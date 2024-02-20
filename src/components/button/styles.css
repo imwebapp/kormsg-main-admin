@@ -1,0 +1,5 @@
+.custom-button {
+    --primary-color: #1890ff; /* Blue color */
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+  }
