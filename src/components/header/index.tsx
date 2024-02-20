@@ -91,7 +91,7 @@ const HeaderComponent = () => {
 
   return (
     <div className="flex flex-row items-center justify-between h-full">
-      <BaseText locale size={20} bold>
+      <BaseText locale size={20} bold className="line-clamp-1">
         {title}
       </BaseText>
       <div className="flex flex-row items-center">
@@ -106,7 +106,7 @@ const HeaderComponent = () => {
         >
           <div className="px-3 h-11 border rounded flex justify-center items-center ml-6 cursor-pointer">
             <img src={Images.icEnglish} className="w-6 h-6" />
-            <BaseText bold className="ml-3">
+            <BaseText bold className="ml-3 line-clamp-1">
               {lang === "ko" ? "한국어" : "English"}
             </BaseText>
           </div>
