@@ -1,3 +1,19 @@
 {
-  "Dashboard" : "Dashboard"
+  "Dashboard": "Dashboard",
+  "Collapse": "Collapse",
+  "User Manage": "User Manage",
+  "Bulletin Board": "Bulletin Board",
+  "Store": "Store",
+  "Shopping": "Shopping",
+  "Help Center": "Help Center",
+  "Reports": "Reports",
+  "Subscription": "Subscription",
+  "Point History": "Point History",
+  "Blogs Manage": "Blogs Manage",
+  "App Version": "App Version",
+  "SEO Page": "SEO Page",
+  "Setting": "Setting",
+  "Store Listing": "Store Listing",
+  "Reservation details": "Reservation details",
+  "Logout": "Logout"
 }

@@ -5,6 +5,8 @@ import MenuHome from "../menu";
 import HeaderComponent from "../header";
 import { Url } from "../../routers/paths";
 import Images from "../../assets/gen";
+import BaseText from "../text";
+import { classNames } from "../../utils/common";
 const { Header, Sider } = Layout;
 
 const DashboardLayout = ({ children }: any) => {
@@ -12,47 +14,55 @@ const DashboardLayout = ({ children }: any) => {
   const navigate = useNavigate();
 
   return (
-    <Layout style={{ minHeight: "100vh", backgroundColor: "#fafafa" }}>
+    <Layout className="h-screen bg-white">
       <Sider
+        className="border-r-[1px] flex flex-col"
         style={{
           backgroundColor: "white",
-          boxShadow:
-            "rgba(17, 17, 26, 0.1) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 48px",
         }}
         collapsible={false}
         collapsed={collapsed}
+        collapsedWidth={81}
+        width={250}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div>
-          <p >
-            <i
-              className="fa-solid fa-bars"
-              style={{ paddingLeft: collapsed ? "0.35rem" : 0 }}
-              onClick={() => setCollapsed(!collapsed)}
-            ></i>
-            {!collapsed && (
-              <img
-                className="w-[38px] h-[38px] rounded-lg"
-                src={Images.logo}
-                alt=""
-                onClick={() => {
-                  navigate(Url.dashboard);
-                }}
-              />
-            )}
-          </p>
+        <div className="flex flex-row items-center py-4 border-b-[1px] px-[18px]">
+          <img
+            className="w-[38px] h-[38px] rounded-lg"
+            src={Images.logo}
+            alt=""
+            onClick={() => {
+              navigate(Url.dashboard);
+            }}
+          />
+          {!collapsed && (
+            <div className="pl-3 flex flex-1 min-w-[160px]">
+              <BaseText bold size={18}>
+                GM4 Data
+              </BaseText>
+            </div>
+          )}
         </div>
-        <MenuHome />
+        <div className="flex-1 h-[calc(100vh-152px)] overflow-auto no-scrollbar">
+          <MenuHome />
+        </div>
+        <div
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex flex-row items-center cursor-pointer justify-end border-t-[1px] h-[80px]"
+        >
+          <img
+            className={classNames("w-6 h-6", !!collapsed ? "mr-6" : "")}
+            src={!!collapsed ? Images.collapse2 : Images.collapse}
+          />
+          {!collapsed && (
+            <BaseText medium size={16} className="pr-8 pl-2">
+              Collapse
+            </BaseText>
+          )}
+        </div>
       </Sider>
-      <Layout
-        className="site-layout"
-        style={{ backgroundColor: "#fafafa", margin: "0 1.5rem" }}
-      >
-        <Header
-          className="site-layout-background"
-          style={{ padding: 0 }}
-          children={<HeaderComponent />}
-        />
+      <Layout className="bg-white">
+        <Header className="bg-white border-b h-[71px] px-6" children={<HeaderComponent />} />
         {children}
       </Layout>
     </Layout>
