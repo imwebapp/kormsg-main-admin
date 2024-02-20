@@ -5,7 +5,7 @@ import "./App.css";
 import Router from "./routers";
 
 const App: React.FC = () => {
-  i18next.changeLanguage("ko");
+  // i18next.changeLanguage("ko");
   return (
     <BrowserRouter>
       <Router />
