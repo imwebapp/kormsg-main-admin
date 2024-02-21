@@ -20,14 +20,7 @@ export default function CustomButton(
   const { t } = useTranslation();
 
   return (
-    <Button
-      className={classNames(
-        bold ? "font-bold" : "",
-        medium ? "font-medium" : "",
-        className || ""
-      )}
-      {...newProps}
-    >
+    <Button className={classNames("font-bold", className || "")} {...newProps}>
       <Space>
         {icon && <span>{icon}</span>}
         {locale ? t(children as string) : children}
