@@ -9,6 +9,7 @@ type InputProps = {
   isError?: boolean;
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
   type?: "text" | "password" | "number" | "email";
   disabled?: boolean;
   className?: string; // for tailwindcss
@@ -22,7 +23,7 @@ type InputProps = {
 };
 
 export const BaseInput = (props: InputProps) => {
-  const { title, required, value, onChange, className, type, disabled, styleTitle,styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError } = props;
+  const { title, required, value, onChange, className, type, disabled, styleTitle,styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder } = props;
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = () => {
     setIsFocused(true);
@@ -67,6 +68,7 @@ export const BaseInput = (props: InputProps) => {
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}
+          placeholder={placeholder}
         />
         {iconRight && (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
