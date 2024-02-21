@@ -2,8 +2,8 @@ import { PropsWithChildren } from "react";
 import { DatePicker, Space } from "antd";
 import { DatePickerProps, GetProps } from "antd";
 import { useTranslation } from "react-i18next";
-import "./styles.css";
 import CustomButton from "../button";
+import "./styles.css";
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
@@ -80,7 +80,8 @@ export default function CustomTimePicker(
           onChange={onChange}
           onOk={onOk}
           placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
-          renderExtraFooter={renderExtraFooter}
+          // renderExtraFooter={renderExtraFooter}
+          needConfirm
         />
       )}
       {!range && (
