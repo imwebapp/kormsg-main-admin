@@ -4,6 +4,7 @@ import MenuHome from "./menu";
 import BaseText from "./text";
 import CustomButton from "./button";
 import CustomTimePicker from "./calendar";
+import BaseTable from "./table";
 
 export {
   DashboardLayout,
@@ -12,4 +13,5 @@ export {
   BaseText,
   CustomButton,
   CustomTimePicker,
+  BaseTable,
 };

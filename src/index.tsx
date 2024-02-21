@@ -4,15 +4,24 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./i18n";
+import { ConfigProvider } from "antd";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 root.render(
-  <Suspense fallback={<div>Loading</div>}>
-    <App />
-  </Suspense>
+  <ConfigProvider
+    theme={{
+      token: {
+        fontFamily: '"Noto Sans KR", sans-serif',
+      },
+    }}
+  >
+    <Suspense fallback={<div>Loading</div>}>
+      <App />
+    </Suspense>
+  </ConfigProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

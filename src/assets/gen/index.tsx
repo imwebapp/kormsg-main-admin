@@ -13,6 +13,7 @@ export default class Images {
     static readonly dashboard2 = require("../../../src/assets/images/Dashboard2.png");
     static readonly helpCenter = require("../../../src/assets/images/Help Center.png");
     static readonly helpCenter2 = require("../../../src/assets/images/Help Center2.png");
+    static readonly krFlags = require("../../../src/assets/images/KR Flags.png");
     static readonly pointHistory = require("../../../src/assets/images/Point History.png");
     static readonly pointHistory2 = require("../../../src/assets/images/Point History2.png");
     static readonly reports = require("../../../src/assets/images/Reports.png");
@@ -31,7 +32,7 @@ export default class Images {
     static readonly userManage2 = require("../../../src/assets/images/User Manage2.png");
     static readonly collapse = require("../../../src/assets/images/collapse.png");
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
-    static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
+    static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly logo = require("../../../src/assets/images/logo.jpg");
 }

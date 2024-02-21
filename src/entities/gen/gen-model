@@ -1,0 +1,47 @@
+const readline = require("readline");
+const jsonData = require("./jsonData");
+const fs = require("fs");
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+rl.question("Please enter entity name : ", (entityName) => {
+  if (!jsonData || typeof jsonData !== "object") {
+    console.error("Invalid JSON data.");
+    rl.close();
+    return;
+  }
+
+  let interfaceString = `export interface ${capitalizeFirstLetter(
+    entityName
+  )}Interface {\n`;
+
+  for (const key in jsonData) {
+    const value = jsonData[key];
+    let type = typeof value;
+
+    if (type === "string" && !isNaN(Date.parse(value))) {
+      type = "Date";
+    } else if (Array.isArray(value)) {
+      type = "Array<" + typeof value[0] + ">";
+    } else if (type === "object") {
+      type = "object";
+    }
+
+    interfaceString += `    ${key}: ${type};\n`;
+  }
+
+  interfaceString += "}";
+  fs.writeFile(
+    `./src/entities/${entityName.toLowerCase()}.entity.ts`,
+    interfaceString,
+    (err) => {}
+  );
+  rl.close();
+});

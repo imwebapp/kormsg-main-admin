@@ -105,7 +105,7 @@ const HeaderComponent = () => {
           }}
         >
           <div className="px-3 h-11 border rounded flex justify-center items-center ml-6 cursor-pointer">
-            <img src={Images.icEnglish} className="w-6 h-6" />
+            <img src={lang === "ko" ? Images.krFlags : Images.icEnglish} className="w-6 h-6" />
             <BaseText bold className="ml-3 line-clamp-1">
               {lang === "ko" ? "한국어" : "English"}
             </BaseText>
