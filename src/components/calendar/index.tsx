@@ -9,12 +9,14 @@ type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 interface CustomTimePickerProps extends DatePickerProps {
   range?: boolean;
+  onDataChange?: (data: any) => void;
 }
 
 export default function CustomTimePicker(
   props: PropsWithChildren<CustomTimePickerProps>
 ) {
-  const { locale, children, range, className, ...newProps } = props;
+  const { locale, children, range, className, onDataChange, ...newProps } =
+    props;
   const { t } = useTranslation();
 
   const onChange = (
@@ -23,12 +25,18 @@ export default function CustomTimePicker(
   ) => {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
+    if (onDataChange) {
+      onDataChange({ value, dateString });
+    }
   };
 
   const onOk = (
     value: DatePickerProps["value"] | RangePickerProps["value"]
   ) => {
     console.log("onOk: ", value);
+    if (onDataChange) {
+      onDataChange({ value });
+    }
   };
 
   const renderExtraFooter = () => {
