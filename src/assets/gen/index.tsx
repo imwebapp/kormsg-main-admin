@@ -24,6 +24,10 @@ export default class Images {
     static readonly setting2 = require("../../../src/assets/images/Setting2.png");
     static readonly shopping = require("../../../src/assets/images/Shopping.png");
     static readonly shopping2 = require("../../../src/assets/images/Shopping2.png");
+    static readonly smallChart1 = require("../../../src/assets/images/Small Chart-1.png");
+    static readonly smallChart = require("../../../src/assets/images/Small Chart.png");
+    static readonly statistics1 = require("../../../src/assets/images/Statistics-1.png");
+    static readonly statistics = require("../../../src/assets/images/Statistics.png");
     static readonly store = require("../../../src/assets/images/Store.png");
     static readonly store2 = require("../../../src/assets/images/Store2.png");
     static readonly subscription = require("../../../src/assets/images/Subscription.png");
@@ -35,4 +39,8 @@ export default class Images {
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
     static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly logo = require("../../../src/assets/images/logo.jpg");
+    static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
+    static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
+    static readonly statistic3 = require("../../../src/assets/images/statistic3.png");
+    static readonly statistic4 = require("../../../src/assets/images/statistic4.png");
 }

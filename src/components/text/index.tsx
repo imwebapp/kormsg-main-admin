@@ -18,6 +18,7 @@ export default function BaseText(props: PropsWithChildren<CustomTextProps>) {
   return (
     <span
       className={classNames(
+        "text-darkNight900",
         bold ? "font-bold" : "",
         medium ? "font-medium" : "",
         className || ""

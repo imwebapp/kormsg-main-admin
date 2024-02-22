@@ -61,9 +61,12 @@ const DashboardLayout = ({ children }: any) => {
           )}
         </div>
       </Sider>
-      <Layout className="bg-white">
-        <Header className="bg-white border-b h-[71px] px-6" children={<HeaderComponent />} />
-        {children}
+      <Layout className="bg-white ">
+        <Header
+          className="bg-white border-b h-[71px] px-6"
+          children={<HeaderComponent />}
+        />
+        <div className="overflow-auto">{children}</div>
       </Layout>
     </Layout>
   );

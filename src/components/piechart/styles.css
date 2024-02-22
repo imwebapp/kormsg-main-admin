@@ -1,0 +1,8 @@
+#pie-chart text {
+    fill: transparent !important;
+}
+
+#pie-chart g {
+    transform: translate(11.3%, 11.3%) scale(1.42); 
+}
+
