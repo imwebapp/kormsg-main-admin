@@ -1,4 +1,4 @@
-import { Dashboard, Login, UserManage } from "../pages";
+import { Dashboard, Login, UserManage, ReservationDetails } from "../pages";
 import { Url } from "./paths";
 const routes = [
   {
@@ -25,7 +25,7 @@ const routes = [
     path: Url.store,
     children: [
       {
-        path: '',
+        path: "",
         element: <div className="p-4">coming soon</div>,
       },
       {
@@ -34,7 +34,7 @@ const routes = [
       },
       {
         path: Url.reservationDetails,
-        element: <div className="p-4">coming soon</div>,
+        element: <ReservationDetails />,
       },
     ],
   },
