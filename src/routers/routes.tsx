@@ -9,6 +9,7 @@ import {
   StorePage,
   UserManage,
   UserDetail,
+  ReservationDetails,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -74,7 +75,7 @@ const routes = [
       },
       {
         path: Url.reservationDetails,
-        element: <div className="p-4">coming soon</div>,
+        element: <ReservationDetails />,
       },
     ],
   },
