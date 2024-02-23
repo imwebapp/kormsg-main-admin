@@ -4,11 +4,13 @@
 export default class Images {
     static readonly appVersion = require("../../../src/assets/images/App Version.png");
     static readonly appVersion2 = require("../../../src/assets/images/App Version2.png");
+    static readonly avatarEmpty = require("../../../src/assets/images/Avatar Empty.png");
     static readonly bell = require("../../../src/assets/images/Bell.png");
     static readonly blogsManage = require("../../../src/assets/images/Blogs Manage.png");
     static readonly blogsManage2 = require("../../../src/assets/images/Blogs Manage2.png");
     static readonly bulletinBoard = require("../../../src/assets/images/Bulletin Board.png");
     static readonly bulletinBoard2 = require("../../../src/assets/images/Bulletin Board2.png");
+    static readonly cameraBlue = require("../../../src/assets/images/Camera Blue.png");
     static readonly dashboard = require("../../../src/assets/images/Dashboard.png");
     static readonly dashboard2 = require("../../../src/assets/images/Dashboard2.png");
     static readonly helpCenter = require("../../../src/assets/images/Help Center.png");

@@ -6,12 +6,13 @@ import BaseText from '../text';
 
 interface InputProps extends SelectProps {
     title?: string;
+    titleSize?: number;
     required?: boolean;
     isError?: boolean;
     value?: string;
     size?: 'large' | 'middle' | 'small';
     onChange: (value: string) => void;
-    options: { value: string, label: string, disabled?: boolean }[];
+    options: { value: string | number, label: string, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss
     styleTitle?: string;
@@ -26,7 +27,7 @@ interface InputProps extends SelectProps {
 };
 
 export const BaseInputSelect = (props: InputProps) => {
-    const { title, required, value, onChange, className, size, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
+    const { title, titleSize, required, value, onChange, className, size, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const [valueSelect, setValueSelect] = useState<string | undefined>(value);
 
@@ -37,17 +38,20 @@ export const BaseInputSelect = (props: InputProps) => {
         onChange(value);
     };
     useEffect(() => {
-        setValueSelect(value);
+        if (value)
+            setValueSelect(value);
+        else
+            setValueSelect(undefined);
     }, [value]);
 
     return (
         <div className={classNames('flex flex-col', className)}>
             {title && (
-                <div>
-                    <BaseText locale bold size={16} className={`mb-2, ${styleTitle}`}>
+                <div className={classNames('flex gap-1')}>
+                    <BaseText locale bold size={titleSize} className={classNames('mb-2', styleTitle || '')}>
                         {title}
                     </BaseText>
-                    {required && (<span className="text-red-500"> *</span>)}
+                    {required && (<span className="text-red-500">*</span>)}
                 </div>
             )}
             <ConfigProvider
@@ -75,12 +79,12 @@ export const BaseInputSelect = (props: InputProps) => {
                     allowClear
                     mode={multiple ? 'multiple' : undefined}
                     optionRender={(node) => {
-                        const check = multiple ? Array.isArray(valueSelect) && valueSelect.includes(node.value) : valueSelect === node.value;
+                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : valueSelect === node.value;
                         return (
                             <div className={classNames('flex flex-row items-center ')}>
                                 <BaseText locale size={16} medium className={classNames(
                                     "w-full",
-                                    check ? '' : "text-darkNight500"
+                                    check ? 'text-blue' : "text-darkNight500"
                                 )}>
                                     {node.label}
                                 </BaseText>

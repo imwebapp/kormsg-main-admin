@@ -5,6 +5,7 @@ import Images from "../../assets/gen";
 
 type InputProps = {
   title?: string;
+  titleSize?: number;
   required?: boolean;
   isError?: boolean;
   value: string;
@@ -23,7 +24,7 @@ type InputProps = {
 };
 
 export const BaseInput = (props: InputProps) => {
-  const { title, required, value, onChange, className, type, disabled, styleTitle,styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder } = props;
+  const { title, titleSize, required, value, onChange, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder } = props;
   const [isFocused, setIsFocused] = useState(false);
   const handleFocus = () => {
     setIsFocused(true);
@@ -40,11 +41,11 @@ export const BaseInput = (props: InputProps) => {
   return (
     <div className={classNames('flex flex-col', className)}>
       {title && (
-        <div>
-          <BaseText locale bold size={16} className={`mb-2, ${styleTitle}`}>
+        <div className={classNames('flex gap-1')}>
+          <BaseText locale bold size={titleSize} className={classNames('mb-2', styleTitle || '')}>
             {title}
           </BaseText>
-          {required && (<span className="text-red-500"> *</span>)}
+          {required && (<span className="text-red-500">*</span>)}
         </div>
       )}
       <div
