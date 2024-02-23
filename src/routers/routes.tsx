@@ -1,4 +1,4 @@
-import { Dashboard, Login, UserManage } from "../pages";
+import { Dashboard, Login, UserManage, UserDetail } from "../pages";
 import { Url } from "./paths";
 const routes = [
   {
@@ -16,6 +16,10 @@ const routes = [
   {
     path: Url.user,
     element: <UserManage />,
+  },
+  {
+    path: Url.userDetail,
+    element: <UserDetail />,
   },
   {
     path: Url.bulletinBoard,

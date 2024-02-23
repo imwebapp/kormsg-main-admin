@@ -55,7 +55,9 @@ export const BaseInput = (props: InputProps) => {
           styleInputContainer || "")}
       >
         {iconLeft && (
-          <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
+          typeof iconLeft === 'string' ? (
+            <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
+          ) : iconLeft
         )}
         <input
           className={classNames(

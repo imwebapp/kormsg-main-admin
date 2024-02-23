@@ -4,9 +4,11 @@ import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseInputSelect } from "../../components/input/BaseInputSelect";
 
-import { CheckOutlined, PlusCircleOutlined, PlusOutlined, TeamOutlined, CameraOutlined } from "@ant-design/icons";
+import { CheckOutlined, PlusCircleOutlined, PlusOutlined, TeamOutlined, SearchOutlined } from "@ant-design/icons";
 import { BaseModal } from "../../components/modal/BaseModal";
 import { classNames } from "../../utils/common";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 const listUserGroup = [
   {
@@ -51,9 +53,12 @@ type IGroups = {
   count: number;
 };
 const UserManage = () => {
+  const navigate = useNavigate();
+
   const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroup[0]);
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
+  const [valueSearch, setValueSearch] = useState("");
   const [valueInputCreateGroup, setValueInputCreateGroup] = useState("");
   const [formDataCreateUser, setFormDataCreateUser] = useState({
     userType: "",
@@ -187,8 +192,9 @@ const UserManage = () => {
             <BaseInput
               placeholder="Search user"
               className="w-2/4"
-              value=""
-              onChange={() => { }}
+              value={valueSearch}
+              onChange={(value) => { setValueSearch(value) }}
+              iconLeft={<SearchOutlined className="mr-3 text-2xl text-darkNight500" />}
             />
             <div className={classNames('flex gap-4')}>
               <CustomButton
@@ -209,6 +215,15 @@ const UserManage = () => {
                 Create a user
               </CustomButton>
             </div>
+          </div>
+          <div>
+            <CustomButton
+              onClick={() => {
+                navigate(Url.userDetail);
+              }}
+            >
+              Detail
+            </CustomButton>
           </div>
         </div>
       </div>

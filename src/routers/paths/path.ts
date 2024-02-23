@@ -1,6 +1,7 @@
 export const login = '/login'
 export const dashboard = '/dashboard'
 export const user = '/user'
+export const userDetail = '/user/detail'
 export const bulletinBoard = '/bulletin-board'
 export const store = '/store'
 export const storeListing = '/store/store-listing'

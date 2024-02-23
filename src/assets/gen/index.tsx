@@ -36,6 +36,7 @@ export default class Images {
     static readonly subscription2 = require("../../../src/assets/images/Subscription2.png");
     static readonly userManage = require("../../../src/assets/images/User Manage.png");
     static readonly userManage2 = require("../../../src/assets/images/User Manage2.png");
+    static readonly arrowLeft = require("../../../src/assets/images/arrowLeft.png");
     static readonly collapse = require("../../../src/assets/images/collapse.png");
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
