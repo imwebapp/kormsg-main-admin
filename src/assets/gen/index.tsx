@@ -39,7 +39,6 @@ export default class Images {
     static readonly arrowLeft = require("../../../src/assets/images/arrowLeft.png");
     static readonly android = require("../../../src/assets/images/android.png");
     static readonly android2 = require("../../../src/assets/images/android2.png");
-    static readonly arrowLeft = require("../../../src/assets/images/arrowLeft.png");
     static readonly collapse = require("../../../src/assets/images/collapse.png");
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
@@ -47,7 +46,6 @@ export default class Images {
     static readonly icon18 = require("../../../src/assets/images/icon18+.png");
     static readonly iphone = require("../../../src/assets/images/iphone.png");
     static readonly iphone2 = require("../../../src/assets/images/iphone2.png");
-    static readonly icon18 = require("../../../src/assets/images/icon18+.png");
     static readonly logo = require("../../../src/assets/images/logo.jpg");
     static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
     static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
