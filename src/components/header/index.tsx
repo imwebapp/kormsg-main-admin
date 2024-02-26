@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import i18next from "i18next";
 import { Url } from "../../routers/paths";
+import { useLocalStorage } from "../../stores/localStorage";
 
 const HeaderComponent = () => {
   const location = useLocation();
-  const [lang, setLang] = useState<string>(i18next.language);
-
+  // const [lang, setLang] = useState<string>(i18next.language);
+  const { locale, setLocale } = useLocalStorage((state) => state);
   const [title, setTitle] = useState("");
   const [openLangs, setOpenLangs] = useState(false);
 
@@ -18,7 +19,7 @@ const HeaderComponent = () => {
     console.log("location.pathname", location.pathname);
 
     switch (location.pathname) {
-      case "":
+      case "/":
         setTitle("Dashboard");
         break;
       case Url.dashboard:
@@ -83,7 +84,7 @@ const HeaderComponent = () => {
       items={items}
       onClick={(e) => {
         i18next.changeLanguage(e.key);
-        setLang(e.key);
+        setLocale(e.key);
         setOpenLangs(false);
       }}
     />
@@ -105,9 +106,12 @@ const HeaderComponent = () => {
           }}
         >
           <div className="px-3 h-11 border rounded flex justify-center items-center ml-6 cursor-pointer">
-            <img src={lang === "ko" ? Images.krFlags : Images.icEnglish} className="w-6 h-6" />
+            <img
+              src={locale === "ko" ? Images.krFlags : Images.icEnglish}
+              className="w-6 h-6"
+            />
             <BaseText bold className="ml-3 line-clamp-1">
-              {lang === "ko" ? "한국어" : "English"}
+              {locale === "ko" ? "한국어" : "English"}
             </BaseText>
           </div>
         </Popover>

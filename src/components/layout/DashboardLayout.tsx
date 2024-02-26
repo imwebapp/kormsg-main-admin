@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Breadcrumb, Layout } from "antd";
 import { useNavigate } from "react-router-dom";
 import MenuHome from "../menu";
@@ -7,10 +6,12 @@ import { Url } from "../../routers/paths";
 import Images from "../../assets/gen";
 import BaseText from "../text";
 import { classNames } from "../../utils/common";
+import { useLocalStorage } from "../../stores/localStorage";
 const { Header, Sider } = Layout;
 
 const DashboardLayout = ({ children }: any) => {
-  const [collapsed, setCollapsed] = useState(false);
+  // const [collapsed, setCollapsed] = useState(true);
+  const { collapsed, setCollapsed } = useLocalStorage((state) => state);
   const navigate = useNavigate();
 
   return (

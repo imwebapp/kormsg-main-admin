@@ -2,3 +2,12 @@
     background: #1677ff !important;
     font-size: 14px;
 }
+
+.ant-picker{
+    height: 44px;
+    border-radius: 10px;
+}
+
+.anticon-calendar{
+    color: black;
+}

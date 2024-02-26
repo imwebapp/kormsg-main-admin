@@ -1,0 +1,27 @@
+.ant-segmented{
+  height: 44px;
+  padding: 4px;
+  border-radius: 10px;
+  background-color: #F6F6F6 !important;
+}
+.ant-segmented-item{
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+}
+
+.ant-segmented-item-selected{
+  background: #0866FF !important;
+}
+
+.ant-segmented-item-selected > .ant-segmented-item-label{
+  color: white;
+}
+
+.ant-segmented-item-label{
+  font-size: 16px;
+  font-weight: 500;
+}
+
