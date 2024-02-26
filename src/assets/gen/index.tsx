@@ -41,6 +41,7 @@ export default class Images {
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
     static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
+    static readonly icon18 = require("../../../src/assets/images/icon18+.png");
     static readonly logo = require("../../../src/assets/images/logo.jpg");
     static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
     static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
