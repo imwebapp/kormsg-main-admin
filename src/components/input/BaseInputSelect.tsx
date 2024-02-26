@@ -45,7 +45,7 @@ export const BaseInputSelect = (props: InputProps) => {
     }, [value]);
 
     return (
-        <div className={classNames('flex flex-col', className)}>
+        <div className={classNames('flex flex-col min-w-fit', className)}>
             {title && (
                 <div className={classNames('flex gap-1')}>
                     <BaseText locale bold size={titleSize} className={classNames('mb-2', styleTitle || '')}>
