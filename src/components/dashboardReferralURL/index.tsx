@@ -5,6 +5,7 @@ import CustomButton from "../button";
 import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
+import { getURL } from "../../utils/common";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -32,7 +33,7 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
     },
     {
       title: t("URL"),
-      dataIndex: "url",
+      render: ({ url }) => <a href={getURL(url)}>{url}</a>,
     },
     {
       title: t("Click"),
@@ -44,7 +45,7 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
     <>
       <div className="flex flex-row justify-between items-center">
         <BaseText locale size={24} bold>
-          Overview
+          Referral URL
         </BaseText>
         <CustomButton locale>View all</CustomButton>
       </div>
