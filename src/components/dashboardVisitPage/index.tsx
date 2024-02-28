@@ -4,6 +4,9 @@ import BaseText from "../text";
 import CustomButton from "../button";
 import Images from "../../assets/gen";
 import { useTranslation } from "react-i18next";
+import CustomTimePicker from "../calendar";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -14,6 +17,7 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
   const { className, isViewAll } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const data = [];
@@ -46,7 +50,18 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
         <BaseText locale size={24} bold>
           Most visited pages
         </BaseText>
-        <CustomButton locale>View all</CustomButton>
+        {!isViewAll ? (
+          <CustomButton
+            onClick={() => navigate(Url.dashboardVisit)}
+            locale
+          >
+            View all
+          </CustomButton>
+        ) : (
+          <div className="flex flex-row gap-6">
+            <CustomTimePicker range />
+          </div>
+        )}
       </div>
       <Table
         className={className}

@@ -6,6 +6,9 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { getURL } from "../../utils/common";
+import CustomTimePicker from "../calendar";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -18,6 +21,7 @@ export default function DashboardInflowDomaineTable(
   const { className, isViewAll } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const data = [];
@@ -49,7 +53,18 @@ export default function DashboardInflowDomaineTable(
         <BaseText locale size={24} bold>
           Inflow Domaine
         </BaseText>
-        <CustomButton locale>View all</CustomButton>
+        {!isViewAll ? (
+          <CustomButton
+            onClick={() => navigate(Url.dashboardInflowDomaine)}
+            locale
+          >
+            View all
+          </CustomButton>
+        ) : (
+          <div className="flex flex-row gap-6">
+            <CustomTimePicker range />
+          </div>
+        )}
       </div>
       <BaseTable
         className={className}

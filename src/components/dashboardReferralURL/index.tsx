@@ -6,6 +6,9 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { getURL } from "../../utils/common";
+import CustomTimePicker from "../calendar";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -16,6 +19,7 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
   const { className, isViewAll } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const data = [];
@@ -47,7 +51,18 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
         <BaseText locale size={24} bold>
           Referral URL
         </BaseText>
-        <CustomButton locale>View all</CustomButton>
+        {!isViewAll ? (
+          <CustomButton
+            onClick={() => navigate(Url.dashboardReferral)}
+            locale
+          >
+            View all
+          </CustomButton>
+        ) : (
+          <div className="flex flex-row gap-6">
+            <CustomTimePicker range />
+          </div>
+        )}
       </div>
       <BaseTable
         className={className}

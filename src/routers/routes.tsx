@@ -1,4 +1,13 @@
-import { Dashboard, Login, UserManage } from "../pages";
+import {
+  Dashboard,
+  DashboardIncomingPage,
+  DashboardInflowPage,
+  DashboardOverviewPage,
+  DashboardReferralPage,
+  DashboardVisitPage,
+  Login,
+  UserManage,
+} from "../pages";
 import { Url } from "./paths";
 const routes = [
   {
@@ -11,7 +20,32 @@ const routes = [
   },
   {
     path: Url.dashboard,
-    element: <Dashboard />,
+    children: [
+      {
+        path: "",
+        element: <Dashboard />,
+      },
+      {
+        path: Url.dashboardOverview,
+        element: <DashboardOverviewPage />,
+      },
+      {
+        path: Url.dashboardInflowDomaine,
+        element: <DashboardInflowPage />,
+      },
+      {
+        path: Url.dashboardReferral,
+        element: <DashboardReferralPage />,
+      },
+      {
+        path: Url.dashboardVisit,
+        element: <DashboardVisitPage />,
+      },
+      {
+        path: Url.dashboardIncoming,
+        element: <DashboardIncomingPage />,
+      },
+    ],
   },
   {
     path: Url.user,
@@ -25,7 +59,7 @@ const routes = [
     path: Url.store,
     children: [
       {
-        path: '',
+        path: "",
         element: <div className="p-4">coming soon</div>,
       },
       {

@@ -10,20 +10,48 @@ import { useLocalStorage } from "../../stores/localStorage";
 
 const HeaderComponent = () => {
   const location = useLocation();
-  // const [lang, setLang] = useState<string>(i18next.language);
   const { locale, setLocale } = useLocalStorage((state) => state);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<any>();
   const [openLangs, setOpenLangs] = useState(false);
 
-  useEffect(() => {
-    console.log("location.pathname", location.pathname);
+  const getSubTitle = (title: string, subtitle: string) => {
+    return (
+      <div className="flex flex-row line-clamp-1">
+        <BaseText locale size={20} bold className=" !text-darkNight600">
+          {title}
+        </BaseText>
+        <BaseText size={20} bold>
+          /
+        </BaseText>
+        <BaseText locale size={20} bold>
+          {subtitle}
+        </BaseText>
+      </div>
+    );
+  };
 
+  useEffect(() => {
     switch (location.pathname) {
       case "/":
         setTitle("Dashboard");
         break;
       case Url.dashboard:
         setTitle("Dashboard");
+        break;
+      case Url.dashboardOverview:
+        setTitle(getSubTitle("Dashboard", "Overview"));
+        break;
+      case Url.dashboardReferral:
+        setTitle(getSubTitle("Dashboard", "Referral URL"));
+        break;
+      case Url.dashboardInflowDomaine:
+        setTitle(getSubTitle("Dashboard", "Inflow Domaine"));
+        break;
+      case Url.dashboardVisit:
+        setTitle(getSubTitle("Dashboard", "Most visited pages"));
+        break;
+      case Url.dashboardIncoming:
+        setTitle(getSubTitle("Dashboard", "Incoming search terms"));
         break;
       case Url.user:
         setTitle("User Manage");
@@ -92,7 +120,12 @@ const HeaderComponent = () => {
 
   return (
     <div className="flex flex-row items-center justify-between h-full">
-      <BaseText locale size={20} bold className="line-clamp-1">
+      <BaseText
+        locale={typeof title === "string"}
+        size={20}
+        bold
+        className="line-clamp-1"
+      >
         {title}
       </BaseText>
       <div className="flex flex-row items-center">
