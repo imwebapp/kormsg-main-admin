@@ -4,7 +4,11 @@ import BaseCard from "../../components/baseCard";
 import CardStatistic from "../../components/cardStatistic";
 import Images from "../../assets/gen";
 import { useMemo } from "react";
-import { BaseText, CustomTimePicker } from "../../components";
+import {
+  BaseText,
+  CustomTimePicker,
+  DashboardReservation,
+} from "../../components";
 import { Radio, Table } from "antd";
 
 const ReservationDetails = () => {
@@ -82,8 +86,10 @@ const ReservationDetails = () => {
   ];
   return (
     <div className="p-6">
-      <div className="mt-4 w-full">
-        <Table dataSource={dataSource} columns={columns} />
+      <div className="flex flex-row gap-4 mt-4">
+        <BaseCard className="flex-1 w-full">
+          <DashboardReservation isViewAll={false} />
+        </BaseCard>
       </div>
     </div>
   );
