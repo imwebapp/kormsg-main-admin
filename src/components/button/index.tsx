@@ -10,22 +10,40 @@ interface CustomButtonProps extends ButtonProps {
   bold?: boolean;
   medium?: boolean;
   className?: string; // for tailwindcss
-  url?:string;
-  primary?:boolean;
+  url?: string;
+  primary?: boolean;
 }
 
 export default function CustomButton(
   props: PropsWithChildren<CustomButtonProps>
 ) {
-  const { locale, children, bold, icon, medium, className,url,primary, ...newProps } =
-    props;
+  const {
+    locale,
+    children,
+    bold,
+    icon,
+    medium,
+    className,
+    url,
+    primary,
+    ...newProps
+  } = props;
   const { t } = useTranslation();
 
   return (
-    <Button className={classNames("font-bold", className || "")} {...newProps} type={primary ? "primary" : "default"}>
+    <Button
+      className={classNames("font-bold", className || "")}
+      {...newProps}
+      type={primary ? "primary" : "default"}
+    >
       <Space className={classNames("justify-center  items-center")}>
-      {icon && <span>{icon}</span>}
-      {url && <img src={url} className={"w-4 h-4 justify-center items-center mt-1"}/>}  
+        {icon && <span>{icon}</span>}
+        {url && (
+          <img
+            src={url}
+            className={"w-4 h-4 justify-center items-center mt-1"}
+          />
+        )}
         {locale ? t(children as string) : children}
       </Space>
     </Button>
