@@ -62,5 +62,11 @@
   "Stores that refuse review": "Stores that refuse review",
   "Expired store": "Expired store",
   "Recommended store": "Recommended store",
-  "During the event": "During the event"
+  "During the event": "During the event",
+  "No": "No",
+  "Title": "Title",
+  "Category": "Category",
+  "Start/End/Remaining Period": "Start/End/Remaining Period",
+  "Event": "Event",
+  "Management": "Management"
 }

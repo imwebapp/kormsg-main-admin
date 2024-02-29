@@ -6,6 +6,7 @@ import {
   DashboardReferralPage,
   DashboardVisitPage,
   Login,
+  StorePage,
   UserManage,
 } from "../pages";
 import { Url } from "./paths";
@@ -60,11 +61,11 @@ const routes = [
     children: [
       {
         path: "",
-        element: <div className="p-4">coming soon</div>,
+        element: <StorePage />,
       },
       {
         path: Url.storeListing,
-        element: <div className="p-4">coming soon</div>,
+        element: <StorePage />,
       },
       {
         path: Url.reservationDetails,

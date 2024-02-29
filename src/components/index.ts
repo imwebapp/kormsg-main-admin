@@ -15,6 +15,9 @@ import DashboardReferralTable from "./dashboardReferralURL";
 import BaseSegmented from "./segmented";
 import DashboardVisitTable from "./dashboardVisitPage";
 import DashboardSearchTermTable from "./dashboardSearchTerm";
+import UserManageTable from "./userManageTable";
+import StoreListTable from "./storeListTable";
+
 
 export {
   DashboardLayout,
@@ -33,5 +36,7 @@ export {
   DashboardReferralTable,
   BaseSegmented,
   DashboardVisitTable,
-  DashboardSearchTermTable
+  DashboardSearchTermTable,
+  UserManageTable,
+  StoreListTable
 };
