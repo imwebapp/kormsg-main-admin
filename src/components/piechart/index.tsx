@@ -46,6 +46,7 @@ export default function BasePieChart(props: PieChartProps) {
           Used by
         </BaseText>
         <BaseInputSelect
+          className="w-[120px] h-[40px] bg-lightGray border-none rounded-md text-darkNight600"
           onChange={() => {}}
           value="Weekly"
           options={[
@@ -84,8 +85,8 @@ export default function BasePieChart(props: PieChartProps) {
           />
         </div>
         <div className="flex flex-row mt-10">
-          <div className="flex flex-row justify-center items-start">
-            <div className="w-3 h-3 bg-violet rounded-full mt-1"></div>
+          <div className="flex flex-row items-start justify-center">
+            <div className="w-3 h-3 mt-1 rounded-full bg-violet"></div>
             <div className="flex flex-col pl-2">
               <BaseText locale>Browser</BaseText>
               <BaseText size={18} bold>
@@ -93,7 +94,7 @@ export default function BasePieChart(props: PieChartProps) {
               </BaseText>
             </div>
             <div className="h-full w-0 border-[0.5px] mx-4"></div>
-            <div className="w-3 h-3 bg-lightBlue rounded-full mt-1"></div>
+            <div className="w-3 h-3 mt-1 rounded-full bg-lightBlue"></div>
             <div className="flex flex-col pl-2">
               <BaseText locale>Application</BaseText>
               <BaseText size={18} bold>

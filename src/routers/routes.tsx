@@ -1,4 +1,3 @@
-import { Dashboard, Login, UserManage, UserDetail } from "../pages";
 import {
   Dashboard,
   DashboardIncomingPage,
@@ -9,6 +8,7 @@ import {
   Login,
   StorePage,
   UserManage,
+  UserDetail,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [

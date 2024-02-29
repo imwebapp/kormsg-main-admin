@@ -11,6 +11,7 @@ import { useLocalStorage } from "../../stores/localStorage";
 const HeaderComponent = () => {
   const location = useLocation();
   const { locale, setLocale } = useLocalStorage((state) => state);
+  const navigate = useNavigate();
   const [title, setTitle] = useState<any>();
   const [isDetail, setIsDetail] = useState(false);
   const [openLangs, setOpenLangs] = useState(false);
