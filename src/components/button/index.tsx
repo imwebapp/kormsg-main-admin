@@ -12,6 +12,7 @@ interface CustomButtonProps extends ButtonProps {
   className?: string; // for tailwindcss
   url?: string;
   primary?: boolean;
+  selected?: boolean;
 }
 
 export default function CustomButton(
@@ -26,13 +27,15 @@ export default function CustomButton(
     className,
     url,
     primary,
+    selected,
     ...newProps
   } = props;
   const { t } = useTranslation();
 
   return (
     <Button
-      className={classNames("font-bold", className || "")}
+      className={classNames(bold ? "font-bold" : "", className || "")}
+      style={selected ? { backgroundColor: "#007bff" } : {}}
       {...newProps}
       type={primary ? "primary" : "default"}
     >

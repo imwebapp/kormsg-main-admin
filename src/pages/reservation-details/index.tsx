@@ -1,94 +1,105 @@
-import BaseBarChart from "../../components/barchart";
-import BasePieChart from "../../components/piechart";
 import BaseCard from "../../components/baseCard";
-import CardStatistic from "../../components/cardStatistic";
-import Images from "../../assets/gen";
-import { useMemo } from "react";
 import {
-  BaseText,
+  CustomButton,
   CustomTimePicker,
   DashboardReservation,
 } from "../../components";
-import { Radio, Table } from "antd";
-
+import { useEffect, useState } from "react";
 const ReservationDetails = () => {
-  const dataSource = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-    },
-  ];
+  const data = {
+    Totalreservationdetails: 84,
+    PaymentDetails: 24,
+    OutstandingPaymentHistory: 24,
+    CancellationDetails: 32,
+    StoreSettlementDetails: 69,
+  };
+  const [selectedButton, setSelectedButton] = useState("");
 
-  const columns = [
-    {
-      title: "예약 ID ",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "이용자 연락처",
-      dataIndex: "이용자 연락처",
-      key: "이용자 연락처",
-    },
-    {
-      title: "예약 날짜",
-      dataIndex: "예약 날짜",
-      key: "예약 날짜",
-    },
-    {
-      title: "예약 시간",
-      dataIndex: "예약 시간",
-      key: "예약 시간",
-    },
-    {
-      title: "서비스 유형",
-      dataIndex: "서비스 유형",
-      key: "서비스 유형",
-    },
-    {
-      title: "예약 상태",
-      dataIndex: "예약 상태",
-      key: "예약 상태",
-    },
-    {
-      title: "결제 상태",
-      dataIndex: "결제 상태",
-      key: "결제 상태",
-    },
-    {
-      title: "결제 금액 (₩)",
-      dataIndex: "결제 금액 (₩)",
-      key: "결제 금액 (₩)",
-    },
-    {
-      title: "비고",
-      dataIndex: "비고",
-      key: "비고",
-    },
-    {
-      title: "예약취소 횟수",
-      dataIndex: "예약취소 횟수",
-      key: "예약취소 횟수",
-    },
-    {
-      title: "예약성공 횟수",
-      dataIndex: "예약성공 횟수",
-      key: "예약성공 횟수",
-    },
-  ];
+  const handleButtonClick = (buttonName: string) => {
+    console.log("123", buttonName);
+
+    setSelectedButton(buttonName);
+  };
+  useEffect(() => {
+    console.log("selectedButton", selectedButton);
+  }, [selectedButton]);
+  const listButton = () => {
+    return (
+      <div className="flex flex-row gap-4 mt-1">
+        <CustomButton
+          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          style={{
+            backgroundColor:
+              selectedButton === "Totalreservationdetails" ? "black" : "white",
+            color:
+              selectedButton === "Totalreservationdetails" ? "white" : "black",
+          }}
+          onClick={() => handleButtonClick("Totalreservationdetails")}
+        >
+          총 예약내역 {"(" + data.Totalreservationdetails + ")"}
+        </CustomButton>
+        <CustomButton
+          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          style={{
+            backgroundColor:
+              selectedButton === "PaymentDetails" ? "black" : "white",
+            color: selectedButton === "PaymentDetails" ? "white" : "black",
+          }}
+          onClick={() => handleButtonClick("PaymentDetails")}
+        >
+          결제내역 {"(" + data.PaymentDetails + ")"}
+        </CustomButton>
+        <CustomButton
+          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          style={{
+            backgroundColor:
+              selectedButton === "OutstandingPaymentHistory"
+                ? "black"
+                : "white",
+            color:
+              selectedButton === "OutstandingPaymentHistory"
+                ? "white"
+                : "black",
+          }}
+          onClick={() => handleButtonClick("OutstandingPaymentHistory")}
+        >
+          미결제 내역 {"(" + data.OutstandingPaymentHistory + ")"}
+        </CustomButton>
+        <CustomButton
+          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          style={{
+            backgroundColor:
+              selectedButton === "CancellationDetails" ? "black" : "white",
+            color: selectedButton === "CancellationDetails" ? "white" : "black",
+          }}
+          onClick={() => handleButtonClick("CancellationDetails")}
+        >
+          취소내역 {"(" + data.CancellationDetails + ")"}
+        </CustomButton>
+        <CustomButton
+          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          style={{
+            backgroundColor:
+              selectedButton === "StoreSettlementDetails" ? "black" : "white",
+            color:
+              selectedButton === "StoreSettlementDetails" ? "white" : "black",
+          }}
+          onClick={() => handleButtonClick("StoreSettlementDetails")}
+        >
+          매장 정산내역 {"(" + data.StoreSettlementDetails + ")"}
+        </CustomButton>
+      </div>
+    );
+  };
   return (
     <div className="p-6">
+      <div className="flex flex-row justify-between item-center">
+        {listButton()}
+        <CustomTimePicker range />
+      </div>
       <div className="flex flex-row gap-4 mt-4">
         <BaseCard className="flex-1 w-full">
-          <DashboardReservation isViewAll={false} />
+          <DashboardReservation isViewAll={true} />
         </BaseCard>
       </div>
     </div>
