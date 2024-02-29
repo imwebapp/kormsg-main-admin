@@ -18,6 +18,7 @@ import DashboardSearchTermTable from "./dashboardSearchTerm";
 import UserManageTable from "./userManageTable";
 import StoreListTable from "./storeListTable";
 
+import DashboardReservation from "./dashboardReservation";
 
 export {
   DashboardLayout,
@@ -38,5 +39,6 @@ export {
   DashboardVisitTable,
   DashboardSearchTermTable,
   UserManageTable,
-  StoreListTable
+  StoreListTable,
+  DashboardReservation,
 };

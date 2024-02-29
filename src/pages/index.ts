@@ -8,5 +8,18 @@ import DashboardReferralPage from "./dashboard/referral";
 import DashboardVisitPage from "./dashboard/visit";
 import StorePage from "./store";
 import UserDetail from "./userDetail";
+import ReservationDetails from "./reservation-details";
 
-export { Login, Dashboard, UserManage, UserDetail, DashboardIncomingPage, DashboardInflowPage, DashboardOverviewPage, DashboardReferralPage, DashboardVisitPage, StorePage };
+export {
+  Login,
+  Dashboard,
+  UserManage,
+  UserDetail,
+  DashboardIncomingPage,
+  DashboardInflowPage,
+  DashboardOverviewPage,
+  DashboardReferralPage,
+  DashboardVisitPage,
+  StorePage,
+  ReservationDetails,
+};
