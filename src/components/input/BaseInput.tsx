@@ -17,10 +17,10 @@ type InputProps = {
   styleTitle?: string;
   styleInputContainer?: string;
   styleInput?: string;
-  iconLeft?: ReactNode;
-  iconLeftInactive?: ReactNode;
-  iconRight?: ReactNode;
-  iconRightInactive?: ReactNode;
+  iconLeft?: ReactNode | string;
+  iconLeftInactive?: ReactNode | string;
+  iconRight?: ReactNode | string;
+  iconRightInactive?: ReactNode | string;
 };
 
 export const BaseInput = (props: InputProps) => {
@@ -55,7 +55,9 @@ export const BaseInput = (props: InputProps) => {
           styleInputContainer || "")}
       >
         {iconLeft && (
-          <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
+          typeof iconLeft === 'string' ? (
+            <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
+          ) : iconLeft
         )}
         <input
           className={classNames(

@@ -14,14 +14,14 @@ const Dashboard = () => {
   return (
     <div className="p-6">
       <DashboardStatistic />
-      <div className="flex flex-row mt-4 w-full">
+      <div className="flex flex-row w-full mt-4">
         <BaseBarChart />
         <BasePieChart />
       </div>
       <BaseCard className="mt-4">
         <DashboardOverviewTable isViewAll={false} />
       </BaseCard>
-      <div className="mt-4 flex flex-row gap-4">
+      <div className="flex flex-row gap-4 mt-4">
         <BaseCard className="flex-1 w-1/2">
           <DashboardInflowDomaineTable isViewAll={false} />
         </BaseCard>

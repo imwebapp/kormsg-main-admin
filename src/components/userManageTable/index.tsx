@@ -6,6 +6,8 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { BaseInputSelect } from "../input/BaseInputSelect";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 type UserManageTableProps = {
   className?: string; // for tailwindcss
@@ -13,6 +15,7 @@ type UserManageTableProps = {
 
 export default function UserManageTable(props: UserManageTableProps) {
   const { className } = props;
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
@@ -81,7 +84,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Jump up limit"),
       render: ({}) => (
-        <div className="flex flex-col gap-1 items-center">
+        <div className="flex flex-col items-center gap-1">
           <CustomButton className="w-10" primary>
             0
           </CustomButton>
@@ -107,7 +110,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Date create/ By"),
       render: ({}) => (
-        <div className="flex flex-col gap-1 items-center">
+        <div className="flex flex-col items-center gap-1">
           <img src={Images.web} className="w-6 h-6" />
           <BaseText medium size={16}>
             2023.12.12
@@ -118,7 +121,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Store"),
       render: ({}) => (
-        <div className="min-w-[30px] cursor-pointer">
+        <div className="min-w-[30px] cursor-pointer" onClick={()=> navigate(Url.userDetail)}>
           <img src={Images.eye} className="w-6 h-6" />
         </div>
       ),

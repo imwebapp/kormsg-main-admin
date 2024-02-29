@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { LOCAL_STORAGE } from "../utils/constants";
 import routes from "./routes";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import { DetailLayout } from "../components/layout/DetailLayout";
 
 const Router = () => {
   const navigate = useNavigate();
@@ -43,7 +44,11 @@ const Router = () => {
             path={item.path}
             element={
               item.path !== Url.login ? (
-                <DashboardLayout>{item.element}</DashboardLayout>
+                item.path === Url.userDetail ? (
+                  <DetailLayout>{item.element}</DetailLayout>
+                ) : (
+                  <DashboardLayout>{item.element}</DashboardLayout>
+                )
               ) : (
                 item.element
               )
