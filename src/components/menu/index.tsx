@@ -177,7 +177,7 @@ const MenuHome: React.FC = () => {
   useEffect(() => {
     if (
       location.pathname.includes(Url.dashboard) ||
-      location.pathname.includes("/")
+      location.pathname === "/"
     ) {
       setSelectedKeys(Url.dashboard);
     } else {

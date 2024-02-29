@@ -49,5 +49,18 @@
   "Days": "날",
   "Weekly": "",
   "Monthly": "월간 간행물",
-  "Annually": "매년"
+  "Annually": "매년",
+  "Id": "ID",
+  "Type/Group": "유형/그룹",
+  "Jump up limit": "점프 업 한도",
+  "Store status": "매장현황",
+  "Date create/ By": "생성일/작성자",
+  "Post/comment/ review/requests": "게시글/댓글/리뷰/요청",
+  "View history": "기록 보기",
+  "Announcement Store": "공지사항 저장소",
+  "Store under review": "검토 중인 매장",
+  "Stores that refuse review": "리뷰를 거부하는 매장",
+  "Expired store": "만료된 매장",
+  "Recommended store": "추천 매장",
+  "During the event": "이벤트 기간 중"
 }
