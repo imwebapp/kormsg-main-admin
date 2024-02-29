@@ -4,7 +4,7 @@ import {
   CustomTimePicker,
   DashboardReservation,
 } from "../../components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 const ReservationDetails = () => {
   const data = {
@@ -24,7 +24,7 @@ const ReservationDetails = () => {
     return (
       <div className="flex flex-row gap-4 mt-1">
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "Totalreservationdetails" ? "black" : "white",
@@ -37,7 +37,7 @@ const ReservationDetails = () => {
           {"(" + data.Totalreservationdetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "PaymentDetails" ? "black" : "white",
@@ -49,7 +49,7 @@ const ReservationDetails = () => {
           {"(" + data.PaymentDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "OutstandingPaymentHistory"
@@ -66,7 +66,7 @@ const ReservationDetails = () => {
           {"(" + data.OutstandingPaymentHistory + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "CancellationDetails" ? "black" : "white",
@@ -78,7 +78,7 @@ const ReservationDetails = () => {
           {"(" + data.CancellationDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "StoreSettlementDetails" ? "black" : "white",
