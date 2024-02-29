@@ -68,5 +68,21 @@
   "Category": "Category",
   "Start/End/Remaining Period": "Start/End/Remaining Period",
   "Event": "Event",
-  "Management": "Management"
+  "Management": "Management",
+  "Total reservation details": "Total reservation details",
+  "Payment details": "Payment details",
+  "Outstanding Payment History": "Outstanding Payment History",
+  "Cancellation details": "Cancellation details",
+  "Store settlement details": "Store settlement details",
+  "Reservation ID": "Reservation ID",
+  "User contact information": "User contact information",
+  "Reservation date": "Reservation date",
+  "Reservation time": "Reservation time",
+  "Service type": "Service type",
+  "Reservation Status": "Reservation Status",
+  "Payment status": "Payment status",
+  "Payment amount (₩)": "Payment amount (₩)",
+  "Note": "Note",
+  "Number of reservation cancellations": "Number of reservation cancellations",
+  "Number of successful reservations": "Number of successful reservations"
 }

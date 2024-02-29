@@ -68,5 +68,21 @@
   "Category": "범주",
   "Start/End/Remaining Period": "시작/종료/남은 기간",
   "Event": "이벤트",
-  "Management": "관리"
+  "Management": "관리",
+  "Total reservation details": "총 예약내역",
+  "Payment details": "결제내역",
+  "Outstanding Payment History": "미결제 내역",
+  "Cancellation details": "취소내역",
+  "Store settlement details": "매장 정산내역",
+  "Reservation ID": "예약 ID",
+  "User contact information": "이용자 연락처",
+  "Reservation date": "예약 날짜",
+  "Reservation time": "예약 시간",
+  "Service type": "서비스 유형",
+  "Reservation Status": "예약 상태",
+  "Payment status": "결제 상태",
+  "Payment amount (₩)": "결제 금액 (₩)",
+  "Note": "비고",
+  "Number of reservation cancellations": "예약취소 횟수",
+  "Number of successful reservations": "예약성공 횟수"
 }
