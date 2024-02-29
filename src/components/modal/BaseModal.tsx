@@ -62,15 +62,17 @@ export const BaseModal = (props: BaseModalProps) => {
                                 <CustomButton
                                     onClick={closeModal}
                                     locale
-                                    className={classNames("items-center justify-center w-full py-6", styleButtonCancel)}
+                                    bold
+                                    className={classNames(" w-full py-6", styleButtonCancel)}
                                 >
                                     {nameCancel || 'Cancel'}
                                 </CustomButton>
                                 <CustomButton
                                     onClick={submitModal}
-                                    type='primary'
+                                    primary
                                     locale
-                                    className={classNames("items-center justify-center w-full py-6", styleButtonConfirm)}
+                                    bold
+                                    className={classNames("w-full py-6", styleButtonConfirm)}
                                     disabled={disableSubmitBtn}
                                 >
                                     {nameConfirm || 'Confirm'}
