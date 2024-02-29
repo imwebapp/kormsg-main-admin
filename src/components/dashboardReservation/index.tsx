@@ -36,28 +36,28 @@ export default function DashboardReservation(props: DashboardReservationProps) {
   }
   const columns: TableColumnsType<any> = [
     {
-      title: t("예약 ID"),
+      title: t("Reservation ID"),
       dataIndex: "id",
     },
     {
-      title: t("이용자 연락처"),
+      title: t("User contact information"),
       dataIndex: "phoneNumber",
     },
     {
-      title: t("예약 날짜"),
+      title: t("Reservation date"),
       dataIndex: "reservationDate",
       // render: (text) => <img className="w-6 h-6" src={Images.android} />,
     },
     {
-      title: t("예약 시간"),
+      title: t("Reservation time"),
       dataIndex: "reservationTime",
     },
     {
-      title: t("서비스 유형"),
+      title: t("Service type"),
       dataIndex: "serviceType",
     },
     {
-      title: t("예약 상태"),
+      title: t("Reservation Status"),
       dataIndex: "reservationStatus",
       render: (text) => (
         <div
@@ -78,7 +78,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       ),
     },
     {
-      title: t("결제 상태"),
+      title: t("Payment status"),
       dataIndex: "paymentStatus",
       render: (text) => (
         <div
@@ -100,23 +100,23 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       ),
     },
     {
-      title: t("결제 금액 (₩)"),
+      title: t("Payment amount (₩)"),
       dataIndex: "paymentAmount",
       render: (text) => <span className="text-center font-bold">{text}</span>,
     },
     {
-      title: t("비고"),
+      title: t("Note"),
       dataIndex: "note",
     },
     {
-      title: t("예약취소 횟수"),
+      title: t("Number of reservation cancellations"),
       dataIndex: "numberCancel",
       render: (text) => (
         <span className="text-center text-red-500">{text}</span>
       ),
     },
     {
-      title: t("예약성공 횟수"),
+      title: t("Number of successful reservations"),
       dataIndex: "numberSuccess",
     },
   ];
