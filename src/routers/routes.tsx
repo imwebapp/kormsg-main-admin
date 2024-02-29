@@ -1,4 +1,15 @@
 import { Dashboard, Login, UserManage, UserDetail } from "../pages";
+import {
+  Dashboard,
+  DashboardIncomingPage,
+  DashboardInflowPage,
+  DashboardOverviewPage,
+  DashboardReferralPage,
+  DashboardVisitPage,
+  Login,
+  StorePage,
+  UserManage,
+} from "../pages";
 import { Url } from "./paths";
 const routes = [
   {
@@ -11,7 +22,32 @@ const routes = [
   },
   {
     path: Url.dashboard,
-    element: <Dashboard />,
+    children: [
+      {
+        path: "",
+        element: <Dashboard />,
+      },
+      {
+        path: Url.dashboardOverview,
+        element: <DashboardOverviewPage />,
+      },
+      {
+        path: Url.dashboardInflowDomaine,
+        element: <DashboardInflowPage />,
+      },
+      {
+        path: Url.dashboardReferral,
+        element: <DashboardReferralPage />,
+      },
+      {
+        path: Url.dashboardVisit,
+        element: <DashboardVisitPage />,
+      },
+      {
+        path: Url.dashboardIncoming,
+        element: <DashboardIncomingPage />,
+      },
+    ],
   },
   {
     path: Url.user,
@@ -29,12 +65,12 @@ const routes = [
     path: Url.store,
     children: [
       {
-        path: '',
-        element: <div className="p-4">coming soon</div>,
+        path: "",
+        element: <StorePage />,
       },
       {
         path: Url.storeListing,
-        element: <div className="p-4">coming soon</div>,
+        element: <StorePage />,
       },
       {
         path: Url.reservationDetails,

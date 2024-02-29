@@ -23,6 +23,7 @@ module.exports = {
         dustRed500: "#F5222D",
         dustRed900: "#5C0011",
         violet: "#4318FF",
+        violet2: "#9747FF",
         polaGreen500: "#52C41A",
         dayBreakBlue50: "#E6F4FF",
         dayBreakBlue500: "#0866FF",

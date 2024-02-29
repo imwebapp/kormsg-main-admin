@@ -17,13 +17,3 @@ export const menuList: Record<string, string> = {
     [Url.seo]: Url.seo,
     [Url.setting]: Url.setting,
 };
-
-const swap = (json: Record<string, string>) => {
-    const ret: Record<string, string> = {};
-    for (let key in json) {
-        ret[json[key]] = key;
-    }
-    return ret;
-}
-
-export const menuListSwap: Record<string, string> = swap(menuList)

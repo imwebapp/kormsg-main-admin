@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
-import { menuList, menuListSwap } from "./menuList";
+import { menuList } from "./menuList";
 import Images from "../../assets/gen";
 import "./menu.css";
 type MenuItem = Required<MenuProps>["items"][number];
@@ -13,7 +13,7 @@ const MenuHome: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedKeys, setSelectedKeys] = useState("Dashboard");
+  const [selectedKeys, setSelectedKeys] = useState(Url.dashboard);
 
   function getItem(
     label: React.ReactNode,
@@ -175,7 +175,14 @@ const MenuHome: React.FC = () => {
   ];
 
   useEffect(() => {
-    setSelectedKeys(menuListSwap[location.pathname]);
+    if (
+      location.pathname.includes(Url.dashboard) ||
+      location.pathname === "/"
+    ) {
+      setSelectedKeys(Url.dashboard);
+    } else {
+      setSelectedKeys(location.pathname);
+    }
   }, [location.pathname]);
 
   return (

@@ -3,74 +3,69 @@ import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
 import Images from "../../assets/gen";
+import { useTranslation } from "react-i18next";
+import CustomTimePicker from "../calendar";
+import { useNavigate } from "react-router-dom";
+import { Url } from "../../routers/paths";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
   className?: string; // for tailwindcss
 };
 
-export default function DashboardOverviewTable(props: DashboardOverviewProps) {
+export default function DashboardSearchTermTable(
+  props: DashboardOverviewProps
+) {
   const { className, isViewAll } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const data = [];
   for (let i = 0; i < 10; i++) {
     data.push({
       key: i,
-      date: "2025-12-12",
-      ip: "135 . 31 . 234",
-      address: `London, Park Lane no. ${i}`,
-      sale: 0,
-      order: 1,
-      joined: 4,
-      inquiry: 5,
-      comment: 2
+      last_click: "2025-12-12",
+      click: 2,
+      query: "Home",
     });
   }
   const columns: TableColumnsType<any> = [
     {
-      title: "Date",
-      dataIndex: "date",
+      title: t("Query"),
+      dataIndex: "query",
     },
     {
-      title: "IP Adress",
-      dataIndex: "ip",
+      title: t("Search Engines"),
+      dataIndex: "platform",
+      render: (text) => <img className="w-6 h-6" src={Images.android} />,
     },
     {
-      title: "Use by",
-      dataIndex: "user_by",
-      render: (text) => <img className="w-6 h-6" src={Images.android}/>,
+      title: t("Click"),
+      dataIndex: "click",
     },
     {
-      title: "Sales",
-      dataIndex: "sale",
-    },
-    {
-      title: "Orders",
-      dataIndex: "order",
-    },
-    {
-      title: "Joined",
-      dataIndex: "joined",
-    },
-    {
-      title: "Inquiry",
-      dataIndex: "inquiry",
-    },
-    {
-      title: "Comments",
-      dataIndex: "comment",
+      title: t("Last click"),
+      dataIndex: "last_click",
     },
   ];
 
   return (
     <>
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row items-center justify-between">
         <BaseText locale size={24} bold>
-          Overview
+          Incoming search terms
         </BaseText>
-        <CustomButton locale>View all</CustomButton>
+        {!isViewAll ? (
+          <CustomButton onClick={() => navigate(Url.dashboardIncoming)} locale>
+            View all
+          </CustomButton>
+        ) : (
+          <div className="flex flex-row gap-6">
+            <CustomTimePicker range />
+          </div>
+        )}
       </div>
       <Table
         className={className}
