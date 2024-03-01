@@ -126,7 +126,7 @@ export default function BaseBarChart() {
               ]}
             >
               <ChartsTooltip />
-              <BarPlot sx={{ rx: 8 }} color="#00CCFF" />
+              <BarPlot />
               <ChartsXAxis />
               <ChartsYAxis position="left" />
             </BarChart>
