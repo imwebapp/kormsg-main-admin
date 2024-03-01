@@ -34,21 +34,20 @@ export default function CustomButton(
 
   return (
     <Button
-      className={classNames(bold ? "font-bold" : "", className || "")}
+      className={classNames(
+        bold ? "font-bold" : "",
+        className || "",
+        "flex gap-2 justify-center items-center"
+      )}
       style={selected ? { backgroundColor: "#007bff" } : {}}
       {...newProps}
       type={primary ? "primary" : "default"}
     >
-      <Space className={classNames("justify-center  items-center")}>
-        {icon && <span>{icon}</span>}
-        {url && (
-          <img
-            src={url}
-            className={"w-4 h-4 justify-center items-center mt-1"}
-          />
-        )}
-        {locale ? t(children as string) : children}
-      </Space>
+      {icon && <span>{icon}</span>}
+      {url && (
+        <img src={url} className={"w-4 h-4 justify-center items-center mt-1"} />
+      )}
+      {locale ? t(children as string) : children}
     </Button>
   );
 }

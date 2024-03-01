@@ -46,7 +46,6 @@ export default function BasePieChart(props: PieChartProps) {
           Used by
         </BaseText>
         <BaseInputSelect
-          className="w-[120px] h-[40px] bg-lightGray border-none rounded-md text-darkNight600"
           onChange={() => {}}
           value="Weekly"
           options={[
