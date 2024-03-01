@@ -35,7 +35,7 @@ const HeaderComponent = () => {
   useEffect(() => {
     switch (location.pathname) {
       case "/":
-        setTitle("Dashboardas");
+        setTitle("Dashboard");
         break;
       case Url.dashboard:
         setTitle("Dashboard");
