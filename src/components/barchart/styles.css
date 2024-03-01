@@ -1,17 +1,10 @@
-.css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-line{
-    stroke-width: 0 !important
+.MuiBarElement-root{
+    rx: 8px !important;
+    fill: #00CCFF !important;
 }
 
-.css-1k2u9zb-MuiChartsAxis-root .MuiChartsAxis-tick {
+.MuiChartsAxis-tick, .MuiChartsAxis-line{
     stroke: transparent !important;
-}
-
-.css-1vuxth3-MuiBarElement-root{
-    fill: transparent !important;
-}
-
-#bar-chart svg {
-    /* transform: translate(-3.3%, -5.3%) scale(1.0,1.2);  */
 }
 
 .MuiChartsAxis-tickLabel{
