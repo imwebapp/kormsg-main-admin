@@ -4,7 +4,8 @@ import {
   CustomTimePicker,
   DashboardReservation,
 } from "../../components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 const ReservationDetails = () => {
   const data = {
     Totalreservationdetails: 84,
@@ -14,20 +15,16 @@ const ReservationDetails = () => {
     StoreSettlementDetails: 69,
   };
   const [selectedButton, setSelectedButton] = useState("");
+  const { t } = useTranslation();
 
   const handleButtonClick = (buttonName: string) => {
-    console.log("123", buttonName);
-
     setSelectedButton(buttonName);
   };
-  useEffect(() => {
-    console.log("selectedButton", selectedButton);
-  }, [selectedButton]);
   const listButton = () => {
     return (
       <div className="flex flex-row gap-4 mt-1">
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "Totalreservationdetails" ? "black" : "white",
@@ -36,10 +33,11 @@ const ReservationDetails = () => {
           }}
           onClick={() => handleButtonClick("Totalreservationdetails")}
         >
-          총 예약내역 {"(" + data.Totalreservationdetails + ")"}
+          {t("Total reservation details")}
+          {"(" + data.Totalreservationdetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "PaymentDetails" ? "black" : "white",
@@ -47,10 +45,11 @@ const ReservationDetails = () => {
           }}
           onClick={() => handleButtonClick("PaymentDetails")}
         >
-          결제내역 {"(" + data.PaymentDetails + ")"}
+          {t("Payment details")}
+          {"(" + data.PaymentDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "OutstandingPaymentHistory"
@@ -63,10 +62,11 @@ const ReservationDetails = () => {
           }}
           onClick={() => handleButtonClick("OutstandingPaymentHistory")}
         >
-          미결제 내역 {"(" + data.OutstandingPaymentHistory + ")"}
+          {t("Outstanding Payment History")}
+          {"(" + data.OutstandingPaymentHistory + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "CancellationDetails" ? "black" : "white",
@@ -74,10 +74,11 @@ const ReservationDetails = () => {
           }}
           onClick={() => handleButtonClick("CancellationDetails")}
         >
-          취소내역 {"(" + data.CancellationDetails + ")"}
+          {t("Cancellation details")}
+          {"(" + data.CancellationDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base items-center justify-center pb-8"
+          className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
               selectedButton === "StoreSettlementDetails" ? "black" : "white",
@@ -86,7 +87,8 @@ const ReservationDetails = () => {
           }}
           onClick={() => handleButtonClick("StoreSettlementDetails")}
         >
-          매장 정산내역 {"(" + data.StoreSettlementDetails + ")"}
+          {t("Store settlement details")}
+          {"(" + data.StoreSettlementDetails + ")"}
         </CustomButton>
       </div>
     );

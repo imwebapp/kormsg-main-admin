@@ -8,7 +8,7 @@ type InputProps = {
   titleSize?: number;
   required?: boolean;
   isError?: boolean;
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   placeholder?: string;
   type?: "text" | "password" | "number" | "email";

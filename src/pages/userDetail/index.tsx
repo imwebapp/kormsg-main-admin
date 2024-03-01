@@ -5,6 +5,7 @@ import { BaseText } from "../../components";
 import { useState } from "react";
 import { InformationTab } from "./infomationTab";
 import { HistoryPaymentTab } from "./historyPaymentTab";
+import { ShopInformationTab } from "./shopInformationTab";
 
 const formDataCreateUser = {
   id: "123456",
@@ -132,15 +133,7 @@ const UserDetail = () => {
             <InformationTab dataUser={formDataCreateUser} />
           ) : null}
           {optionSelected === "shopInformation" ? (
-            <div className={classNames("flex flex-col gap-6")}>
-              <BaseText
-                bold
-                size={24}
-                className={classNames("text-darkNight900")}
-              >
-                Shop information
-              </BaseText>
-            </div>
+            <ShopInformationTab />
           ) : null}
           {optionSelected === "historyPayment" ? <HistoryPaymentTab /> : null}
         </div>
