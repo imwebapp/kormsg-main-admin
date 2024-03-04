@@ -15,3 +15,12 @@ export interface BaseResponse<T = any> {
   result: T;
   results: T[];
 }
+
+export interface Reservation {
+  results: {
+    objects: {
+      count: number;
+      rows: [];
+    };
+  };
+}

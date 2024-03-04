@@ -71,7 +71,7 @@ const getHeader = async (config = {}) => {
 const getMethod = async <T>(
   url: string,
   params?: any
-): Promise<BaseResponse<T>> => {
+): Promise<T> => {
   const headers = await getHeader();
   return http
     .get(Config.HOST_API + url, {
