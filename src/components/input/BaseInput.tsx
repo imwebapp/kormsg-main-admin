@@ -2,6 +2,7 @@ import React, { ReactNode, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import Images from "../../assets/gen";
+import { useTranslation } from 'react-i18next';
 
 type InputProps = {
   title?: string;
@@ -26,6 +27,7 @@ type InputProps = {
 export const BaseInput = (props: InputProps) => {
   const { title, titleSize, required, value, onChange, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder } = props;
   const [isFocused, setIsFocused] = useState(false);
+  const { t } = useTranslation();
   const handleFocus = () => {
     setIsFocused(true);
   };
@@ -71,7 +73,7 @@ export const BaseInput = (props: InputProps) => {
           onFocus={handleFocus}
           onBlur={handleBlur}
           disabled={disabled}
-          placeholder={placeholder}
+          placeholder={t(placeholder || '')}
         />
         {iconRight && (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
