@@ -114,10 +114,12 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       render: (text) => (
         <span className="text-center text-red-500">{text}</span>
       ),
+      width: "5%",
     },
     {
       title: t("Number of successful reservations"),
       dataIndex: "numberSuccess",
+      width: "5%",
     },
   ];
 

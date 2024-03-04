@@ -4,8 +4,9 @@ import {
   CustomTimePicker,
   DashboardReservation,
 } from "../../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getMethod } from "../../utils/request";
 const ReservationDetails = () => {
   const data = {
     Totalreservationdetails: 84,
@@ -16,10 +17,26 @@ const ReservationDetails = () => {
   };
   const [selectedButton, setSelectedButton] = useState("");
   const { t } = useTranslation();
-
+  const [listReservation, setListReservation] = useState<any>();
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
   };
+  const getList = async () => {
+    try {
+      let result = await getMethod(
+        "/api/v1/reservation/?limit=2&fields=%5B%22$all%22,%7B%22user%22:%5B%22$all%22%5D%7D,%7B%22seller%22:%5B%22$all%22%5D%7D,%7B%22shop%22:%5B%22$all%22%5D%7D%5D"
+      );
+      // setListReservation(result.result.object);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    console.log("eget list");
+
+    getList();
+
+    return () => {};
+  }, []);
+
   const listButton = () => {
     return (
       <div className="flex flex-row gap-4 mt-1">
