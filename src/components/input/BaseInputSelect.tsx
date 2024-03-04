@@ -3,6 +3,7 @@ import { ConfigProvider, Select, SelectProps } from 'antd';
 import { ReactNode, useEffect, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
+import { useTranslation } from 'react-i18next';
 
 interface InputProps extends SelectProps {
     title?: string;
@@ -29,6 +30,7 @@ interface InputProps extends SelectProps {
 export const BaseInputSelect = (props: InputProps) => {
     const { title, titleSize, required, value, onChange, className, size, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
+    const { t } = useTranslation();
     const [valueSelect, setValueSelect] = useState<string | undefined>(value);
 
     console.log('valueSelect', valueSelect);
@@ -71,7 +73,7 @@ export const BaseInputSelect = (props: InputProps) => {
             >
                 <Select
                     value={valueSelect}
-                    placeholder={placeholder}
+                    placeholder={t(placeholder || '')}
                     onChange={handleChange}
                     disabled={disabled}
                     options={options}

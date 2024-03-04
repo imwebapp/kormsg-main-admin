@@ -8,17 +8,18 @@ type CustomTextProps = {
   locale?: boolean;
   size?: number;
   className?: string; // for tailwindcss
+  color?: string;
 };
 
 export default function BaseText(props: PropsWithChildren<CustomTextProps>) {
-  const { bold, locale, size, medium, children, className, ...newProps } =
+  const { bold, locale, size, medium, children, className, color, ...newProps } =
     props;
   const { t } = useTranslation();
 
   return (
     <span
       className={classNames(
-        "text-darkNight900",
+        color ? color : "text-darkNight900",
         bold ? "font-bold" : "",
         medium ? "font-medium" : "",
         className || ""
