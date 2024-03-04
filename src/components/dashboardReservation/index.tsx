@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
 import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
+import { getMethod } from "../../utils/request";
+import {Reservation} from "../../utils/common";
 
 type DashboardReservationProps = {
   isViewAll: boolean;
@@ -14,6 +16,8 @@ type DashboardReservationProps = {
 export default function DashboardReservation(props: DashboardReservationProps) {
   const { className, isViewAll } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [listReservation, setListReservation] = useState<any>();
+
   const { t } = useTranslation();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
@@ -34,6 +38,20 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       numberSuccess: 8,
     });
   }
+  useEffect(() => {
+    const getList = async () => {
+      try {
+        // limit = 50; fields = ["$all",{"user":["$all"]},{"seller":["$all"]},{"shop":["$all"]}]
+        let response = await getMethod<Reservation>(
+          "/api/v1/reservation/?limit=50&fields=%5B%22$all%22,%7B%22user%22:%5B%22$all%22%5D%7D,%7B%22seller%22:%5B%22$all%22%5D%7D,%7B%22shop%22:%5B%22$all%22%5D%7D%5D"
+        );
+        setListReservation(response.results.objects.rows);
+        
+      } catch (error) {}
+    };
+    getList();
+    return () => {};
+  }, []);
   const columns: TableColumnsType<any> = [
     {
       title: t("Reservation ID"),
@@ -41,7 +59,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     },
     {
       title: t("User contact information"),
-      dataIndex: "phoneNumber",
+      dataIndex: ["user", "phone"],
     },
     {
       title: t("Reservation date"),
@@ -114,10 +132,12 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       render: (text) => (
         <span className="text-center text-red-500">{text}</span>
       ),
+      width: "5%",
     },
     {
       title: t("Number of successful reservations"),
       dataIndex: "numberSuccess",
+      width: "5%",
     },
   ];
 
@@ -128,7 +148,8 @@ export default function DashboardReservation(props: DashboardReservationProps) {
         className={className}
         pagination={!!isViewAll ? { pageSize: 10 } : false}
         columns={columns}
-        data={data}
+        data={listReservation}
+        // data={data}
       />
     </>
   );

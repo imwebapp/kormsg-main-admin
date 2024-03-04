@@ -4,8 +4,11 @@ import {
   CustomTimePicker,
   DashboardReservation,
 } from "../../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { getMethod } from "../../utils/request";
+
+
 const ReservationDetails = () => {
   const data = {
     Totalreservationdetails: 84,
@@ -16,10 +19,11 @@ const ReservationDetails = () => {
   };
   const [selectedButton, setSelectedButton] = useState("");
   const { t } = useTranslation();
-
+  const [listReservation, setListReservation] = useState<any>();
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
   };
+
   const listButton = () => {
     return (
       <div className="flex flex-row gap-4 mt-1">

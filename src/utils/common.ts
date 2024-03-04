@@ -1,10 +1,26 @@
 export const classNames = (...names: (string | undefined | null)[]): string =>
-	(names || []).filter((e) => !!e && typeof e === 'string').join(' ')
+  (names || []).filter((e) => !!e && typeof e === "string").join(" ");
 
 export function getURL(url: string) {
-	if (!url.includes('http://') && !url.includes('https://') ) {
-		url = "https://" + url;
-	}
+  if (!url.includes("http://") && !url.includes("https://")) {
+    url = "https://" + url;
+  }
 
-	return url
+  return url;
+}
+export interface BaseResponse<T = any> {
+  success: boolean;
+  errorCode: string;
+  message: string;
+  result: T;
+  results: T[];
+}
+
+export interface Reservation {
+  results: {
+    objects: {
+      count: number;
+      rows: [];
+    };
+  };
 }
