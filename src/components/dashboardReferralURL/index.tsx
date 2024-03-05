@@ -26,7 +26,7 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
   for (let i = 0; i < 10; i++) {
     data.push({
       key: i,
-      url: "https://www.instagram.com/stories/gpskin.official/www.instagram.com/",
+      url: "https://kormsg.com/",
       click: 123,
     });
   }
