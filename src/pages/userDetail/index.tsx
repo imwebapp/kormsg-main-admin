@@ -126,7 +126,7 @@ const UserDetail = () => {
           })}
         </div>
         <div
-          className={classNames("w-4/5 flex flex-col gap-6")}
+          className={classNames("w-4/5 flex flex-col")}
           style={{ height: "calc(100vh - 71px)" }}
         >
           {optionSelected === "information" ? (

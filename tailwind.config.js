@@ -27,6 +27,7 @@ module.exports = {
         polaGreen500: "#52C41A",
         dayBreakBlue50: "#E6F4FF",
         dayBreakBlue500: "#0866FF",
+        neutral9: "#F6F8FA",
       },
     },
   },

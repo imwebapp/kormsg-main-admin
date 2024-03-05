@@ -16,6 +16,7 @@ import { classNames } from "../../utils/common";
 import UserManageTable from "../../components/userManageTable";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
+import { useTranslation } from "react-i18next";
 
 const listUserGroup = [
   {
@@ -61,7 +62,7 @@ type IGroups = {
 };
 const UserManage = () => {
   const navigate = useNavigate();
-
+  const {t} = useTranslation();
   const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroup[0]);
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
@@ -326,7 +327,7 @@ const UserManage = () => {
             placeholder="Select type user"
             options={(TypeUser || []).map((item) => ({
               value: item.id,
-              label: item.name,
+              label: t(item.name),
             }))}
           />
           <BaseInputSelect
