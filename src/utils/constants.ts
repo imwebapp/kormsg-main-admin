@@ -4,8 +4,10 @@ export const Config = {
 };
 
 export enum LOCAL_STORAGE {
-  TOKEN = "access_token",
+  TOKEN = "accessToken",
 }
 
 export const Constants = {
 };
+
+export const BASE_URL = 'https://server.kormsg.com/api/v1'

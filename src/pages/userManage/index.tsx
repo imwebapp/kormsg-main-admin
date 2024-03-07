@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Images from "../../assets/gen";
 import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
@@ -12,11 +12,13 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { BaseModal } from "../../components/modal/BaseModal";
-import { classNames } from "../../utils/common";
+import { User, classNames } from "../../utils/common";
 import UserManageTable from "../../components/userManageTable";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
 import { useTranslation } from "react-i18next";
+import { getMethod } from "../../utils/request";
+import { userApi } from "../../apis/userApi";
 
 const listUserGroup = [
   {
@@ -62,7 +64,7 @@ type IGroups = {
 };
 const UserManage = () => {
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroup[0]);
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
@@ -76,6 +78,10 @@ const UserManage = () => {
     userName: "",
     avatar: "",
   });
+
+  const [listUser, setListUser] = useState<User[]>([]);
+
+  console.log("listUser: ", listUser);
 
   const handleClickGroup = (group: IGroups) => {
     if (groupSelected && groupSelected.id === group.id) {
@@ -159,6 +165,16 @@ const UserManage = () => {
       console.log("FormData is not valid. Please fill all fields.");
     }
   };
+
+  useEffect(() => {
+    userApi.getList({ limit: 50, fields: '["$all"]' }
+    ).then((res: any) => {
+      setListUser(res.results.objects.rows)
+    })
+      .catch((err) => {
+        console.log("err: ", err);
+      });
+  }, []);
 
   return (
     <>
@@ -263,7 +279,7 @@ const UserManage = () => {
               </CustomButton>
             </div>
           </div>
-          <UserManageTable />
+          <UserManageTable data={listUser} />
         </div>
       </div>
       <BaseModal

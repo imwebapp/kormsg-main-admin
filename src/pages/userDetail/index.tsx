@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { classNames } from "../../utils/common";
 import Images from "../../assets/gen";
 import { BaseText } from "../../components";
@@ -6,20 +6,6 @@ import { useState } from "react";
 import { InformationTab } from "./infomationTab";
 import { HistoryPaymentTab } from "./historyPaymentTab";
 import { ShopInformationTab } from "./shopInformationTab";
-
-const formDataCreateUser = {
-  id: "123456",
-  avatar: Images.avatarEmpty,
-  fullName: "Lesungwwoo",
-  email: "abcxyz1223.naver.abcxyz1",
-  phone: "0123456789",
-  address: "Hà Nội",
-  birthday: "01/01/1990",
-  type: "Biz",
-  groupName: "Group A",
-  countShop: 5,
-  paymentInfo: "이채원/60/6개1달연장/서비스 + 1주일",
-};
 
 const listOption = [
   {
@@ -36,9 +22,34 @@ const listOption = [
   },
 ];
 
+interface Iprops {
+  route?: any;
+  navigation?: any;
+}
+
 const UserDetail = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const formDataCreateUser = location.state;
   const [optionSelected, setOptionSelected] = useState("information");
+
+  const checkAccountType = (type: string) => {
+    if (type === "FREE_USER") {
+      return "Normal";
+    } else if (type === "admin") {
+      return "Admin";
+    } else if (type === "BIZ_USER") {
+      return "Biz";
+    }
+  };
+
+  const checkGroup = (group: string) => {
+    if (group === null) {
+      return "All";
+    } else {
+      return group;
+    }
+  };
 
   const handleClickOption = (item: { title: string; value: string }) => {
     console.log(item);
@@ -68,7 +79,7 @@ const UserDetail = () => {
                 size={28}
                 className={classNames("text-darkNight900")}
               >
-                {formDataCreateUser.fullName}
+                {formDataCreateUser.nickname}
               </BaseText>
               <img
                 src={Images.icon18}
@@ -77,7 +88,7 @@ const UserDetail = () => {
               />
             </div>
             <BaseText size={16} className={classNames("text-darkNight900")}>
-              {formDataCreateUser.email}
+              {formDataCreateUser.username}
             </BaseText>
             <div className={classNames("flex flex-row items-center gap-1")}>
               <BaseText
@@ -86,7 +97,7 @@ const UserDetail = () => {
                   "text-purple flex px-4 py-2 items-center bg-goldenPurple50"
                 )}
               >
-                {formDataCreateUser.type}
+                {checkAccountType(formDataCreateUser.account_type)}
               </BaseText>
               <BaseText
                 medium
@@ -94,7 +105,7 @@ const UserDetail = () => {
                   "text-darkNight900 flex px-4 py-2 items-center bg-darkNight50"
                 )}
               >
-                {formDataCreateUser.groupName}
+                {checkGroup(formDataCreateUser.group)}
               </BaseText>
             </div>
           </div>
@@ -133,7 +144,7 @@ const UserDetail = () => {
             <InformationTab dataUser={formDataCreateUser} />
           ) : null}
           {optionSelected === "shopInformation" ? (
-            <ShopInformationTab />
+            <ShopInformationTab dataUser={formDataCreateUser} />
           ) : null}
           {optionSelected === "historyPayment" ? <HistoryPaymentTab /> : null}
         </div>
