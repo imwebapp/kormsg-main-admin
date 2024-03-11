@@ -5,39 +5,35 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { convertDateTime } from "../../utils/common";
 
 type HistoryPaymentProps = {
+  data: any[];  
   className?: string; // for tailwindcss
 };
 
 export default function HistoryPaymentTable(props: HistoryPaymentProps) {
-  const { className } = props;
+  const { className, data } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const [platformsSelected, setPlatformSelected] = useState<Array<string>>([]);
   const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      date: "2025-12-12",
-      detail: "이채원/60/6개1달연장/서비스 + 1주일",
-    });
-  }
+
   const columns: TableColumnsType<any> = [
     {
       title: t("Date"),
-      dataIndex: "date",
+      dataIndex: "created_at",
+      render: (text) => <BaseText medium className="">{convertDateTime(text)}</BaseText>,
     },
     {
       title: t("Detail"),
-      dataIndex: "detail",
+      dataIndex: "note",
     },
     {
       title: t("Contact Id"),
-      render: (text) => <BaseText medium className="text-primary">Master</BaseText>,
+      render: (text) => <BaseText medium className="text-primary ">Master</BaseText>,
     },
   ];
 
