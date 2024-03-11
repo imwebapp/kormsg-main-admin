@@ -7,15 +7,14 @@ interface IItemShop {
   id: string;
   avatar: string;
   name: string;
-  timeStart: string;
-  timeEnd: string;
+  timeOpening: string;
   hashtag: string[];
   className?: string;
   onClick: (id: number | string) => void;
 }
 
 export const ItemShop = (props: IItemShop) => {
-  const { id, avatar, name, timeStart, timeEnd, hashtag, className, onClick } = props;
+  const { id, avatar, name, timeOpening, hashtag, className, onClick } = props;
   const navigate = useNavigate();
 
   return (
@@ -24,7 +23,7 @@ export const ItemShop = (props: IItemShop) => {
       <BaseText bold size={20} className="truncate">{name}</BaseText>
       <div className="flex gap-2 py-1 pl-1 pr-3 bg-neutral9 rounded-[32px] items-center">
         <BaseText locale size={16} bold className="py-1 px-2 bg-white rounded-[32px]">Open</BaseText>
-        <BaseText size={16} medium>오후{timeStart} ~ 오전{timeEnd}까지</BaseText>
+        <BaseText size={16} medium>{timeOpening}</BaseText>
       </div>
       <div className="flex gap-2 truncate">
         {hashtag.map((item, index) => (

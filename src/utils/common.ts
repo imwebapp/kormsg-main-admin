@@ -81,3 +81,33 @@ export interface User {
   updated_at: Date;
   deleted_at: string | null;
 }
+
+export const checkAccountType = (type: string) => {
+  if (type === "FREE_USER") {
+    return "Normal";
+  } else if (type === "admin") {
+    return "Admin";
+  } else if (type === "BIZ_USER") {
+    return "Biz";
+  } else {
+    return type;
+  }
+};
+
+export const convertDateTime = (timestamp: Date) => {
+  const dateObject = new Date(timestamp);
+  const year = dateObject.getFullYear();
+  const month = ("0" + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 to month since it's zero-based
+  const day = ("0" + dateObject.getDate()).slice(-2);
+
+  return `${year}-${month}-${day} (${dateObject.getHours()}:${dateObject.getMinutes()})`;
+};
+
+export const convertDate = (timestamp: Date) => {
+  const dateObject = new Date(timestamp);
+  const year = dateObject.getFullYear();
+  const month = ('0' + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 to month since it's zero-based
+  const day = ('0' + dateObject.getDate()).slice(-2);
+
+  return `${year}-${month}-${day}`;
+}

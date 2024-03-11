@@ -10,4 +10,34 @@ export enum LOCAL_STORAGE {
 export const Constants = {
 };
 
+export const TypeUser = [
+  {
+    id: "FREE_USER",
+    name: "Normal User",
+  },
+  {
+    id: "admin",
+    name: "Admin",
+  },
+  {
+    id: "BIZ_USER",
+    name: "Biz User",
+  },
+];
+
+export const listOptionUserDetail = [
+  {
+    title: "Information",
+    value: "information",
+  },
+  {
+    title: "Shop information",
+    value: "shopInformation",
+  },
+  {
+    title: "History Payment",
+    value: "historyPayment",
+  },
+];
+
 export const BASE_URL = 'https://server.kormsg.com/api/v1'

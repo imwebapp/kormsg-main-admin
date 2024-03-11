@@ -1,26 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { classNames } from "../../utils/common";
+import { checkAccountType, classNames } from "../../utils/common";
 import Images from "../../assets/gen";
 import { BaseText } from "../../components";
 import { useState } from "react";
 import { InformationTab } from "./infomationTab";
 import { HistoryPaymentTab } from "./historyPaymentTab";
 import { ShopInformationTab } from "./shopInformationTab";
+import { listOptionUserDetail } from "../../utils/constants";
 
-const listOption = [
-  {
-    title: "Information",
-    value: "information",
-  },
-  {
-    title: "Shop information",
-    value: "shopInformation",
-  },
-  {
-    title: "History Payment",
-    value: "historyPayment",
-  },
-];
+
 
 interface Iprops {
   route?: any;
@@ -33,15 +21,7 @@ const UserDetail = () => {
   const formDataCreateUser = location.state;
   const [optionSelected, setOptionSelected] = useState("information");
 
-  const checkAccountType = (type: string) => {
-    if (type === "FREE_USER") {
-      return "Normal";
-    } else if (type === "admin") {
-      return "Admin";
-    } else if (type === "BIZ_USER") {
-      return "Biz";
-    }
-  };
+  
 
   const checkGroup = (group: string) => {
     if (group === null) {
@@ -109,7 +89,7 @@ const UserDetail = () => {
               </BaseText>
             </div>
           </div>
-          {listOption.map((item: { title: string; value: string }, index) => {
+          {listOptionUserDetail.map((item: { title: string; value: string }, index) => {
             const checkSelected =
               optionSelected && optionSelected === item.value;
             return (
@@ -146,7 +126,7 @@ const UserDetail = () => {
           {optionSelected === "shopInformation" ? (
             <ShopInformationTab dataUser={formDataCreateUser} />
           ) : null}
-          {optionSelected === "historyPayment" ? <HistoryPaymentTab /> : null}
+          {optionSelected === "historyPayment" ? <HistoryPaymentTab  dataUser={formDataCreateUser} /> : null}
         </div>
       </div>
     </>

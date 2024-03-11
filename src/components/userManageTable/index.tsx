@@ -8,7 +8,8 @@ import { useTranslation } from "react-i18next";
 import { BaseInputSelect } from "../input/BaseInputSelect";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
-import { User } from "../../utils/common";
+import { User, convertDate } from "../../utils/common";
+import { TypeUser } from "../../utils/constants";
 
 const listUserGroup = [
   {
@@ -33,34 +34,10 @@ const listUserGroup = [
   },
 ];
 
-const TypeUser = [
-  {
-    id: "FREE_USER",
-    name: "Normal User",
-  },
-  {
-    id: "admin",
-    name: "Admin",
-  },
-  {
-    id: "BIZ_USER",
-    name: "Biz User",
-  },
-];
-
 type UserManageTableProps = {
   data: User[];
   className?: string; // for tailwindcss
 };
-
-const convertTimestampToDateFormat = (timestamp: Date) => {
-  const dateObject = new Date(timestamp);
-  const year = dateObject.getFullYear();
-  const month = ('0' + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 to month since it's zero-based
-  const day = ('0' + dateObject.getDate()).slice(-2);
-
-  return `${year}-${month}-${day}`;
-}
 
 export default function UserManageTable(props: UserManageTableProps) {
   const { className, data } = props;
@@ -81,14 +58,6 @@ export default function UserManageTable(props: UserManageTableProps) {
       </div>
     );
   };
-  // const data = [];
-  // for (let i = 0; i < 45; i++) {
-  //   data.push({
-  //     key: i,
-  //     name: "Luong Nhat Duy",
-  //     id: "abcxyz1223.naver.abcxyz1",
-  //   });
-  // }
   const columns: TableColumnsType<any> = [
     {
       title: t("Name"),
@@ -165,7 +134,7 @@ export default function UserManageTable(props: UserManageTableProps) {
         <div className="flex flex-col items-center gap-1">
           <img src={Images.web} className="w-6 h-6" />
           <BaseText medium size={16}>
-            {convertTimestampToDateFormat(created_at)}
+            {convertDate(created_at)}
           </BaseText>
         </div>
       ),

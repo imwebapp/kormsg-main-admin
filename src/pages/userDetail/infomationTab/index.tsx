@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { User, classNames } from "../../../utils/common";
+import { User, checkAccountType, classNames } from "../../../utils/common";
 import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseModal } from "../../../components/modal/BaseModal";
@@ -111,7 +111,7 @@ export const InformationTab = (prop: IProps) => {
                 User Type
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.account_type}
+                {checkAccountType(dataUser.account_type)}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>

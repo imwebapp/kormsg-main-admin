@@ -5,29 +5,30 @@ import { BaseText } from "../../../components";
 import { useEffect, useState } from "react";
 import { ItemShop } from "./components";
 import { useTranslation } from "react-i18next";
+import { shopApi } from "../../../apis/shopApi";
 
 const ListTabBar = [
   {
     title: "Announcement Store",
-    value: "Announcement Store",
+    value: "APPROVED",
     data: [],
     count: 0,
   },
   {
     title: "Store under review",
-    value: "Store under review",
+    value: "PENDING",
     data: [],
     count: 0,
   },
   {
     title: "Stores that refuse review",
-    value: "Stores that refuse review",
+    value: "REJECTED",
     data: [],
     count: 0,
   },
   {
     title: "Expired store",
-    value: "Expired store",
+    value: "EXPIRED",
     data: [],
     count: 0,
 
@@ -70,13 +71,13 @@ export const ShopInformationTab = (props: IProps) => {
   }>(ListTabBar[0]);
   const checkCount = (type: string) => {
     switch (type) {
-      case "Announcement Store":
+      case "APPROVED":
         return dataUser.current_active_post;
-      case "Store under review":
+      case "PENDING":
         return dataUser.current_pending_post;
-      case "Stores that refuse review":
+      case "REJECTED":
         return dataUser.current_rejected_post;
-      case "Expired store":
+      case "EXPIRED":
         return dataUser.current_expired_post;
       case "Recommended store":
         return dataUser.current_recommendation_post;
@@ -88,8 +89,51 @@ export const ShopInformationTab = (props: IProps) => {
   };
 
   useEffect(() => {
+    let type = tabSelected.value;
+    switch (tabSelected.value) {
+      case "APPROVED":
+        type = "APPROVED";
+        break;
+      case "PENDING":
+        type = "PENDING";
+        break;
+      case "REJECTED":
+        type = "REJECTED";
+        break;
+      case "EXPIRED":
+        type = "EXPIRED";
+        break;
+      case "Recommended store":
+        type = "APPROVED";
+        break;
+      case "During the event":
+        type = "APPROVED";
+        break;
+      default:
+        type = "APPROVED";
+        break;
+    }
 
-  }, [])
+    shopApi.getList(
+      {
+        fields: JSON.stringify(["$all", { "user": ["$all"] }, { "category": ["$all", { "thema": ["$all"] }] }, { "events": ["$all"] }]),
+        filter: JSON.stringify({ "user_id": `${dataUser.id}`, "$or": [{ "denied_shop": { "$ne": null } }, { "state": { "$in": [`${type}`] } }] }),
+        limit: 50,
+        page: 1
+      }
+    ).then((res) => {
+      setTabSelected((
+        {
+          ...tabSelected,
+          data: res.results.objects.rows
+        }
+      ))
+    })
+      .catch((err) => {
+        console.log('err getList SHOP API', err);
+      });
+
+  }, [tabSelected.value])
 
   return (
     <>
@@ -111,8 +155,15 @@ export const ShopInformationTab = (props: IProps) => {
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6">
           {
-            tabSelected.data.map((item, index) => (
-              <ItemShop key={index} {...item} onClick={(id) => console.log(id)} className="" />
+            (tabSelected.data || []).map((item: any, index) => (
+              <ItemShop key={index}
+                id={item.id}
+                avatar={item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/300"}
+                name={item.title}
+                timeOpening={item.opening_hours}
+                hashtag={[]}
+                onClick={(id) => console.log(id)}
+                className="" />
             ))
           }
         </div>
