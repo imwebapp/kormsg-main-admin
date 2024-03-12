@@ -6,8 +6,7 @@ import {
 } from "../../components";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getMethod } from "../../utils/request";
-
+import { RESERVATION_STATUS } from "../../utils/constants";
 
 const ReservationDetails = () => {
   const data = {
@@ -17,9 +16,9 @@ const ReservationDetails = () => {
     CancellationDetails: 32,
     StoreSettlementDetails: 69,
   };
-  const [selectedButton, setSelectedButton] = useState("");
+  const [selectedButton, setSelectedButton] = useState(RESERVATION_STATUS.ALL);
+  const [dateTimeSelect, setDateTimeSelect] = useState(["", ""]);
   const { t } = useTranslation();
-  const [listReservation, setListReservation] = useState<any>();
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
   };
@@ -31,11 +30,11 @@ const ReservationDetails = () => {
           className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
-              selectedButton === "Totalreservationdetails" ? "black" : "white",
+              selectedButton === RESERVATION_STATUS.ALL ? "black" : "white",
             color:
-              selectedButton === "Totalreservationdetails" ? "white" : "black",
+              selectedButton === RESERVATION_STATUS.ALL ? "white" : "black",
           }}
-          onClick={() => handleButtonClick("Totalreservationdetails")}
+          onClick={() => handleButtonClick(RESERVATION_STATUS.ALL)}
         >
           {t("Total reservation details")}
           {"(" + data.Totalreservationdetails + ")"}
@@ -44,10 +43,15 @@ const ReservationDetails = () => {
           className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
-              selectedButton === "PaymentDetails" ? "black" : "white",
-            color: selectedButton === "PaymentDetails" ? "white" : "black",
+              selectedButton === RESERVATION_STATUS.COMPLETED
+                ? "black"
+                : "white",
+            color:
+              selectedButton === RESERVATION_STATUS.COMPLETED
+                ? "white"
+                : "black",
           }}
-          onClick={() => handleButtonClick("PaymentDetails")}
+          onClick={() => handleButtonClick(RESERVATION_STATUS.COMPLETED)}
         >
           {t("Payment details")}
           {"(" + data.PaymentDetails + ")"}
@@ -56,15 +60,11 @@ const ReservationDetails = () => {
           className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
-              selectedButton === "OutstandingPaymentHistory"
-                ? "black"
-                : "white",
+              selectedButton === RESERVATION_STATUS.PENDING ? "black" : "white",
             color:
-              selectedButton === "OutstandingPaymentHistory"
-                ? "white"
-                : "black",
+              selectedButton === RESERVATION_STATUS.PENDING ? "white" : "black",
           }}
-          onClick={() => handleButtonClick("OutstandingPaymentHistory")}
+          onClick={() => handleButtonClick(RESERVATION_STATUS.PENDING)}
         >
           {t("Outstanding Payment History")}
           {"(" + data.OutstandingPaymentHistory + ")"}
@@ -73,10 +73,15 @@ const ReservationDetails = () => {
           className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
-              selectedButton === "CancellationDetails" ? "black" : "white",
-            color: selectedButton === "CancellationDetails" ? "white" : "black",
+              selectedButton === RESERVATION_STATUS.CANCELLED
+                ? "black"
+                : "white",
+            color:
+              selectedButton === RESERVATION_STATUS.CANCELLED
+                ? "white"
+                : "black",
           }}
-          onClick={() => handleButtonClick("CancellationDetails")}
+          onClick={() => handleButtonClick(RESERVATION_STATUS.CANCELLED)}
         >
           {t("Cancellation details")}
           {"(" + data.CancellationDetails + ")"}
@@ -85,11 +90,15 @@ const ReservationDetails = () => {
           className="rounded-full font-medium text-base"
           style={{
             backgroundColor:
-              selectedButton === "StoreSettlementDetails" ? "black" : "white",
+              selectedButton === RESERVATION_STATUS.REJECTED
+                ? "black"
+                : "white",
             color:
-              selectedButton === "StoreSettlementDetails" ? "white" : "black",
+              selectedButton === RESERVATION_STATUS.REJECTED
+                ? "white"
+                : "black",
           }}
-          onClick={() => handleButtonClick("StoreSettlementDetails")}
+          onClick={() => handleButtonClick(RESERVATION_STATUS.REJECTED)}
         >
           {t("Store settlement details")}
           {"(" + data.StoreSettlementDetails + ")"}
@@ -101,11 +110,22 @@ const ReservationDetails = () => {
     <div className="p-6">
       <div className="flex flex-row justify-between item-center">
         {listButton()}
-        <CustomTimePicker range />
+        <CustomTimePicker
+          range
+          onDataChange={({ value, dateString }) => {
+            if (dateString) {
+              setDateTimeSelect(dateString);
+            }
+          }}
+        />
       </div>
       <div className="flex flex-row gap-4 mt-4">
         <BaseCard className="flex-1 w-full">
-          <DashboardReservation isViewAll={true} />
+          <DashboardReservation
+            isViewAll={true}
+            selectedButton={selectedButton}
+            dateTimeSelect={dateTimeSelect}
+          />
         </BaseCard>
       </div>
     </div>
