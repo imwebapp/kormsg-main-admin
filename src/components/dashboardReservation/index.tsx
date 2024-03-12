@@ -6,14 +6,17 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { reservationApi } from "../../apis/reservationApi";
-
+import { RESERVATION_STATUS } from "../../utils/constants";
+import moment from "moment";
 type DashboardReservationProps = {
   isViewAll: boolean;
   className?: string; // for tailwindcss
+  selectedButton?: string;
+  dateTimeSelect?: any;
 };
 
 export default function DashboardReservation(props: DashboardReservationProps) {
-  const { className, isViewAll } = props;
+  const { className, isViewAll, selectedButton, dateTimeSelect } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [listReservation, setListReservation] = useState<any>();
 
@@ -21,11 +24,30 @@ export default function DashboardReservation(props: DashboardReservationProps) {
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   useEffect(() => {
+    // field all selected
+    const fields =
+      '["$all",{"user":["$all"]},{"seller":["$all"]},{"shop":["$all"]}]';
+    // STATUS SELECT
+    const type =
+      selectedButton === RESERVATION_STATUS.ALL
+        ? {}
+        : { state: selectedButton };
+    // TIMESTAMP SELECT RANGE
+    const startTimestamp = moment(dateTimeSelect[0]).valueOf();
+    const endTimestamp = moment(dateTimeSelect[1]).valueOf();
+
+    const date = startTimestamp
+      ? { date: { $gte: startTimestamp, $lte: endTimestamp } }
+      : {};
+    // filter getlist reservation
+    const filter = JSON.stringify({ ...type, ...date });
+
     reservationApi
       .getList({
         limit: 50,
-        fields:
-          '["$all",{"user":["$all"]},{"seller":["$all"]},{"shop":["$all"]}]',
+        fields: fields,
+        filter: filter,
+        order: [["updated_at", "DESC"]],
       })
       .then((res: any) => {
         setListReservation(res.results.objects.rows);
@@ -33,7 +55,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       .catch((err) => {
         console.log("err: ", err);
       });
-  }, []);
+  }, [selectedButton, dateTimeSelect]);
   const renderPaymentStatus = (paymentMethod: string) => {
     let text = "";
     let backgroundColor = "";
@@ -70,7 +92,6 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       color: "",
     };
     let text = "";
-    console.log("state", state);
 
     switch (state) {
       case "COMPLETED":
@@ -128,7 +149,6 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     return type === "day" ? `${year}/${month}/${day}` : `${hours}:${minutes}`;
   };
   const renderServiceType = (prices: any) => {
-    console.log("prices", prices[0]);
     const courseTitle = prices[0]?.course?.title ?? "";
     const runningTime = prices[0]?.course?.running_time ?? "";
     const unit = prices[0]?.course?.unit ?? "";
@@ -137,14 +157,23 @@ export default function DashboardReservation(props: DashboardReservationProps) {
 
     return `${courseTitle} ${runningTime} ${unit} ${name} ${priceValue}`;
   };
+  const renderPaymentAmount = (paymentAmount: any) => {
+    if (paymentAmount && paymentAmount.length > 0) {
+      const discount = paymentAmount[0]?.discount;
+      return discount ? (
+        <span className="text-center font-bold">{discount}</span>
+      ) : null;
+    }
+    return null;
+  };
   const columns: TableColumnsType<any> = [
     {
       title: t("Reservation ID"),
-      dataIndex: "id",
+      dataIndex: ["user", "email"],
     },
     {
       title: t("User contact information"),
-      dataIndex: ["user", "phone"],
+      dataIndex: "contact",
     },
     {
       title: t("Reservation date"),
@@ -173,12 +202,12 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     },
     {
       title: t("Payment amount (₩)"),
-      dataIndex: "paymentAmount",
-      render: (text) => <span className="text-center font-bold">{text}</span>,
+      dataIndex: "prices",
+      render: (text) => renderPaymentAmount(text),
     },
     {
       title: t("Note"),
-      dataIndex: "note",
+      dataIndex: "memo",
     },
     {
       title: t("Number of reservation cancellations"),

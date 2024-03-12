@@ -7,8 +7,7 @@ export enum LOCAL_STORAGE {
   TOKEN = "accessToken",
 }
 
-export const Constants = {
-};
+export const Constants = {};
 
 export const TypeUser = [
   {
@@ -40,4 +39,13 @@ export const listOptionUserDetail = [
   },
 ];
 
-export const BASE_URL = 'https://server.kormsg.com/api/v1'
+export const BASE_URL = "https://server.kormsg.com/api/v1";
+
+export const RESERVATION_STATUS = {
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+  ALL: "ALL",
+};
