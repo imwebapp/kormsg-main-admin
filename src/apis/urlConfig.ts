@@ -17,3 +17,4 @@ export const SITE = "/site";
 export const GLOBAL = "/global";
 
 export const REFRESH_TOKEN = "/user/refresh";
+export const STORE = "/shop";

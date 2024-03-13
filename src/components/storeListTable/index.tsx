@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TableColumnsType } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
@@ -6,6 +6,9 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { BaseInputSelect } from "../input/BaseInputSelect";
+import { storeApi } from "../../apis/storeApi";
+import moment from "moment";
+import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
@@ -29,16 +32,59 @@ export default function StoreListTable(props: StoreListTableProps) {
       </div>
     );
   };
-  const data = [];
-  for (let i = 0; i < 45; i++) {
-    data.push({
-      key: i,
-      index: i + 1,
-      id: "abcxyz1223.naver.abcxyz1",
-      title: "미인애ㅁㅁㄴㅇㅇ 맘스케어",
-      category: "로드샵",
-    });
-  }
+  const renderEventAction = (item: any, events: any) => {
+    console.log("eneve", events);
+
+    return (
+      <div>
+        {events && events.length === 0 && (
+          <button className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline">
+            이벤트+
+          </button>
+        )}
+        {item.events &&
+          item.events.length > 0 &&
+          item.events[0].state === "PENDING" && (
+            <button
+              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline"
+              disabled={mathRemainingTime(item.expired_date) < 0}
+            >
+              이벤트+
+            </button>
+          )}
+        {item.events &&
+          item.events.length > 0 &&
+          item.events[0].state !== "PENDING" && (
+            <button className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10  rounded  text-bold text-blue-700 underline">
+              이벤트
+            </button>
+          )}
+      </div>
+    );
+  };
+  const [listStore, setListStore] = useState([]);
+
+  useEffect(() => {
+    // field all selected
+    const fields =
+      '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
+    const filter = '{"state":{"$notIn":["REJECTED","EXPIRED"]}}';
+
+    storeApi
+      .getList({
+        limit: 50,
+        fields: fields,
+        filter: filter,
+        order: [["geolocation_api_type", "DESC"]],
+      })
+      .then((res: any) => {
+        console.log("", res.results.objects.rows);
+        setListStore(res.results.objects.rows);
+      })
+      .catch((err) => {
+        console.log("err: ", err);
+      });
+  }, []);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -50,11 +96,12 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Id"),
-      dataIndex: "id",
+      dataIndex: ["user", "username"],
     },
     {
       title: t("Title"),
-      render: ({ title }) => (
+      dataIndex: "title",
+      render: (title) => (
         <div className="min-w-[200px]">
           <BaseText>{title}</BaseText>
         </div>
@@ -62,7 +109,8 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Category"),
-      render: ({ category }) => (
+      dataIndex: ["category", "thema", "name"],
+      render: (category) => (
         <div className="min-w-[40px]">
           <BaseText>{category}</BaseText>
         </div>
@@ -70,26 +118,24 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Start/End/Remaining Period"),
-      render: ({}) => (
+      render: (text, record) => (
         <div className="flex flex-col items-center">
           <BaseText locale size={16} medium>
-            2022.11.30~2024.01.04
+            {`${moment(parseInt(record.start_date)).format(
+              "YYYY-MM-DD"
+            )} - ${moment(parseInt(record.expired_date)).format("YYYY-MM-DD")}`}
           </BaseText>
           <BaseText locale size={16} medium className="text-violet2 ">
-            78남음
+            {mathRemainingTime(record.expired_date) >= 0
+              ? ceilRemainingTime(record.expired_date) + " days"
+              : "Expired"}
           </BaseText>
         </div>
       ),
     },
     {
       title: t("Event"),
-      render: ({}) => (
-        <div className="w-[60px]">
-          <BaseText locale size={16} medium className="text-violet2 underline">
-            이벤트
-          </BaseText>
-        </div>
-      ),
+      render: (text, record) => renderEventAction(record, record.events),
     },
     {
       title: t("Store"),
@@ -117,7 +163,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       className={className}
       pagination={{ pageSize: 10 }}
       columns={columns}
-      data={data}
+      data={listStore}
     />
   );
 }

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const classNames = (...names: (string | undefined | null)[]): string =>
   (names || []).filter((e) => !!e && typeof e === "string").join(" ");
 
@@ -106,8 +108,28 @@ export const convertDateTime = (timestamp: Date) => {
 export const convertDate = (timestamp: Date) => {
   const dateObject = new Date(timestamp);
   const year = dateObject.getFullYear();
-  const month = ('0' + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 to month since it's zero-based
-  const day = ('0' + dateObject.getDate()).slice(-2);
+  const month = ("0" + (dateObject.getMonth() + 1)).slice(-2); // Adding 1 to month since it's zero-based
+  const day = ("0" + dateObject.getDate()).slice(-2);
 
   return `${year}-${month}-${day}`;
-}
+};
+
+export const mathRemainingTime = (unixtimestamp: any) => {
+  // return new Date(parseInt(unixtimestamp))
+  return (
+    (moment(new Date(parseInt(unixtimestamp)))
+      .endOf("day")
+      .valueOf() -
+      moment().endOf("day").valueOf()) /
+    (24 * 60 * 60 * 1000)
+  );
+};
+export const ceilRemainingTime = (unixtimestamp: any) => {
+  return Math.floor(
+    (moment(new Date(parseInt(unixtimestamp)))
+      .endOf("day")
+      .valueOf() -
+      moment().valueOf()) /
+      (24 * 60 * 60 * 1000)
+  );
+};
