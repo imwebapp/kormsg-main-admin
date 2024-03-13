@@ -3,14 +3,19 @@ import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import Images from "../../assets/gen";
 import { useTranslation } from 'react-i18next';
+import { InputProps } from 'antd';
 
-type InputProps = {
+interface IProps {
   title?: string;
   titleSize?: number;
   required?: boolean;
   isError?: boolean;
   value: string | number;
-  onChange: (value: string) => void;
+  onChange: (value: string | any) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
+  onSave?: () => void;
+  autoFocus?: boolean;
   placeholder?: string;
   type?: "text" | "password" | "number" | "email";
   disabled?: boolean;
@@ -24,16 +29,26 @@ type InputProps = {
   iconRightInactive?: ReactNode | string;
 };
 
-export const BaseInput = (props: InputProps) => {
-  const { title, titleSize, required, value, onChange, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder } = props;
+export const BaseInput = (props: IProps) => {
+  const { title, titleSize, required, value, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
   const handleFocus = () => {
+    onFocus && onFocus();
     setIsFocused(true);
   };
 
   const handleBlur = () => {
+    onBlur && onBlur()
     setIsFocused(false);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      if (onSave) {
+        onSave();
+      }
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,6 +89,9 @@ export const BaseInput = (props: InputProps) => {
           onBlur={handleBlur}
           disabled={disabled}
           placeholder={t(placeholder || '')}
+          autoFocus={autoFocus}
+          onKeyDown={handleKeyDown}
+          {...rest}
         />
         {iconRight && (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />

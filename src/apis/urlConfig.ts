@@ -4,6 +4,7 @@ export const LOGOUT = "";
 export const USER = "/user";
 export const SHOP = "/shop";
 export const HISTORY = "/history";
+export const GROUP = "/group";
 export const CONVERSATION = "/conversation";
 export const RESERVATION = "/reservation";
 
