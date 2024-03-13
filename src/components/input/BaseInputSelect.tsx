@@ -33,8 +33,6 @@ export const BaseInputSelect = (props: InputProps) => {
     const { t } = useTranslation();
     const [valueSelect, setValueSelect] = useState<string | undefined>(value);
 
-    console.log('valueSelect', valueSelect);
-
     const handleChange = (value: string) => {
         setValueSelect(value);
         onChange(value);
