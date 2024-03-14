@@ -39,7 +39,8 @@ export const listOptionUserDetail = [
   },
 ];
 
-export const BASE_URL = "https://server.kormsg.com/api/v1";
+// export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
+export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
@@ -49,3 +50,9 @@ export const RESERVATION_STATUS = {
   COMPLETED: "COMPLETED",
   ALL: "ALL",
 };
+
+export const INIT_TAB_USER_DETAIL = {
+  INFORMATION : 'information',
+  SHOP_INFORMATION : 'shopInformation',
+  HISTORY_PAYMENT : 'historyPayment',
+}
