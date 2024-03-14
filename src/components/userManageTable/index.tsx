@@ -1,15 +1,15 @@
-import React from "react";
 import { TableColumnsType } from "antd";
-import BaseText from "../text";
-import CustomButton from "../button";
-import Images from "../../assets/gen";
-import BaseTable from "../table";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { BaseInputSelect } from "../input/BaseInputSelect";
 import { useNavigate } from "react-router-dom";
+import Images from "../../assets/gen";
 import { Url } from "../../routers/paths";
 import { User, convertDate } from "../../utils/common";
-import { TypeUser } from "../../utils/constants";
+import { INIT_TAB_USER_DETAIL } from "../../utils/constants";
+import CustomButton from "../button";
+import { BaseInput } from "../input/BaseInput";
+import BaseTable from "../table";
+import BaseText from "../text";
 
 const listUserGroup = [
   {
@@ -76,7 +76,7 @@ export default function UserManageTable(props: UserManageTableProps) {
       title: t("Type/Group"),
       render: ({ account_type, group }) => (
         <div className="flex flex-col gap-1">
-          <BaseInputSelect
+          {/* <BaseInputSelect
             required
             value={account_type}
             onChange={(value) => { }}
@@ -87,8 +87,15 @@ export default function UserManageTable(props: UserManageTableProps) {
             }))}
             className="min-w-[160px]"
             disabled
+          /> */}
+          <BaseInput
+            required
+            value={account_type}
+            onChange={(value) => { }}
+            placeholder="Type user"
+            disabled
           />
-          <BaseInputSelect
+          {/* <BaseInputSelect
             required
             value={group === null ? 1 : group}
             onChange={(value) => { }}
@@ -97,6 +104,13 @@ export default function UserManageTable(props: UserManageTableProps) {
               value: item.id,
               label: item.name,
             }))}
+            disabled
+          /> */}
+          <BaseInput
+            required
+            value={group === null ? 'All' : group}
+            onChange={(value) => { }}
+            placeholder="Group User"
             disabled
           />
         </div>
@@ -142,7 +156,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Store"),
       render: (item: any) => (
-        <div className="min-w-[30px] cursor-pointer" onClick={() => navigate(Url.userDetail, { state: item })}>
+        <div className="min-w-[30px] cursor-pointer" onClick={() => navigate(Url.userDetail, { state: {data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })}>
           {/* <div className="min-w-[30px] cursor-pointer" onClick={() => console.log(item)}> */}
           <img src={Images.eye} className="w-6 h-6" />
         </div>

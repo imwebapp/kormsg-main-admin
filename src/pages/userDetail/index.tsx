@@ -6,8 +6,7 @@ import { useState } from "react";
 import { InformationTab } from "./infomationTab";
 import { HistoryPaymentTab } from "./historyPaymentTab";
 import { ShopInformationTab } from "./shopInformationTab";
-import { listOptionUserDetail } from "../../utils/constants";
-
+import { INIT_TAB_USER_DETAIL, listOptionUserDetail } from "../../utils/constants";
 
 
 interface Iprops {
@@ -18,10 +17,9 @@ interface Iprops {
 const UserDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const formDataCreateUser = location.state;
-  const [optionSelected, setOptionSelected] = useState("information");
-
-  
+  const formDataCreateUser = location?.state?.data;
+  const initTab = location?.state?.initTab || INIT_TAB_USER_DETAIL.INFORMATION;
+  const [optionSelected, setOptionSelected] = useState(initTab);
 
   const checkGroup = (group: string) => {
     if (group === null) {
