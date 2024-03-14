@@ -17,7 +17,8 @@ type StoreListTableProps = {
 export default function StoreListTable(props: StoreListTableProps) {
   const { className } = props;
   const { t } = useTranslation();
-
+  const [listStore, setListStore] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
 
   const storeStatus = (title: string, value: number) => {
@@ -33,12 +34,15 @@ export default function StoreListTable(props: StoreListTableProps) {
     );
   };
   const renderEventAction = (item: any, events: any) => {
-    console.log("eneve", events);
-
     return (
       <div>
         {events && events.length === 0 && (
-          <button className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline">
+          <button
+            className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-pointer"
+            onClick={() => {
+              console.log("items", item);
+            }}
+          >
             이벤트+
           </button>
         )}
@@ -46,24 +50,34 @@ export default function StoreListTable(props: StoreListTableProps) {
           item.events.length > 0 &&
           item.events[0].state === "PENDING" && (
             <button
-              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline"
+              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-not-allowed"
               disabled={mathRemainingTime(item.expired_date) < 0}
             >
-              이벤트+
+              PENDING
             </button>
           )}
         {item.events &&
           item.events.length > 0 &&
           item.events[0].state !== "PENDING" && (
-            <button className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10  rounded  text-bold text-blue-700 underline">
+            <button
+              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10  rounded  text-bold text-blue-700 underline"
+              onClick={() => {
+                console.log("click view events");
+              }}
+            >
               이벤트
             </button>
           )}
       </div>
     );
   };
-  const [listStore, setListStore] = useState([]);
-
+  const handleClick = () => {
+    console.log("Div đã được click");
+  };
+  const handlePageChange = (page: any) => {
+    console.log("Trang hiện tại:", page);
+    setCurrentPage(page);
+  };
   useEffect(() => {
     // field all selected
     const fields =
@@ -78,7 +92,6 @@ export default function StoreListTable(props: StoreListTableProps) {
         order: [["geolocation_api_type", "DESC"]],
       })
       .then((res: any) => {
-        console.log("", res.results.objects.rows);
         setListStore(res.results.objects.rows);
       })
       .catch((err) => {
@@ -88,9 +101,9 @@ export default function StoreListTable(props: StoreListTableProps) {
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),
-      render: ({ index }) => (
+      render: (text, record, index) => (
         <div className="min-w-[40px]">
-          <BaseText>{index}</BaseText>
+          <BaseText>{(currentPage - 1) * 10 + index + 1}</BaseText>
         </div>
       ),
     },
@@ -120,12 +133,12 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("Start/End/Remaining Period"),
       render: (text, record) => (
         <div className="flex flex-col items-center">
-          <BaseText locale size={16} medium>
+          <BaseText size={16} medium>
             {`${moment(parseInt(record.start_date)).format(
               "YYYY-MM-DD"
-            )} - ${moment(parseInt(record.expired_date)).format("YYYY-MM-DD")}`}
+            )} ~ ${moment(parseInt(record.expired_date)).format("YYYY-MM-DD")}`}
           </BaseText>
-          <BaseText locale size={16} medium className="text-violet2 ">
+          <BaseText size={16} medium className="text-violet2 ">
             {mathRemainingTime(record.expired_date) >= 0
               ? ceilRemainingTime(record.expired_date) + " days"
               : "Expired"}
@@ -140,7 +153,10 @@ export default function StoreListTable(props: StoreListTableProps) {
     {
       title: t("Store"),
       render: ({}) => (
-        <div className="min-w-[30px] cursor-pointer">
+        <div
+          className="min-w-[30px] cursor-pointer"
+          onClick={() => handleClick()}
+        >
           <img src={Images.eye} className="w-6 h-6" />
         </div>
       ),
@@ -159,9 +175,12 @@ export default function StoreListTable(props: StoreListTableProps) {
 
   return (
     <BaseTable
-      onSelectChange={() => {}}
+      // onSelectChange={() => {}}
       className={className}
-      pagination={{ pageSize: 10 }}
+      pagination={{
+        pageSize: 10,
+        onChange: handlePageChange,
+      }}
       columns={columns}
       data={listStore}
     />
