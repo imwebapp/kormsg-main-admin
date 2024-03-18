@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { User, classNames } from "../../../utils/common";
 import { BaseText } from "../../../components";
@@ -31,7 +30,6 @@ const ListTabBar = [
     value: "EXPIRED",
     data: [],
     count: 0,
-
   },
   {
     title: "Recommended store",
@@ -55,7 +53,7 @@ export const ShopInformationTab = (props: IProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { dataUser } = props;
-  console.log('dataUser ShopInformationTab', dataUser);
+  console.log("dataUser ShopInformationTab", dataUser);
   const [tabSelected, setTabSelected] = useState<{
     title: string;
     value: string;
@@ -114,60 +112,98 @@ export const ShopInformationTab = (props: IProps) => {
         break;
     }
 
-    shopApi.getList(
-      {
-        fields: JSON.stringify(["$all", { "user": ["$all"] }, { "category": ["$all", { "thema": ["$all"] }] }, { "events": ["$all"] }]),
-        filter: JSON.stringify({ "user_id": `${dataUser.id}`, "$or": [{ "denied_shop": { "$ne": null } }, { "state": { "$in": [`${type}`] } }] }),
+    shopApi
+      .getList({
+        fields: JSON.stringify([
+          "$all",
+          { user: ["$all"] },
+          { category: ["$all", { thema: ["$all"] }] },
+          { events: ["$all"] },
+        ]),
+        filter: JSON.stringify({
+          user_id: `${dataUser.id}`,
+          $or: [
+            { denied_shop: { $ne: null } },
+            { state: { $in: [`${type}`] } },
+          ],
+        }),
         limit: 50,
-        page: 1
-      }
-    ).then((res) => {
-      setTabSelected((
-        {
+        page: 1,
+      })
+      .then((res: any) => {
+        setTabSelected({
           ...tabSelected,
-          data: res.results.objects.rows
-        }
-      ))
-    })
+          data: res.results.objects.rows,
+        });
+      })
       .catch((err) => {
-        console.log('err getList SHOP API', err);
+        console.log("err getList SHOP API", err);
       });
-
-  }, [tabSelected.value])
+  }, [tabSelected.value]);
 
   return (
     <>
       <div className="flex w-full">
         {ListTabBar.map((item, index) => {
           return (
-            <div onClick={() => setTabSelected(item)} key={index} className={"flex w-1/6 items-center justify-center pt-6 cursor-pointer border-b"}>
+            <div
+              onClick={() => setTabSelected(item)}
+              key={index}
+              className={
+                "flex w-1/6 items-center justify-center pt-6 cursor-pointer border-b"
+              }
+            >
               <div className="flex flex-col gap-4 ">
                 <div className="flex items-center justify-center gap-2 ">
-                  <BaseText locale size={16} bold color={classNames(tabSelected.value !== item.value ? "text-darkNight500" : "")}>{t(item.title)}</BaseText>
-                  <BaseText bold className="px-1 text-white bg-darkNight900 rounded-[4px]">{checkCount(item.value)}</BaseText>
+                  <BaseText
+                    locale
+                    size={16}
+                    bold
+                    color={classNames(
+                      tabSelected.value !== item.value
+                        ? "text-darkNight500"
+                        : ""
+                    )}
+                  >
+                    {t(item.title)}
+                  </BaseText>
+                  <BaseText
+                    bold
+                    className="px-1 text-white bg-darkNight900 rounded-[4px]"
+                  >
+                    {checkCount(item.value)}
+                  </BaseText>
                 </div>
-                {tabSelected.value === item.value ? <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" /> : <div className="w-full h-1" />}
+                {tabSelected.value === item.value ? (
+                  <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" />
+                ) : (
+                  <div className="w-full h-1" />
+                )}
               </div>
             </div>
-          )
+          );
         })}
       </div>
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6">
-          {
-            (tabSelected.data || []).map((item: any, index) => (
-              <ItemShop key={index}
-                id={item.id}
-                avatar={item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/300"}
-                name={item.title}
-                timeOpening={item.opening_hours}
-                hashtag={[]}
-                onClick={(id) => console.log(id)}
-                className="" />
-            ))
-          }
+          {(tabSelected.data || []).map((item: any, index) => (
+            <ItemShop
+              key={index}
+              id={item.id}
+              avatar={
+                item.images.length > 0
+                  ? item.images[0]
+                  : "https://via.placeholder.com/300"
+              }
+              name={item.title}
+              timeOpening={item.opening_hours}
+              hashtag={[]}
+              onClick={(id) => console.log(id)}
+              className=""
+            />
+          ))}
         </div>
       </div>
     </>
-  )
+  );
 };
