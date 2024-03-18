@@ -10,33 +10,9 @@ import {
   DashboardSearchTermTable,
   DashboardVisitTable,
 } from "../../components";
-import axios from "axios";
 import { analyticsApi } from "../../apis/analyticsApi";
 
 const Dashboard = () => {
-  useEffect(() => {
-    const getInfoAnalytics = async () => {
-      let result = await analyticsApi.getInfo({
-        property: "properties/244725891",
-        dateRanges: [
-          {
-            startDate: "7daysAgo",
-            endDate: "today",
-          },
-        ],
-        dimensions: [{ name: "date" }],
-        metrics: [
-          { name: "activeUsers" },
-          { name: "screenPageViews" },
-          { name: "sessions" },
-        ],
-      });
-      console.log("result", result.data);
-    };
-    getInfoAnalytics();
-    return () => {};
-  }, []);
-
   return (
     <div className="p-6">
       <DashboardStatistic />
