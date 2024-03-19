@@ -1,269 +1,61 @@
 
 import { useNavigate } from "react-router-dom";
-import { classNames } from "../../../utils/common";
+import { User, classNames } from "../../../utils/common";
 import { BaseText } from "../../../components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ItemShop } from "./components";
 import { useTranslation } from "react-i18next";
+import { shopApi } from "../../../apis/shopApi";
 
 const ListTabBar = [
   {
     title: "Announcement Store",
-    value: "Announcement Store",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11 Shop Time111 Shop Time111  Shop Time111  Shop Time111 ",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "14",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name14",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "15",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name15",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    value: "APPROVED",
+    data: [],
+    count: 0,
   },
   {
     title: "Store under review",
-    value: "Store under review",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    value: "PENDING",
+    data: [],
+    count: 0,
   },
   {
     title: "Stores that refuse review",
-    value: "Stores that refuse review",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "14",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name14",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    value: "REJECTED",
+    data: [],
+    count: 0,
   },
   {
     title: "Expired store",
-    value: "Expired store",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "14",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name14",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "15",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name15",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    value: "EXPIRED",
+    data: [],
+    count: 0,
+
   },
   {
     title: "Recommended store",
     value: "Recommended store",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "14",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name14",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "15",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name15",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    data: [],
+    count: 0,
   },
   {
     title: "During the event",
     value: "During the event",
-    data: [
-      {
-        id: "11",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name11",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "12",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name12",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "13",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name13",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "14",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name14",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-      {
-        id: "15",
-        avatar: "https://via.placeholder.com/150",
-        name: "Shop Name15",
-        timeStart: "12:00 PM",
-        timeEnd: "04:00 AM",
-        hashtag: ["#hashtag1", "#hashtag2", "#hashtag3"],
-      },
-    ],
+    data: [],
+    count: 0,
   },
 ];
 
-export const ShopInformationTab = () => {
+interface IProps {
+  dataUser: User;
+}
+
+export const ShopInformationTab = (props: IProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { dataUser } = props;
+  console.log('dataUser ShopInformationTab', dataUser);
   const [tabSelected, setTabSelected] = useState<{
     title: string;
     value: string;
@@ -275,28 +67,103 @@ export const ShopInformationTab = () => {
       timeEnd: string;
       hashtag: string[];
     }[];
+    count: number;
   }>(ListTabBar[0]);
+  const checkCount = (type: string) => {
+    switch (type) {
+      case "APPROVED":
+        return dataUser.current_active_post;
+      case "PENDING":
+        return dataUser.current_pending_post;
+      case "REJECTED":
+        return dataUser.current_rejected_post;
+      case "EXPIRED":
+        return dataUser.current_expired_post;
+      case "Recommended store":
+        return dataUser.current_recommendation_post;
+      case "During the event":
+        return dataUser.current_active_post;
+      default:
+        return 0;
+    }
+  };
+
+  useEffect(() => {
+    let type = tabSelected.value;
+    switch (tabSelected.value) {
+      case "APPROVED":
+        type = "APPROVED";
+        break;
+      case "PENDING":
+        type = "PENDING";
+        break;
+      case "REJECTED":
+        type = "REJECTED";
+        break;
+      case "EXPIRED":
+        type = "EXPIRED";
+        break;
+      case "Recommended store":
+        type = "APPROVED";
+        break;
+      case "During the event":
+        type = "APPROVED";
+        break;
+      default:
+        type = "APPROVED";
+        break;
+    }
+
+    shopApi.getList(
+      {
+        fields: JSON.stringify(["$all", { "user": ["$all"] }, { "category": ["$all", { "thema": ["$all"] }] }, { "events": ["$all"] }]),
+        filter: JSON.stringify({ "user_id": `${dataUser.id}`, "$or": [{ "denied_shop": { "$ne": null } }, { "state": { "$in": [`${type}`] } }] }),
+        limit: 50,
+        page: 1
+      }
+    ).then((res) => {
+      setTabSelected((
+        {
+          ...tabSelected,
+          data: res.results.objects.rows
+        }
+      ))
+    })
+      .catch((err) => {
+        console.log('err getList SHOP API', err);
+      });
+
+  }, [tabSelected.value])
 
   return (
     <>
       <div className="flex w-full">
-        {ListTabBar.map((item, index) => (
-          <div onClick={() => setTabSelected(item)} key={index} className={"flex w-1/6 items-center justify-center pt-6 cursor-pointer border-b"}>
-            <div className="flex flex-col gap-4 ">
-              <div className="flex items-center justify-center gap-2 ">
-                <BaseText locale size={20} bold color={classNames(tabSelected.value !== item.value ? "text-darkNight500" : "")}>{t(item.title)}</BaseText>
-                <BaseText bold className="px-1 text-white bg-darkNight900 rounded-[4px]">5</BaseText>
+        {ListTabBar.map((item, index) => {
+          return (
+            <div onClick={() => setTabSelected(item)} key={index} className={"flex w-1/6 items-center justify-center pt-6 cursor-pointer border-b"}>
+              <div className="flex flex-col gap-4 ">
+                <div className="flex items-center justify-center gap-2 ">
+                  <BaseText locale size={16} bold color={classNames(tabSelected.value !== item.value ? "text-darkNight500" : "")}>{t(item.title)}</BaseText>
+                  <BaseText bold className="px-1 text-white bg-darkNight900 rounded-[4px]">{checkCount(item.value)}</BaseText>
+                </div>
+                {tabSelected.value === item.value ? <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" /> : <div className="w-full h-1" />}
               </div>
-              {tabSelected.value === item.value ? <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" /> : <div className="w-full h-1" />}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6">
           {
-            tabSelected.data.map((item, index) => (
-              <ItemShop key={index} {...item} onClick={(id) => console.log(id)} className="" />
+            (tabSelected.data || []).map((item: any, index) => (
+              <ItemShop key={index}
+                id={item.id}
+                avatar={item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/300"}
+                name={item.title}
+                timeOpening={item.opening_hours}
+                hashtag={[]}
+                onClick={(id) => console.log(id)}
+                className="" />
             ))
           }
         </div>

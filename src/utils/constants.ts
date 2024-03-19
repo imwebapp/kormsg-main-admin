@@ -4,8 +4,55 @@ export const Config = {
 };
 
 export enum LOCAL_STORAGE {
-  TOKEN = "access_token",
+  TOKEN = "accessToken",
 }
 
-export const Constants = {
+export const Constants = {};
+
+export const TypeUser = [
+  {
+    id: "FREE_USER",
+    name: "Normal User",
+  },
+  {
+    id: "admin",
+    name: "Admin",
+  },
+  {
+    id: "BIZ_USER",
+    name: "Biz User",
+  },
+];
+
+export const listOptionUserDetail = [
+  {
+    title: "Information",
+    value: "information",
+  },
+  {
+    title: "Shop information",
+    value: "shopInformation",
+  },
+  {
+    title: "History Payment",
+    value: "historyPayment",
+  },
+];
+
+// export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
+export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
+
+export const RESERVATION_STATUS = {
+  PENDING: "PENDING",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+  ALL: "ALL",
 };
+
+export const INIT_TAB_USER_DETAIL = {
+  INFORMATION : 'information',
+  SHOP_INFORMATION : 'shopInformation',
+  HISTORY_PAYMENT : 'historyPayment',
+}

@@ -1,6 +1,6 @@
 
 import { useNavigate } from "react-router-dom";
-import { classNames } from "../../../utils/common";
+import { User, checkAccountType, classNames } from "../../../utils/common";
 import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseModal } from "../../../components/modal/BaseModal";
@@ -27,24 +27,13 @@ const listUserGroup = [
   },
 ];
 
-interface Iprops {
-  dataUser: {
-    id: string,
-    avatar: string,
-    fullName: string,
-    email: string,
-    phone: string,
-    address: string,
-    birthday: string,
-    type: string,
-    groupName: string,
-    countShop: number,
-    paymentInfo: string
-  };
+interface IProps {
+  dataUser: User;
 }
 
-export const InformationTab = (prop: Iprops) => {
+export const InformationTab = (prop: IProps) => {
   const { dataUser } = prop;
+  console.log('dataUser', dataUser);
   const navigate = useNavigate();
   const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
@@ -106,7 +95,7 @@ export const InformationTab = (prop: Iprops) => {
                 User name
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.fullName}
+                {dataUser.nickname}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -114,7 +103,7 @@ export const InformationTab = (prop: Iprops) => {
                 ID Account
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.email}
+                {dataUser.username}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -122,7 +111,7 @@ export const InformationTab = (prop: Iprops) => {
                 User Type
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.type}
+                {checkAccountType(dataUser.account_type)}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -130,7 +119,7 @@ export const InformationTab = (prop: Iprops) => {
                 Shop registration
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.countShop}
+                {dataUser.current_active_post}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -138,7 +127,7 @@ export const InformationTab = (prop: Iprops) => {
                 Payment information
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.paymentInfo}
+                {dataUser.memo}
               </BaseText>
             </div>
           </div>
@@ -148,16 +137,19 @@ export const InformationTab = (prop: Iprops) => {
               bold
               onClick={() => console.log('Change password')}
               icon={<img src={Images.padlock} className={classNames('w-6 h-6')} />}
-              className="text-dayBreakBlue500 border-dayBreakBlue500"
+              className="py-6 text-dayBreakBlue500 border-dayBreakBlue500"
               children="Change password"
+              disabled
             />
             <CustomButton
               locale
               bold
               onClick={handleOpenModalEditInfo}
               icon={<img src={Images.editPencil} className={classNames('w-6 h-6')} />}
-              className="border-none text-dayBreakBlue500 bg-dayBreakBlue50 hover:bg-dayBreakBlue500 hover:text-white"
+              // className="py-6 border-none text-dayBreakBlue500 bg-dayBreakBlue50 hover:bg-dayBreakBlue500 hover:text-white"
+              className="py-6 border-none text-dayBreakBlue500 bg-dayBreakBlue50"
               children="Edit information"
+              disabled
             />
           </div>
         </div>

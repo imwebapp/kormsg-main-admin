@@ -8,14 +8,14 @@ import { DetailLayout } from "../components/layout/DetailLayout";
 
 const Router = () => {
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   const token = localStorage.getItem(LOCAL_STORAGE.TOKEN);
-  //   if (!token) {
-  //     navigate(Url.login);
-  //   }else {
-  //     navigate(Url.dashboard);
-  //   }
-  // }, [navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem(LOCAL_STORAGE.TOKEN);
+    if (!token) {
+      navigate(Url.login);
+    }else {
+      navigate(Url.dashboard);
+    }
+  }, []);
 
   return (
     <Routes>
