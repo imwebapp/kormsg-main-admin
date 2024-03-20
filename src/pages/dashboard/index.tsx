@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   BaseBarChart,
   BasePieChart,
@@ -9,6 +10,7 @@ import {
   DashboardSearchTermTable,
   DashboardVisitTable,
 } from "../../components";
+import { analyticsApi } from "../../apis/analyticsApi";
 
 const Dashboard = () => {
   return (

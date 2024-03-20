@@ -14,6 +14,8 @@ import BaseSegmented from "../segmented";
 import { useTranslation } from "react-i18next";
 import { classNames } from "../../utils/common";
 import { useLocalStorage } from "../../stores/localStorage";
+import moment from "moment";
+import { analyticsApi } from "../../apis/analyticsApi";
 
 export interface BarChartDataInterface {
   label: string;
@@ -54,6 +56,31 @@ export default function BaseBarChart() {
     { label: "23", value: 2884 },
     { label: "24", value: 5884 },
   ]);
+  const [dateSelected, setDateSelected] = useState("today");
+  const getInfoAnalytics = async () => {
+    let result = await analyticsApi.getInfo({
+      property: "properties/244725891",
+      dateRanges: [
+        {
+          startDate: dateSelected,
+          endDate: "today",
+        },
+      ],
+      dimensions: [{ name: "date" }],
+      metrics: [
+        { name: "activeUsers" },
+        { name: "screenPageViews" },
+        { name: "sessions" },
+        { name: "averageSessionDuration"}
+      ],
+    });
+    //  get user active today
+    console.log("result", result.data[0]);
+  };
+  useEffect(() => {
+    getInfoAnalytics();
+    return () => {};
+  }, [dateSelected]);
 
   useEffect(() => {
     if (data[0]) {
@@ -94,7 +121,13 @@ export default function BaseBarChart() {
           Traffic
         </BaseText>
         <div className="flex flex-row items-center">
-          <CustomTimePicker />
+          <CustomTimePicker  onDataChange={({ value }) => {
+            console.log('value', typeof value);
+            const formattedDate = moment.utc(value).format("YYYY-MM-DD");
+            console.log("formattedDate",formattedDate);
+            
+            
+          }}/>
           <BaseSegmented
             className="ml-3"
             options={[t("Hours"), t("Days")]}

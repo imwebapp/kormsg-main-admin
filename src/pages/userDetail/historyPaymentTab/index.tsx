@@ -15,21 +15,28 @@ export const HistoryPaymentTab = (props: Iprops) => {
   const [dataHistory, setDataHistory] = useState<any[]>([]);
 
   useEffect(() => {
-    historyApi.getList(
-      {
-        fields: JSON.stringify(["$all", { "user": ["$all"] }, { "shop": ["$all"] }]),
-        filter: JSON.stringify({ "user_id": `${dataUser.id}`, "type_1": "JUMP_UP" }),
+    historyApi
+      .getList({
+        fields: JSON.stringify([
+          "$all",
+          { user: ["$all"] },
+          { shop: ["$all"] },
+        ]),
+        filter: JSON.stringify({
+          user_id: `${dataUser.id}`,
+          type_1: "JUMP_UP",
+        }),
         limit: 50,
-        page: 1
-      }
-    ).then((res: any) => {
-      console.log('res getList HISTORY API', res.results?.objects?.rows);
-      setDataHistory((res.results?.objects?.rows))
-    })
+        page: 1,
+      })
+      .then((res: any) => {
+        console.log("res getList HISTORY API", res.results?.objects?.rows);
+        setDataHistory(res.results?.objects?.rows);
+      })
       .catch((err) => {
-        console.log('err getList SHOP API', err);
+        console.log("err getList SHOP API", err);
       });
-  }, [])
+  }, []);
 
   return (
     <div className="p-6">
