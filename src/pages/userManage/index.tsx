@@ -20,7 +20,8 @@ import { useTranslation } from "react-i18next";
 import { getMethod } from "../../utils/request";
 import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
-import { TypeUser } from "../../utils/constants";
+import { ListTypeUser, TypeUser } from "../../utils/constants";
+import { employeeApi } from "../../apis/employeeApi ";
 
 const listUserGroups = [
   {
@@ -30,29 +31,20 @@ const listUserGroups = [
   },
 ];
 
-// const TypeUser = [
-//   {
-//     id: "normal",
-//     name: "Normal User",
-//   },
-//   {
-//     id: "admin",
-//     name: "Admin",
-//   },
-//   {
-//     id: "biz",
-//     name: "Biz User",
-//   },
-// ];
 type IGroups = {
   id: number;
   name: string;
   numberUser: number;
 };
+type ITypeUser = {
+  id: string;
+  name: string;
+};
 const UserManage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroups[0]);
+  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(ListTypeUser[0]);
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
@@ -64,6 +56,13 @@ const UserManage = () => {
     password: "",
     userName: "",
     avatar: "",
+  });
+
+  const [countTypeUser, setCountTypeUser] = useState({
+    countAdmin: 0,
+    countBizUser: 0,
+    countFreeUser: 0,
+    countPaidUser: 0,
   });
 
   const [listUserGroup, setListUserGroup] = useState(listUserGroups);
@@ -141,6 +140,11 @@ const UserManage = () => {
     }
   };
 
+  const handleClickTypeUser = (item: any) => {
+    console.log("item: ", item);
+    setTypeUserSelected(item);
+  };
+
   //create user
   const handleOpenModalCreateUser = () => {
     setOpenModalCreateUser(true);
@@ -202,22 +206,63 @@ const UserManage = () => {
   };
 
   useEffect(() => {
-    userApi.getList({ limit: 50, fields: '["$all"]' }
-    ).then((res: any) => {
-      setListUser(res.results.objects.rows)
-    })
+    const convertFilter: any = {
+      account_type: typeUserSelected.id,
+    };
+    if (groupSelected.id !== 1) {
+      convertFilter['group_id'] = groupSelected.id;
+    }
+
+    if (typeUserSelected.id === TypeUser.ADMIN) {
+      // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
+      employeeApi.getList({ limit: 50, fields: '["$all"]' }
+      ).then((res: any) => {
+        console.log("res getList EMPLOYEE: ", res.results.objects.rows);
+        const listUserConvert = res.results.objects.rows.map((item: any) => {
+          return {
+            ...item,
+            nickname: item.fullname,
+            account_type: TypeUser.ADMIN,
+          }
+
+        });
+        setListUser(listUserConvert)
+      })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+
+
+    } else {
+      userApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
+      ).then((res: any) => {
+        console.log("res getList User: ", res.results.objects.rows);
+        setListUser(res.results.objects.rows)
+      })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    }
+  }, [groupSelected, typeUserSelected]);
+
+  useEffect(() => {
+    userApi.getCount(groupSelected.id === 1 ? '' : groupSelected.id)
+      .then((res: any) => {
+        console.log("res getCount User: ", res);
+        setCountTypeUser(res.results.object);
+      })
       .catch((err) => {
-        console.log("err: ", err);
+        console.log("err getCount User: ", err);
       });
-  }, []);
+  }, [groupSelected]);
 
   useEffect(() => {
     groupApi.getList({
       limit: 50, fields: '["$all"]'
     }).then((res: any) => {
       console.log("res getList Group: ", res.results.objects);
-      listUserGroups[0].numberUser = res.results.objects.count;
-      setListUserGroup([listUserGroups[0], ...res.results.objects.rows]);
+      listUserGroups[0].numberUser = res.results?.objects?.count || 0;
+      setListUserGroup([listUserGroups[0], ...res.results?.objects?.rows]);
     })
       .catch((err) => {
         console.log("err getList Group: ", err);
@@ -296,7 +341,7 @@ const UserManage = () => {
                             : "font-medium"
                         )}
                       >
-                        ({item.numberUser || 0})
+                        ({item?.numberUser || 0})
                       </span>
                     </>)}
                 </div>
@@ -338,9 +383,7 @@ const UserManage = () => {
           >
             {groupSelected.name}
           </BaseText>
-          <div
-            className={classNames("flex flex-row justify-between items-center")}
-          >
+          <div className={classNames("flex flex-row justify-between items-center")}>
             <BaseInput
               placeholder="Search user"
               className="w-2/4"
@@ -370,7 +413,50 @@ const UserManage = () => {
               </CustomButton>
             </div>
           </div>
+
+          <div className={classNames("flex flex-row gap-3 items-center")}>
+            {ListTypeUser.map((item) => {
+              let count = 0;
+              switch (item.id) {
+                case TypeUser.ADMIN:
+                  count = countTypeUser.countAdmin;
+                  break;
+                case TypeUser.BIZ_USER:
+                  count = countTypeUser.countBizUser;
+                  break;
+                case TypeUser.FREE_USER:
+                  count = countTypeUser.countFreeUser;
+                  break;
+                case TypeUser.PAID_USER:
+                  count = countTypeUser.countPaidUser;
+                  break;
+                default:
+                  break;
+              }
+              return (
+                <CustomButton
+                  className="text-base font-medium rounded-full"
+                  style={{
+                    backgroundColor:
+                      typeUserSelected.id === item.id
+                        ? "black"
+                        : "white",
+                    color:
+                      typeUserSelected.id === item.id
+                        ? "white"
+                        : "black",
+                  }}
+                  onClick={() => handleClickTypeUser(item)}
+                >
+                  {t(item.name)}
+                  {"(" + count + ")"}
+                </CustomButton>
+              )
+            })}
+          </div>
+
           <UserManageTable data={listUser} />
+
         </div>
       </div>
       {/* <BaseModal
@@ -432,7 +518,7 @@ const UserManage = () => {
             value={formDataCreateUser.userType}
             onChange={(value) => handleInputChange("userType", value)}
             placeholder="Select type user"
-            options={(TypeUser || []).map((item) => ({
+            options={(ListTypeUser || []).map((item) => ({
               value: item.id,
               label: t(item.name),
             }))}

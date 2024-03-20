@@ -27,12 +27,12 @@ export const HistoryPaymentTab = (props: Iprops) => {
           type_1: "JUMP_UP",
         }),
         limit: 50,
-        page: 1,
-      })
-      .then((res: any) => {
-        console.log("res getList HISTORY API", res.results.objects.rows);
-        setDataHistory(res.results.objects.rows);
-      })
+        page: 1
+      }
+    ).then((res: any) => {
+      console.log('res getList HISTORY API', res.results?.objects?.rows);
+      setDataHistory((res.results?.objects?.rows))
+    })
       .catch((err) => {
         console.log("err getList SHOP API", err);
       });
