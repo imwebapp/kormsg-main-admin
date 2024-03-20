@@ -9,6 +9,7 @@ import DashboardVisitPage from "./dashboard/visit";
 import StorePage from "./store";
 import UserDetail from "./userDetail";
 import ReservationDetails from "./reservation-details";
+import AppVersion from "./appversion";
 
 export {
   Login,
@@ -22,4 +23,5 @@ export {
   DashboardVisitPage,
   StorePage,
   ReservationDetails,
+  AppVersion,
 };

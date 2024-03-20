@@ -19,3 +19,4 @@ export const GLOBAL = "/global";
 
 export const REFRESH_TOKEN = "/user/refresh";
 export const STORE = "/shop";
+export const APP_VERSION = "/app_version";
