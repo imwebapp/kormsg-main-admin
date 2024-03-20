@@ -125,5 +125,10 @@
   "Detail": "Detail",
   "Contact Id": "Contact ID",
   "Biz": "Biz",
-  "Open": "Open"
+  "Open": "Open",
+  "Apply": "Apply",
+  "Android Version": "Android version",
+  "Current version": "Current version:",
+  "Version to modify": "Version to modify:",
+  "IOS Version": "IOS version"
 }
