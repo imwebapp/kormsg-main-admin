@@ -21,7 +21,7 @@ import { getMethod } from "../../utils/request";
 import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
 import { ListTypeUser, TypeUser } from "../../utils/constants";
-import { employeeApi } from "../../apis/employeeApi ";
+import { employeeApi } from "../../apis/employeeApi";
 
 const listUserGroups = [
   {
@@ -43,8 +43,12 @@ type ITypeUser = {
 const UserManage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroups[0]);
-  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(ListTypeUser[0]);
+  const [groupSelected, setGroupSelected] = useState<IGroups>(
+    listUserGroups[0]
+  );
+  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
+    ListTypeUser[0]
+  );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
@@ -93,12 +97,15 @@ const UserManage = () => {
       setIsEditingGroupName(false);
       return;
     }
-    const resEditGroup: any = await groupApi.update(groupSelected.id.toString(), { name: newGroupName.trim() });
+    const resEditGroup: any = await groupApi.update(
+      groupSelected.id.toString(),
+      { name: newGroupName.trim() }
+    );
     if (resEditGroup.code === 200) {
       console.log("resEditGroup: ", resEditGroup);
       const updatedGroups = listUserGroup.map((group) => {
         if (group.id === groupSelected.id) {
-          setGroupSelected({ ...group, name: newGroupName.trim() })
+          setGroupSelected({ ...group, name: newGroupName.trim() });
           return { ...group, name: newGroupName.trim() };
         }
         return group;
@@ -128,13 +135,12 @@ const UserManage = () => {
       const newGroup = {
         id: res.results.object.id,
         name: valueInputCreateGroup,
-        numberUser: 0
-      }
+        numberUser: 0,
+      };
       setListUserGroup([...listUserGroup, newGroup]);
       setValueInputCreateGroup("");
       setIsCreatingGroupName(false);
-    }
-    else {
+    } else {
       console.log("err: ", res);
       setIsCreatingGroupName(false);
     }
@@ -210,35 +216,38 @@ const UserManage = () => {
       account_type: typeUserSelected.id,
     };
     if (groupSelected.id !== 1) {
-      convertFilter['group_id'] = groupSelected.id;
+      convertFilter["group_id"] = groupSelected.id;
     }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
       // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
-      employeeApi.getList({ limit: 50, fields: '["$all"]' }
-      ).then((res: any) => {
-        console.log("res getList EMPLOYEE: ", res.results.objects.rows);
-        const listUserConvert = res.results.objects.rows.map((item: any) => {
-          return {
-            ...item,
-            nickname: item.fullname,
-            account_type: TypeUser.ADMIN,
-          }
-
-        });
-        setListUser(listUserConvert)
-      })
-        .catch((err) => {
+      employeeApi
+        .getList({ limit: 50, fields: '["$all"]' })
+        .then((res: any) => {
+          console.log("res getList EMPLOYEE: ", res.results.objects.rows);
+          const listUserConvert = res.results.objects.rows.map((item: any) => {
+            return {
+              ...item,
+              nickname: item.fullname,
+              account_type: TypeUser.ADMIN,
+            };
+          });
+          setListUser(listUserConvert);
+        })
+        .catch((err: any) => {
           console.log("err: ", err);
         });
-
-
     } else {
-      userApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
-      ).then((res: any) => {
-        console.log("res getList User: ", res.results.objects.rows);
-        setListUser(res.results.objects.rows)
-      })
+      userApi
+        .getList({
+          limit: 50,
+          fields: '["$all"]',
+          filter: JSON.stringify(convertFilter),
+        })
+        .then((res: any) => {
+          console.log("res getList User: ", res.results.objects.rows);
+          setListUser(res.results.objects.rows);
+        })
         .catch((err) => {
           console.log("err: ", err);
         });
@@ -246,7 +255,8 @@ const UserManage = () => {
   }, [groupSelected, typeUserSelected]);
 
   useEffect(() => {
-    userApi.getCount(groupSelected.id === 1 ? '' : groupSelected.id)
+    userApi
+      .getCount(groupSelected.id === 1 ? "" : groupSelected.id)
       .then((res: any) => {
         console.log("res getCount User: ", res);
         setCountTypeUser(res.results.object);
@@ -257,13 +267,16 @@ const UserManage = () => {
   }, [groupSelected]);
 
   useEffect(() => {
-    groupApi.getList({
-      limit: 50, fields: '["$all"]'
-    }).then((res: any) => {
-      console.log("res getList Group: ", res.results.objects);
-      listUserGroups[0].numberUser = res.results?.objects?.count || 0;
-      setListUserGroup([listUserGroups[0], ...res.results?.objects?.rows]);
-    })
+    groupApi
+      .getList({
+        limit: 50,
+        fields: '["$all"]',
+      })
+      .then((res: any) => {
+        console.log("res getList Group: ", res.results.objects);
+        listUserGroups[0].numberUser = res.results?.objects?.count || 0;
+        setListUserGroup([listUserGroups[0], ...res.results?.objects?.rows]);
+      })
       .catch((err) => {
         console.log("err getList Group: ", err);
       });
@@ -283,7 +296,9 @@ const UserManage = () => {
             <PlusOutlined
               className={classNames("text-xl cursor-pointer")}
               // onClick={handleOpenModalCreateGroup}
-              onClick={() => { setIsCreatingGroupName(true) }}
+              onClick={() => {
+                setIsCreatingGroupName(true);
+              }}
             />
           </div>
           <div
@@ -301,25 +316,26 @@ const UserManage = () => {
                   onClick={() => handleClickGroup(item)}
                   onDoubleClick={handleEditGroupName}
                 >
-                  {isEditingGroupName && groupSelected.id === item.id ? (<>
-                    {checkSelected && (
-                      <CheckOutlined
-                        className={classNames("text-dayBreakBlue500 text-xl")}
+                  {isEditingGroupName && groupSelected.id === item.id ? (
+                    <>
+                      {checkSelected && (
+                        <CheckOutlined
+                          className={classNames("text-dayBreakBlue500 text-xl")}
+                        />
+                      )}
+                      <BaseInput
+                        value={newGroupName}
+                        onChange={(value) => setNewGroupName(value)}
+                        onBlur={handleSaveGroupName}
+                        onSave={handleSaveGroupName}
+                        autoFocus
+                        styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
+                        styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
                       />
-                    )}
-                    <BaseInput
-                      value={newGroupName}
-                      onChange={(value) => setNewGroupName(value)}
-                      onBlur={handleSaveGroupName}
-                      onSave={handleSaveGroupName}
-                      autoFocus
-                      styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
-                      styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
-                    />
-                  </>
+                    </>
                   ) : (
                     <>
-                      {(!isCreatingGroupName && checkSelected) && (
+                      {!isCreatingGroupName && checkSelected && (
                         <CheckOutlined
                           className={classNames("text-dayBreakBlue500 text-xl")}
                         />
@@ -328,7 +344,9 @@ const UserManage = () => {
                         medium
                         size={14}
                         className={classNames(
-                          checkSelected && !isCreatingGroupName ? "text-dayBreakBlue500" : "pl-6"
+                          checkSelected && !isCreatingGroupName
+                            ? "text-dayBreakBlue500"
+                            : "pl-6"
                         )}
                       >
                         {item.name}
@@ -343,17 +361,18 @@ const UserManage = () => {
                       >
                         ({item?.numberUser || 0})
                       </span>
-                    </>)}
+                    </>
+                  )}
                 </div>
               );
             })}
-            {
-              isCreatingGroupName && (<div
+            {isCreatingGroupName && (
+              <div
                 className={classNames(
                   "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                 )}
-                onClick={() => { }}
-              // onDoubleClick={handleEditGroupName}
+                onClick={() => {}}
+                // onDoubleClick={handleEditGroupName}
               >
                 <CheckOutlined
                   className={classNames("text-dayBreakBlue500 text-xl")}
@@ -369,8 +388,7 @@ const UserManage = () => {
                   styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
                 />
               </div>
-              )
-            }
+            )}
           </div>
         </div>
         <div
@@ -383,13 +401,19 @@ const UserManage = () => {
           >
             {groupSelected.name}
           </BaseText>
-          <div className={classNames("flex flex-row justify-between items-center")}>
+          <div
+            className={classNames("flex flex-row justify-between items-center")}
+          >
             <BaseInput
               placeholder="Search user"
               className="w-2/4"
               value={valueSearch}
-              onChange={(value) => { setValueSearch(value) }}
-              iconLeft={<SearchOutlined className="mr-3 text-2xl text-darkNight500" />}
+              onChange={(value) => {
+                setValueSearch(value);
+              }}
+              iconLeft={
+                <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
+              }
             />
             <div className={classNames("flex gap-4")}>
               <CustomButton
@@ -397,7 +421,7 @@ const UserManage = () => {
                 medium
                 icon={<TeamOutlined className="text-2xl" />}
                 className={" px-4 py-6"}
-                onClick={() => { }}
+                onClick={() => {}}
               >
                 Create users bulk
               </CustomButton>
@@ -438,25 +462,19 @@ const UserManage = () => {
                   className="text-base font-medium rounded-full"
                   style={{
                     backgroundColor:
-                      typeUserSelected.id === item.id
-                        ? "black"
-                        : "white",
-                    color:
-                      typeUserSelected.id === item.id
-                        ? "white"
-                        : "black",
+                      typeUserSelected.id === item.id ? "black" : "white",
+                    color: typeUserSelected.id === item.id ? "white" : "black",
                   }}
                   onClick={() => handleClickTypeUser(item)}
                 >
                   {t(item.name)}
                   {"(" + count + ")"}
                 </CustomButton>
-              )
+              );
             })}
           </div>
 
           <UserManageTable data={listUser} />
-
         </div>
       </div>
       {/* <BaseModal
