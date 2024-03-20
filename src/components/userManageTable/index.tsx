@@ -81,7 +81,7 @@ export default function UserManageTable(props: UserManageTableProps) {
             value={account_type}
             onChange={(value) => { }}
             placeholder="Select type user"
-            options={TypeUser.map((item) => ({
+            options={ListTypeUser.map((item) => ({
               value: item.id,
               label: item.name,
             }))}
@@ -92,7 +92,7 @@ export default function UserManageTable(props: UserManageTableProps) {
             required
             value={account_type}
             onChange={(value) => { }}
-            placeholder="Type user"
+            // placeholder="Type user"
             disabled
           />
           {/* <BaseInputSelect
@@ -110,7 +110,7 @@ export default function UserManageTable(props: UserManageTableProps) {
             required
             value={group === null ? 'All' : group}
             onChange={(value) => { }}
-            placeholder="Group User"
+            // placeholder="Group User"
             disabled
           />
         </div>
@@ -170,7 +170,7 @@ export default function UserManageTable(props: UserManageTableProps) {
         </BaseText>
       ),
     },
-    {
+    { 
       title: "",
       render: ({ }) => (
         <div className="flex flex-row items-center w-[50px]">
