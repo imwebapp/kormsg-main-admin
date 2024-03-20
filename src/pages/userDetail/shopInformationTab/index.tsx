@@ -135,7 +135,7 @@ export const ShopInformationTab = (props: IProps) => {
         {
           ...tabSelected,
           data: res.results.objects.rows,
-        });
+        }))
       })
       .catch((err) => {
         console.log("err getList SHOP API", err);
