@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TableColumnsType } from "antd";
+import { TableColumnsType, notification } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
 import Images from "../../assets/gen";
@@ -13,26 +13,12 @@ import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
 };
-
 export default function StoreListTable(props: StoreListTableProps) {
   const { className } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
-
-  const storeStatus = (title: string, value: number) => {
-    return (
-      <div className="flex flex-row">
-        <BaseText locale medium size={16}>
-          {title}
-        </BaseText>
-        <BaseText medium size={16}>
-          : {value}
-        </BaseText>
-      </div>
-    );
-  };
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -78,7 +64,35 @@ export default function StoreListTable(props: StoreListTableProps) {
     console.log("Trang hiện tại:", page);
     setCurrentPage(page);
   };
-  useEffect(() => {
+  const cloneStore = async (id: string) => {
+    try {
+      await storeApi.cloneStore(id);
+      notification.success({
+        message: "Clone Store Success",
+      });
+      getListStore();
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+  const deleteStore = async (id: string) => {
+    try {
+      await storeApi.deleteStore(id);
+      notification.success({
+        message: "Delete Success",
+      });
+      getListStore();
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+  const getListStore = () => {
     // field all selected
     const fields =
       '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
@@ -86,7 +100,7 @@ export default function StoreListTable(props: StoreListTableProps) {
 
     storeApi
       .getList({
-        limit: 50,
+        limit: 300,
         fields: fields,
         filter: filter,
         order: [["geolocation_api_type", "DESC"]],
@@ -97,6 +111,9 @@ export default function StoreListTable(props: StoreListTableProps) {
       .catch((err) => {
         console.log("err: ", err);
       });
+  };
+  useEffect(() => {
+    getListStore();
   }, []);
   const columns: TableColumnsType<any> = [
     {
@@ -163,11 +180,23 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Management"),
-      render: ({}) => (
+      render: (text, record) => (
         <div className="flex flex-row items-center w-[50px] gap-2">
           <img src={Images.edit2} className="w-6 h-6 cursor-pointer" />
-          <img src={Images.copy} className="w-6 h-6 cursor-pointer" />
-          <img src={Images.trash} className="w-6 h-6 cursor-pointer" />
+          <img
+            src={Images.copy}
+            className="w-6 h-6 cursor-pointer"
+            onClick={() => {
+              cloneStore(record.id);
+            }}
+          />
+          <img
+            src={Images.trash}
+            className="w-6 h-6 cursor-pointer"
+            onClick={() => {
+              deleteStore(record.id);
+            }}
+          />
         </div>
       ),
     },
