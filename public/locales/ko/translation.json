@@ -125,5 +125,10 @@
   "Detail": "세부 사항",
   "Contact Id": "연락처 ID",
   "Biz": "비즈",
-  "Open": "영업 중"
+  "Open": "영업 중",
+  "Apply": "적용하다",
+  "Android Version": "Android 버전",
+  "Current version": "현재 버전",
+  "Version to modify": "수정할 버전",
+  "IOS Version": "IOS 버전"
 }
