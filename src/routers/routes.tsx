@@ -10,6 +10,7 @@ import {
   UserManage,
   UserDetail,
   ReservationDetails,
+  AppVersion,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -105,7 +106,7 @@ const routes = [
   },
   {
     path: Url.appVersion,
-    element: <div className="p-4">coming soon</div>,
+    element: <AppVersion />,
   },
   {
     path: Url.seo,
