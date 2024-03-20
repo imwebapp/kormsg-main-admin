@@ -9,20 +9,31 @@ export enum LOCAL_STORAGE {
 
 export const Constants = {};
 
-export const TypeUser = [
+export const ListTypeUser = [
   {
     id: "FREE_USER",
     name: "Normal User",
   },
   {
-    id: "admin",
-    name: "Admin",
+    id: "PAID_USER",
+    name: "P",
   },
   {
     id: "BIZ_USER",
     name: "Biz User",
   },
+  {
+    id: "ADMIN",
+    name: "Admin",
+  },
 ];
+
+export const TypeUser = {
+  BIZ_USER: 'BIZ_USER',
+  FREE_USER: 'FREE_USER',
+  PAID_USER: 'PAID_USER',
+  ADMIN: 'ADMIN',
+}
 
 export const listOptionUserDetail = [
   {
@@ -52,7 +63,7 @@ export const RESERVATION_STATUS = {
 };
 
 export const INIT_TAB_USER_DETAIL = {
-  INFORMATION : 'information',
-  SHOP_INFORMATION : 'shopInformation',
-  HISTORY_PAYMENT : 'historyPayment',
-}
+  INFORMATION: "information",
+  SHOP_INFORMATION: "shopInformation",
+  HISTORY_PAYMENT: "historyPayment",
+};

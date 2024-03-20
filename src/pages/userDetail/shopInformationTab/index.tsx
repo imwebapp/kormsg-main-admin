@@ -121,7 +121,7 @@ export const ShopInformationTab = (props: IProps) => {
         limit: 50,
         page: 1
       }
-    ).then((res) => {
+    ).then((res: any) => {
       setTabSelected((
         {
           ...tabSelected,

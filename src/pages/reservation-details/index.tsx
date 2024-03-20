@@ -27,7 +27,7 @@ const ReservationDetails = () => {
     return (
       <div className="flex flex-row gap-4 mt-1">
         <CustomButton
-          className="rounded-full font-medium text-base"
+          className="text-base font-medium rounded-full"
           style={{
             backgroundColor:
               selectedButton === RESERVATION_STATUS.ALL ? "black" : "white",
@@ -40,7 +40,7 @@ const ReservationDetails = () => {
           {"(" + data.Totalreservationdetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base"
+          className="text-base font-medium rounded-full"
           style={{
             backgroundColor:
               selectedButton === RESERVATION_STATUS.COMPLETED
@@ -57,7 +57,7 @@ const ReservationDetails = () => {
           {"(" + data.PaymentDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base"
+          className="text-base font-medium rounded-full"
           style={{
             backgroundColor:
               selectedButton === RESERVATION_STATUS.PENDING ? "black" : "white",
@@ -70,7 +70,7 @@ const ReservationDetails = () => {
           {"(" + data.OutstandingPaymentHistory + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base"
+          className="text-base font-medium rounded-full"
           style={{
             backgroundColor:
               selectedButton === RESERVATION_STATUS.CANCELLED
@@ -87,7 +87,7 @@ const ReservationDetails = () => {
           {"(" + data.CancellationDetails + ")"}
         </CustomButton>
         <CustomButton
-          className="rounded-full font-medium text-base"
+          className="text-base font-medium rounded-full"
           style={{
             backgroundColor:
               selectedButton === RESERVATION_STATUS.REJECTED
