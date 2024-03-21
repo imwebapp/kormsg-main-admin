@@ -21,7 +21,7 @@ export default function CustomTimePicker(
 
   const onChange = (
     value: DatePickerProps["value"] | RangePickerProps["value"],
-    dateString: [string, string] | string
+    dateString?: [string, string] | string
   ) => {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
@@ -85,7 +85,7 @@ export default function CustomTimePicker(
     <Space direction="horizontal" size={14}>
       {range && (
         <RangePicker
-          onChange={onChange}
+          onChange={(value, dateString) => onChange(value, dateString)}
           onOk={onOk}
           placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
           // renderExtraFooter={renderExtraFooter}
@@ -93,7 +93,7 @@ export default function CustomTimePicker(
         />
       )}
       {!range && (
-        <DatePicker {...newProps} onOk={onOk} placeholder={"YYYY.MM.DD"} />
+        <DatePicker {...newProps} onOk={onOk} onChange={(value) => onChange(value)} placeholder={"YYYY.MM.DD"} />
       )}
     </Space>
   );

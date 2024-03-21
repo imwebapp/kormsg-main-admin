@@ -128,14 +128,13 @@ export const ShopInformationTab = (props: IProps) => {
           ],
         }),
         limit: 50,
-        page: 1
-      }
-    ).then((res: any) => {
-      setTabSelected((
-        {
+        page: 1,
+      })
+      .then((res: any) => {
+        setTabSelected({
           ...tabSelected,
           data: res.results.objects.rows,
-        }))
+        });
       })
       .catch((err) => {
         console.log("err getList SHOP API", err);
