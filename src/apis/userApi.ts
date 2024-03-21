@@ -8,4 +8,10 @@ export const userApi = {
   getCount: (params?: string | number) => {
     return axiosClient.get(`${USER}/count?group_id=${params}`);
   },
+  createUser: (data: any) => {
+    return axiosClient.post(`${USER}`, data);
+  },
+  updateUser: (id: any, data: any) => {
+    return axiosClient.put(`${USER}/${id}`, data);
+  },
 };

@@ -1,4 +1,5 @@
 import moment from "moment";
+import { TypeUser } from "./constants";
 
 export const classNames = (...names: (string | undefined | null)[]): string =>
   (names || []).filter((e) => !!e && typeof e === "string").join(" ");
@@ -58,6 +59,7 @@ export interface User {
   level: number;
   ranking: number;
   group: string | null;
+  group_id: string | null;
   groups: [string];
   depositor: string | null;
   contact: string | null;
@@ -84,16 +86,38 @@ export interface User {
   deleted_at: string | null;
 }
 
-export const checkAccountType = (type: string) => {
-  if (type === "FREE_USER") {
-    return "Normal";
-  } else if (type === "admin") {
-    return "Admin";
-  } else if (type === "BIZ_USER") {
-    return "Biz";
-  } else {
-    return type;
+export const checkAccountType = (account_type: string) => {
+  let type = account_type;
+  let CustomStyle = "";
+
+  switch (account_type) {
+    case TypeUser.ADMIN:
+      type = "Admin";
+      CustomStyle =
+        "text-green-500 flex px-4 py-2 items-center bg-cyan50 rounded-md";
+      break;
+    case TypeUser.BIZ_USER:
+      type = "Biz";
+      CustomStyle =
+        "text-purple flex px-4 py-2 items-center bg-goldenPurple50 rounded-md";
+      break;
+    case TypeUser.FREE_USER:
+      type = "Normal";
+      CustomStyle =
+        "text-orange-500 flex px-4 py-2 items-center bg-volcano50 rounded-md";
+      break;
+    case TypeUser.PAID_USER:
+      type = "P";
+      CustomStyle =
+        "text-yellow-500 flex px-4 py-2 items-center bg-yellow-50 rounded-md";
+      break;
+    default:
+      break;
   }
+  return {
+    type,
+    CustomStyle,
+  };
 };
 
 export const convertDateTime = (timestamp: Date) => {
