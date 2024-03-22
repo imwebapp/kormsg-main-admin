@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { BASE_URL } from "../utils/constants";
 import { Url } from "../routers/paths";
 import { REFRESH_TOKEN } from "./urlConfig";
+import { useLocalStorage } from "../stores/localStorage";
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
@@ -12,8 +13,10 @@ const axiosClient = axios.create({
 });
 
 export const setTokens = () => {
-  const token = localStorage.getItem("accessToken");
-  axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  const { accessToken } = useLocalStorage.getState(); // Access state directly
+  axiosClient.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${accessToken}`;
 };
 setTokens();
 
@@ -34,7 +37,8 @@ axiosClient.interceptors.response.use(
   },
   function (error) {
     if (error.response.status === 401) {
-      const refreshToken = localStorage.getItem("refreshToken");
+      const { refreshToken, setRefreshToken, setAccessToken, setExpiresIn } =
+        useLocalStorage.getState();
       axios
         .post(
           `${BASE_URL}${REFRESH_TOKEN}`,
@@ -49,17 +53,23 @@ axiosClient.interceptors.response.use(
         )
         .then((res) => {
           console.log("resAxiosClient REFRESH_TOKEN", res.data.data);
-          localStorage.setItem("accessToken", res.data.data.accessToken);
-          localStorage.setItem("refreshToken", res.data.data.refreshToken);
-          localStorage.setItem(
-            "expiresIn",
-            JSON.stringify(res.data.data.expiresIn)
-          );
+          setAccessToken(res.data.data.accessToken);
+          setRefreshToken(res.data.data.refreshToken);
+          setExpiresIn(res.data.data.expiresIn);
+          // localStorage.setItem("accessToken", res.data.data.accessToken);
+          // localStorage.setItem("refreshToken", res.data.data.refreshToken);
+          // localStorage.setItem(
+          //   "expiresIn",
+          //   JSON.stringify(res.data.data.expiresIn)
+          // );
           window.location.reload();
         })
         .catch((err) => {
           // console.log("errAxiosClient: ", err);
           localStorage.clear();
+          setAccessToken("");
+          setRefreshToken("");
+          setExpiresIn(0);
           window.location.href = Url.login;
         });
     } else return Promise.reject(error);

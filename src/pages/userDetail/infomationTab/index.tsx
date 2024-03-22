@@ -6,9 +6,11 @@ import Images from "../../../assets/gen";
 import { BaseModal } from "../../../components/modal/BaseModal";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
+import { groupApi } from "../../../apis/groupApi";
+import { userApi } from "../../../apis/userApi";
 const listUserGroup = [
   {
     id: 2,
@@ -31,19 +33,19 @@ interface IProps {
   dataUser: User;
 }
 
-export const InformationTab = (prop: IProps) => {
-  const { dataUser } = prop;
-  console.log('dataUser', dataUser);
+export const InformationTab = (props: IProps) => {
   const navigate = useNavigate();
+  const [dataUser, setDataUser] = useState<User>(props.dataUser);
+  const [listUserGroup, setListUserGroup] = useState<any[]>([]);
   const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [formDataEditInfo, setFormDataEditInfo] = useState({
-    userGroup: "",
-    nickname: "",
-    userId: "",
-    countShop: 0,
-    memo: "",
+    group_id: dataUser.group_id || "",
+    nickname: dataUser.nickname,
+    username: dataUser.username,
+    post_limit: dataUser.post_limit || 0,
+    memo: dataUser.memo || '',
   });
   const handleInputChange = (name: string, value: any) => {
     setFormDataEditInfo({ ...formDataEditInfo, [name]: value });
@@ -56,11 +58,19 @@ export const InformationTab = (prop: IProps) => {
 
   const handleCloseModalEditInfo = () => {
     setOpenModalEditInfo(false);
+    setFormDataEditInfo({
+      group_id: dataUser.group_id || "",
+      nickname: dataUser.nickname || "",
+      username: dataUser.username || "",
+      post_limit: dataUser.post_limit || 0,
+      memo: dataUser.memo || "",
+    });
   };
 
   const isFormDataValid = () => {
     for (const key in formDataEditInfo) {
       if (
+        key !== "memo" && key !== "post_limit" && 
         !formDataEditInfo[key as keyof typeof formDataEditInfo]
       ) {
         return false;
@@ -73,17 +83,29 @@ export const InformationTab = (prop: IProps) => {
     if (isFormDataValid()) {
       console.log("FormData is valid. Submitting...", formDataEditInfo);
       setOpenModalEditInfo(false);
-      setFormDataEditInfo({
-        userGroup: "",
-        nickname: "",
-        userId: "",
-        countShop: 0,
-        memo: "",
+      userApi.updateUser(dataUser.id, formDataEditInfo).then((res: any) => {
+        console.log("res update user: ", res.results.object);
+        setDataUser(res.results.object);
+      }).catch((err) => {
+        console.log("err update user: ", err);
       });
     } else {
       console.log("FormData is not valid. Please fill all fields.");
     }
   };
+
+  useEffect(() => {
+    groupApi.getList({
+      limit: 50, fields: '["$all"]'
+    }).then((res: any) => {
+      console.log("res getList Group: ", res.results.objects);
+
+      setListUserGroup(res.results?.objects?.rows);
+    })
+      .catch((err) => {
+        console.log("err getList Group: ", err);
+      });
+  }, []);
 
   return (
     <>
@@ -111,7 +133,7 @@ export const InformationTab = (prop: IProps) => {
                 User Type
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {checkAccountType(dataUser.account_type)}
+                {checkAccountType(dataUser.account_type).type}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -149,7 +171,6 @@ export const InformationTab = (prop: IProps) => {
               // className="py-6 border-none text-dayBreakBlue500 bg-dayBreakBlue50 hover:bg-dayBreakBlue500 hover:text-white"
               className="py-6 border-none text-dayBreakBlue500 bg-dayBreakBlue50"
               children="Edit information"
-              disabled
             />
           </div>
         </div>
@@ -165,8 +186,8 @@ export const InformationTab = (prop: IProps) => {
           <BaseInputSelect
             title="Group"
             required
-            value={formDataEditInfo.userGroup}
-            onChange={(value) => handleInputChange("userGroup", value)}
+            value={formDataEditInfo.group_id}
+            onChange={(value) => handleInputChange("group_id", value)}
             placeholder="Select a group"
             options={(listUserGroup || []).map((item) => ({
               value: item.id,
@@ -183,9 +204,10 @@ export const InformationTab = (prop: IProps) => {
           <BaseInput
             title="ID account"
             required
-            value={formDataEditInfo.userId}
-            onChange={(value) => handleInputChange("userId", value)}
+            value={formDataEditInfo.username}
+            onChange={(value) => handleInputChange("username", value)}
             placeholder="Id account"
+            disabled
           />
           <CustomButton
             locale
@@ -211,14 +233,14 @@ export const InformationTab = (prop: IProps) => {
 
             <div className="flex justify-between w-full px-2 py-3 rounded-lg bg-darkNight50">
               <img src={Images.minusCircle}
-                onClick={isChecked ? () => setFormDataEditInfo({ ...formDataEditInfo, countShop: formDataEditInfo.countShop === 0 ? 0 : formDataEditInfo.countShop - 1 }) : () => { }}
+                onClick={isChecked ? () => setFormDataEditInfo({ ...formDataEditInfo, post_limit: formDataEditInfo.post_limit === 0 ? 0 : formDataEditInfo.post_limit - 1 }) : () => { }}
                 className="w-6 h-6 cursor-pointer"
               />
               <BaseText locale medium size={18} className={classNames('text-darkNight900')}>
-                {formDataEditInfo.countShop}
+                {formDataEditInfo.post_limit}
               </BaseText>
               <img src={Images.plusCircle}
-                onClick={isChecked ? () => setFormDataEditInfo({ ...formDataEditInfo, countShop: formDataEditInfo.countShop + 1 }) : () => { }}
+                onClick={isChecked ? () => setFormDataEditInfo({ ...formDataEditInfo, post_limit: formDataEditInfo.post_limit + 1 }) : () => { }}
                 className="w-6 h-6 cursor-pointer"
               />
             </div>
