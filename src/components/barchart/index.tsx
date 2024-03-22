@@ -71,7 +71,7 @@ export default function BaseBarChart() {
         { name: "activeUsers" },
         { name: "screenPageViews" },
         { name: "sessions" },
-        { name: "averageSessionDuration"}
+        { name: "averageSessionDuration" },
       ],
     });
     //  get user active today
@@ -121,13 +121,14 @@ export default function BaseBarChart() {
           Traffic
         </BaseText>
         <div className="flex flex-row items-center">
-          <CustomTimePicker  onDataChange={({ value }) => {
-            console.log('value', typeof value);
-            const formattedDate = moment.utc(value).format("YYYY-MM-DD");
-            console.log("formattedDate",formattedDate);
-            
-            
-          }}/>
+          <CustomTimePicker
+            onDataChange={({ value }) => {
+              const date = moment(value.$d).format("YYYY-MM-DD");
+              if (date) {
+                setDateSelected(date);
+              }
+            }}
+          />
           <BaseSegmented
             className="ml-3"
             options={[t("Hours"), t("Days")]}
