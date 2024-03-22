@@ -16,8 +16,8 @@ const Login = () => {
     console.log('loginnnnnn: ', username, password);
     const param = { username, password }
     authApi.login(param).then((res) => {
-      console.log('resLOGIN: ', res.results);
-      setAccessToken(String(res.results))
+      console.log('resLOGIN: ', res.results.token);
+      setAccessToken(String(res.results?.token))
       navigate(Url.dashboard)
     }).catch((err) => {
       console.log('err: ', err);
