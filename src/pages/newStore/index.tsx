@@ -5,9 +5,11 @@ import { Layout } from "antd";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Images from "../../assets/gen";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, DownOutlined } from "@ant-design/icons";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseInputSelect } from "../../components/input/BaseInputSelect";
+import { ListCategoryPart1 } from "./components/ListCategoryPart1";
+import { ChatMessageFuncPart1 } from "./components/ChatMessageFuncPart1";
 
 
 interface IFormDataPage1 {
@@ -125,38 +127,38 @@ const NewStore = () => {
         >
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto ">
             <BaseInput
+              title="매장 복사 기능"
+              placeholder="복사할 매장을 검색해주세요"
               value={formDataPage1.storeCopyFunc}
               onChange={(value) => handleInputChange('storeCopyFunc', value)}
-              placeholder="Store Copy Function"
-              title="Store Copy Function"
             />
             <BaseInput
+              title="매장 주인 회원 설정"
+              placeholder="회원을 닉네임 혹은 아이디로 검색해주세요"
               value={formDataPage1.storeOwnerMembershipSetting}
               onChange={(value) => handleInputChange('storeOwnerMembershipSetting', value)}
-              placeholder="Store Copy Function"
-              title="Store Copy Function"
             />
             <BaseInput
+              title="매장 이름"
+              placeholder="지역명도 같이 넣어주세요"
               value={formDataPage1.storeName}
               onChange={(value) => handleInputChange('storeName', value)}
-              placeholder="Store Copy Function"
-              title="Store Copy Function"
             />
             <BaseInput
-              title="Store Copy Function"
-              placeholder="Store Copy Function"
+              title="매장 번호"
+              placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
               onChange={(value) => handleInputChange('storeNumber', value)}
             />
             <div>
               <BaseInput
-                title="Store address (location-based application)"
-                placeholder="Enter address"
+                title="매장 주소(위치기반 적용)"
+                placeholder="주소입력"
                 value={formDataPage1.storeAddress}
                 onChange={(value) => handleInputChange('storeAddress', value)}
               />
               <BaseInput
-                placeholder="Enter detailed address"
+                placeholder="상세주소 입력"
                 value={formDataPage1.storeAddressDetails}
                 onChange={(value) => handleInputChange('storeAddressDetails', value)}
                 className="mt-2"
@@ -165,21 +167,44 @@ const NewStore = () => {
 
             <div className="flex flex-col gap-2">
               <BaseText locale size={16} bold>
-                Please upload a photo of your store
+                매장 사진을 업로드 해주세요
               </BaseText>
               <BaseText locale size={16} bold>
-                Please register at least 1 photo
+                사진은 최소 1장이상 등록해주세요
               </BaseText>
             </div>
             <div>
               image area
             </div>
-            <div onClick={() => { console.log('click storeOpeningHours') }}>
-              <BaseText locale size={16} bold>
-                Please register at least 1 photo
-              </BaseText>
-            </div>
+            <ListCategoryPart1 title="영업시간" value="" placeholder="영업시간을 설정해주세요" onClick={() => { console.log('click openning') }} />
+            <ListCategoryPart1 title="카테고리" value="" placeholder="카테고리를 선택해주세요" onClick={() => { console.log('click category') }} />
+            <ListCategoryPart1 title="지역" value="" placeholder="지역을 선택해주세요" onClick={() => { console.log('click region') }} />
+            <ListCategoryPart1 title="지하철" value="" placeholder="지하철을 선택해주세요" onClick={() => { console.log('click subway') }} />
 
+            <ChatMessageFuncPart1
+              title="채팅 메시지 기능"
+              value=''
+              onClick={(value) => { console.log('click Chat message function', value) }}
+              options={[
+                { value: '1', label: '활성화' },
+                { value: '2', label: '비활성화' }
+              ]} />
+            <ChatMessageFuncPart1
+              title="스탬프 설정"
+              value=''
+              onClick={(value) => { console.log('click Stamp settings', value) }}
+              options={[
+                { value: '11', label: '활성화' },
+                { value: '22', label: '비활성화' }
+              ]} />
+            <ChatMessageFuncPart1
+              title="예약기능 설정"
+              value=''
+              onClick={(value) => { console.log('click Reservation function settings', value) }}
+              options={[
+                { value: '111', label: '활성화' },
+                { value: '222', label: '비활성화' }
+              ]} />
           </div>
           <div className="flex w-1/3 overflow-auto border-x ">2</div>
           <div className="flex w-1/3 overflow-auto ">3</div>
