@@ -12,7 +12,7 @@ const Router = () => {
     const token = localStorage.getItem(LOCAL_STORAGE.TOKEN);
     if (!token) {
       navigate(Url.login);
-    }else {
+    } else {
       navigate(Url.dashboard);
     }
   }, []);
@@ -44,10 +44,14 @@ const Router = () => {
             path={item.path}
             element={
               item.path !== Url.login ? (
-                item.path === Url.userDetail ? (
+                item.detail ? (
                   <DetailLayout>{item.element}</DetailLayout>
                 ) : (
-                  <DashboardLayout>{item.element}</DashboardLayout>
+                  item.custom ? (
+                    item.element
+                  ) : (
+                    <DashboardLayout>{item.element}</DashboardLayout>
+                  )
                 )
               ) : (
                 item.element

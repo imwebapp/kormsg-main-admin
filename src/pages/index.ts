@@ -8,6 +8,7 @@ import DashboardReferralPage from "./dashboard/referral";
 import DashboardVisitPage from "./dashboard/visit";
 import StorePage from "./store";
 import UserDetail from "./userDetail";
+import NewStore from "./newStore";
 import ReservationDetails from "./reservation-details";
 import AppVersion from "./appversion";
 
@@ -22,6 +23,7 @@ export {
   DashboardReferralPage,
   DashboardVisitPage,
   StorePage,
+  NewStore,
   ReservationDetails,
   AppVersion,
 };
