@@ -6,6 +6,10 @@ interface LocalStorageInterface {
   setLocale: (locale: LocalStorageInterface['locale']) => void;
   accessToken: string;
   setAccessToken: (accessToken: LocalStorageInterface['accessToken']) => void;
+  refreshToken: string;
+  setRefreshToken: (refreshToken: LocalStorageInterface['refreshToken']) => void;
+  expiresIn: number;
+  setExpiresIn: (expiresIn: LocalStorageInterface['expiresIn']) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: LocalStorageInterface['collapsed']) => void;
 }
@@ -17,6 +21,10 @@ export const useLocalStorage = create<LocalStorageInterface>()(
       setLocale: (locale) => set({ locale }),
       accessToken: '',
       setAccessToken: (accessToken) => set({ accessToken }),
+      refreshToken: '',
+      setRefreshToken: (refreshToken) => set({ refreshToken }),
+      expiresIn: 0,
+      setExpiresIn: (expiresIn) => set({ expiresIn }),
       collapsed: false,
       setCollapsed: (collapsed) => set({ collapsed }),
     }),

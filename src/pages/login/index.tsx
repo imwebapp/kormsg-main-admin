@@ -3,19 +3,21 @@ import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
 import axiosClient from "../../apis/axiosClient";
 import { authApi } from "../../apis/authApi";
-import { setTokens } from "../../utils/setToken";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
+import { useLocalStorage } from "../../stores/localStorage";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("master");
-  const [password, setPassword] = useState("b832596dc55133cc7272754b18bbfc22");
+  const { accessToken, setAccessToken } = useLocalStorage((state) => state);
+  const [username, setUsername] = useState("adminj");
+  const [password, setPassword] = useState("c9b3109c85263c46320c635bd3548f1e");
   const handleLogin = () => {
     console.log('loginnnnnn: ', username, password);
-    authApi.login({ username, password }).then((res) => {
+    const param = { username, password }
+    authApi.login(param).then((res) => {
       console.log('resLOGIN: ', res.results);
-      setTokens(res.results)
+      setAccessToken(String(res.results))
       navigate(Url.dashboard)
     }).catch((err) => {
       console.log('err: ', err);
