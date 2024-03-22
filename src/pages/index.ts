@@ -10,6 +10,7 @@ import StorePage from "./store";
 import UserDetail from "./userDetail";
 import ReservationDetails from "./reservation-details";
 import AppVersion from "./appversion";
+import BulletinPage from "./bulletin";
 
 export {
   Login,
@@ -24,4 +25,5 @@ export {
   StorePage,
   ReservationDetails,
   AppVersion,
+  BulletinPage
 };

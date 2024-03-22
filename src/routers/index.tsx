@@ -13,7 +13,7 @@ const Router = () => {
     if (!token) {
       navigate(Url.login);
     }else {
-      navigate(Url.dashboard);
+      // navigate(Url.dashboard);
     }
   }, []);
 

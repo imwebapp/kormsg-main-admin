@@ -29,9 +29,9 @@ rl.question("Please enter entity name : ", (entityName) => {
     if (type === "string" && !isNaN(Date.parse(value))) {
       type = "Date";
     } else if (Array.isArray(value)) {
-      type = "Array<" + typeof value[0] + ">";
+      type = value[0] ? "Array<" + typeof value[0] + ">" : "Array<any>";
     } else if (type === "object") {
-      type = "object";
+      type = "any";
     }
 
     interfaceString += `    ${key}: ${type};\n`;

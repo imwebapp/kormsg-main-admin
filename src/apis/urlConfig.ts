@@ -2,6 +2,7 @@ export const LOGIN = "/auth/employee_login";
 export const LOGOUT = "";
 
 export const USER = "/user";
+export const BOARD_LINK = "/link";
 export const EMPLOYEE = "/employee";
 export const SHOP = "/shop";
 export const HISTORY = "/history";
