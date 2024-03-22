@@ -1,16 +1,16 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Url } from "./paths";
 import { useEffect } from "react";
-import { LOCAL_STORAGE } from "../utils/constants";
 import routes from "./routes";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import { DetailLayout } from "../components/layout/DetailLayout";
+import { useLocalStorage } from "../stores/localStorage";
 
 const Router = () => {
   const navigate = useNavigate();
+  const { accessToken } = useLocalStorage((state) => state);
   useEffect(() => {
-    const token = localStorage.getItem(LOCAL_STORAGE.TOKEN);
-    if (!token) {
+    if (!accessToken) {
       navigate(Url.login);
     } else {
       navigate(Url.dashboard);
