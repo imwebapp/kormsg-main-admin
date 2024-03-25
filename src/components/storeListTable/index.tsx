@@ -9,12 +9,16 @@ import { BaseInputSelect } from "../input/BaseInputSelect";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
+import { SORTING, STORE_STATUS } from "../../utils/constants";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
+  typeStore?: string;
+  category?: string;
+  typeSorting?: string;
 };
 export default function StoreListTable(props: StoreListTableProps) {
-  const { className } = props;
+  const { className, typeStore, category, typeSorting } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,20 +96,72 @@ export default function StoreListTable(props: StoreListTableProps) {
       });
     }
   };
+  function generateOrder(sorting: string | undefined) {
+    switch (sorting) {
+      case SORTING.NONE:
+        return [["geolocation_api_type", "DESC"]];
+      case SORTING.DESC:
+        return [["expired_date", "DESC"]];
+      case SORTING.ASC:
+        return [["expired_date", "ASC"]];
+      default:
+        return [["geolocation_api_type", "DESC"]];
+    }
+  }
+  function generateFilter(category?: string, status?: string) {
+    let filter = "";
+
+    // Thêm điều kiện trạng thái
+    switch (status) {
+      case STORE_STATUS.exposure:
+        filter += `"state":{"$notIn":["REJECTED","EXPIRED"]}`;
+        break;
+      case STORE_STATUS.underReview:
+        filter += `"state":"PENDING"`;
+        break;
+      case STORE_STATUS.reviewRejected:
+        filter += `{"$or":[{"denied_shop":{"$ne":null}},{"state":{"$in":["REJECTED"]}}]}`;
+        break;
+      case STORE_STATUS.adExpired:
+        filter += `"state":{"$in":["EXPIRED"]}`;
+        break;
+      case STORE_STATUS.eventOngoing:
+        filter += `{"state":{"$in":["APPROVED"]},"is_random_20_shop":true}`;
+        break;
+      default:
+        break; // Nếu không có trạng thái, không thêm bất kỳ điều kiện nào
+    }
+
+    // Thêm điều kiện category nếu có
+    if (category && category !== "" && category !== "all") {
+      if (filter !== "") {
+        filter += ", ";
+      }
+      filter += `"category_id": "${category}"`;
+    }
+
+    return `{${filter}}`;
+  }
+
   const getListStore = () => {
     // field all selected
     const fields =
       '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
-    const filter = '{"state":{"$notIn":["REJECTED","EXPIRED"]}}';
+    const filter = generateFilter(category, typeStore);
+    console.log("filter", filter);
 
+    const order = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
         limit: 300,
         fields: fields,
         filter: filter,
-        order: [["geolocation_api_type", "DESC"]],
+        order: order,
       })
       .then((res: any) => {
+        console.log("call api");
+        console.log("res.results.objects.rows", res.results.objects.rows);
+
         setListStore(res.results.objects.rows);
       })
       .catch((err) => {
@@ -114,7 +170,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   useEffect(() => {
     getListStore();
-  }, []);
+  }, [typeStore, typeSorting, category]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),

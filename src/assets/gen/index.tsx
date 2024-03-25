@@ -58,6 +58,7 @@ export default class Images {
     static readonly minusCircle = require("../../../src/assets/images/minusCircle.png");
     static readonly padlock = require("../../../src/assets/images/padlock.png");
     static readonly plusCircle = require("../../../src/assets/images/plusCircle.png");
+    static readonly search = require("../../../src/assets/images/search.png");
     static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
     static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
     static readonly statistic3 = require("../../../src/assets/images/statistic3.png");
