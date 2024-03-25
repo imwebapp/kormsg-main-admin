@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { authApi } from "../../apis/authApi";
+import { setTokens } from "../../apis/axiosClient";
 import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
-import axiosClient from "../../apis/axiosClient";
-import { authApi } from "../../apis/authApi";
-import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
 import { useLocalStorage } from "../../stores/localStorage";
 
@@ -16,8 +16,9 @@ const Login = () => {
     console.log('loginnnnnn: ', username, password);
     const param = { username, password }
     authApi.login(param).then((res) => {
-      console.log('resLOGIN: ', res.results.token);
-      setAccessToken(String(res.results?.token))
+      console.log('resLOGIN: ', res.results?.token);
+      setAccessToken(res.results?.token)
+      setTokens();
       navigate(Url.dashboard)
     }).catch((err) => {
       console.log('err: ', err);
