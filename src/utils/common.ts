@@ -97,7 +97,7 @@ export const checkAccountType = (account_type: string) => {
         "text-green-500 flex px-4 py-2 items-center bg-cyan50 rounded-md";
       break;
     case TypeUser.BIZ_USER:
-      type = "Biz";
+      type = "Biz ";
       CustomStyle =
         "text-purple flex px-4 py-2 items-center bg-goldenPurple50 rounded-md";
       break;

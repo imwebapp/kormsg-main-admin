@@ -50,7 +50,7 @@ export const BaseModal = (props: BaseModalProps) => {
                             <div className="absolute inset-0 bg-black opacity-50" onClick={handleOutsideClick}></div>
                         </div>
                         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div className="inline-block w-full text-left align-bottom transition-all transform bg-white rounded-lg shadow-xl sm:my-10 sm:max-w-xl sm:w-full md:max-w-2xl md:w-full lg:max-w-3xl lg:w-full xl:max-w-4xl xl:w-full">
+                        <div className="inline-block w-full text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-10 sm:max-w-xl sm:w-full md:max-w-2xl md:w-full lg:max-w-3xl lg:w-full xl:max-w-4xl xl:w-full">
                             <div className="flex items-center justify-between px-6 py-4 bg-white rounded-lg">
                                 <BaseText bold locale size={20} className={classNames("font-bold text-left text-darkNight900", styleTitle)}>{title}</BaseText>
                                 <CloseOutlined onClick={closeModal} className="text-2xl text-gray-500 cursor-pointer" />
