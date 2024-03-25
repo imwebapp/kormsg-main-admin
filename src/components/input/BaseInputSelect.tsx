@@ -14,7 +14,7 @@ interface InputProps extends SelectProps {
     size?: 'large' | 'middle' | 'small';
     textInputSize?: number;
     onChange: (value: string) => void;
-    options: { value: string | number, label: string, disabled?: boolean }[];
+    options: { value: string | number, label: any, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss
     styleTitle?: string;
@@ -85,14 +85,14 @@ export const BaseInputSelect = (props: InputProps) => {
                         const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : valueSelect === node.value;
                         return (
                             <div className={classNames('flex flex-row items-center ')}>
-                                <BaseText locale size={textInputSize || 16} medium className={classNames(
+                                {typeof node.label === 'string' ? <BaseText locale size={textInputSize || 16} medium className={classNames(
                                     "w-full",
                                     check ? 'text-blue' : "text-darkNight500", styleInput
                                 )} >
                                     {node.label}
-                                </BaseText>
+                                </BaseText> : node.label}
                                 {
-                                    valueSelect === node.value && <CheckOutlined style={{ marginLeft: '8px' }} />
+                                   !multiple && valueSelect === node.value && <CheckOutlined style={{ marginLeft: '8px' }} />
                                 }
 
                             </div>

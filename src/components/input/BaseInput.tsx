@@ -26,11 +26,12 @@ interface IProps {
   iconLeft?: ReactNode | string;
   iconLeftInactive?: ReactNode | string;
   iconRight?: ReactNode | string;
+  widgetRight?: ReactNode;
   iconRightInactive?: ReactNode | string;
 };
 
 export const BaseInput = (props: IProps) => {
-  const { title, titleSize, required, value, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const { title, titleSize, required, value, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
   const handleFocus = () => {
@@ -93,9 +94,10 @@ export const BaseInput = (props: IProps) => {
           onKeyDown={handleKeyDown}
           {...rest}
         />
-        {iconRight && (
+        {iconRight &&   (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
         )}
+        {widgetRight}
       </div>
     </div>
 
