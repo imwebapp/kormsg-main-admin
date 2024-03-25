@@ -164,5 +164,6 @@
   "underReview": "Judging",
   "reviewRejected": "Refusal of review",
   "adExpired": "Ad Expires",
-  "eventOngoing": "During the event"
+  "eventOngoing": "During the event",
+  "Search": "Search"
 }

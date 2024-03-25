@@ -16,9 +16,10 @@ type StoreListTableProps = {
   typeStore?: string;
   category?: string;
   typeSorting?: string;
+  filter?: { type: string; value: any };
 };
 export default function StoreListTable(props: StoreListTableProps) {
-  const { className, typeStore, category, typeSorting } = props;
+  const { className, typeStore, category, typeSorting, filter } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -129,7 +130,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         filter += `{"state":{"$in":["APPROVED"]},"is_random_20_shop":true}`;
         break;
       default:
-        break; // Nếu không có trạng thái, không thêm bất kỳ điều kiện nào
+        break;
     }
 
     // Thêm điều kiện category nếu có
@@ -147,21 +148,18 @@ export default function StoreListTable(props: StoreListTableProps) {
     // field all selected
     const fields =
       '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
-    const filter = generateFilter(category, typeStore);
-    console.log("filter", filter);
+    const filterCustom = generateFilter(category, typeStore);
+    console.log("filterCustom", filterCustom);
 
     const order = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
         limit: 300,
         fields: fields,
-        filter: filter,
+        filter: filterCustom,
         order: order,
       })
       .then((res: any) => {
-        console.log("call api");
-        console.log("res.results.objects.rows", res.results.objects.rows);
-
         setListStore(res.results.objects.rows);
       })
       .catch((err) => {
@@ -170,7 +168,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   useEffect(() => {
     getListStore();
-  }, [typeStore, typeSorting, category]);
+  }, [typeStore, typeSorting, filter, category]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),

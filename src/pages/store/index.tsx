@@ -9,7 +9,6 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import Images from "../../assets/gen";
 import { Input, Select } from "antd";
 import { storeApi } from "../../apis/storeApi";
 
@@ -19,12 +18,15 @@ const StorePage = () => {
   const [listCategory, setListCategory] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
+  const [selectedFilterUser, setSelectedFilterUser] = useState("ID");
+  const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [filter, setFilter] = useState<any>();
   const data = {
     exposure: 84,
     underReview: 24,
     reviewRejected: 12,
     adExpired: 12,
-    eventOngoing: 12,
+    eventOngoing: 23,
   };
   const { t } = useTranslation();
   const getListCategory = async () => {
@@ -58,113 +60,72 @@ const StorePage = () => {
   const handleChangeCategory = (value: string) => {
     setSelectedCategory(value);
   };
+  const handleChangeFilter = (value: string) => {
+    setSelectedFilterUser(value);
+  };
   const handleChangeAdvertise = (value: string) => {
     setSelectedSorting(value);
   };
+  const handleChangeTextKeyword = (e: any) => {
+    setValueKeywordFilter(e.target.value);
+  };
+  const handleSearch = () => {
+    const newFilter = { type: selectedFilterUser, value: valueKeywordFilter };
+    setFilter(newFilter);
+  };
+  const getButtonStyle = (buttonKey: any) => {
+    const isSelected = buttonKey === selectedButton;
+    return {
+      backgroundColor: isSelected ? "black" : "white",
+      color: isSelected ? "white" : "black",
+    };
+  };
+  const getTextColor = (buttonStatus: any) => {
+    return buttonStatus === selectedButton ? "white" : "black";
+  };
   const listButton = () => {
+    const buttonData = [
+      {
+        status: STORE_STATUS.exposure,
+        label: t("exposure"),
+        count: data.exposure,
+      },
+      {
+        status: STORE_STATUS.underReview,
+        label: t("underReview"),
+        count: data.underReview,
+      },
+      {
+        status: STORE_STATUS.reviewRejected,
+        label: t("reviewRejected"),
+        count: data.reviewRejected,
+      },
+      {
+        status: STORE_STATUS.adExpired,
+        label: t("adExpired"),
+        count: data.adExpired,
+      },
+      {
+        status: STORE_STATUS.eventOngoing,
+        label: t("eventOngoing"),
+        count: data.eventOngoing,
+      },
+    ];
+
     return (
       <div className="flex flex-row gap-4 mt-1">
-        <CustomButton
-          className="text-base font-medium rounded-full px-4 py-2.5 px-4 py-2.5"
-          style={{
-            backgroundColor:
-              selectedButton === STORE_STATUS.exposure ? "black" : "white",
-            color: selectedButton === STORE_STATUS.exposure ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(STORE_STATUS.exposure)}
-        >
-          <BaseText
-            color={selectedButton === STORE_STATUS.exposure ? "white" : "black"}
-            size={16}
+        {buttonData.map(({ status, label, count }) => (
+          <CustomButton
+            key={status}
+            className="text-base font-medium rounded-full px-4 py-2.5"
+            style={getButtonStyle(status)}
+            onClick={() => handleButtonClick(status)}
           >
-            {t("exposure")}
-            {"(" + data.exposure + ")"}
-          </BaseText>
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full px-4 py-2.5"
-          style={{
-            backgroundColor:
-              selectedButton === STORE_STATUS.underReview ? "black" : "white",
-            color:
-              selectedButton === STORE_STATUS.underReview ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(STORE_STATUS.underReview)}
-        >
-          <BaseText
-            color={
-              selectedButton === STORE_STATUS.underReview ? "white" : "black"
-            }
-            size={16}
-          >
-            {t("underReview")}
-            {"(" + data.underReview + ")"}
-          </BaseText>
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full px-4 py-2.5"
-          style={{
-            backgroundColor:
-              selectedButton === STORE_STATUS.reviewRejected
-                ? "black"
-                : "white",
-            color:
-              selectedButton === STORE_STATUS.reviewRejected
-                ? "white"
-                : "black",
-          }}
-          onClick={() => handleButtonClick(STORE_STATUS.reviewRejected)}
-        >
-          <BaseText
-            color={
-              selectedButton === STORE_STATUS.reviewRejected ? "white" : "black"
-            }
-            size={16}
-          >
-            {t("reviewRejected")}
-            {"(" + data.reviewRejected + ")"}
-          </BaseText>
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full px-4 py-2.5"
-          style={{
-            backgroundColor:
-              selectedButton === STORE_STATUS.adExpired ? "black" : "white",
-            color:
-              selectedButton === STORE_STATUS.adExpired ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(STORE_STATUS.adExpired)}
-        >
-          <BaseText
-            color={
-              selectedButton === STORE_STATUS.adExpired ? "white" : "black"
-            }
-            size={16}
-          >
-            {t("adExpired")}
-            {"(" + data.adExpired + ")"}
-          </BaseText>
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full px-4 py-2.5"
-          style={{
-            backgroundColor:
-              selectedButton === STORE_STATUS.eventOngoing ? "black" : "white",
-            color:
-              selectedButton === STORE_STATUS.eventOngoing ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(STORE_STATUS.eventOngoing)}
-        >
-          <BaseText
-            color={
-              selectedButton === STORE_STATUS.eventOngoing ? "white" : "black"
-            }
-            size={16}
-          >
-            {t("eventOngoing")}
-            {"(" + data.eventOngoing + ")"}
-          </BaseText>
-        </CustomButton>
+            <BaseText color={getTextColor(status)} size={16}>
+              {label} ({count})
+            </BaseText>
+          </CustomButton>
+        ))}
       </div>
     );
   };
@@ -175,8 +136,8 @@ const StorePage = () => {
         <div className="flex gap-3 whitespace-nowrap">
           <Select
             suffixIcon={<CaretDownOutlined />}
-            placeholder="Category"
-            defaultValue="Category"
+            placeholder={t("Category")}
+            defaultValue={t("Category")}
             style={{ width: 110 }}
             onChange={handleChangeCategory}
             options={listCategory}
@@ -185,7 +146,7 @@ const StorePage = () => {
             suffixIcon={<ArrowUpOutlined />}
             placeholder="Advertise"
             defaultValue="Advertise"
-            style={{ width: 110 }}
+            style={{ width: 120 }}
             onChange={handleChangeAdvertise}
             options={[
               {
@@ -216,14 +177,14 @@ const StorePage = () => {
         </div>
       </div>
       <div>
-        <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap">
+        <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
           <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
             <Select
               suffixIcon={<CaretDownOutlined />}
               bordered={false}
-              placeholder="Category"
-              defaultValue="Category"
-              onChange={handleChangeCategory}
+              placeholder="ID"
+              defaultValue="ID"
+              onChange={handleChangeFilter}
               options={[
                 {
                   value: "ID",
@@ -249,26 +210,25 @@ const StorePage = () => {
               className="flex-1"
             />
           </div>
-          <div className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5">
-            Keyword
-          </div>
-          <button className="justify-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl">
-            Search
-          </button>
-        </div>
-        <div className="flex justify-center items-start mt-5 p-3 text-base font-medium leading-6 rounded-xl bg-neutral-100">
-          <img
-            src={Images.search}
-            alt="Search user"
-            className="shrink-0 w-6 aspect-square self-center"
+          <Input
+            className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+            placeholder="Keyword"
+            onChange={handleChangeTextKeyword}
+            value={valueKeywordFilter}
           />
-          <Input variant="borderless" placeholder="Search User" />
+          <CustomButton
+            className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
+            onClick={handleSearch}
+          >
+            {t("Search")}
+          </CustomButton>
         </div>
       </div>
       <StoreListTable
-        typeStore={selectedButton}
         category={selectedCategory}
+        typeStore={selectedButton}
         typeSorting={selectedSorting}
+        filter={filter}
       />
     </div>
   );
