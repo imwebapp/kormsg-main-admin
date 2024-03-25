@@ -73,8 +73,10 @@ const UserManage = () => {
   const [listUser, setListUser] = useState<User[]>([]);
   const [isEditingGroupName, setIsEditingGroupName] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
-
   const [isCreatingGroupName, setIsCreatingGroupName] = useState(false);
+
+  const [reloading, setReloading] = useState(false);
+  console.log("reloading: ", reloading);
 
   console.log("listUser: ", listUser);
 
@@ -101,7 +103,7 @@ const UserManage = () => {
       groupSelected.id.toString(),
       { name: newGroupName.trim() }
     );
-    if (resEditGroup.code === 200) {
+    if (resEditGroup?.code === 200) {
       console.log("resEditGroup: ", resEditGroup);
       const updatedGroups = listUserGroup.map((group) => {
         if (group.id === groupSelected.id) {
@@ -111,6 +113,7 @@ const UserManage = () => {
         return group;
       });
       setListUserGroup(updatedGroups);
+      setReloading(!reloading);
     }
     setIsEditingGroupName(false);
   };
@@ -218,6 +221,18 @@ const UserManage = () => {
     if (groupSelected.id !== 1) {
       convertFilter["group_id"] = groupSelected.id;
     }
+    if (valueSearch !== "") {
+      convertFilter['$or'] = [
+        { nickname: { $like: `%${valueSearch}%` } },
+        { email: { $like: `%${valueSearch}%` } },
+      ];
+    }
+    if (valueSearch !== "") {
+      convertFilter['$or'] = [
+        { nickname: { $like: `%${valueSearch}%` } },
+        { email: { $like: `%${valueSearch}%` } },
+      ];
+    }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
       // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
@@ -237,6 +252,7 @@ const UserManage = () => {
         .catch((err: any) => {
           console.log("err: ", err);
         });
+
     } else {
       userApi
         .getList({
@@ -252,7 +268,7 @@ const UserManage = () => {
           console.log("err: ", err);
         });
     }
-  }, [groupSelected, typeUserSelected]);
+  }, [groupSelected, typeUserSelected, valueSearch]);
 
   useEffect(() => {
     userApi
@@ -474,7 +490,8 @@ const UserManage = () => {
             })}
           </div>
 
-          <UserManageTable data={listUser} />
+          <UserManageTable data={listUser} reload={reloading}  />
+
         </div>
       </div>
       {/* <BaseModal

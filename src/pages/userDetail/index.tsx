@@ -71,16 +71,14 @@ const UserDetail = () => {
             <div className={classNames("flex flex-row items-center gap-1")}>
               <BaseText
                 bold
-                className={classNames(
-                  "text-purple flex px-4 py-2 items-center bg-goldenPurple50"
-                )}
+                className={checkAccountType(formDataCreateUser.account_type).CustomStyle}
               >
-                {checkAccountType(formDataCreateUser.account_type)}
+                {checkAccountType(formDataCreateUser.account_type).type}
               </BaseText>
               <BaseText
                 medium
                 className={classNames(
-                  "text-darkNight900 flex px-4 py-2 items-center bg-darkNight50"
+                  "text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"
                 )}
               >
                 {checkGroup(formDataCreateUser.group)}

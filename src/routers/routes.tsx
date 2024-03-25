@@ -7,6 +7,7 @@ import {
   DashboardVisitPage,
   Login,
   StorePage,
+  NewStore,
   UserManage,
   UserDetail,
   ReservationDetails,
@@ -59,6 +60,7 @@ const routes = [
   {
     path: Url.userDetail,
     element: <UserDetail />,
+    detail: true,
   },
   {
     path: Url.bulletinBoard,
@@ -80,6 +82,11 @@ const routes = [
         element: <ReservationDetails />,
       },
     ],
+  },
+  {
+    path: Url.newStore,
+    element: <NewStore />,
+    custom: true,
   },
   {
     path: Url.shopping,

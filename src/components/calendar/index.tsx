@@ -93,7 +93,12 @@ export default function CustomTimePicker(
         />
       )}
       {!range && (
-        <DatePicker {...newProps} onOk={onOk} onChange={(value) => onChange(value)} placeholder={"YYYY.MM.DD"} />
+        <DatePicker
+          {...newProps}
+          onOk={onOk}
+          onChange={(value) => onChange(value)}
+          placeholder={"YYYY.MM.DD"}
+        />
       )}
     </Space>
   );
