@@ -103,7 +103,7 @@ const UserManage = () => {
       groupSelected.id.toString(),
       { name: newGroupName.trim() }
     );
-    if (resEditGroup.code === 200) {
+    if (resEditGroup?.code === 200) {
       console.log("resEditGroup: ", resEditGroup);
       const updatedGroups = listUserGroup.map((group) => {
         if (group.id === groupSelected.id) {

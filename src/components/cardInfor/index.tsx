@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import BaseText from "../text";
 import { Url } from "../../routers/paths";
+import { useLocalStorage } from "../../stores/localStorage";
 
 const CardInfor = () => {
   const navigate = useNavigate();
+  const { setRefreshToken, setAccessToken, setExpiresIn } = useLocalStorage((state) => state);
   const handleLogout = () => {
     console.log('logout');
-    localStorage.removeItem('accessToken');
+    setAccessToken("");
+    setRefreshToken("");
+    setExpiresIn(0);
     navigate(Url.login);
   };
   return (
