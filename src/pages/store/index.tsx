@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Input, Select } from "antd";
 import { storeApi } from "../../apis/storeApi";
+import { BaseModal } from "../../components/modal/BaseModal";
 
 const StorePage = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const StorePage = () => {
           })
         );
         // add item to first array
-        transformedData.unshift({ value: "all", label: "all" });
+        transformedData.unshift({ value: "all", label: t("All") });
         setListCategory(transformedData);
       }
     } catch (error) {}
@@ -147,107 +148,117 @@ const StorePage = () => {
     );
   };
   return (
-    <div className="p-6">
-      <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
-        {listButton()}
-        <div className="flex gap-3 whitespace-nowrap">
-          <Select
-            suffixIcon={<CaretDownOutlined />}
-            placeholder={t("Category")}
-            defaultValue={t("Category")}
-            style={{ width: 110 }}
-            onChange={handleChangeCategory}
-            options={listCategory}
-          />
-          <Select
-            suffixIcon={<ArrowUpOutlined />}
-            placeholder="Advertise"
-            defaultValue="Advertise"
-            style={{ width: 120 }}
-            onChange={handleChangeAdvertise}
-            options={[
-              {
-                value: SORTING.NONE,
-                label: "none",
-              },
-              {
-                value: SORTING.DESC,
-                label: "descending",
-              },
-              {
-                value: SORTING.ASC,
-                label: "ascending",
-              },
-            ]}
-          />
-          <CustomButton
-            className="flex items-start px-4 py-2.5 text-base font-medium leading-6 text-blue-600 whitespace-nowrap rounded border border-blue-600 border-solid"
-            icon={
-              <PlusOutlined
-                alt="Add icon"
-                className="shrink-0 w-6 aspect-square"
-              />
-            }
-          >
-            {t("Add")}
-          </CustomButton>
-        </div>
-      </div>
-      <div>
-        <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-          <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+    <>
+      <div className="p-6">
+        <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
+          {listButton()}
+          <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
-              bordered={false}
-              placeholder="ID"
-              defaultValue="ID"
-              onChange={handleChangeFilter}
+              placeholder={t("All")}
+              defaultValue={t("All")}
+              style={{ width: 110 }}
+              onChange={handleChangeCategory}
+              options={listCategory}
+            />
+            <Select
+              suffixIcon={<ArrowUpOutlined />}
+              placeholder="None"
+              defaultValue="None"
+              style={{ width: 120 }}
+              onChange={handleChangeAdvertise}
               options={[
                 {
-                  value: "username",
-                  label: "ID",
+                  value: SORTING.NONE,
+                  label: "none",
                 },
                 {
-                  value: "nickname",
-                  label: "nickname",
+                  value: SORTING.DESC,
+                  label: "descending",
                 },
                 {
-                  value: "email",
-                  label: "gmail",
-                },
-                {
-                  value: "title",
-                  label: "title",
-                },
-                {
-                  value: "contact_phone",
-                  label: "Phone number",
+                  value: SORTING.ASC,
+                  label: "ascending",
                 },
               ]}
-              className="flex-1"
             />
+            <CustomButton
+              className="flex items-start px-4 py-2.5 text-base font-medium leading-6 text-blue-600 whitespace-nowrap rounded border border-blue-600 border-solid"
+              icon={
+                <PlusOutlined
+                  alt="Add icon"
+                  className="shrink-0 w-6 aspect-square"
+                />
+              }
+            >
+              {t("Add")}
+            </CustomButton>
           </div>
-          <Input
-            className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
-            placeholder="Keyword"
-            onChange={handleChangeTextKeyword}
-            value={valueKeywordFilter}
-          />
-          <CustomButton
-            className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
-            onClick={handleSearch}
-          >
-            {t("Search")}
-          </CustomButton>
         </div>
+        <div>
+          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
+            <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+              <Select
+                suffixIcon={<CaretDownOutlined />}
+                bordered={false}
+                placeholder="ID"
+                defaultValue="ID"
+                onChange={handleChangeFilter}
+                options={[
+                  {
+                    value: "username",
+                    label: "ID",
+                  },
+                  {
+                    value: "nickname",
+                    label: "nickname",
+                  },
+                  {
+                    value: "email",
+                    label: "gmail",
+                  },
+                  {
+                    value: "title",
+                    label: "title",
+                  },
+                  {
+                    value: "contact_phone",
+                    label: "Phone number",
+                  },
+                ]}
+                className="flex-1"
+              />
+            </div>
+            <Input
+              className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+              placeholder="Keyword"
+              onChange={handleChangeTextKeyword}
+              value={valueKeywordFilter}
+            />
+            <CustomButton
+              className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
+              onClick={handleSearch}
+            >
+              {t("Search")}
+            </CustomButton>
+          </div>
+        </div>
+        <StoreListTable
+          category={selectedCategory}
+          typeStore={selectedButton}
+          typeSorting={selectedSorting}
+          filter={filter}
+        />
       </div>
-      <StoreListTable
-        category={selectedCategory}
-        typeStore={selectedButton}
-        typeSorting={selectedSorting}
-        filter={filter}
-      />
-    </div>
+      <BaseModal
+        isOpen={true}
+        onSubmit={() => {
+          console.log("submit");
+        }}
+      >
+        <div>1233</div>
+      </BaseModal>
+    </>
   );
 };
 
