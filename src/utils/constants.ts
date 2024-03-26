@@ -29,11 +29,11 @@ export const ListTypeUser = [
 ];
 
 export const TypeUser = {
-  BIZ_USER: 'BIZ_USER',
-  FREE_USER: 'FREE_USER',
-  PAID_USER: 'PAID_USER',
-  ADMIN: 'ADMIN',
-}
+  BIZ_USER: "BIZ_USER",
+  FREE_USER: "FREE_USER",
+  PAID_USER: "PAID_USER",
+  ADMIN: "ADMIN",
+};
 
 export const listOptionUserDetail = [
   {
@@ -66,4 +66,17 @@ export const INIT_TAB_USER_DETAIL = {
   INFORMATION: "information",
   SHOP_INFORMATION: "shopInformation",
   HISTORY_PAYMENT: "historyPayment",
+};
+
+export const STORE_STATUS = {
+  exposure: "exposure",
+  underReview: "underReview",
+  reviewRejected: "reviewRejected",
+  adExpired: "adExpired",
+  eventOngoing: "eventOngoing",
+};
+export const SORTING = {
+  NONE: "NONE",
+  DESC: "DESC",
+  ASC: "ASC",
 };

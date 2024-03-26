@@ -1,14 +1,21 @@
 import axiosClient from "./axiosClient";
-import { STORE } from "./urlConfig";
-
+import { CATEGORY, STORE } from "./urlConfig";
 export const storeApi = {
   getList: (params?: any) => {
+    console.log("params", params);
+
     return axiosClient.get(`${STORE}`, { params });
   },
   cloneStore: (id: string) => {
-    return axiosClient.post(`shop/clone_shop/${id}`);
+    return axiosClient.post(`${STORE}/clone_shop/${id}`);
   },
   deleteStore: (id: string) => {
-    return axiosClient.delete(`shop/${id}`);
+    return axiosClient.delete(`${STORE}/${id}`);
+  },
+  getListCategory: (params?: any) => {
+    return axiosClient.get(`${CATEGORY}`, { params });
+  },
+  getCountStore: () => {
+    return axiosClient.get(`${STORE}/count_shop`);
   },
 };

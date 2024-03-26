@@ -159,5 +159,11 @@
   "회원을 닉네임 혹은 아이디로 검색해주세요": "Please search for members by nickname or ID",
   "매장 주인 회원 설정": "Store owner membership settings",
   "복사할 매장을 검색해주세요": "Please search for the store you want to copy from",
-  "매장 복사 기능": "Store copy function"
+  "매장 복사 기능": "Store copy function",
+  "exposure": "Exposing",
+  "underReview": "Judging",
+  "reviewRejected": "Refusal of review",
+  "adExpired": "Ad Expires",
+  "eventOngoing": "During the event",
+  "Search": "Search"
 }
