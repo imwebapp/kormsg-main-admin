@@ -110,24 +110,24 @@ export default function StoreListTable(props: StoreListTableProps) {
     }
   }
   function generateFilter(category?: string, status?: string) {
-    let filter = "";
+    let filterString = "";
 
     // Thêm điều kiện trạng thái
     switch (status) {
       case STORE_STATUS.exposure:
-        filter += `"state":{"$notIn":["REJECTED","EXPIRED"]}`;
+        filterString += `"state":{"$notIn":["REJECTED","EXPIRED"]}`;
         break;
       case STORE_STATUS.underReview:
-        filter += `"state":"PENDING"`;
+        filterString += `"state":"PENDING"`;
         break;
       case STORE_STATUS.reviewRejected:
-        filter += `{"$or":[{"denied_shop":{"$ne":null}},{"state":{"$in":["REJECTED"]}}]}`;
+        filterString += `{"$or":[{"denied_shop":{"$ne":null}},{"state":{"$in":["REJECTED"]}}]}`;
         break;
       case STORE_STATUS.adExpired:
-        filter += `"state":{"$in":["EXPIRED"]}`;
+        filterString += `"state":{"$in":["EXPIRED"]}`;
         break;
       case STORE_STATUS.eventOngoing:
-        filter += `{"state":{"$in":["APPROVED"]},"is_random_20_shop":true}`;
+        filterString += ``;
         break;
       default:
         break;
@@ -135,29 +135,53 @@ export default function StoreListTable(props: StoreListTableProps) {
 
     // Thêm điều kiện category nếu có
     if (category && category !== "" && category !== "all") {
-      if (filter !== "") {
-        filter += ", ";
+      if (filterString !== "") {
+        filterString += ", ";
       }
-      filter += `"category_id": "${category}"`;
+      filterString += `"category_id": "${category}"`;
+    }
+    if (
+      filter &&
+      (filter.type === "contact_phone" || filter.type === "title") &&
+      filter.value !== ""
+    ) {
+      if (filterString !== "") {
+        filterString += ", ";
+      }
+      filterString += `"${filter.type}":{"$iLike":"%${filter.value}%"}`;
     }
 
-    return `{${filter}}`;
+    return `{${filterString}}`;
   }
+  const generateFields = () => {
+    if (typeStore == STORE_STATUS.eventOngoing) {
+      // default event on going
+      return '["$all",{"events":["$all",{"$filter":{}}]}]';
+    }
+    let filterString = "";
+    if (
+      filter && // check exist filter
+      filter.type !== "contact_phone" && // check not phone user
+      filter.type !== "title" && // check not title user
+      filter.value !== "" // check empty value
+    ) {
+      filterString = `,{"$filter":{"${filter.type}":{"$iLike":"%${filter.value}%"}}}`;
+    }
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"${filterString}]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]`;
+    return fields;
+  };
 
   const getListStore = () => {
     // field all selected
-    const fields =
-      '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
+    const fieldsCustom = generateFields();
     const filterCustom = generateFilter(category, typeStore);
-    console.log("filterCustom", filterCustom);
-
-    const order = JSON.stringify(generateOrder(typeSorting));
+    const orderCustom = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
-        limit: 300,
-        fields: fields,
+        limit: 50,
+        fields: fieldsCustom,
         filter: filterCustom,
-        order: order,
+        order: orderCustom,
       })
       .then((res: any) => {
         setListStore(res.results.objects.rows);

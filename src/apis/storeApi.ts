@@ -1,6 +1,5 @@
 import axiosClient from "./axiosClient";
 import { CATEGORY, STORE } from "./urlConfig";
-
 export const storeApi = {
   getList: (params?: any) => {
     console.log("params", params);
@@ -15,5 +14,8 @@ export const storeApi = {
   },
   getListCategory: (params?: any) => {
     return axiosClient.get(`${CATEGORY}`, { params });
+  },
+  getCountStore: () => {
+    return axiosClient.get(`${STORE}/count_shop`);
   },
 };

@@ -15,6 +15,13 @@ import { storeApi } from "../../apis/storeApi";
 const StorePage = () => {
   const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState(STORE_STATUS.exposure);
+  const [countStore, setCountStore] = useState({
+    countShopPending: 0,
+    countShopActive: 0,
+    countShopReject: 0,
+    countShopExpired: 0,
+    countShopOnEvent: 0,
+  });
   const [listCategory, setListCategory] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
@@ -29,6 +36,15 @@ const StorePage = () => {
     eventOngoing: 23,
   };
   const { t } = useTranslation();
+  const getCountStore = async () => {
+    try {
+      let resultCount: any = await storeApi.getCountStore();
+      console.log();
+      if (resultCount.code === 200) {
+        setCountStore(resultCount.results.object);
+      }
+    } catch (error) {}
+  };
   const getListCategory = async () => {
     try {
       let result: any = await storeApi.getListCategory({
@@ -51,6 +67,7 @@ const StorePage = () => {
   };
   useEffect(() => {
     getListCategory();
+    getCountStore();
     return () => {};
   }, []);
 
@@ -88,27 +105,27 @@ const StorePage = () => {
       {
         status: STORE_STATUS.exposure,
         label: t("exposure"),
-        count: data.exposure,
+        count: countStore.countShopActive,
       },
       {
         status: STORE_STATUS.underReview,
         label: t("underReview"),
-        count: data.underReview,
+        count: countStore.countShopPending,
       },
       {
         status: STORE_STATUS.reviewRejected,
         label: t("reviewRejected"),
-        count: data.reviewRejected,
+        count: countStore.countShopReject,
       },
       {
         status: STORE_STATUS.adExpired,
         label: t("adExpired"),
-        count: data.adExpired,
+        count: countStore.countShopExpired,
       },
       {
         status: STORE_STATUS.eventOngoing,
         label: t("eventOngoing"),
-        count: data.eventOngoing,
+        count: countStore.countShopOnEvent,
       },
     ];
 
@@ -187,7 +204,7 @@ const StorePage = () => {
               onChange={handleChangeFilter}
               options={[
                 {
-                  value: "ID",
+                  value: "username",
                   label: "ID",
                 },
                 {
@@ -195,7 +212,7 @@ const StorePage = () => {
                   label: "nickname",
                 },
                 {
-                  value: "gmail",
+                  value: "email",
                   label: "gmail",
                 },
                 {
@@ -203,8 +220,8 @@ const StorePage = () => {
                   label: "title",
                 },
                 {
-                  value: "phone number",
-                  label: "phone number",
+                  value: "contact_phone",
+                  label: "Phone number",
                 },
               ]}
               className="flex-1"
