@@ -6,7 +6,7 @@ import { BoardLinkInterface } from "../../../entities";
 import { BoardLinkApi } from "../../../apis/boardLinkApi";
 import { useBulletinState } from "../store";
 export default function BulletinLeft() {
-  const { boardSelected, setBoardSelected } = useBulletinState(
+  const { boardSelected, setBoardSelected, setLastRefresh } = useBulletinState(
     (state) => state
   );
   const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>();
@@ -43,7 +43,10 @@ export default function BulletinLeft() {
                     "px-3 py-2 mb-1 rounded flex items-center cursor-pointer",
                     boardSelected?.id === item.id ? "bg-dayBreakBlue50" : ""
                   )}
-                  onClick={() => setBoardSelected(item)}
+                  onClick={() => {
+                    setBoardSelected(item);
+                    setLastRefresh(Date.now());
+                  }}
                 >
                   <BaseText
                     bold

@@ -1,4 +1,3 @@
-import { Switch } from "antd";
 import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseInput } from "../../../components/input/BaseInput";
@@ -6,8 +5,8 @@ import { useState } from "react";
 import { BOARD, BOARD_TEXT } from "../../../utils/constants";
 import { classNames } from "../../../utils/common";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
-import { BaseModal } from "../../../components/modal/BaseModal";
 import ThemaTable from "./thema_table";
+import { BaseModal2 } from "../../../components/modal/BaseModal2";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
@@ -15,26 +14,6 @@ export default function BulletinSetting() {
   const [boardTypeSelected, setBoardTypeSelected] = useState<string>("");
   return (
     <div className="flex flex-col">
-      <BaseText locale bold size={16} className="mb-4">
-        Things
-      </BaseText>
-      <BaseText locale medium className="mb-4">
-        Adult certification
-      </BaseText>
-      <div className="flex flex-row justify-between">
-        <BaseText locale medium className="mb-4">
-          Adult verification status
-        </BaseText>
-        <Switch defaultChecked />
-      </div>
-      <div className="h-[1px] bg-darkNight100"></div>
-      <div className="flex flex-row justify-between mt-4">
-        <BaseText locale medium className="mb-4">
-          Whether profile features are exposed?
-        </BaseText>
-        <Switch defaultChecked />
-      </div>
-      <div className="h-[1px] bg-darkNight100"></div>
       <BaseText locale medium className="mt-4">
         SREEN
       </BaseText>
@@ -122,7 +101,6 @@ export default function BulletinSetting() {
           Thema
         </BaseText>
         <BaseInputSelect
-          multiple
           className="!min-w-[100px]"
           onChange={() => {}}
           required={true}
@@ -182,189 +160,13 @@ export default function BulletinSetting() {
           ]}
         />
       </div>
-      <div className="h-[1px] bg-darkNight100 my-4"></div>
-      <BaseText locale medium>
-        Setting permissions
-      </BaseText>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          View
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="Naver Map"
-          options={[
-            {
-              value: "Naver Map",
-              label: "Naver Map",
-            },
-            {
-              value: "Google Map",
-              label: "Google Map",
-            },
-          ]}
-        />
-      </div>
-      <div className="h-[1px] bg-darkNight100 my-4"></div>
-      <BaseText locale medium>
-        Setting permissions
-      </BaseText>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium className="flex-1">
-          Writing
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="모든 사용자"
-          options={[
-            {
-              value: "모든 사용자",
-              label: "모든 사용자",
-            },
-            {
-              value: "로그인 사용자",
-              label: "로그인 사용자",
-            },
-            {
-              value: "회원그룹 선택",
-              label: "회원그룹 선택",
-            },
-          ]}
-        />
-        <BaseInputSelect
-          className="ml-3"
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="1"
-          options={[
-            {
-              value: "1",
-              label: <img src={Images.android} className="w-5" />,
-            },
-            {
-              value: "2",
-              label: <img src={Images.iphone} className="w-5" />,
-            },
-          ]}
-        />
-      </div>
-      <div className="flex flex-row justify-between mt-4">
-        <BaseText locale medium className="">
-          Whether to be reviewed by administrator when uploading writing
-        </BaseText>
-        <Switch defaultChecked />
-      </div>
-      <div className="h-[1px] bg-darkNight100 my-4"></div>
-      <div className="flex flex-row justify-between items-center">
-        <BaseText locale medium>
-          Comments
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="모든 사용자"
-          options={[
-            {
-              value: "모든 사용자",
-              label: "모든 사용자",
-            },
-            {
-              value: "로그인 사용자",
-              label: "로그인 사용자",
-            },
-            {
-              value: "회원그룹 선택",
-              label: "회원그룹 선택",
-            },
-          ]}
-        />
-      </div>
-      <div className="h-[1px] bg-darkNight100 my-4"></div>
-      <div className="flex flex-row justify-between items-center">
-        <BaseText locale medium>
-          Member ID exposure method
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="닉네임"
-          options={[
-            {
-              value: "닉네임",
-              label: "닉네임",
-            },
-            {
-              value: "닉네임(일부*로 표시)",
-              label: "닉네임(일부*로 표시)",
-            },
-            {
-              value: "ID",
-              label: "ID",
-            },
-            {
-              value: "ID(일부*로 표시)",
-              label: "ID(일부*로 표시)",
-            },
-          ]}
-        />
-      </div>
-      <div className="h-[1px] bg-darkNight100 my-4"></div>
-      <div className="flex flex-row justify-between">
-        <BaseText locale medium className="">
-          Product reviews
-        </BaseText>
-        <Switch defaultChecked />
-      </div>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Who can?
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          value="모든 사용자"
-          options={[
-            {
-              value: "모든 사용자",
-              label: "모든 사용자",
-            },
-            {
-              value: "로그인 사용자",
-              label: "로그인 사용자",
-            },
-            {
-              value: "회원그룹 선택",
-              label: "회원그룹 선택",
-            },
-          ]}
-        />
-      </div>
+      
       <div className="flex flex-row justify-between items-center mt-4">
         <BaseText locale medium>
           Tags
         </BaseText>
       </div>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 mt-4">
         {["Thaimassage", "Thaimassage home", "Thaimassage home", "home"].map(
           (item, index) => {
             return (
@@ -389,15 +191,19 @@ export default function BulletinSetting() {
         Delete Main
       </CustomButton>
 
-      <BaseModal
+      <BaseModal2
+        width='80vw'
         isOpen={openModalThema}
         onClose={() => {
+          setOpenModalThema(false);
+        }}
+        onSubmit={() => {
           setOpenModalThema(false);
         }}
         title="Thema Management"
         isHideAction
         children={<ThemaTable />}
-      ></BaseModal>
+      ></BaseModal2>
     </div>
   );
 }

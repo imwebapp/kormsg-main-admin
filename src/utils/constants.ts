@@ -1,3 +1,4 @@
+import { CONVERSATION } from './../apis/urlConfig';
 export const Config = {
   HOST_API: process.env.REACT_APP_BASE_URL,
   SOCKET_API: process.env.REACT_APP_BASE_URL_SOCKET,
@@ -114,3 +115,12 @@ export const BOARD_ROUTE = {
   [BOARD.BLOG]: ROUTE.BLOG,
 }
 
+export const NAVBAR = {
+  HOME: 'Home',
+  EVENT: 'Event',
+  POST: 'Post',
+  CONVERSATION: 'Conversation',
+  RESERVATION: 'Reservation',
+  SHORT_VIDEO: 'Short video',
+  PROFILE: 'Profile',
+}
