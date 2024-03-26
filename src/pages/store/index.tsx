@@ -1,5 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { BaseText, CustomButton, StoreListTable } from "../../components";
+import {
+  BaseText,
+  CustomButton,
+  CustomTimePicker,
+  StoreListTable,
+} from "../../components";
 import { Url } from "../../routers/paths";
 import { useEffect, useState } from "react";
 import { SORTING, STORE_STATUS } from "../../utils/constants";
@@ -11,6 +16,8 @@ import {
 } from "@ant-design/icons";
 import { Input, Select } from "antd";
 import { storeApi } from "../../apis/storeApi";
+import { BaseModal } from "../../components/modal/BaseModal";
+import { BaseInput } from "../../components/input/BaseInput";
 
 const StorePage = () => {
   const navigate = useNavigate();
@@ -25,16 +32,11 @@ const StorePage = () => {
   const [listCategory, setListCategory] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
-  const [selectedFilterUser, setSelectedFilterUser] = useState("ID");
+  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
+
   const [filter, setFilter] = useState<any>();
-  const data = {
-    exposure: 84,
-    underReview: 24,
-    reviewRejected: 12,
-    adExpired: 12,
-    eventOngoing: 23,
-  };
   const { t } = useTranslation();
   const getCountStore = async () => {
     try {
@@ -147,107 +149,140 @@ const StorePage = () => {
     );
   };
   return (
-    <div className="p-6">
-      <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
-        {listButton()}
-        <div className="flex gap-3 whitespace-nowrap">
-          <Select
-            suffixIcon={<CaretDownOutlined />}
-            placeholder={t("Category")}
-            defaultValue={t("Category")}
-            style={{ width: 110 }}
-            onChange={handleChangeCategory}
-            options={listCategory}
-          />
-          <Select
-            suffixIcon={<ArrowUpOutlined />}
-            placeholder="Advertise"
-            defaultValue="Advertise"
-            style={{ width: 120 }}
-            onChange={handleChangeAdvertise}
-            options={[
-              {
-                value: SORTING.NONE,
-                label: "none",
-              },
-              {
-                value: SORTING.DESC,
-                label: "descending",
-              },
-              {
-                value: SORTING.ASC,
-                label: "ascending",
-              },
-            ]}
-          />
-          <CustomButton
-            className="flex items-start px-4 py-2.5 text-base font-medium leading-6 text-blue-600 whitespace-nowrap rounded border border-blue-600 border-solid"
-            icon={
-              <PlusOutlined
-                alt="Add icon"
-                className="shrink-0 w-6 aspect-square"
-              />
-            }
-          >
-            {t("Add")}
-          </CustomButton>
-        </div>
-      </div>
-      <div>
-        <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-          <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+    <>
+      <div className="p-6">
+        <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
+          {listButton()}
+          <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
-              bordered={false}
-              placeholder="ID"
-              defaultValue="ID"
-              onChange={handleChangeFilter}
+              placeholder={t("Category")}
+              defaultValue={t("Category")}
+              style={{ width: 110 }}
+              onChange={handleChangeCategory}
+              options={listCategory}
+            />
+            <Select
+              suffixIcon={<ArrowUpOutlined />}
+              placeholder="Advertise"
+              defaultValue="Advertise"
+              style={{ width: 120 }}
+              onChange={handleChangeAdvertise}
               options={[
                 {
-                  value: "username",
-                  label: "ID",
+                  value: SORTING.NONE,
+                  label: "none",
                 },
                 {
-                  value: "nickname",
-                  label: "nickname",
+                  value: SORTING.DESC,
+                  label: "descending",
                 },
                 {
-                  value: "email",
-                  label: "gmail",
-                },
-                {
-                  value: "title",
-                  label: "title",
-                },
-                {
-                  value: "contact_phone",
-                  label: "Phone number",
+                  value: SORTING.ASC,
+                  label: "ascending",
                 },
               ]}
-              className="flex-1"
             />
+            <CustomButton
+              className="flex items-start px-4 py-2.5 text-base font-medium leading-6 text-blue-600 whitespace-nowrap rounded border border-blue-600 border-solid"
+              icon={
+                <PlusOutlined
+                  alt="Add icon"
+                  className="shrink-0 w-6 aspect-square"
+                />
+              }
+            >
+              {t("Add")}
+            </CustomButton>
           </div>
-          <Input
-            className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
-            placeholder="Keyword"
-            onChange={handleChangeTextKeyword}
-            value={valueKeywordFilter}
-          />
-          <CustomButton
-            className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
-            onClick={handleSearch}
-          >
-            {t("Search")}
-          </CustomButton>
         </div>
+        <div>
+          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
+            <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+              <Select
+                suffixIcon={<CaretDownOutlined />}
+                bordered={false}
+                placeholder="ID"
+                defaultValue="ID"
+                onChange={handleChangeFilter}
+                options={[
+                  {
+                    value: "username",
+                    label: "ID",
+                  },
+                  {
+                    value: "nickname",
+                    label: "nickname",
+                  },
+                  {
+                    value: "email",
+                    label: "gmail",
+                  },
+                  {
+                    value: "title",
+                    label: "title",
+                  },
+                  {
+                    value: "contact_phone",
+                    label: "Phone number",
+                  },
+                ]}
+                className="flex-1"
+              />
+            </div>
+            <Input
+              className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+              placeholder="Keyword"
+              onChange={handleChangeTextKeyword}
+              value={valueKeywordFilter}
+            />
+            <CustomButton
+              className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
+              onClick={handleSearch}
+            >
+              {t("Search")}
+            </CustomButton>
+          </div>
+        </div>
+        <StoreListTable
+          category={selectedCategory}
+          typeStore={selectedButton}
+          typeSorting={selectedSorting}
+          filter={filter}
+          onItemStoreClick={(value) => {
+            setOpenModalCreateEvent(true);
+          }}
+        />
       </div>
-      <StoreListTable
-        category={selectedCategory}
-        typeStore={selectedButton}
-        typeSorting={selectedSorting}
-        filter={filter}
-      />
-    </div>
+      <BaseModal
+        isOpen={openModalCreateEvent}
+        onSubmit={() => {}}
+        title="Create a event"
+        onClose={() => {
+          setOpenModalCreateEvent(!openModalCreateEvent);
+        }}
+      >
+        <BaseInput
+          title="Store"
+          placeholder="복사할 매장을 검색해주세요"
+          value={123}
+          onChange={(value) => {
+            console.log(value);
+          }}
+          styleInputContainer="border border-black border-solid "
+        />
+        <CustomTimePicker range className=" flex flex-1 w-full" />
+        <BaseInput
+          title="Store"
+          placeholder="복사할 매장을 검색해주세요"
+          value={123}
+          onChange={(value) => {
+            console.log(value);
+          }}
+          styleInputContainer="border border-black border-solid "
+        />
+      </BaseModal>
+    </>
   );
 };
 
