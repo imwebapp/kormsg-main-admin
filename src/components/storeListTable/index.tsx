@@ -17,7 +17,7 @@ type StoreListTableProps = {
   category?: string;
   typeSorting?: string;
   filter?: { type: string; value: any };
-  onItemStoreClick?: (storeId: string) => void;
+  onItemStoreClick?: (item: any) => void;
 };
 export default function StoreListTable(props: StoreListTableProps) {
   const {
@@ -40,7 +40,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-pointer"
             onClick={() => {
               console.log("items", item);
-              handleItemClick(item.id);
+              handleItemClick(item);
             }}
           >
             이벤트+

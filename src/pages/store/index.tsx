@@ -1,10 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {
-  BaseText,
-  CustomButton,
-  CustomTimePicker,
-  StoreListTable,
-} from "../../components";
+import { BaseText, CustomButton, StoreListTable } from "../../components";
 import { Url } from "../../routers/paths";
 import { useEffect, useState } from "react";
 import { SORTING, STORE_STATUS } from "../../utils/constants";
@@ -14,12 +9,19 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import { Input, Select } from "antd";
+import { DatePicker, GetProps, Input, Select } from "antd";
 import { storeApi } from "../../apis/storeApi";
-import { BaseModal } from "../../components/modal/BaseModal";
 import { BaseInput } from "../../components/input/BaseInput";
-
+import { BaseModal2 } from "../../components/modal/BaseModal2";
+import dayjs from "dayjs";
+import { eventApi } from "../../apis/eventApi";
+import { createEvent } from "@testing-library/react";
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+const { RangePicker } = DatePicker;
 const StorePage = () => {
+  // format date
+  const dateFormat = "YYYY.MM.DD";
+
   const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState(STORE_STATUS.exposure);
   const [countStore, setCountStore] = useState({
@@ -35,9 +37,38 @@ const StorePage = () => {
   const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
   const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
-
+  const [itemSelectShop, setItemSelectShop] = useState<any>({});
+  const [timePickerEvents, setTimePickerEvents] = useState<any>([
+    dayjs(),
+    dayjs(),
+  ]);
+  const [descriptionEvent, setDescriptionEvent] = useState("");
+  const [timePickerEvent, setTimePickerEvent] = useState({
+    start_time: 0,
+    end_time: 0,
+  });
   const [filter, setFilter] = useState<any>();
+
   const { t } = useTranslation();
+
+  const onChange = (
+    value: RangePickerProps["value"],
+    dateString?: [string, string]
+  ) => {
+    const isRequiredDate = dateString && dateString[0] !== "";
+    const timeStampStart = isRequiredDate
+      ? dayjs(dateString[0]).valueOf()
+      : dayjs().valueOf();
+    const timeStampEnd = isRequiredDate
+      ? dayjs(dateString[1]).valueOf()
+      : dayjs().valueOf();
+
+    setTimePickerEvent({
+      start_time: timeStampStart,
+      end_time: timeStampEnd,
+    });
+  };
+
   const getCountStore = async () => {
     try {
       let resultCount: any = await storeApi.getCountStore();
@@ -65,6 +96,27 @@ const StorePage = () => {
         transformedData.unshift({ value: "all", label: "all" });
         setListCategory(transformedData);
       }
+    } catch (error) {}
+  };
+  const _createEvent = async () => {
+    try {
+      const params = {
+        description: descriptionEvent,
+        shop_id: itemSelectShop.id,
+        start_time: timePickerEvent.start_time,
+        end_time: timePickerEvent.end_time,
+        images: [],
+      };
+      console.log("params", params);
+
+      let result: any = await eventApi.createEvent(params);
+      if (result.code === 200) {
+        console.log("123");
+
+        setDescriptionEvent("");
+        setTimePickerEvents([dayjs(), dayjs()]);
+      }
+      console.log("@@@", result);
     } catch (error) {}
   };
   useEffect(() => {
@@ -249,39 +301,54 @@ const StorePage = () => {
           typeStore={selectedButton}
           typeSorting={selectedSorting}
           filter={filter}
-          onItemStoreClick={(value) => {
+          onItemStoreClick={(item) => {
+            setItemSelectShop(item);
             setOpenModalCreateEvent(true);
           }}
         />
       </div>
-      <BaseModal
+      <BaseModal2
         isOpen={openModalCreateEvent}
-        onSubmit={() => {}}
-        title="Create a event"
+        onSubmit={() => {
+          setOpenModalCreateEvent(false);
+          _createEvent();
+        }}
+        title="이벤트+"
         onClose={() => {
+          setTimePickerEvents(undefined);
           setOpenModalCreateEvent(!openModalCreateEvent);
         }}
       >
         <BaseInput
           title="Store"
-          placeholder="복사할 매장을 검색해주세요"
-          value={123}
-          onChange={(value) => {
-            console.log(value);
-          }}
-          styleInputContainer="border border-black border-solid "
+          // placeholder="복사할 매장을 검색해주세요"
+          value={itemSelectShop.title}
+          disabled
+          styleInputContainer="border border-black border-solid"
         />
-        <CustomTimePicker range className=" flex flex-1 w-full" />
+        <div className="flex flex-col my-4">
+          <BaseText locale bold size={14}>
+            행사 기간
+          </BaseText>
+          <RangePicker
+            defaultValue={timePickerEvents}
+            format={dateFormat}
+            onChange={(value, dateString) => onChange(value, dateString)}
+            placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
+            className="w-full mt-1"
+          />
+        </div>
         <BaseInput
-          title="Store"
-          placeholder="복사할 매장을 검색해주세요"
-          value={123}
+          title="행사 설명"
+          placeholder="예시) 오후 할인 1만원"
+          // value={123}
           onChange={(value) => {
-            console.log(value);
+            setDescriptionEvent(value);
           }}
+          required
           styleInputContainer="border border-black border-solid "
         />
-      </BaseModal>
+      </BaseModal2>
     </>
   );
 };
