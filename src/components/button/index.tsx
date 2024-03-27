@@ -10,6 +10,7 @@ interface CustomButtonProps extends ButtonProps {
   bold?: boolean;
   medium?: boolean;
   className?: string; // for tailwindcss
+  classNameTitle?: string; // for tailwindcss
   url?: string;
   primary?: boolean;
   selected?: boolean;
@@ -25,6 +26,7 @@ export default function CustomButton(
     icon,
     medium,
     className,
+    classNameTitle,
     url,
     primary,
     selected,
@@ -47,7 +49,11 @@ export default function CustomButton(
       {url && (
         <img src={url} className={"w-4 h-4 justify-center items-center mt-1"} />
       )}
-      {locale ? t(children as string) : children}
+      {locale ? (
+        <span className={classNameTitle}>{t(children as string)}</span>
+      ) : (
+        children
+      )}
     </Button>
   );
 }

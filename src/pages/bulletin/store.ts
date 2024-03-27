@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import { BoardLinkInterface } from '../../entities';
+import { BOARD } from '../../utils/constants';
 
 interface BulletinStateInterface {
   boardSelected: BoardLinkInterface
   setBoardSelected: (boardSelected: BulletinStateInterface['boardSelected']) => void;
+  lastRefresh: number,
+  setLastRefresh: (lastRefresh: BulletinStateInterface['lastRefresh']) => void;
 }
 
 export const useBulletinState = create<BulletinStateInterface>()(
@@ -11,7 +14,9 @@ export const useBulletinState = create<BulletinStateInterface>()(
     boardSelected: {
       id: "HOME",
       name: "Home",
-    } as BoardLinkInterface,
+    },
     setBoardSelected: (boardSelected) => set({ boardSelected }),
+    lastRefresh: Date.now(),
+    setLastRefresh: (lastRefresh) => set({ lastRefresh }),
   })
 );

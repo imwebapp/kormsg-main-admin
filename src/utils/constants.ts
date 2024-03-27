@@ -1,3 +1,4 @@
+import { CONVERSATION } from './../apis/urlConfig';
 export const Config = {
   HOST_API: process.env.REACT_APP_BASE_URL,
   SOCKET_API: process.env.REACT_APP_BASE_URL_SOCKET,
@@ -123,6 +124,11 @@ export const BOARD_ROUTE = {
   [BOARD.EVENT_BOARD]: ROUTE.EVENT,
   [BOARD.BULLETIN_BOARD]: ROUTE.POST,
   [BOARD.BLOG]: ROUTE.BLOG,
+};
+
+export const MAP_TYPE = {
+  NAVER: 'NAVER',
+  GOOGLE: 'GOOGLE'
 };
 export const CATEGORY_PART1 = {
   타이: "타이",
@@ -447,3 +453,4 @@ export const LIST_REGION = [
     ],
   },
 ];
+

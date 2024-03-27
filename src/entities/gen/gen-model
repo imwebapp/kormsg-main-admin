@@ -34,7 +34,7 @@ rl.question("Please enter entity name : ", (entityName) => {
       type = "any";
     }
 
-    interfaceString += `    ${key}: ${type};\n`;
+    interfaceString += `    ${key}?: ${type};\n`;
   }
 
   interfaceString += "}";
