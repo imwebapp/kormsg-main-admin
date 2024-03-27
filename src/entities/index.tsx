@@ -1,3 +1,15 @@
-import { AccountInterface } from "./account.entity";
+import { BoardLinkInterface } from "./boardlink.entity";
+import { CategoryInterface } from "./category.entity";
+import { EmployeeInterface } from "./employee.entity";
+import { TagThemaInterface } from "./tagthema.entity";
+import { ThemaInterface } from "./thema.entity";
+import { UserInterface } from "./user.entity";
 
-export type { AccountInterface };
+export type {
+  BoardLinkInterface,
+  EmployeeInterface,
+  UserInterface,
+  CategoryInterface,
+  TagThemaInterface,
+  ThemaInterface,
+};

@@ -12,6 +12,7 @@ import {
   UserDetail,
   ReservationDetails,
   AppVersion,
+  BulletinPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -63,7 +64,7 @@ const routes = [
   },
   {
     path: Url.bulletinBoard,
-    element: <div className="p-4">coming soon</div>,
+    element: <BulletinPage/>,
   },
   {
     path: Url.store,

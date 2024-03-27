@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import Images from "../../assets/gen";
@@ -10,11 +10,12 @@ interface IProps {
   titleSize?: number;
   required?: boolean;
   isError?: boolean;
-  value: string | number;
-  onChange: (value: string | any) => void;
+  value?: string | number;
+  defaultValue?: string | number;
+  onChange?: (value: string | any) => void;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: () => void;
+  onSave?: (value?: string | any) => void;
   autoFocus?: boolean;
   placeholder?: string;
   type?: "text" | "password" | "number" | "email";
@@ -26,13 +27,16 @@ interface IProps {
   iconLeft?: ReactNode | string;
   iconLeftInactive?: ReactNode | string;
   iconRight?: ReactNode | string;
+  widgetRight?: ReactNode;
   iconRightInactive?: ReactNode | string;
 };
 
 export const BaseInput = (props: IProps) => {
-  const { title, titleSize, required, value, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const {  title, titleSize, required, value, defaultValue, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
+  const [_defaultValue, setDefaultValue] = useState<string | number | undefined>(defaultValue);
+
   const handleFocus = () => {
     onFocus && onFocus();
     setIsFocused(true);
@@ -43,16 +47,18 @@ export const BaseInput = (props: IProps) => {
     setIsFocused(false);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event:any) => {
     if (event.key === 'Enter') {
       if (onSave) {
-        onSave();
+        onSave(event.target.value);
+        setIsFocused(false);
+        setDefaultValue(event.target.value)
       }
     }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+    onChange && onChange(event.target.value);
   };
 
   return (
@@ -84,6 +90,7 @@ export const BaseInput = (props: IProps) => {
           )}
           type={type || "text"}
           value={value}
+          defaultValue={_defaultValue}
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -93,9 +100,10 @@ export const BaseInput = (props: IProps) => {
           onKeyDown={handleKeyDown}
           {...rest}
         />
-        {iconRight && (
+        {iconRight &&   (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
         )}
+        {widgetRight}
       </div>
     </div>
 

@@ -1,18 +1,12 @@
 {
-  "name": "John",
-  "age": 30,
-  "birthdate": "1990-01-01",
-  "isStudent": false,
-  "hobbies": [
-    "reading",
-    "gaming"
-  ],
-  "hobbies2": [
-    1,
-    2
-  ],
-  "address": {
-    "city": "New York",
-    "country": "USA"
-  }
+  "id": "2fda3e40-eb5a-11ee-8f60-01d91ac32613",
+  "status": true,
+  "created_at_unix_timestamp": "1711448307748",
+  "created_at": "2024-03-26T10:18:27.749Z",
+  "updated_at": "2024-03-26T10:18:27.749Z",
+  "name": "",
+  "images": "",
+  "type": "",
+  "image_active": "",
+  "image_inactive": ""
 }
