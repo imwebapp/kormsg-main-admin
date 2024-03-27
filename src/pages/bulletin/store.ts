@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { BoardLinkInterface } from '../../entities';
+import { BOARD } from '../../utils/constants';
 
 interface BulletinStateInterface {
   boardSelected: BoardLinkInterface

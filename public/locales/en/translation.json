@@ -221,5 +221,12 @@
   "회원을 닉네임 혹은 아이디로 검색해주세요": "Please search for members by nickname or ID",
   "매장 주인 회원 설정": "Store owner membership settings",
   "복사할 매장을 검색해주세요": "Please search for the store you want to copy from",
-  "매장 복사 기능": "Store copy function"
+  "매장 복사 기능": "Store copy function",
+  "Select": "Select",
+  "Post": "Post",
+  "Conversation": "Conversation",
+  "Reservation": "Reservation",
+  "Short video": "Short video",
+  "Profile": "Profile",
+  "There are no thema containing this board type": "There are no thema containing this board type"
 }

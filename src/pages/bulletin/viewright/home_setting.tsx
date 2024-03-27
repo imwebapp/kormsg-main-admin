@@ -3,7 +3,7 @@ import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BannerInterface } from "../../../entities/banner.entity";
 import { NAVBAR } from "../../../utils/constants";
 import { AdminSettingInterface } from "../../../entities/adminsetting.entity";
@@ -13,6 +13,7 @@ import { HomeSettingApi } from "../../../apis/homeSettingApi";
 import { NavBarApi } from "../../../apis/navbarApi";
 import { NavBarInterface } from "../../../entities/navbar.entity";
 import { showError } from "../../../utils/showToast";
+import { useTranslation } from "react-i18next";
 
 export default function HomeSetting() {
   return (
@@ -108,6 +109,7 @@ const Banner = () => {
       setBanners(data);
     } catch (error) {}
   };
+
   useEffect(() => {
     getListBanner();
   }, []);
@@ -160,82 +162,100 @@ const Banner = () => {
 
   return (
     <>
-      <div className="h-[1px] bg-darkNight100"></div>
-      <div className="flex flex-row justify-between mt-4">
-        <BaseText locale bold className="mb-4">
-          Banner
-        </BaseText>
-        <img
-          onClick={createBanner}
-          src={Images.plus}
-          className="w-6 h-6 cursor-pointer"
-        />
-      </div>
-      <div className="flex flex-col">
-        {banners.map((item, index) => {
-          return (
-            <div key={index}>
-              <div className="flex flex-row items-center justify-between">
-                <BaseText medium>
-                  <BaseText locale>Banner</BaseText> {index + 1}
-                </BaseText>
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id={"bannerInput" + index}
-                    style={{ display: "none" }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      handleImageChange(e, item);
-                    }}
-                  />
-                  <label
-                    htmlFor={"bannerInput" + index}
-                    className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
-                  >
-                    <img src={Images.upload} className="w-5 h-5 mr-2" />
-                    <BaseText locale bold className="text-dayBreakBlue500">
-                      Upload
-                    </BaseText>
-                  </label>
-                </div>
-              </div>
+      {useMemo(
+        () => (
+          <>
+            <div className="h-[1px] bg-darkNight100"></div>
+            <div className="flex flex-row justify-between mt-4">
+              <BaseText locale bold className="mb-4">
+                Banner
+              </BaseText>
               <img
-                src={item.thumbnail}
-                className="w-full h-[128px] mt-4 object-cover rounded-xl"
+                onClick={createBanner}
+                src={Images.plus}
+                className="w-6 h-6 cursor-pointer"
               />
-              <div className="flex flex-row justify-between items-center mt-4">
-                <BaseText locale medium>
-                  Link to
-                </BaseText>
-                <BaseInput
-                  key={Date.now() + index}
-                  styleInputContainer="h-9"
-                  onSave={(value) => {
-                    console.log("value ", value);
-                    updateBanner({
-                      ...item,
-                      url: value,
-                    });
-                  }}
-                  defaultValue={item.url}
-                  placeholder="Enter Link"
-                  className="w-[170px]"
-                />
-              </div>
-              <CustomButton
-                onClick={() => deleteBanner(item.id || "")}
-                className="my-4 bg-dustRed50 border-none w-full"
-                classNameTitle="text-dustRed500"
-                medium
-                locale
-              >
-                Delete
-              </CustomButton>
             </div>
-          );
-        })}
-      </div>
+            <div className="flex flex-col">
+              {banners.map((item, index) => {
+                return (
+                  <div key={index}>
+                    <div className="flex flex-row items-center justify-between">
+                      <BaseText medium>
+                        <BaseText locale>Banner</BaseText> {index + 1}
+                      </BaseText>
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id={"bannerInput" + index}
+                          style={{ display: "none" }}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            handleImageChange(e, item);
+                          }}
+                        />
+                        <label
+                          htmlFor={"bannerInput" + index}
+                          className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
+                        >
+                          <img src={Images.upload} className="w-5 h-5 mr-2" />
+                          <BaseText
+                            locale
+                            bold
+                            className="text-dayBreakBlue500"
+                          >
+                            Upload
+                          </BaseText>
+                        </label>
+                      </div>
+                    </div>
+                    <img
+                      src={item.thumbnail}
+                      className="w-full h-[128px] mt-4 object-cover rounded-xl"
+                    />
+                    <div className="flex flex-row justify-between items-center mt-4">
+                      <BaseText locale medium>
+                        Link to
+                      </BaseText>
+                      <BaseInput
+                        key={Date.now() + index}
+                        styleInputContainer="h-9"
+                        onSave={(value) => {
+                          updateBanner({
+                            ...item,
+                            url: value,
+                          });
+                        }}
+                        onBlur={(value) => {
+                          updateBanner({
+                            ...item,
+                            url: value,
+                          });
+                        }}
+                        defaultValue={item.url}
+                        placeholder="Enter Link"
+                        className="w-[170px]"
+                      />
+                    </div>
+                    <CustomButton
+                      onClick={() => deleteBanner(item.id || "")}
+                      className="my-4 bg-dustRed50 border-none w-full"
+                      classNameTitle="text-dustRed500"
+                      medium
+                      locale
+                    >
+                      Delete
+                    </CustomButton>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        ),
+        [banners]
+      )}
     </>
   );
 };
@@ -243,6 +263,7 @@ const Banner = () => {
 const NavigationBar = () => {
   const [navbars, setNavbar] = useState<Array<NavBarInterface>>([]);
   const { setLastRefresh } = useBulletinState((state) => state);
+  const { t } = useTranslation();
 
   const getNavBars = async () => {
     try {
@@ -265,7 +286,15 @@ const NavigationBar = () => {
     }
   };
 
-  const deleteBanner = async (id: string) => {
+  const updateNav = async (item: NavBarInterface) => {
+    try {
+      await NavBarApi.updateNavbar(item.id || "", item);
+      getNavBars();
+      setLastRefresh(Date.now());
+    } catch (error) {}
+  };
+
+  const deleteNav = async (id: string) => {
     try {
       await NavBarApi.deleteNavbar(id);
       setLastRefresh(Date.now());
@@ -275,92 +304,173 @@ const NavigationBar = () => {
     }
   };
 
+  const handleImageChange = async (
+    isActiveIcon: boolean,
+    e: React.ChangeEvent<HTMLInputElement>,
+    item: NavBarInterface
+  ) => {
+    try {
+      const file = e.target.files?.[0];
+      if (file) {
+        const respon = await UploadApi.uploadImage(file);
+        updateNav({
+          ...item,
+          image_inactive: isActiveIcon ? item.image_inactive : respon.url,
+          image_active: isActiveIcon ? respon.url : item.image_active,
+        });
+      }
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   return (
     <>
-      <div className="flex flex-row justify-between mt-4">
-        <BaseText locale bold className="mb-4">
-          NAVIGATION BAR
-        </BaseText>
-        <img
-          onClick={createNavBar}
-          src={Images.plus}
-          className="w-6 h-6 cursor-pointer"
-        />
-      </div>
-      <div>
-        {navbars.map((item, index) => {
-          return (
-            <div key={index} className="flex flex-col">
-              <div className="flex flex-row items-center">
-                <BaseText medium className="w-[92px]">
-                  <BaseText locale>Label</BaseText> {index + 1}
-                </BaseText>
-                <BaseInput
-                  styleInputContainer="h-9"
-                  onChange={() => {}}
-                  value=""
-                  placeholder="Enter Label"
-                  className="flex-1 "
-                />
-              </div>
-              <div className="flex flex-row mt-2">
-                <div className="w-[92px]"></div>
-                <BaseInputSelect
-                  className="flex-1"
-                  onChange={() => {}}
-                  required={true}
-                  allowClear={false}
-                  size="middle"
-                  textInputSize={12}
-                  value="Home"
-                  options={[
-                    {
-                      value: "Home",
-                      label: "Home",
-                    },
-                    {
-                      value: "Shop",
-                      label: "Shop",
-                    },
-                    {
-                      value: "Common",
-                      label: "Common",
-                    },
-                    {
-                      value: "Profile",
-                      label: "Profile",
-                    },
-                  ]}
-                />
-              </div>
-              <div className="flex flex-row mt-2">
-                <div className="w-[92px]"></div>
-                <div className="flex flex-row flex-1">
-                  <div className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer">
-                    <img src={Images.upload} className="w-5 h-5" />
-                    <BaseText size={12}>Inactive icon</BaseText>
-                  </div>
-                </div>
-                <div className="flex flex-row flex-1 ml-2">
-                  <div className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer">
-                    <img src={Images.upload} className="w-5 h-5" />
-                    <BaseText size={12}>Active icon</BaseText>
-                  </div>
-                </div>
-              </div>
-              <CustomButton
-                onClick={() => deleteBanner(item.id || "")}
-                className="my-4 bg-dustRed50 border-none w-full"
-                classNameTitle="text-dustRed500"
-                medium
-                locale
-              >
-                Delete
-              </CustomButton>
+      {useMemo(
+        () => (
+          <div>
+            <div className="flex flex-row justify-between mt-4">
+              <BaseText locale bold className="mb-4">
+                NAVIGATION BAR
+              </BaseText>
+              <img
+                onClick={createNavBar}
+                src={Images.plus}
+                className="w-6 h-6 cursor-pointer"
+              />
             </div>
-          );
-        })}
-      </div>
+            <div>
+              {navbars.map((item, index) => {
+                return (
+                  <div key={index} className="flex flex-col">
+                    <div className="flex flex-row items-center">
+                      <BaseText medium className="w-[92px]">
+                        <BaseText locale>Label</BaseText> {index + 1}
+                      </BaseText>
+                      <BaseInput
+                        key={Date.now() + index}
+                        styleInputContainer="h-9"
+                        onSave={(value) => {
+                          updateNav({
+                            ...item,
+                            name: value,
+                          });
+                        }}
+                        onBlur={(value) => {
+                          updateNav({
+                            ...item,
+                            name: value,
+                          });
+                        }}
+                        defaultValue={item.name}
+                        placeholder="Enter Label"
+                        className="flex-1 "
+                      />
+                    </div>
+                    <div className="flex flex-row mt-2">
+                      <div className="w-[92px]"></div>
+                      <BaseInputSelect
+                        className="flex-1"
+                        onChange={(value) => {
+                          updateNav({
+                            ...item,
+                            type: value,
+                          });
+                        }}
+                        defaultValue={item.type}
+                        required={true}
+                        allowClear={false}
+                        size="middle"
+                        textInputSize={12}
+                        placeholder="Select"
+                        options={Object.values(NAVBAR).map((item) => {
+                          return {
+                            label: t(item),
+                            value: item,
+                          };
+                        })}
+                      />
+                    </div>
+                    <div className="flex flex-row mt-2">
+                      <div className="w-[92px]"></div>
+                      <div className="flex flex-row flex-1">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id={"Inactive icon" + index}
+                          style={{ display: "none" }}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            handleImageChange(false, e, item);
+                          }}
+                        />
+                        <label
+                          htmlFor={"Inactive icon" + index}
+                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
+                        >
+                          {item.image_inactive ? (
+                            <img
+                              src={item.image_inactive}
+                              className="object-contain w-[86px] h-[86px]"
+                            />
+                          ) : (
+                            <>
+                              <img src={Images.upload} className="w-5 h-5" />
+                              <BaseText size={12}>
+                                {t("Inactive icon")}
+                              </BaseText>
+                            </>
+                          )}
+                        </label>
+                      </div>
+                      <div className="flex flex-row flex-1 ml-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          id={"active icon" + index}
+                          style={{ display: "none" }}
+                          onChange={(
+                            e: React.ChangeEvent<HTMLInputElement>
+                          ) => {
+                            handleImageChange(true, e, item);
+                          }}
+                        />
+                        <label
+                          htmlFor={"active icon" + index}
+                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
+                        >
+                          {item.image_active ? (
+                            <img
+                              src={item.image_active}
+                              className="object-contain w-[86px] h-[86px]"
+                            />
+                          ) : (
+                            <>
+                              <img src={Images.upload} className="w-5 h-5" />
+                              <BaseText size={12}>{t("Active icon")}</BaseText>
+                            </>
+                          )}
+                        </label>
+                      </div>
+                    </div>
+                    <CustomButton
+                      onClick={() => deleteNav(item.id || "")}
+                      className="my-4 bg-dustRed50 border-none w-full"
+                      classNameTitle="text-dustRed500"
+                      medium
+                      locale
+                    >
+                      Delete
+                    </CustomButton>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ),
+        [navbars, t]
+      )}
     </>
   );
 };

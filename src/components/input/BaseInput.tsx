@@ -13,7 +13,7 @@ interface IProps {
   value?: string | number;
   defaultValue?: string | number;
   onChange?: (value: string | any) => void;
-  onBlur?: () => void;
+  onBlur?: (value?: string | any) => void;
   onFocus?: () => void;
   onSave?: (value?: string | any) => void;
   autoFocus?: boolean;
@@ -35,15 +35,14 @@ export const BaseInput = (props: IProps) => {
   const {  title, titleSize, required, value, defaultValue, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
-  const [_defaultValue, setDefaultValue] = useState<string | number | undefined>(defaultValue);
 
   const handleFocus = () => {
     onFocus && onFocus();
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
-    onBlur && onBlur()
+  const handleBlur = (event : any) => {
+    onBlur && onBlur(event.target.value)
     setIsFocused(false);
   };
 
@@ -51,8 +50,6 @@ export const BaseInput = (props: IProps) => {
     if (event.key === 'Enter') {
       if (onSave) {
         onSave(event.target.value);
-        setIsFocused(false);
-        setDefaultValue(event.target.value)
       }
     }
   };
@@ -90,7 +87,7 @@ export const BaseInput = (props: IProps) => {
           )}
           type={type || "text"}
           value={value}
-          defaultValue={_defaultValue}
+          defaultValue={defaultValue}
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}

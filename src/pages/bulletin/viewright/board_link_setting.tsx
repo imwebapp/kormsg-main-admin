@@ -1,17 +1,159 @@
 import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseInput } from "../../../components/input/BaseInput";
-import { useState } from "react";
-import { BOARD, BOARD_TEXT } from "../../../utils/constants";
+import { useEffect, useRef, useState } from "react";
+import { BOARD, BOARD_TEXT, MAP_TYPE } from "../../../utils/constants";
 import { classNames } from "../../../utils/common";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import ThemaTable from "./thema_table";
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
+import { ThemaApi } from "../../../apis/themaApi";
+import {
+  BoardLinkInterface,
+  CategoryInterface,
+  TagThemaInterface,
+  ThemaInterface,
+} from "../../../entities";
+import { useBulletinState } from "../store";
+import { UploadApi } from "../../../apis/uploadApi";
+import { showError } from "../../../utils/showToast";
+import { BoardLinkApi } from "../../../apis/boardLinkApi";
+import { useTranslation } from "react-i18next";
+import { CategoryApi } from "../../../apis/categoryApi";
+import { TagApi } from "../../../apis/tagApi";
+import { NEW_ID } from "../viewleft";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
   const [openModalThema, setOpenModalThema] = useState(false);
-  const [boardTypeSelected, setBoardTypeSelected] = useState<string>("");
+  const [themas, setThemas] = useState<Array<ThemaInterface>>([]);
+  const [tags, setTags] = useState<Array<TagThemaInterface>>([]);
+  const { boardSelected, setBoardSelected, setLastRefresh } = useBulletinState(
+    (state) => state
+  );
+  const [boardTypeSelected, setBoardTypeSelected] = useState<string>(
+    boardSelected.route || ""
+  );
+
+  const { t } = useTranslation();
+
+  const getListThemaWithBoardType = async (boardTypeSelected: string) => {
+    if (boardTypeSelected === "") return;
+    const filter = [
+      BOARD.BULLETIN_BOARD,
+      BOARD.EVENT_BOARD,
+      BOARD.RECRUIT_BOARD,
+      BOARD.RECRUIT_BOARD_2,
+      BOARD.SHOP_SALES_BOARD,
+    ].includes(boardTypeSelected)
+      ? `{"visible_boards": {"$contains": ["${boardTypeSelected}"]}}`
+      : "";
+    try {
+      const data: Array<ThemaInterface> = await ThemaApi.getList({
+        filter,
+      });
+      setThemas(data);
+      if (data[0]) {
+        const dataCategories = await CategoryApi.getList({
+          filter: `{"thema_id":"${data[0].id}"}`,
+        });
+        const category_ids = dataCategories.map(
+          (item: CategoryInterface) => item.id
+        );
+        updateOrCreateBoardLink({
+          ...boardSelected,
+          route: boardTypeSelected,
+          thema_id: data[0].id,
+          category_ids: category_ids,
+        });
+      } else {
+        showError(t("There are no thema containing this board type"));
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getListThemaWithBoardType(boardTypeSelected);
+  }, []);
+
+  const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
+    console.log('boardLink',boardLink);
+    
+    setBoardSelected(boardLink);
+    try {
+      if (boardLink.id && boardLink.id !== NEW_ID) {
+        const data = await BoardLinkApi.update(boardLink.id, boardLink);
+        setBoardSelected(data);
+      } else {
+        const { id, ...linkData } = boardLink;
+        const data = await BoardLinkApi.create(linkData);
+        console.log('data',data);
+        
+        setBoardSelected(data);
+      }
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error)
+    }
+  };
+
+  const getTagsWithThema = async () => {
+    try {
+      const data = await TagApi.getList({
+        filter: `{"thema_id":"${boardSelected.thema_id}"}`,
+      });
+      setTags(data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getTagsWithThema();
+  }, [boardSelected]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (file) {
+        const respon = await UploadApi.uploadImage(file);
+        updateOrCreateBoardLink({
+          ...boardSelected,
+          image: respon.url,
+        });
+      }
+    } catch (error) {
+      showError(error);
+    }
+  };
+
+  const getCategories = async (thema_id: string) => {
+    try {
+      const data = await CategoryApi.getList({
+        filter: `{"thema_id":"${thema_id}"}`,
+      });
+      const category_ids = data.map((item: CategoryInterface) => item.id);
+      updateOrCreateBoardLink({
+        ...boardSelected,
+        thema_id,
+        category_ids: category_ids,
+      });
+    } catch (error) {}
+  };
+
+  const deleteBoardLink = async () => {
+    try {
+      if (boardSelected.id && boardSelected.id !== NEW_ID) {
+        await BoardLinkApi.delete(boardSelected.id);
+      }
+      setBoardSelected({
+        id: "HOME",
+        name: "Home",
+      })
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <BaseText locale medium className="mt-4">
@@ -21,28 +163,52 @@ export default function BulletinSetting() {
         <BaseText locale medium>
           Image
         </BaseText>
-        <div className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer">
+        <input
+          type="file"
+          accept="image/*"
+          id="image-link"
+          style={{ display: "none" }}
+          onChange={handleImageChange}
+        />
+        <label
+          htmlFor="image-link"
+          className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
+        >
           <img src={Images.upload} className="w-5 h-5 mr-2" />
           <BaseText locale bold className="text-dayBreakBlue500">
             Upload
           </BaseText>
-        </div>
+        </label>
       </div>
       <div className="flex flex-row justify-center items-center mt-[10px]">
-        <img
-          src="https://vcdn1-ngoisao.vnecdn.net/2020/12/02/Ngoc-Trinh-4-8143-1606887703.jpg?w=460&h=0&q=100&dpr=2&fit=crop&s=KpBRxgyI6gGuvV-8RpwSNg"
-          alt=""
-          className="w-[100px] h-[100px] object-cover rounded-xl"
-        />
+        {boardSelected.image && (
+          <img
+            src={boardSelected.image}
+            alt=""
+            className="w-[100px] h-[100px] object-cover rounded-xl"
+          />
+        )}
       </div>
       <div className="flex flex-row justify-between items-center mt-4">
         <BaseText locale medium>
           Board Name
         </BaseText>
         <BaseInput
+          key={Date.now()}
           styleInputContainer="h-9"
-          onChange={() => {}}
-          value=""
+          onSave={(value) => {
+            updateOrCreateBoardLink({
+              ...boardSelected,
+              name: value,
+            });
+          }}
+          onBlur={(value) => {
+            updateOrCreateBoardLink({
+              ...boardSelected,
+              name: value,
+            });
+          }}
+          defaultValue={boardSelected.name}
           placeholder="Typing...."
           className="w-[170px]"
         />
@@ -63,7 +229,10 @@ export default function BulletinSetting() {
           {Object.keys(BOARD).map((item, index) => {
             return (
               <div
-                onClick={() => setBoardTypeSelected(item)}
+                onClick={() => {
+                  setBoardTypeSelected(item);
+                  getListThemaWithBoardType(item);
+                }}
                 key={index}
                 className={classNames(
                   "w-20 h-20  rounded-xl flex justify-center items-center flex-col cursor-pointer",
@@ -101,35 +270,23 @@ export default function BulletinSetting() {
           Thema
         </BaseText>
         <BaseInputSelect
+          key={Date.now()}
           className="!min-w-[100px]"
-          onChange={() => {}}
+          onChange={(value: any) => {
+            getCategories(value);
+          }}
+          defaultValue={boardSelected.thema_id}
           required={true}
           allowClear={false}
           size="middle"
           textInputSize={12}
-          value="1"
-          options={[
-            {
-              value: "1",
-              label: "1",
-            },
-            {
-              value: "2",
-              label: "2",
-            },
-            {
-              value: "3",
-              label: "3",
-            },
-            {
-              value: "4",
-              label: "4",
-            },
-            {
-              value: "5",
-              label: "5",
-            },
-          ]}
+          placeholder="Select"
+          options={themas.map((item, index) => {
+            return {
+              label: t(item.name || ""),
+              value: item.id || "",
+            };
+          })}
         />
         <img
           onClick={() => setOpenModalThema(true)}
@@ -142,57 +299,58 @@ export default function BulletinSetting() {
           Map Brand
         </BaseText>
         <BaseInputSelect
-          onChange={() => {}}
+          key={Date.now()}
+          placeholder="Select"
+          onChange={(value) => {
+            updateOrCreateBoardLink({
+              ...boardSelected,
+              geolocation_api_type: value,
+            });
+          }}
           required={true}
           allowClear={false}
           size="middle"
           textInputSize={12}
-          value="Naver Map"
-          options={[
-            {
-              value: "Naver Map",
-              label: "Naver Map",
-            },
-            {
-              value: "Google Map",
-              label: "Google Map",
-            },
-          ]}
+          defaultValue={boardSelected.geolocation_api_type}
+          options={Object.values(MAP_TYPE).map((item) => {
+            return {
+              label: t(item),
+              value: item,
+            };
+          })}
         />
       </div>
-      
+
       <div className="flex flex-row justify-between items-center mt-4">
         <BaseText locale medium>
           Tags
         </BaseText>
       </div>
       <div className="flex flex-wrap gap-3 mt-4">
-        {["Thaimassage", "Thaimassage home", "Thaimassage home", "home"].map(
-          (item, index) => {
-            return (
-              <div
-                key={index}
-                className="px-3 py-2 bg-darkNight50 rounded-full"
-              >
-                <BaseText size={12} medium>
-                  {item}
-                </BaseText>
-              </div>
-            );
-          }
-        )}
+        {tags.map((item, index) => {
+          return (
+            <div key={index} className="px-3 py-2 bg-darkNight50 rounded-full">
+              <BaseText size={12} medium>
+                {item.name}
+              </BaseText>
+            </div>
+          );
+        })}
       </div>
-      <CustomButton
-        className="mt-5 bg-dustRed50 border-none"
-        classNameTitle="text-dustRed500"
-        medium
-        locale
-      >
-        Delete Main
-      </CustomButton>
+      {boardSelected.id && boardSelected.id !== NEW_ID && (
+        <CustomButton
+          onClick={deleteBoardLink}
+          className="mt-5 bg-dustRed50 border-none"
+          classNameTitle="text-dustRed500"
+          medium
+          locale
+        >
+          Delete Main
+        </CustomButton>
+      )}
 
       <BaseModal2
-        width='80vw'
+        width="80vw"
         isOpen={openModalThema}
         onClose={() => {
           setOpenModalThema(false);

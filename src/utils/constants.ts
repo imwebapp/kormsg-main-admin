@@ -124,3 +124,9 @@ export const NAVBAR = {
   SHORT_VIDEO: 'Short video',
   PROFILE: 'Profile',
 }
+
+
+export const MAP_TYPE = {
+  NAVER: 'NAVER',
+  GOOGLE: 'GOOGLE'
+}
