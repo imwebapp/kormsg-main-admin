@@ -52,6 +52,7 @@ export default class Images {
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
     static readonly copy = require("../../../src/assets/images/copy.png");
     static readonly cross = require("../../../src/assets/images/cross.png");
+    static readonly dataEmpty = require("../../../src/assets/images/dataEmpty.png");
     static readonly dot = require("../../../src/assets/images/dot.png");
     static readonly edit = require("../../../src/assets/images/edit.png");
     static readonly edit2 = require("../../../src/assets/images/edit2.png");
@@ -67,10 +68,12 @@ export default class Images {
     static readonly minusCircle = require("../../../src/assets/images/minusCircle.png");
     static readonly padlock = require("../../../src/assets/images/padlock.png");
     static readonly plusCircle = require("../../../src/assets/images/plusCircle.png");
+    static readonly search = require("../../../src/assets/images/search.png");
     static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
     static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
     static readonly statistic3 = require("../../../src/assets/images/statistic3.png");
     static readonly statistic4 = require("../../../src/assets/images/statistic4.png");
+    static readonly twoDot = require("../../../src/assets/images/twoDot.png");
     static readonly web = require("../../../src/assets/images/web.png");
     static readonly web2 = require("../../../src/assets/images/web2.png");
 }

@@ -29,11 +29,11 @@ export const ListTypeUser = [
 ];
 
 export const TypeUser = {
-  BIZ_USER: 'BIZ_USER',
-  FREE_USER: 'FREE_USER',
-  PAID_USER: 'PAID_USER',
-  ADMIN: 'ADMIN',
-}
+  BIZ_USER: "BIZ_USER",
+  FREE_USER: "FREE_USER",
+  PAID_USER: "PAID_USER",
+  ADMIN: "ADMIN",
+};
 
 export const listOptionUserDetail = [
   {
@@ -68,6 +68,18 @@ export const INIT_TAB_USER_DETAIL = {
   HISTORY_PAYMENT: "historyPayment",
 };
 
+export const STORE_STATUS = {
+  exposure: "exposure",
+  underReview: "underReview",
+  reviewRejected: "reviewRejected",
+  adExpired: "adExpired",
+  eventOngoing: "eventOngoing",
+};
+export const SORTING = {
+  NONE: "NONE",
+  DESC: "DESC",
+  ASC: "ASC",
+};
 export const BOARD = {
   DISTANCE_ORDER_BOARD: 'DISTANCE_ORDER_BOARD',
   DISTANCE_ORDER_BOARD_2: 'DISTANCE_ORDER_BOARD_2',
@@ -113,4 +125,3 @@ export const BOARD_ROUTE = {
   [BOARD.BULLETIN_BOARD]: ROUTE.POST,
   [BOARD.BLOG]: ROUTE.BLOG,
 }
-

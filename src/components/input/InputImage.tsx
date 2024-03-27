@@ -49,6 +49,7 @@ export const BaseInputImage = (props: Iprops) => {
             <input
                 ref={fileInputRef}
                 type='file'
+                accept="image/*"
                 hidden
                 onChange={(e) => {
                     handleImageChange(e)
@@ -62,7 +63,7 @@ export const BaseInputImage = (props: Iprops) => {
                     <img
                         src={Images.closeCircle}
                         className="absolute z-10 w-8 h-8 cursor-pointer top-2 right-2"
-                        alt="Image"
+                        alt="closeCircle"
                     />
                     <img
                         src={image}

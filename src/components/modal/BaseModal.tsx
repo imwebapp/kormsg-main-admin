@@ -16,10 +16,11 @@ interface BaseModalProps {
     nameConfirm?: string;
     styleButtonCancel?: string;
     styleButtonConfirm?: string;
+    hideButton?: boolean;
 }
 
 export const BaseModal = (props: BaseModalProps) => {
-    const { isOpen, onSubmit, onClose, title, children, disableSubmitBtn, nameCancel, nameConfirm, styleTitle, styleButtonCancel, styleButtonConfirm } = props;
+    const { isOpen, onSubmit, onClose, title, children,hideButton, disableSubmitBtn, nameCancel, nameConfirm, styleTitle, styleButtonCancel, styleButtonConfirm } = props;
     const [isShown, setIsShown] = useState<boolean>(isOpen);
 
     const closeModal = () => {
@@ -58,26 +59,28 @@ export const BaseModal = (props: BaseModalProps) => {
                             <div className="max-h-[70vh] px-6 py-4 overflow-auto">
                                 {children}
                             </div>
-                            <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
-                                <CustomButton
-                                    onClick={closeModal}
-                                    locale
-                                    bold
-                                    className={classNames(" w-full py-6", styleButtonCancel)}
-                                >
-                                    {nameCancel || 'Cancel'}
-                                </CustomButton>
-                                <CustomButton
-                                    onClick={submitModal}
-                                    primary
-                                    locale
-                                    bold
-                                    className={classNames("w-full py-6", styleButtonConfirm)}
-                                    disabled={disableSubmitBtn}
-                                >
-                                    {nameConfirm || 'Confirm'}
-                                </CustomButton>
-                            </div>
+                            {hideButton ? null : (
+                                <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
+                                    <CustomButton
+                                        onClick={closeModal}
+                                        locale
+                                        bold
+                                        className={classNames(" w-full py-6", styleButtonCancel)}
+                                    >
+                                        {nameCancel || 'Cancel'}
+                                    </CustomButton>
+                                    <CustomButton
+                                        onClick={submitModal}
+                                        primary
+                                        locale
+                                        bold
+                                        className={classNames("w-full py-6", styleButtonConfirm)}
+                                        disabled={disableSubmitBtn}
+                                    >
+                                        {nameConfirm || 'Confirm'}
+                                    </CustomButton>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

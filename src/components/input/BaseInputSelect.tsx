@@ -10,10 +10,10 @@ interface InputProps extends SelectProps {
     titleSize?: number;
     required?: boolean;
     isError?: boolean;
-    value?: string;
+    value?: string | string[]; // Adjusted to accept string or string array
     size?: 'large' | 'middle' | 'small';
     textInputSize?: number;
-    onChange: (value: string) => void;
+    onChange: (value: string | string[]) => void; // Adjusted onChange to accept string or string array
     options: { value: string | number, label: string, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss
@@ -27,25 +27,25 @@ interface InputProps extends SelectProps {
     placeholder?: string;
     multiple?: boolean;
     allowClear?: boolean;
-};
+}
 
 export const BaseInputSelect = (props: InputProps) => {
-    const { title, titleSize,textInputSize, required, value, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
+    const { title, titleSize, textInputSize, required, value, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const { t } = useTranslation();
-    const [valueSelect, setValueSelect] = useState<string | undefined>(value);
+    const [valueSelect, setValueSelect] = useState<string | string[] | undefined>(value); // Adjusted state to accept string or string array
 
-    const handleChange = (value: string) => {
+    const handleChange = (value: string | string[]) => {
         setValueSelect(value);
         onChange(value);
     };
+
     useEffect(() => {
         if (value)
             setValueSelect(value);
         else
             setValueSelect(undefined);
     }, [value]);
-    {console.log('allowClear',allowClear)}
 
     return (
         <div className={classNames('flex flex-col min-w-fit', className)}>
@@ -82,7 +82,7 @@ export const BaseInputSelect = (props: InputProps) => {
                     allowClear={allowClear != undefined ? allowClear : true}
                     mode={multiple ? 'multiple' : undefined}
                     optionRender={(node) => {
-                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : valueSelect === node.value;
+                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value as string)) : valueSelect === node.value;
                         return (
                             <div className={classNames('flex flex-row items-center ')}>
                                 <BaseText locale size={textInputSize || 16} medium className={classNames(
@@ -92,9 +92,8 @@ export const BaseInputSelect = (props: InputProps) => {
                                     {node.label}
                                 </BaseText>
                                 {
-                                    valueSelect === node.value && <CheckOutlined style={{ marginLeft: '8px' }} />
+                                    multiple ? (<></>) : (check && <CheckOutlined style={{ marginLeft: '8px' }} />)
                                 }
-
                             </div>
                         );
                     }}
