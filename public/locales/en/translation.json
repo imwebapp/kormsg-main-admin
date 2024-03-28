@@ -227,5 +227,12 @@
   "reviewRejected": "Refusal of review",
   "adExpired": "Ad Expires",
   "eventOngoing": "During the event",
-  "Search": "Search"
+  "Search": "Search",
+  "Select": "Select",
+  "Post": "Post",
+  "Conversation": "Conversation",
+  "Reservation": "Reservation",
+  "Short video": "Short video",
+  "Profile": "Profile",
+  "There are no thema containing this board type": "There are no thema containing this board type"
 }

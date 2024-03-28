@@ -25,12 +25,13 @@ interface InputProps extends SelectProps {
     iconRight?: ReactNode;
     iconRightInactive?: ReactNode;
     placeholder?: string;
+    defaultValue?: string;
     multiple?: boolean;
     allowClear?: boolean;
 };
 
 export const BaseInputSelect = (props: InputProps) => {
-    const { title, titleSize,textInputSize, required, value, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
+    const { title, titleSize,textInputSize, required, value, defaultValue, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const { t } = useTranslation();
     const [valueSelect, setValueSelect] = useState<string | undefined>(value);
@@ -45,7 +46,6 @@ export const BaseInputSelect = (props: InputProps) => {
         else
             setValueSelect(undefined);
     }, [value]);
-    {console.log('allowClear',allowClear)}
 
     return (
         <div className={classNames('flex flex-col min-w-fit', className)}>
@@ -74,6 +74,7 @@ export const BaseInputSelect = (props: InputProps) => {
             >
                 <Select
                     value={valueSelect}
+                    defaultValue={defaultValue}
                     placeholder={t(placeholder || '')}
                     onChange={handleChange}
                     disabled={disabled}
@@ -81,8 +82,8 @@ export const BaseInputSelect = (props: InputProps) => {
                     size={size || 'large'}
                     allowClear={allowClear != undefined ? allowClear : true}
                     mode={multiple ? 'multiple' : undefined}
-                    optionRender={(node) => {
-                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : valueSelect === node.value;
+                    optionRender={(node :any) => {
+                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : (valueSelect === node.value || (!valueSelect && node.value === defaultValue));
                         return (
                             <div className={classNames('flex flex-row items-center ')}>
                                 {typeof node.label === 'string' ? <BaseText locale size={textInputSize || 16} medium className={classNames(
@@ -92,7 +93,7 @@ export const BaseInputSelect = (props: InputProps) => {
                                     {node.label}
                                 </BaseText> : node.label}
                                 {
-                                   !multiple && valueSelect === node.value && <CheckOutlined style={{ marginLeft: '8px' }} />
+                                   !multiple && (valueSelect === node.value  || (!valueSelect && node.value === defaultValue)) && <CheckOutlined style={{ marginLeft: '8px' }} />
                                 }
 
                             </div>

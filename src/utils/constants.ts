@@ -127,6 +127,7 @@ export const BOARD_ROUTE = {
 };
 
 export const NAVBAR = {
+<<<<<<< HEAD
   HOME: "Home",
   EVENT: "Event",
   POST: "Post",
@@ -135,3 +136,19 @@ export const NAVBAR = {
   SHORT_VIDEO: "Short video",
   PROFILE: "Profile",
 };
+=======
+  HOME: 'Home',
+  EVENT: 'Event',
+  POST: 'Post',
+  CONVERSATION: 'Conversation',
+  RESERVATION: 'Reservation',
+  SHORT_VIDEO: 'Short video',
+  PROFILE: 'Profile',
+}
+
+
+export const MAP_TYPE = {
+  NAVER: 'NAVER',
+  GOOGLE: 'GOOGLE'
+}
+>>>>>>> development

@@ -26,3 +26,5 @@ export const STORE = "/shop";
 export const APP_VERSION = "/app_version";
 export const CATEGORY = "/category";
 export const THEMA = "/thema";
+export const CATEGORY = "/category";
+export const TAG = "/tag";

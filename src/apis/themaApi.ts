@@ -1,11 +1,10 @@
 import { ThemaInterface } from "../entities";
-import { BannerInterface } from "../entities/banner.entity";
 import axiosClient from "./axiosClient";
-import { BANNER, SETTING_ADMIN, THEMA } from "./urlConfig";
+import { THEMA } from "./urlConfig";
 
 export const ThemaApi = {
-  getList: async () => {
-    const res: any = await axiosClient.get(`${THEMA}/?fields=["$all"]&limit=50&order=[["created_at","DESC"]]`);
+  getList: async (params?: object) => {
+    const res: any = await axiosClient.get(`${THEMA}/?fields=["$all"]&limit=50&order=[["created_at","DESC"]]`, { params });
     return res?.results?.objects?.rows || []
   },
   updateThema: async (id: string, data: ThemaInterface) => {
@@ -17,5 +16,4 @@ export const ThemaApi = {
   createThema: async (data: ThemaInterface) => {
     return await axiosClient.post(THEMA, data);
   },
- 
 };

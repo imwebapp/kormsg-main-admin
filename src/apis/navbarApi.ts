@@ -5,8 +5,8 @@ import { NAVBAR } from "./urlConfig";
 
 export const NavBarApi = {
   getList: async () => {
-    const res: any = await axiosClient.get(`${NAVBAR}/?fields=["$all"]&limit=6969696&order=[["created_at","DESC"]]`);
-    return res?.results?.objects || []
+    const res: any = await axiosClient.get(`${NAVBAR}/?fields=["$all"]&limit=6969696&order=[["created_at","ASC"]]`);
+    return res?.results?.objects?.rows || []
   },
   updateNavbar: async (id: string, data: NavBarInterface) => {
     return await axiosClient.put(`${NAVBAR}/${id}`, data);
