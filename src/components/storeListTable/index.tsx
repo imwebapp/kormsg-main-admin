@@ -17,9 +17,17 @@ type StoreListTableProps = {
   category?: string;
   typeSorting?: string;
   filter?: { type: string; value: any };
+  onItemStoreClick?: (item: any) => void;
 };
 export default function StoreListTable(props: StoreListTableProps) {
-  const { className, typeStore, category, typeSorting, filter } = props;
+  const {
+    className,
+    typeStore,
+    category,
+    typeSorting,
+    filter,
+    onItemStoreClick,
+  } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +40,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-pointer"
             onClick={() => {
               console.log("items", item);
+              handleItemClick(item);
             }}
           >
             이벤트+
@@ -61,6 +70,11 @@ export default function StoreListTable(props: StoreListTableProps) {
           )}
       </div>
     );
+  };
+  const handleItemClick = (itemId: string) => {
+    if (onItemStoreClick) {
+      onItemStoreClick(itemId);
+    }
   };
   const handleClick = () => {
     console.log("Div đã được click");
@@ -154,6 +168,8 @@ export default function StoreListTable(props: StoreListTableProps) {
     return `{${filterString}}`;
   }
   const generateFields = () => {
+    console.log("filter", filter);
+
     if (typeStore == STORE_STATUS.eventOngoing) {
       // default event on going
       return '["$all",{"events":["$all",{"$filter":{}}]}]';

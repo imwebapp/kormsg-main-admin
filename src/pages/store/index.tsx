@@ -9,11 +9,18 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import { Input, Select } from "antd";
+import { DatePicker, GetProps, Input, Select } from "antd";
 import { storeApi } from "../../apis/storeApi";
-import { BaseModal } from "../../components/modal/BaseModal";
-
+import { BaseInput } from "../../components/input/BaseInput";
+import { BaseModal2 } from "../../components/modal/BaseModal2";
+import dayjs from "dayjs";
+import { eventApi } from "../../apis/eventApi";
+type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+const { RangePicker } = DatePicker;
 const StorePage = () => {
+  // format date
+  const dateFormat = "YYYY.MM.DD";
+
   const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState(STORE_STATUS.exposure);
   const [countStore, setCountStore] = useState({
@@ -26,17 +33,42 @@ const StorePage = () => {
   const [listCategory, setListCategory] = useState();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
-  const [selectedFilterUser, setSelectedFilterUser] = useState("ID");
+  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
+  const [itemSelectShop, setItemSelectShop] = useState<any>({});
+  const [timePickerEvents, setTimePickerEvents] = useState<any>([
+    dayjs(),
+    dayjs(),
+  ]);
+  const [isEdit, setisEdit] = useState(false);
+  const [descriptionEvent, setDescriptionEvent] = useState("");
+  const [timePickerEvent, setTimePickerEvent] = useState({
+    start_time: 0,
+    end_time: 0,
+  });
   const [filter, setFilter] = useState<any>();
-  const data = {
-    exposure: 84,
-    underReview: 24,
-    reviewRejected: 12,
-    adExpired: 12,
-    eventOngoing: 23,
-  };
+
   const { t } = useTranslation();
+
+  const onChange = (
+    value: RangePickerProps["value"],
+    dateString?: [string, string]
+  ) => {
+    const isRequiredDate = dateString && dateString[0] !== "";
+    const timeStampStart = isRequiredDate
+      ? dayjs(dateString[0]).valueOf()
+      : dayjs().valueOf();
+    const timeStampEnd = isRequiredDate
+      ? dayjs(dateString[1]).valueOf()
+      : dayjs().valueOf();
+
+    setTimePickerEvent({
+      start_time: timeStampStart,
+      end_time: timeStampEnd,
+    });
+  };
+
   const getCountStore = async () => {
     try {
       let resultCount: any = await storeApi.getCountStore();
@@ -61,9 +93,26 @@ const StorePage = () => {
           })
         );
         // add item to first array
-        transformedData.unshift({ value: "all", label: t("All") });
+        transformedData.unshift({ value: "all", label: "all" });
         setListCategory(transformedData);
       }
+    } catch (error) {}
+  };
+  const _createEvent = async () => {
+    try {
+      const params = {
+        description: descriptionEvent,
+        shop_id: itemSelectShop.id,
+        start_time: timePickerEvent.start_time,
+        end_time: timePickerEvent.end_time,
+        images: [],
+      };
+      let result: any = await eventApi.createEvent(params);
+      if (result.code === 200) {
+        setDescriptionEvent("");
+        setTimePickerEvents([dayjs(), dayjs()]);
+      }
+      console.log("@@@", result);
     } catch (error) {}
   };
   useEffect(() => {
@@ -155,16 +204,16 @@ const StorePage = () => {
           <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
-              placeholder={t("All")}
-              defaultValue={t("All")}
+              placeholder={t("Category")}
+              defaultValue={t("Category")}
               style={{ width: 110 }}
               onChange={handleChangeCategory}
               options={listCategory}
             />
             <Select
               suffixIcon={<ArrowUpOutlined />}
-              placeholder="None"
-              defaultValue="None"
+              placeholder="Advertise"
+              defaultValue="Advertise"
               style={{ width: 120 }}
               onChange={handleChangeAdvertise}
               options={[
@@ -187,7 +236,7 @@ const StorePage = () => {
               icon={
                 <PlusOutlined
                   alt="Add icon"
-                  className="shrink-0 w-6 aspect-square"
+                  className="w-6 shrink-0 aspect-square"
                 />
               }
             >
@@ -230,13 +279,13 @@ const StorePage = () => {
               />
             </div>
             <Input
-              className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
               placeholder="Keyword"
               onChange={handleChangeTextKeyword}
               value={valueKeywordFilter}
             />
             <CustomButton
-              className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
+              className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600  rounded-xl"
               onClick={handleSearch}
             >
               {t("Search")}
@@ -248,16 +297,56 @@ const StorePage = () => {
           typeStore={selectedButton}
           typeSorting={selectedSorting}
           filter={filter}
+          onItemStoreClick={(item) => {
+            setItemSelectShop(item);
+            setOpenModalCreateEvent(true);
+          }}
         />
       </div>
-      <BaseModal
-        isOpen={true}
+      <BaseModal2
+        isOpen={openModalCreateEvent}
         onSubmit={() => {
-          console.log("submit");
+          setOpenModalCreateEvent(false);
+          _createEvent();
+        }}
+        title="이벤트+"
+        onClose={() => {
+          setDescriptionEvent("");
+          setTimePickerEvents([dayjs(), dayjs()]);
+          setOpenModalCreateEvent(!openModalCreateEvent);
         }}
       >
-        <div>1233</div>
-      </BaseModal>
+        <BaseInput
+          title="Store"
+          value={itemSelectShop.title}
+          disabled
+          styleInputContainer="border border-black border-solid"
+        />
+        <div className="flex flex-col my-4">
+          <BaseText locale bold size={14}>
+            행사 기간
+          </BaseText>
+          <RangePicker
+            // defaultValue={isEdit ? [dayjs(), dayjs()] : undefined}
+            allowEmpty={[false, false]}
+            format={dateFormat}
+            onChange={(value, dateString) => onChange(value, dateString)}
+            placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
+            className="w-full mt-1"
+            value={undefined}
+          />
+        </div>
+        <BaseInput
+          title="행사 설명"
+          placeholder="예시) 오후 할인 1만원"
+          value={descriptionEvent}
+          onChange={(value) => {
+            setDescriptionEvent(value);
+          }}
+          required
+          styleInputContainer="border border-black border-solid "
+        />
+      </BaseModal2>
     </>
   );
 };

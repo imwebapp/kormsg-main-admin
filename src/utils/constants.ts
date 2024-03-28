@@ -1,4 +1,4 @@
-import { CONVERSATION } from './../apis/urlConfig';
+import { CONVERSATION } from "./../apis/urlConfig";
 export const Config = {
   HOST_API: process.env.REACT_APP_BASE_URL,
   SOCKET_API: process.env.REACT_APP_BASE_URL_SOCKET,
@@ -124,30 +124,41 @@ export const BOARD_ROUTE = {
   [BOARD.EVENT_BOARD]: ROUTE.EVENT,
   [BOARD.BULLETIN_BOARD]: ROUTE.POST,
   [BOARD.BLOG]: ROUTE.BLOG,
-}
+};
 
 export const VISIBLE_BOARDS = [
   BOARD.BULLETIN_BOARD,
   BOARD.EVENT_BOARD,
   BOARD.RECRUIT_BOARD,
   BOARD.RECRUIT_BOARD_2,
-  BOARD.SHOP_SALES_BOARD
-]
+  BOARD.SHOP_SALES_BOARD,
+];
 
 export const NAVBAR = {
-  HOME: 'Home',
-  EVENT: 'Event',
-  POST: 'Post',
-  CONVERSATION: 'Conversation',
-  RESERVATION: 'Reservation',
-  SHORT_VIDEO: 'Short video',
-  PROFILE: 'Profile',
+  HOME: "Home",
+  EVENT: "Event",
+  POST: "Post",
+  CONVERSATION: "Conversation",
+  RESERVATION: "Reservation",
+  SHORT_VIDEO: "Short video",
+  PROFILE: "Profile",
 };
 
 export const MAP_TYPE = {
-  NAVER: 'NAVER',
-  GOOGLE: 'GOOGLE'
+  NAVER: "NAVER",
+  GOOGLE: "GOOGLE",
 };
+
+export const USER_PERMISSION = {
+  LOGIN_USER: "LOGIN_USER",
+  NON_LOGIN_USER: "NON_LOGIN_USER",
+};
+
+export const USER_PERMISSION_TEXT = {
+  [USER_PERMISSION.LOGIN_USER]: "Login user",
+  [USER_PERMISSION.NON_LOGIN_USER]: "Non-logged in user",
+};
+
 export const CATEGORY_PART1 = {
   타이: "타이",
   러시아: "러시아",
