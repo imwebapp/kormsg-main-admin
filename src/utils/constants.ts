@@ -115,6 +115,14 @@ export const BOARD_ROUTE = {
   [BOARD.BLOG]: ROUTE.BLOG,
 }
 
+export const VISIBLE_BOARDS = [
+  BOARD.BULLETIN_BOARD,
+  BOARD.EVENT_BOARD,
+  BOARD.RECRUIT_BOARD,
+  BOARD.RECRUIT_BOARD_2,
+  BOARD.SHOP_SALES_BOARD
+]
+
 export const NAVBAR = {
   HOME: 'Home',
   EVENT: 'Event',
@@ -129,4 +137,14 @@ export const NAVBAR = {
 export const MAP_TYPE = {
   NAVER: 'NAVER',
   GOOGLE: 'GOOGLE'
+}
+
+export const USER_PERMISSION = {
+  LOGIN_USER : 'LOGIN_USER',
+  NON_LOGIN_USER : 'NON_LOGIN_USER',
+}
+
+export const USER_PERMISSION_TEXT = {
+  [USER_PERMISSION.LOGIN_USER] : 'Login user',
+  [USER_PERMISSION.NON_LOGIN_USER] : 'Non-logged in user',
 }
