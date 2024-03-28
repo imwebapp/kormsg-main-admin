@@ -10,7 +10,7 @@ interface BaseModalProps {
   onClose?: () => void;
   onSubmit?: () => void;
   title?: string;
-  width?: any,
+  width?: any;
   children: ReactNode;
   bodyStyle?: any;
   styleTitle?: string;
@@ -20,6 +20,7 @@ interface BaseModalProps {
   styleButtonCancel?: string;
   styleButtonConfirm?: string;
   isHideAction?: boolean;
+  afterOpenChange?: any;
 }
 
 export const BaseModal2 = (props: BaseModalProps) => {
@@ -37,6 +38,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
     styleTitle,
     styleButtonCancel,
     styleButtonConfirm,
+    afterOpenChange,
   } = props;
   const [isShown, setIsShown] = useState<boolean>(isOpen);
 
@@ -59,6 +61,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
       centered
       width={width}
       open={isShown}
+      afterOpenChange={afterOpenChange}
       onCancel={() => {
         closeModal();
       }}
@@ -82,7 +85,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
           className="text-2xl text-gray-500 cursor-pointer"
         />
       </div>
-      <div className="max-h-[70vh] px-6 py-4 overflow-auto">{children}</div>
+      <div className="max-h-[80vh] px-6 py-4 overflow-auto">{children}</div>
       {!isHideAction && (
         <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
           <CustomButton

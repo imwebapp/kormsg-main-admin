@@ -10,7 +10,8 @@ interface InputProps extends SelectProps {
     titleSize?: number;
     required?: boolean;
     isError?: boolean;
-    value?: string;
+    value?: any;
+    defaultValue?: any;
     size?: 'large' | 'middle' | 'small';
     textInputSize?: number;
     onChange: (value: string) => void;
@@ -25,7 +26,6 @@ interface InputProps extends SelectProps {
     iconRight?: ReactNode;
     iconRightInactive?: ReactNode;
     placeholder?: string;
-    defaultValue?: string;
     multiple?: boolean;
     allowClear?: boolean;
 };
