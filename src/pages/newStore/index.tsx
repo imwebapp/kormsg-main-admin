@@ -698,7 +698,7 @@ const NewStore = () => {
         onSubmit={handleSubmitSubway}
         title="뒤로"
         disableSubmitBtn={!subwaySelectedChild.value}
-        hideButton={!subwaySelected}
+        isHideAction={subwaySelected}
       >
         <div className="flex flex-col gap-4">
           {
