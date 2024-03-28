@@ -14,7 +14,7 @@ interface InputProps extends SelectProps {
     defaultValue?: any;
     size?: 'large' | 'middle' | 'small';
     textInputSize?: number;
-    onChange: (value: string | string[]) => void; // Adjusted onChange to accept string or string array
+    onChange: (value: string | string[]| any) => void; // Adjusted onChange to accept string or string array
     options: { value: string | number, label: any, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss

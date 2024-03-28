@@ -239,6 +239,7 @@ const StorePage = () => {
                   className="w-6 shrink-0 aspect-square"
                 />
               }
+              onClick={() => navigate(Url.newStore)}
             >
               {t("Add")}
             </CustomButton>
@@ -285,7 +286,7 @@ const StorePage = () => {
               value={valueKeywordFilter}
             />
             <CustomButton
-              className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600  rounded-xl"
+              className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
               onClick={handleSearch}
             >
               {t("Search")}
