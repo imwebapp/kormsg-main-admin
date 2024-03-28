@@ -1,4 +1,4 @@
-import { CONVERSATION } from './../apis/urlConfig';
+import { CONVERSATION } from "./../apis/urlConfig";
 export const Config = {
   HOST_API: process.env.REACT_APP_BASE_URL,
   SOCKET_API: process.env.REACT_APP_BASE_URL_SOCKET,
@@ -30,11 +30,11 @@ export const ListTypeUser = [
 ];
 
 export const TypeUser = {
-  BIZ_USER: 'BIZ_USER',
-  FREE_USER: 'FREE_USER',
-  PAID_USER: 'PAID_USER',
-  ADMIN: 'ADMIN',
-}
+  BIZ_USER: "BIZ_USER",
+  FREE_USER: "FREE_USER",
+  PAID_USER: "PAID_USER",
+  ADMIN: "ADMIN",
+};
 
 export const listOptionUserDetail = [
   {
@@ -69,42 +69,53 @@ export const INIT_TAB_USER_DETAIL = {
   HISTORY_PAYMENT: "historyPayment",
 };
 
+export const STORE_STATUS = {
+  exposure: "exposure",
+  underReview: "underReview",
+  reviewRejected: "reviewRejected",
+  adExpired: "adExpired",
+  eventOngoing: "eventOngoing",
+};
+export const SORTING = {
+  NONE: "NONE",
+  DESC: "DESC",
+  ASC: "ASC",
+};
 export const BOARD = {
-  DISTANCE_ORDER_BOARD: 'DISTANCE_ORDER_BOARD',
-  DISTANCE_ORDER_BOARD_2: 'DISTANCE_ORDER_BOARD_2',
-  STORE_PROFILE: 'STORE_PROFILE',
-  PROFILE_DESIGN1: 'PROFILE_DESIGN1',
-  RECRUIT_BOARD: 'RECRUIT_BOARD',
-  RECRUIT_BOARD_2: 'RECRUIT_BOARD_2',
-  BULLETIN_BOARD: 'BULLETIN_BOARD',
-  JUMP_UP_SHOP_LIST_BOARD: 'JUMP_UP_SHOP_LIST_BOARD',
-  EVENT_BOARD: 'EVENT_BOARD',
-  SHOP_SALES_BOARD: 'SHOP_SALES_BOARD',
-  BLOG: 'BLOG'
-}
+  DISTANCE_ORDER_BOARD: "DISTANCE_ORDER_BOARD",
+  DISTANCE_ORDER_BOARD_2: "DISTANCE_ORDER_BOARD_2",
+  STORE_PROFILE: "STORE_PROFILE",
+  PROFILE_DESIGN1: "PROFILE_DESIGN1",
+  RECRUIT_BOARD: "RECRUIT_BOARD",
+  RECRUIT_BOARD_2: "RECRUIT_BOARD_2",
+  BULLETIN_BOARD: "BULLETIN_BOARD",
+  JUMP_UP_SHOP_LIST_BOARD: "JUMP_UP_SHOP_LIST_BOARD",
+  EVENT_BOARD: "EVENT_BOARD",
+  SHOP_SALES_BOARD: "SHOP_SALES_BOARD",
+  BLOG: "BLOG",
+};
 
 export const BOARD_TEXT = {
-  [BOARD.DISTANCE_ORDER_BOARD]: 'Store Design 1',
-  [BOARD.DISTANCE_ORDER_BOARD_2]: 'Store Design 2',
-  [BOARD.STORE_PROFILE]: 'Store/Profile',
-  [BOARD.PROFILE_DESIGN1]: 'Profile Design1',
-  [BOARD.RECRUIT_BOARD]: 'Job offer',
-  [BOARD.RECRUIT_BOARD_2]: 'Job search',
-  [BOARD.BULLETIN_BOARD]: 'Community',
-  [BOARD.JUMP_UP_SHOP_LIST_BOARD]: 'Jump up bulletin board',
-  [BOARD.EVENT_BOARD]: 'Event',
-  [BOARD.SHOP_SALES_BOARD]: 'Property for Rent',
-  [BOARD.BLOG]: 'Blog'
-}
+  [BOARD.DISTANCE_ORDER_BOARD]: "Store Design 1",
+  [BOARD.DISTANCE_ORDER_BOARD_2]: "Store Design 2",
+  [BOARD.STORE_PROFILE]: "Store/Profile",
+  [BOARD.PROFILE_DESIGN1]: "Profile Design1",
+  [BOARD.RECRUIT_BOARD]: "Job offer",
+  [BOARD.RECRUIT_BOARD_2]: "Job search",
+  [BOARD.BULLETIN_BOARD]: "Community",
+  [BOARD.JUMP_UP_SHOP_LIST_BOARD]: "Jump up bulletin board",
+  [BOARD.EVENT_BOARD]: "Event",
+  [BOARD.SHOP_SALES_BOARD]: "Property for Rent",
+  [BOARD.BLOG]: "Blog",
+};
 
 export const ROUTE = {
-  SHOP: '/shop',
-  SHOP_SECOND: '/jump-up-shop',
-  EVENT: '/event',
-  POST: '/post',
-  BLOG: '/blog',
-}
-
+  SHOP: "/shop",
+  SHOP_SECOND: "/jump-up-shop",
+  EVENT: "/event",
+  POST: "/post",
+  BLOG: "/blog",
+};
 
 export const BOARD_ROUTE = {
   [BOARD.DISTANCE_ORDER_BOARD]: ROUTE.SHOP,
@@ -113,38 +124,37 @@ export const BOARD_ROUTE = {
   [BOARD.EVENT_BOARD]: ROUTE.EVENT,
   [BOARD.BULLETIN_BOARD]: ROUTE.POST,
   [BOARD.BLOG]: ROUTE.BLOG,
-}
+};
 
 export const VISIBLE_BOARDS = [
   BOARD.BULLETIN_BOARD,
   BOARD.EVENT_BOARD,
   BOARD.RECRUIT_BOARD,
   BOARD.RECRUIT_BOARD_2,
-  BOARD.SHOP_SALES_BOARD
-]
+  BOARD.SHOP_SALES_BOARD,
+];
 
 export const NAVBAR = {
-  HOME: 'Home',
-  EVENT: 'Event',
-  POST: 'Post',
-  CONVERSATION: 'Conversation',
-  RESERVATION: 'Reservation',
-  SHORT_VIDEO: 'Short video',
-  PROFILE: 'Profile',
-}
-
+  HOME: "Home",
+  EVENT: "Event",
+  POST: "Post",
+  CONVERSATION: "Conversation",
+  RESERVATION: "Reservation",
+  SHORT_VIDEO: "Short video",
+  PROFILE: "Profile",
+};
 
 export const MAP_TYPE = {
-  NAVER: 'NAVER',
-  GOOGLE: 'GOOGLE'
-}
+  NAVER: "NAVER",
+  GOOGLE: "GOOGLE",
+};
 
 export const USER_PERMISSION = {
-  LOGIN_USER : 'LOGIN_USER',
-  NON_LOGIN_USER : 'NON_LOGIN_USER',
-}
+  LOGIN_USER: "LOGIN_USER",
+  NON_LOGIN_USER: "NON_LOGIN_USER",
+};
 
 export const USER_PERMISSION_TEXT = {
-  [USER_PERMISSION.LOGIN_USER] : 'Login user',
-  [USER_PERMISSION.NON_LOGIN_USER] : 'Non-logged in user',
-}
+  [USER_PERMISSION.LOGIN_USER]: "Login user",
+  [USER_PERMISSION.NON_LOGIN_USER]: "Non-logged in user",
+};

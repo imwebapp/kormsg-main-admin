@@ -9,12 +9,25 @@ import { BaseInputSelect } from "../input/BaseInputSelect";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
+import { SORTING, STORE_STATUS } from "../../utils/constants";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
+  typeStore?: string;
+  category?: string;
+  typeSorting?: string;
+  filter?: { type: string; value: any };
+  onItemStoreClick?: (item: any) => void;
 };
 export default function StoreListTable(props: StoreListTableProps) {
-  const { className } = props;
+  const {
+    className,
+    typeStore,
+    category,
+    typeSorting,
+    filter,
+    onItemStoreClick,
+  } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,6 +40,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-pointer"
             onClick={() => {
               console.log("items", item);
+              handleItemClick(item);
             }}
           >
             이벤트+
@@ -56,6 +70,11 @@ export default function StoreListTable(props: StoreListTableProps) {
           )}
       </div>
     );
+  };
+  const handleItemClick = (itemId: string) => {
+    if (onItemStoreClick) {
+      onItemStoreClick(itemId);
+    }
   };
   const handleClick = () => {
     console.log("Div đã được click");
@@ -92,18 +111,93 @@ export default function StoreListTable(props: StoreListTableProps) {
       });
     }
   };
+  function generateOrder(sorting: string | undefined) {
+    switch (sorting) {
+      case SORTING.NONE:
+        return [["geolocation_api_type", "DESC"]];
+      case SORTING.DESC:
+        return [["expired_date", "DESC"]];
+      case SORTING.ASC:
+        return [["expired_date", "ASC"]];
+      default:
+        return [["geolocation_api_type", "DESC"]];
+    }
+  }
+  function generateFilter(category?: string, status?: string) {
+    let filterString = "";
+
+    // Thêm điều kiện trạng thái
+    switch (status) {
+      case STORE_STATUS.exposure:
+        filterString += `"state":{"$notIn":["REJECTED","EXPIRED"]}`;
+        break;
+      case STORE_STATUS.underReview:
+        filterString += `"state":"PENDING"`;
+        break;
+      case STORE_STATUS.reviewRejected:
+        filterString += `{"$or":[{"denied_shop":{"$ne":null}},{"state":{"$in":["REJECTED"]}}]}`;
+        break;
+      case STORE_STATUS.adExpired:
+        filterString += `"state":{"$in":["EXPIRED"]}`;
+        break;
+      case STORE_STATUS.eventOngoing:
+        filterString += ``;
+        break;
+      default:
+        break;
+    }
+
+    // Thêm điều kiện category nếu có
+    if (category && category !== "" && category !== "all") {
+      if (filterString !== "") {
+        filterString += ", ";
+      }
+      filterString += `"category_id": "${category}"`;
+    }
+    if (
+      filter &&
+      (filter.type === "contact_phone" || filter.type === "title") &&
+      filter.value !== ""
+    ) {
+      if (filterString !== "") {
+        filterString += ", ";
+      }
+      filterString += `"${filter.type}":{"$iLike":"%${filter.value}%"}`;
+    }
+
+    return `{${filterString}}`;
+  }
+  const generateFields = () => {
+    console.log("filter", filter);
+
+    if (typeStore == STORE_STATUS.eventOngoing) {
+      // default event on going
+      return '["$all",{"events":["$all",{"$filter":{}}]}]';
+    }
+    let filterString = "";
+    if (
+      filter && // check exist filter
+      filter.type !== "contact_phone" && // check not phone user
+      filter.type !== "title" && // check not title user
+      filter.value !== "" // check empty value
+    ) {
+      filterString = `,{"$filter":{"${filter.type}":{"$iLike":"%${filter.value}%"}}}`;
+    }
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"${filterString}]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]`;
+    return fields;
+  };
+
   const getListStore = () => {
     // field all selected
-    const fields =
-      '["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]';
-    const filter = '{"state":{"$notIn":["REJECTED","EXPIRED"]}}';
-
+    const fieldsCustom = generateFields();
+    const filterCustom = generateFilter(category, typeStore);
+    const orderCustom = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
-        limit: 300,
-        fields: fields,
-        filter: filter,
-        order: [["geolocation_api_type", "DESC"]],
+        limit: 50,
+        fields: fieldsCustom,
+        filter: filterCustom,
+        order: orderCustom,
       })
       .then((res: any) => {
         setListStore(res.results.objects.rows);
@@ -114,7 +208,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   useEffect(() => {
     getListStore();
-  }, []);
+  }, [typeStore, typeSorting, filter, category]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),
