@@ -18,6 +18,7 @@ type StoreListTableProps = {
   typeSorting?: string;
   filter?: { type: string; value: any };
   onItemStoreClick?: (item: any) => void;
+  onUpdate?: () => void;
 };
 export default function StoreListTable(props: StoreListTableProps) {
   const {
@@ -27,6 +28,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     typeSorting,
     filter,
     onItemStoreClick,
+    onUpdate,
   } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
@@ -62,7 +64,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             <button
               className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10  rounded  text-bold text-blue-700 underline"
               onClick={() => {
-                console.log("click view events");
+                handleItemClick(item);
               }}
             >
               이벤트
@@ -208,7 +210,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   useEffect(() => {
     getListStore();
-  }, [typeStore, typeSorting, filter, category]);
+  }, [typeStore, typeSorting, filter, category, onUpdate]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),

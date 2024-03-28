@@ -37,36 +37,19 @@ const StorePage = () => {
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
   const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
   const [itemSelectShop, setItemSelectShop] = useState<any>({});
-  const [timePickerEvents, setTimePickerEvents] = useState<any>([
-    dayjs(),
-    dayjs(),
-  ]);
-  const [isEdit, setisEdit] = useState(false);
+  const [rangeValue, setRangeValue] = useState<any>(null);
   const [descriptionEvent, setDescriptionEvent] = useState("");
-  const [timePickerEvent, setTimePickerEvent] = useState({
-    start_time: 0,
-    end_time: 0,
-  });
+  const [isEdit, setIsEdit] = useState(false);
   const [filter, setFilter] = useState<any>();
 
   const { t } = useTranslation();
 
-  const onChange = (
-    value: RangePickerProps["value"],
-    dateString?: [string, string]
-  ) => {
-    const isRequiredDate = dateString && dateString[0] !== "";
-    const timeStampStart = isRequiredDate
-      ? dayjs(dateString[0]).valueOf()
-      : dayjs().valueOf();
-    const timeStampEnd = isRequiredDate
-      ? dayjs(dateString[1]).valueOf()
-      : dayjs().valueOf();
-
-    setTimePickerEvent({
-      start_time: timeStampStart,
-      end_time: timeStampEnd,
-    });
+  const handleRangeChange = (value: any, dateString?: [string, string]) => {
+    if (dateString && dateString[0] !== "" && dateString[1] !== "") {
+      const startDate = dayjs(dateString[0], "YYYY.MM.DD");
+      const endDate = dayjs(dateString[1], "YYYY.MM.DD");
+      setRangeValue([startDate, endDate]);
+    }
   };
 
   const getCountStore = async () => {
@@ -100,21 +83,45 @@ const StorePage = () => {
   };
   const _createEvent = async () => {
     try {
+      const timeStampStart = dayjs(rangeValue[0]).valueOf();
+      const timeStampEnd = dayjs(rangeValue[1]).valueOf();
       const params = {
         description: descriptionEvent,
         shop_id: itemSelectShop.id,
-        start_time: timePickerEvent.start_time,
-        end_time: timePickerEvent.end_time,
+        start_time: timeStampStart,
+        end_time: timeStampEnd,
         images: [],
       };
       let result: any = await eventApi.createEvent(params);
       if (result.code === 200) {
         setDescriptionEvent("");
-        setTimePickerEvents([dayjs(), dayjs()]);
+        setRangeValue(null);
+        handleEventCreationSuccess();
       }
       console.log("@@@", result);
     } catch (error) {}
   };
+  const _editEvent = async () => {
+    try {
+      const timeStampStart = dayjs(rangeValue[0]).valueOf();
+      const timeStampEnd = dayjs(rangeValue[1]).valueOf();
+      const params = {
+        description: descriptionEvent,
+        shop_id: itemSelectShop.id,
+        start_time: timeStampStart,
+        end_time: timeStampEnd,
+        images: [],
+      };
+      let result: any = await eventApi.editEvent(params, itemSelectShop.id);
+      if (result.code === 200) {
+        setDescriptionEvent("");
+        setRangeValue(null);
+        handleEventCreationSuccess();
+      }
+      console.log("@@@", result);
+    } catch (error) {}
+  };
+  const handleEventCreationSuccess = () => {};
   useEffect(() => {
     getListCategory();
     getCountStore();
@@ -299,21 +306,39 @@ const StorePage = () => {
           typeSorting={selectedSorting}
           filter={filter}
           onItemStoreClick={(item) => {
+            if (
+              item.events &&
+              item.events.length > 0 &&
+              item.events[0].state !== "PENDING"
+            ) {
+              setIsEdit(true);
+              const startDate = dayjs(new Date(+item.events[0].start_time));
+              const endDate = dayjs(new Date(+item.events[0].end_time));
+              setRangeValue([startDate, endDate]);
+              setDescriptionEvent(item.events[0].title);
+            } else {
+              setIsEdit(false);
+            }
             setItemSelectShop(item);
             setOpenModalCreateEvent(true);
           }}
+          onUpdate={handleEventCreationSuccess}
         />
       </div>
       <BaseModal2
         isOpen={openModalCreateEvent}
         onSubmit={() => {
           setOpenModalCreateEvent(false);
-          _createEvent();
+          if (isEdit) {
+            _editEvent();
+          } else {
+            _createEvent();
+          }
         }}
         title="이벤트+"
         onClose={() => {
           setDescriptionEvent("");
-          setTimePickerEvents([dayjs(), dayjs()]);
+          setRangeValue(null);
           setOpenModalCreateEvent(!openModalCreateEvent);
         }}
       >
@@ -328,13 +353,13 @@ const StorePage = () => {
             행사 기간
           </BaseText>
           <RangePicker
-            // defaultValue={isEdit ? [dayjs(), dayjs()] : undefined}
+            defaultValue={undefined}
             allowEmpty={[false, false]}
             format={dateFormat}
-            onChange={(value, dateString) => onChange(value, dateString)}
+            onChange={handleRangeChange}
             placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
             className="w-full mt-1"
-            value={undefined}
+            value={rangeValue}
           />
         </div>
         <BaseInput
