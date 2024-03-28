@@ -433,15 +433,6 @@ const UserManage = () => {
             />
             <div className={classNames("flex gap-4")}>
               <CustomButton
-                locale
-                medium
-                icon={<TeamOutlined className="text-2xl" />}
-                className={" px-4 py-6"}
-                onClick={() => {}}
-              >
-                Create users bulk
-              </CustomButton>
-              <CustomButton
                 primary
                 locale
                 bold

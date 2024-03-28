@@ -243,9 +243,10 @@ const StorePage = () => {
               icon={
                 <PlusOutlined
                   alt="Add icon"
-                  className="shrink-0 w-6 aspect-square"
+                  className="w-6 shrink-0 aspect-square"
                 />
               }
+              onClick={() => navigate(Url.newStore)}
             >
               {t("Add")}
             </CustomButton>
@@ -286,13 +287,13 @@ const StorePage = () => {
               />
             </div>
             <Input
-              className="flex-1 justify-center items-start px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
               placeholder="Keyword"
               onChange={handleChangeTextKeyword}
               value={valueKeywordFilter}
             />
             <CustomButton
-              className=" justify-center self-center px-5 py-3 font-bold text-white bg-blue-600 rounded-xl h-full"
+              className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
               onClick={handleSearch}
             >
               {t("Search")}

@@ -14,7 +14,7 @@ interface InputProps extends SelectProps {
     defaultValue?: any;
     size?: 'large' | 'middle' | 'small';
     textInputSize?: number;
-    onChange: (value: string) => void;
+    onChange: (value: string | string[]| any) => void; // Adjusted onChange to accept string or string array
     options: { value: string | number, label: any, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss
@@ -28,18 +28,19 @@ interface InputProps extends SelectProps {
     placeholder?: string;
     multiple?: boolean;
     allowClear?: boolean;
-};
+}
 
 export const BaseInputSelect = (props: InputProps) => {
     const { title, titleSize,textInputSize, required, value, defaultValue, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const { t } = useTranslation();
-    const [valueSelect, setValueSelect] = useState<string | undefined>(value);
+    const [valueSelect, setValueSelect] = useState<string | string[] | undefined>(value); // Adjusted state to accept string or string array
 
-    const handleChange = (value: string) => {
+    const handleChange = (value: string | string[]) => {
         setValueSelect(value);
         onChange(value);
     };
+
     useEffect(() => {
         if (value)
             setValueSelect(value);
@@ -95,7 +96,6 @@ export const BaseInputSelect = (props: InputProps) => {
                                 {
                                    !multiple && (valueSelect === node.value  || (!valueSelect && node.value === defaultValue)) && <CheckOutlined style={{ marginLeft: '8px' }} />
                                 }
-
                             </div>
                         );
                     }}

@@ -10,6 +10,7 @@ interface IProps {
   titleSize?: number;
   required?: boolean;
   isError?: boolean;
+  textArea?: boolean;
   value?: string | number;
   defaultValue?: string | number;
   onChange?: (value: string | any) => void;
@@ -29,10 +30,11 @@ interface IProps {
   iconRight?: ReactNode | string;
   widgetRight?: ReactNode;
   iconRightInactive?: ReactNode | string;
+  rows?: number;
 };
 
 export const BaseInput = (props: IProps) => {
-  const {  title, titleSize, required, value, defaultValue, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const {  title, titleSize, required, value, defaultValue, textArea,rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
 
@@ -54,7 +56,7 @@ export const BaseInput = (props: IProps) => {
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
     onChange && onChange(event.target.value);
   };
 
@@ -79,7 +81,25 @@ export const BaseInput = (props: IProps) => {
             <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
           ) : iconLeft
         )}
-        <input
+        {textArea ? (
+          <textarea
+            className={classNames(
+              'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
+              isError ? ' bg-dustRed50' : '',
+              styleInput || ""
+            )}
+            value={value}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            disabled={disabled}
+            placeholder={t(placeholder || '')}
+            autoFocus={autoFocus}
+            onKeyDown={handleKeyDown}
+            rows={rows || 5}
+            {...rest}
+          />
+        ) : <input
           className={classNames(
             'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
             isError ? ' bg-dustRed50' : '',
@@ -96,7 +116,7 @@ export const BaseInput = (props: IProps) => {
           autoFocus={autoFocus}
           onKeyDown={handleKeyDown}
           {...rest}
-        />
+        />}
         {iconRight &&   (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
         )}

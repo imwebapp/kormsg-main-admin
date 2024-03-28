@@ -27,6 +27,7 @@ module.exports = {
         volcano900: "#7A0B00",
         cyan50: "#E6FFFB",
         cyan500: "#13C2C2",
+        cyan600: "#37C4EF",
         violet: "#4318FF",
         violet2: "#9747FF",
         polaGreen500: "#52C41A",
