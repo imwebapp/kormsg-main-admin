@@ -117,7 +117,7 @@ export default function UserManageTable(props: UserManageTableProps) {
       </div>
     )
   }
-  const renderJumpLimit = (jump_limit: number, account_type?: any) => {
+  const renderJumpLimit = (item: any, jump_limit: number, account_type?: any,) => {
     if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
@@ -126,7 +126,7 @@ export default function UserManageTable(props: UserManageTableProps) {
         <CustomButton className="w-10" primary>
           {jump_limit}
         </CustomButton>
-        <CustomButton locale primary>
+        <CustomButton locale primary onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.HISTORY_PAYMENT } })}>
           View history
         </CustomButton>
       </div>
@@ -154,7 +154,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Jump up limit"),
-      render: ({ jump_limit, account_type }) => renderJumpLimit(jump_limit, account_type),
+      render: (item: any) => renderJumpLimit(item, item?.jump_limit, item?.account_type),
     },
     {
       title: t("Store status"),
