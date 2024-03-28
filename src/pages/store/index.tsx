@@ -15,7 +15,6 @@ import { BaseInput } from "../../components/input/BaseInput";
 import { BaseModal2 } from "../../components/modal/BaseModal2";
 import dayjs from "dayjs";
 import { eventApi } from "../../apis/eventApi";
-import { createEvent } from "@testing-library/react";
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 const StorePage = () => {
@@ -42,6 +41,7 @@ const StorePage = () => {
     dayjs(),
     dayjs(),
   ]);
+  const [isEdit, setisEdit] = useState(false);
   const [descriptionEvent, setDescriptionEvent] = useState("");
   const [timePickerEvent, setTimePickerEvent] = useState({
     start_time: 0,
@@ -107,12 +107,8 @@ const StorePage = () => {
         end_time: timePickerEvent.end_time,
         images: [],
       };
-      console.log("params", params);
-
       let result: any = await eventApi.createEvent(params);
       if (result.code === 200) {
-        console.log("123");
-
         setDescriptionEvent("");
         setTimePickerEvents([dayjs(), dayjs()]);
       }
@@ -315,13 +311,13 @@ const StorePage = () => {
         }}
         title="이벤트+"
         onClose={() => {
-          setTimePickerEvents(undefined);
+          setDescriptionEvent("");
+          setTimePickerEvents([dayjs(), dayjs()]);
           setOpenModalCreateEvent(!openModalCreateEvent);
         }}
       >
         <BaseInput
           title="Store"
-          // placeholder="복사할 매장을 검색해주세요"
           value={itemSelectShop.title}
           disabled
           styleInputContainer="border border-black border-solid"
@@ -331,17 +327,19 @@ const StorePage = () => {
             행사 기간
           </BaseText>
           <RangePicker
-            defaultValue={timePickerEvents}
+            // defaultValue={isEdit ? [dayjs(), dayjs()] : undefined}
+            allowEmpty={[false, false]}
             format={dateFormat}
             onChange={(value, dateString) => onChange(value, dateString)}
             placeholder={["YYYY.MM.DD", "YYYY.MM.DD"]}
             className="w-full mt-1"
+            value={undefined}
           />
         </div>
         <BaseInput
           title="행사 설명"
           placeholder="예시) 오후 할인 1만원"
-          // value={123}
+          value={descriptionEvent}
           onChange={(value) => {
             setDescriptionEvent(value);
           }}
