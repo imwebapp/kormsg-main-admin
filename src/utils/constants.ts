@@ -124,7 +124,15 @@ export const BOARD_ROUTE = {
   [BOARD.EVENT_BOARD]: ROUTE.EVENT,
   [BOARD.BULLETIN_BOARD]: ROUTE.POST,
   [BOARD.BLOG]: ROUTE.BLOG,
-};
+}
+
+export const VISIBLE_BOARDS = [
+  BOARD.BULLETIN_BOARD,
+  BOARD.EVENT_BOARD,
+  BOARD.RECRUIT_BOARD,
+  BOARD.RECRUIT_BOARD_2,
+  BOARD.SHOP_SALES_BOARD
+]
 
 export const NAVBAR = {
   HOME: 'Home',
@@ -463,4 +471,3 @@ export const LIST_REGION = [
     ],
   },
 ];
-

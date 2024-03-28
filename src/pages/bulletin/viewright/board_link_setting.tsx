@@ -2,10 +2,15 @@ import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { useEffect, useRef, useState } from "react";
-import { BOARD, BOARD_TEXT, MAP_TYPE } from "../../../utils/constants";
+import {
+  BOARD,
+  BOARD_TEXT,
+  MAP_TYPE,
+  VISIBLE_BOARDS,
+} from "../../../utils/constants";
 import { classNames } from "../../../utils/common";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
-import ThemaTable from "./thema_table";
+import ThemaTable from "../thema/thema_table";
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
 import { ThemaApi } from "../../../apis/themaApi";
 import {
@@ -37,15 +42,9 @@ export default function BulletinSetting() {
 
   const { t } = useTranslation();
 
-  const getListThemaWithBoardType = async (boardTypeSelected: string) => {
-    if (boardTypeSelected === "") return;
-    const filter = [
-      BOARD.BULLETIN_BOARD,
-      BOARD.EVENT_BOARD,
-      BOARD.RECRUIT_BOARD,
-      BOARD.RECRUIT_BOARD_2,
-      BOARD.SHOP_SALES_BOARD,
-    ].includes(boardTypeSelected)
+  const getListThema = async (boardTypeSelected: string) => {
+    if (boardTypeSelected === "") return [];
+    const filter = VISIBLE_BOARDS.includes(boardTypeSelected)
       ? `{"visible_boards": {"$contains": ["${boardTypeSelected}"]}}`
       : "";
     try {
@@ -53,6 +52,15 @@ export default function BulletinSetting() {
         filter,
       });
       setThemas(data);
+      return data;
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const getListThemaAndUpdateBoard = async (boardTypeSelected: string) => {
+    try {
+      const data: Array<ThemaInterface> = await getListThema(boardTypeSelected);
       if (data[0]) {
         const dataCategories = await CategoryApi.getList({
           filter: `{"thema_id":"${data[0].id}"}`,
@@ -60,6 +68,7 @@ export default function BulletinSetting() {
         const category_ids = dataCategories.map(
           (item: CategoryInterface) => item.id
         );
+
         updateOrCreateBoardLink({
           ...boardSelected,
           route: boardTypeSelected,
@@ -73,12 +82,12 @@ export default function BulletinSetting() {
   };
 
   useEffect(() => {
-    getListThemaWithBoardType(boardTypeSelected);
+    getListThema(boardTypeSelected);
   }, []);
 
   const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
-    console.log('boardLink',boardLink);
-    
+    console.log("boardLink", boardLink);
+
     setBoardSelected(boardLink);
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
@@ -87,13 +96,13 @@ export default function BulletinSetting() {
       } else {
         const { id, ...linkData } = boardLink;
         const data = await BoardLinkApi.create(linkData);
-        console.log('data',data);
-        
+        console.log("data", data);
+
         setBoardSelected(data);
       }
       setLastRefresh(Date.now());
     } catch (error) {
-      showError(error)
+      showError(error);
     }
   };
 
@@ -147,7 +156,7 @@ export default function BulletinSetting() {
       setBoardSelected({
         id: "HOME",
         name: "Home",
-      })
+      });
       setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
@@ -231,7 +240,7 @@ export default function BulletinSetting() {
               <div
                 onClick={() => {
                   setBoardTypeSelected(item);
-                  getListThemaWithBoardType(item);
+                  getListThemaAndUpdateBoard(item);
                 }}
                 key={index}
                 className={classNames(
@@ -360,7 +369,7 @@ export default function BulletinSetting() {
         }}
         title="Thema Management"
         isHideAction
-        children={<ThemaTable />}
+        children={<ThemaTable key={Date.now()} />}
       ></BaseModal2>
     </div>
   );
