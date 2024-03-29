@@ -1,12 +1,14 @@
 {
   "files": {
-    "main.css": "/static/css/main.69b21712.css",
-    "main.js": "/static/js/main.31e10ab0.js",
+    "main.css": "/static/css/main.57c53ced.css",
+    "main.js": "/static/js/main.f2ecd702.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
+    "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
     "static/media/plusCircle.png": "/static/media/plusCircle.d2ef13685a665d11044b.png",
     "static/media/minusCircle.png": "/static/media/minusCircle.0174959b44bdf3a1e853.png",
+    "static/media/iconGPS.png": "/static/media/iconGPS.916db9387568f068c446.png",
     "static/media/Dashboard2.png": "/static/media/Dashboard2.f55d404bbe1fd74de53d.png",
     "static/media/closeCircle.png": "/static/media/closeCircle.2c1fdb01a083f35576ce.png",
     "static/media/Dashboard.png": "/static/media/Dashboard.a9a1718085c34c1d3fc3.png",
@@ -14,6 +16,8 @@
     "static/media/Subscription2.png": "/static/media/Subscription2.65193669cfa2bf8d9411.png",
     "static/media/User Manage2.png": "/static/media/User Manage2.01c50b1aa11d8da8da0e.png",
     "static/media/Subscription.png": "/static/media/Subscription.331e9cfa58565cfb5398.png",
+    "static/media/iconClock.png": "/static/media/iconClock.df0cceed32f151e14000.png",
+    "static/media/iconPhone2.png": "/static/media/iconPhone2.180b6aef5bf0dd24279e.png",
     "static/media/Help Center2.png": "/static/media/Help Center2.2b5f3646d4519af9abe8.png",
     "static/media/App Version2.png": "/static/media/App Version2.c64330acdff28e5d652d.png",
     "static/media/SEO Page2.png": "/static/media/SEO Page2.4d42c849e8b39da08242.png",
@@ -23,6 +27,7 @@
     "static/media/Reports.png": "/static/media/Reports.6505839613e07c1824a3.png",
     "static/media/Reports2.png": "/static/media/Reports2.ba1f308e11cca84cdcbb.png",
     "static/media/Shopping2.png": "/static/media/Shopping2.9d7d934c034ac9631590.png",
+    "static/media/iconPhone.png": "/static/media/iconPhone.1a1bef6334d83d8a0560.png",
     "static/media/Shopping.png": "/static/media/Shopping.5cb0d67556c9beb4964f.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
@@ -33,12 +38,12 @@
     "static/media/Setting.png": "/static/media/Setting.da43066134bc02086103.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.69b21712.css.map": "/static/css/main.69b21712.css.map",
-    "main.31e10ab0.js.map": "/static/js/main.31e10ab0.js.map",
+    "main.57c53ced.css.map": "/static/css/main.57c53ced.css.map",
+    "main.f2ecd702.js.map": "/static/js/main.f2ecd702.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.69b21712.css",
-    "static/js/main.31e10ab0.js"
+    "static/css/main.57c53ced.css",
+    "static/js/main.f2ecd702.js"
   ]
 }
