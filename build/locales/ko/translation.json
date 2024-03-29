@@ -238,5 +238,9 @@
   "Login user": "로그인 사용자",
   "Non-logged in user": "비로그인 사용자",
   "Delete the thema": "테마 삭제",
-  "Are you sure to delete this thema?": "이 테마를 삭제하시겠습니까?"
+  "Are you sure to delete this thema?": "이 테마를 삭제하시겠습니까?",
+  "Biz user": "기업회원",
+  "Paid member": "유료회원",
+  "Manager": "관리자",
+  "All users": "모든 사용자"
 }

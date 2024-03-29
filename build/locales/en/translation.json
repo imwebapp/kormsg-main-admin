@@ -238,5 +238,9 @@
   "Login user": "Login user",
   "Non-logged in user": "Non-logged in user",
   "Delete the thema": "Delete the thema",
-  "Are you sure to delete this thema?": "Are you sure to delete this thema?"
+  "Are you sure to delete this thema?": "Are you sure to delete this thema?",
+  "Biz user": "Biz user",
+  "Paid member": "Paid member",
+  "Manager": "Manager",
+  "All users": "All users"
 }
