@@ -8,9 +8,11 @@ interface IProps {
         name: string,
         description: string,
         time: string,
-        amountBeforeDiscount: number,
-        amountAfterDiscount: number,
-        unit: 'USD' | 'VND' | 'Won',
+        amountBeforeDiscount?: number,
+        amountAfterDiscount?: number,
+        amountBeforeNightDiscount?: number,
+        amountAfterNightDiscount?: number,
+        unit: string,
     }[];
     onCLickCreateNew?: () => void;
 }

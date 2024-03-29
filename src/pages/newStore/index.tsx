@@ -16,6 +16,7 @@ import { classNames } from "../../utils/common";
 import { LIST_REGION } from "../../utils/constants";
 import { ManageTab } from "./components/ManageTab";
 import { PriceListTab } from "./components/PriceListTab";
+import ModalCreateNewManage from "./ModalCreateNewManage";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -23,7 +24,7 @@ interface IFormDataPage1 {
   storeNumber: string;
   storeAddress: string;
   storeAddressDetails: string;
-  storeImages: number[];
+  storeImages: File[];
   storeOpeningHours: string;
   category: string;
   region: string;
@@ -39,14 +40,22 @@ interface INewPrice {
   name: string;
   description: string;
   time: string;
-  amountBeforeDiscount: number;
-  amountAfterDiscount: number;
-  unit: 'USD' | 'VND' | 'Won';
+  amountBeforeDiscount?: number;
+  amountAfterDiscount?: number;
+  amountBeforeNightDiscount?: number;
+  amountAfterNightDiscount?: number;
+  unit: string;
+}
+interface INewManger {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
 }
 interface IFormDataPage2 {
   storeIntroduction: string;
   priceList: INewPrice[];
-  manager: string;
+  manager: INewManger[];
 }
 
 const CATEGORY_PART1 = [
@@ -254,36 +263,34 @@ const listOptionPart2 = [
   },
 ];
 
-const dataPrice: Array<
+const dataPrice: Array<INewPrice> = [
   {
-    id: string,
-    name: string,
-    description: string,
-    time: string,
-    amountBeforeDiscount: number,
-    amountAfterDiscount: number,
-    unit: 'USD' | 'VND' | 'Won',
+    id: '1dataPrice',
+    name: "가격표",
+    description: "가격표",
+    time: '2022-12-12',
+    amountBeforeDiscount: 100,
+    amountAfterDiscount: 90,
+    unit: 'USD',
+  },
+  {
+    id: '2dataPrice',
+    name: "가격표2",
+    description: "가격표2",
+    time: '2023-12-12',
+    amountBeforeDiscount: 150,
+    amountAfterDiscount: 100,
+    unit: 'Won',
   }
-> = [
-    {
-      id: '1dataPrice',
-      name: "가격표",
-      description: "가격표",
-      time: '2022-12-12',
-      amountBeforeDiscount: 100,
-      amountAfterDiscount: 90,
-      unit: 'USD',
-    },
-    {
-      id: '2dataPrice',
-      name: "가격표2",
-      description: "가격표2",
-      time: '2023-12-12',
-      amountBeforeDiscount: 150,
-      amountAfterDiscount: 100,
-      unit: 'Won',
-    }
-  ];
+];
+const dataManage: Array<INewManger> = [
+  {
+    id: '1dataPrice',
+    name: "관리사 YK",
+    description: "너무 잘하고 착합니다, 단골지명 많은 분이 세요. 매주 화요일 근무해요! 부원장 이민영.",
+    image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg',
+  },
+];
 
 const { Header } = Layout;
 
@@ -308,7 +315,42 @@ const NewStore = () => {
   });
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
-  const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({} as INewPrice);
+  const [isShowPriceNight, setIsShowPriceNight] = useState('0');
+  const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({
+    id: '',
+    name: '',
+    description: '',
+    time: '',
+    amountBeforeDiscount: undefined,
+    amountAfterDiscount: undefined,
+    amountBeforeNightDiscount: undefined,
+    amountAfterNightDiscount: undefined,
+    unit: '',
+  });
+
+  const [openModalCreateNewManage, setOpenModalCreateNewManage] = useState<boolean>(false);
+  const [dataNewManage, setDataNewManage] = useState<INewManger>({
+    id: '',
+    name: '',
+    description: '',
+    image: '',
+  });
+  console.log('dataNewManage', dataNewManage);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setDataNewManage({ ...dataNewManage, image: reader.result });
+        } else {
+          console.error("Invalid data type for avatar.");
+        }
+      };
+    }
+  };
 
 
   const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
@@ -357,8 +399,20 @@ const NewStore = () => {
   };
 
   const handleSubmitCreateNewPrice = () => {
-    console.log('submit create new price');
+    console.log('submit create new price: ', dataNewPrice);
     setOpenModalCreateNewPrice(false);
+  };
+
+  const handleCloseModalCreateNewManage = () => {
+    setOpenModalCreateNewManage(false);
+  };
+  const handleImageCreateNewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Image Create New Manage (File)
+  };
+
+  const handleSubmitCreateNewManage = (dataNewManage: any) => {
+    console.log('submit create new manage: ', dataNewManage);
+    setOpenModalCreateNewManage(false);
   };
 
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
@@ -368,7 +422,7 @@ const NewStore = () => {
     storeNumber: '',
     storeAddress: '',
     storeAddressDetails: '',
-    storeImages: [1, 2, 3, 4, 5, 6],
+    storeImages: [],
     storeOpeningHours: '',
     category: "1",
     region: '',
@@ -379,7 +433,11 @@ const NewStore = () => {
     reservationFuncSetting: '',
   });
 
-  const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({} as IFormDataPage2);
+  const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
+    storeIntroduction: '',
+    priceList: dataPrice,
+    manager: dataManage,
+  });
 
   console.log('formDataPage1', formDataPage1);
   console.log('formDataPage2', formDataPage2);
@@ -393,6 +451,10 @@ const NewStore = () => {
   const handleInputChangeNewPrice = (name: string, value: any) => {
     setDataNewPrice({ ...dataNewPrice, [name]: value });
   };
+  const handleInputChangeNewManage = (name: string, value: any) => {
+    setDataNewManage({ ...dataNewManage, [name]: value });
+  };
+
   useEffect(() => {
   }, []);
 
@@ -482,7 +544,12 @@ const NewStore = () => {
               <BaseInputImage
                 onImageChange={(e: any) => {
                   console.log('e', e);
-
+                  handleInputChange('storeImages', [e?.target?.files[0], ...formDataPage1.storeImages.slice(1)]);
+                }}
+                // src={URL.createObjectURL(formDataPage1?.storeImages[0])}
+                onDelImage={() => {
+                  const updatedStoreImages = formDataPage1.storeImages.slice(1);
+                  handleInputChange('storeImages', updatedStoreImages);
                 }}
                 description
                 className="flex flex-col items-center justify-center w-2/3 rounded-lg bg-darkNight50 h-[380px]"
@@ -491,27 +558,37 @@ const NewStore = () => {
                 <BaseInputImage
                   onImageChange={(e: any) => {
                     console.log('e', e);
+                    const updatedStoreImages = [...formDataPage1.storeImages];
+                    updatedStoreImages[1] = e?.target?.files[0];
+                    handleInputChange('storeImages', updatedStoreImages);
                   }}
-                  src={'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg'}
+                  onDelImage={() => {
+                    const updatedStoreImages = formDataPage1.storeImages.slice(1);
+                    handleInputChange('storeImages', updatedStoreImages);
+                  }}
+                  // src={'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg'}
                   className="h-[184px]"
                 />
                 <BaseInputImage
                   onImageChange={(e: any) => {
                     console.log('e', e);
-
+                    const updatedStoreImages = [...formDataPage1.storeImages];
+                    updatedStoreImages[2] = e?.target?.files[0];
+                    handleInputChange('storeImages', updatedStoreImages);
                   }}
                   className="h-[184px]"
                 />
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3 grid-flow-rows min-h-[380px]">
-              {(formDataPage1.storeImages || []).map((item, index) => {
+              {([1, 2, 3, 4, 5, 6]).map((item, index) => {
                 console.log('item', item, index);
                 return (
                   <BaseInputImage
                     onImageChange={(e: any) => {
                       console.log('e', e);
 
+                      handleInputChange('storeImages', [...formDataPage1.storeImages, e?.target?.files[0]]);
                     }}
                     key={index}
                     className="h-[184px]"
@@ -574,7 +651,7 @@ const NewStore = () => {
 
         <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
           <BaseInput
-            onChange={(value) => handleInputChange('storeIntroduction', value)}
+            onChange={(value) => handleInputChangePage2('storeIntroduction', value)}
             value={formDataPage2.storeIntroduction}
             placeholder="매장의 소개해주세요
             구글 혹은 네이버에 노출 될 수 있으니
@@ -624,11 +701,12 @@ const NewStore = () => {
           <div>
             {optionPart2Selected === "담당자" ?
               <ManageTab
-
+                data={formDataPage2.manager}
+                onCLickCreateNew={() => { setOpenModalCreateNewManage(true) }}
               />
               :
               <PriceListTab
-                data={dataPrice}
+                data={formDataPage2.priceList}
                 onCLickCreateNew={() => { setOpenModalCreateNewPrice(true) }}
               />}
           </div>
@@ -636,7 +714,10 @@ const NewStore = () => {
         </div>
 
 
-        <div className="flex w-1/3 overflow-auto ">3</div>
+        <div className="flex flex-col w-1/3 p-4 overflow-auto ">
+          {formDataPage1.storeImages[0] && <img src={URL.createObjectURL(formDataPage1?.storeImages[0])} className="w-full h-[260px]" />}
+          {formDataPage1.storeName && <BaseText locale size={16} bold className="flex justify-center py-8 mx-4 border-b">{formDataPage1.storeName}</BaseText>}
+        </div>
       </div>
       <BaseModal
         isOpen={openModalOpenHours}
@@ -698,7 +779,7 @@ const NewStore = () => {
         onSubmit={handleSubmitSubway}
         title="뒤로"
         disableSubmitBtn={!subwaySelectedChild.value}
-        isHideAction={subwaySelected}
+        isHideAction={!subwaySelected}
       >
         <div className="flex flex-col gap-4">
           {
@@ -767,12 +848,13 @@ const NewStore = () => {
         <div className="flex flex-col gap-4">
           <ChatMessageFuncPart1
             title="주간 야간별 요금을 각각 설정"
-            value=''
-            onClick={(value) => { console.log('click Stamp settings', value) }}
+            value='0'
+            onClick={(value) => { setIsShowPriceNight(value) }}
             options={[
-              { value: '1', label: '아니오' },
-              { value: '2', label: '예' }
-            ]} />
+              { value: '0', label: '아니오' },
+              { value: '1', label: '예' }
+            ]}
+          />
           <BaseInput
             title="코스이름"
             placeholder="타이마사지"
@@ -801,27 +883,45 @@ const NewStore = () => {
                 label: "3",
               },
             ]}
-            value={'1'}
-            onChange={(value) => handleInputChange('storeOpeningHours', value)}
+            value={dataNewPrice.time}
+            onChange={(value) => handleInputChangeNewPrice('time', value)}
             placeholder="시간선택"
           />
           <BaseInput
             title="요금"
-            placeholder="100"
+            placeholder="0"
             type="number"
             value={dataNewPrice.amountBeforeDiscount}
             onChange={(value) => handleInputChangeNewPrice('amountBeforeDiscount', value)}
           />
           <BaseInput
             title="할인된 요금"
-            placeholder="90"
+            placeholder="0"
             type="number"
             value={dataNewPrice.amountAfterDiscount}
             onChange={(value) => handleInputChangeNewPrice('amountAfterDiscount', value)}
           />
 
+          {isShowPriceNight === '1' && <>
+            <BaseInput
+              title="야간 할인전 금액"
+              placeholder="0"
+              type="number"
+              value={dataNewPrice.amountBeforeNightDiscount}
+              onChange={(value) => handleInputChangeNewPrice('amountBeforeNightDiscount', value)}
+            />
+            <BaseInput
+              title="야간 할인된 금액"
+              placeholder="0"
+              type="number"
+              value={dataNewPrice.amountAfterNightDiscount}
+              onChange={(value) => handleInputChangeNewPrice('amountAfterNightDiscount', value)}
+            />
+          </>}
+
           <BaseInputSelect
             title="코스시간"
+            placeholder="코스시간"
             options={[
               {
                 value: "1",
@@ -836,11 +936,19 @@ const NewStore = () => {
                 label: "Won",
               },
             ]}
-            value={'1'}
-            onChange={(value) => handleInputChange('storeOpeningHours', value)}
+            value={dataNewPrice.unit}
+            onChange={(value) => handleInputChangeNewPrice('unit', value)}
           />
         </div>
       </BaseModal>
+
+      <ModalCreateNewManage
+        isOpen={openModalCreateNewManage}
+        onClose={handleCloseModalCreateNewManage}
+        onSubmit={handleSubmitCreateNewManage}
+        data={dataNewManage}
+        onImageChange={handleImageCreateNewChange}
+      />
     </Layout>
   );
 };
