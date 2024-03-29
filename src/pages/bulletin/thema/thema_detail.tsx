@@ -4,6 +4,7 @@ import { BaseInput } from "../../../components/input/BaseInput";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import {
   BOARD_TEXT,
+  SELECT_ALL,
   USER_PERMISSION,
   USER_PERMISSION_TEXT,
   VISIBLE_BOARDS,
@@ -23,9 +24,6 @@ export const ThemaDetail = ({
 }: any) => {
   const [thema, setThema] = useState<ThemaInterface>();
   const [groupUsers, setGroupUsers] = useState([]);
-  const [viewGroupUserSelected, setViewGroupUserSelected] = useState([]);
-  const [postGroupUserSelected, setPostGroupUserSelected] = useState([]);
-  const [commentGroupUserSelected, setCommentGroupUserSelected] = useState([]);
 
   const getGroupUser = async () => {
     try {
@@ -38,19 +36,21 @@ export const ThemaDetail = ({
     const viewGroup: any = (themaProps as ThemaInterface)?.groups
       ?.filter((item) => item.group_view)
       .map((item) => item.group_view.id);
-    setViewGroupUserSelected(viewGroup || []);
 
     const postGroup: any = (themaProps as ThemaInterface)?.groups
       ?.filter((item) => item.group_post)
       .map((item) => item.group_post.id);
-    setPostGroupUserSelected(postGroup || []);
 
     const commentGroup: any = (themaProps as ThemaInterface)?.groups
       ?.filter((item) => item.group_comment)
       .map((item) => item.group_comment.id);
-    setCommentGroupUserSelected(commentGroup || []);
 
-    setThema(themaProps);
+    setThema({
+      ...themaProps,
+      view_group_ids: viewGroup,
+      post_group_ids: postGroup,
+      comment_group_ids: commentGroup,
+    });
     getGroupUser();
   }, [lastOpen, themaProps]);
 
@@ -180,7 +180,7 @@ export const ThemaDetail = ({
                     view_user_permissions: value,
                   });
                 }}
-                value={thema?.view_user_permissions}
+                defaultValue={thema?.view_user_permissions}
                 required={true}
                 allowClear={false}
                 size="middle"
@@ -204,18 +204,21 @@ export const ThemaDetail = ({
                     view_group_ids: value,
                   });
                 }}
-                value={viewGroupUserSelected}
+                defaultValue={thema?.view_group_ids}
                 required={true}
                 allowClear={false}
                 size="middle"
                 textInputSize={12}
                 placeholder="Select"
-                options={groupUsers.map((item: any, index) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })}
+                options={[
+                  { label: "All users", value: SELECT_ALL },
+                  ...groupUsers.map((item: any, index) => {
+                    return {
+                      label: item.name,
+                      value: item.id,
+                    };
+                  }),
+                ]}
               />
             </div>
           </div>
@@ -237,7 +240,7 @@ export const ThemaDetail = ({
                     post_user_permissions: value,
                   });
                 }}
-                value={thema?.post_user_permissions}
+                defaultValue={thema?.post_user_permissions}
                 required={true}
                 allowClear={false}
                 size="middle"
@@ -261,18 +264,21 @@ export const ThemaDetail = ({
                     post_group_ids: value,
                   });
                 }}
-                value={postGroupUserSelected}
+                defaultValue={thema?.post_group_ids}
                 required={true}
                 allowClear={false}
                 size="middle"
                 textInputSize={12}
                 placeholder="Select"
-                options={groupUsers.map((item: any, index) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })}
+                options={[
+                  { label: "All users", value: SELECT_ALL },
+                  ...groupUsers.map((item: any, index) => {
+                    return {
+                      label: item.name,
+                      value: item.id,
+                    };
+                  }),
+                ]}
               />
             </div>
           </div>
@@ -295,7 +301,7 @@ export const ThemaDetail = ({
                     comment_user_permissions: value,
                   });
                 }}
-                value={thema?.comment_user_permissions}
+                defaultValue={thema?.comment_user_permissions}
                 required={true}
                 allowClear={false}
                 size="middle"
@@ -319,18 +325,21 @@ export const ThemaDetail = ({
                     comment_group_ids: value,
                   });
                 }}
-                value={commentGroupUserSelected}
+                defaultValue={thema?.comment_group_ids}
                 required={true}
                 allowClear={false}
                 size="middle"
                 textInputSize={12}
                 placeholder="Select"
-                options={groupUsers.map((item: any, index) => {
-                  return {
-                    label: item.name,
-                    value: item.id,
-                  };
-                })}
+                options={[
+                  { label: "All users", value: SELECT_ALL },
+                  ...groupUsers.map((item: any, index) => {
+                    return {
+                      label: item.name,
+                      value: item.id,
+                    };
+                  }),
+                ]}
               />
             </div>
           </div>
