@@ -16,7 +16,8 @@ import { classNames } from "../../utils/common";
 import { LIST_REGION } from "../../utils/constants";
 import { ManageTab } from "./components/ManageTab";
 import { PriceListTab } from "./components/PriceListTab";
-import ModalCreateNewManage from "./ModalCreateNewManage";
+import { ModalCreateNewManage } from "./components/ModalCreateNewManage";
+import { ModalCreateNewPrice } from "./components/ModalCreateNewPrice";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -315,7 +316,6 @@ const NewStore = () => {
   });
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
-  const [isShowPriceNight, setIsShowPriceNight] = useState('0');
   const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({
     id: '',
     name: '',
@@ -336,22 +336,6 @@ const NewStore = () => {
     image: '',
   });
   console.log('dataNewManage', dataNewManage);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setDataNewManage({ ...dataNewManage, image: reader.result });
-        } else {
-          console.error("Invalid data type for avatar.");
-        }
-      };
-    }
-  };
-
 
   const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
 
@@ -716,7 +700,108 @@ const NewStore = () => {
 
         <div className="flex flex-col w-1/3 p-4 overflow-auto ">
           {formDataPage1.storeImages[0] && <img src={URL.createObjectURL(formDataPage1?.storeImages[0])} className="w-full h-[260px]" />}
-          {formDataPage1.storeName && <BaseText locale size={16} bold className="flex justify-center py-8 mx-4 border-b">{formDataPage1.storeName}</BaseText>}
+          {formDataPage1.storeName && <div className="p-4 border">
+            <BaseText locale size={16} bold className="flex justify-center py-8 border-b">{formDataPage1.storeName}</BaseText>
+            <div className="flex py-4">
+              <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                <img src={Images.iconPhone} className="w-9 h-9" />
+                <BaseText locale size={16} className="text-center">전화</BaseText>
+              </div>
+              <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                <img src={Images.iconHeart} className="w-9 h-9" />
+                <BaseText locale size={16} className="text-center">전화</BaseText>
+              </div>
+              <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                <img src={Images.iconDirection} className="w-9 h-9" />
+                <BaseText locale size={16} className="text-center">전화</BaseText>
+              </div>
+              <div className="flex flex-col items-center justify-center flex-1 gap-1 cursor-pointer">
+                <img src={Images.share} className="w-9 h-9" />
+                <BaseText locale size={16} className="text-center">전화</BaseText>
+              </div>
+            </div>
+          </div>}
+          {(formDataPage1.storeAddress || formDataPage1.storeNumber || formDataPage1.storeAddressDetails || formDataPage1.storeOpeningHours) &&
+            <div className="mt-1 border ">
+              <div className="flex">
+                <BaseText locale size={16} bold className="flex justify-center flex-1 p-[10px] border-b-8 border-r">정보</BaseText>
+                <BaseText locale size={16} className="flex justify-center flex-1 p-[10px]">리뷰</BaseText>
+              </div>
+              <div className="p-4">
+                {(formDataPage1.storeAddress || formDataPage1.storeAddressDetails) &&
+                  <div className="flex items-center gap-1 py-3 border-b">
+                    <img src={Images.iconGps} className="w-5 h-5" />
+                    <BaseText locale size={16} className="text-center">{formDataPage1.storeAddress + ' ' + formDataPage1.storeAddressDetails}</BaseText>
+                  </div>
+                }
+                {formDataPage1.storeOpeningHours &&
+                  <div className="flex items-center gap-1 py-3 border-b">
+                    <img src={Images.iconClock} className="w-5 h-5" />
+                    <BaseText locale size={16} className="text-center">{formDataPage1.storeOpeningHours}</BaseText>
+                  </div>
+                }
+                {formDataPage1.storeNumber &&
+                  <div className="flex items-center gap-1 py-3 border-b">
+                    <img src={Images.iconPhone2} className="w-5 h-5" />
+                    <BaseText locale size={16} className="text-center">{formDataPage1.storeNumber}</BaseText>
+                  </div>
+                }
+                {
+                  formDataPage1.category &&
+                  <div className="flex items-center gap-1 py-3 border-b">
+                    <img src={Images.iconCategory} className="w-5 h-5" />
+                    <BaseText locale size={16} className="text-center">{formDataPage1.category}</BaseText>
+                  </div>
+                }
+                {
+                  formDataPage1.region &&
+                  <div className="flex items-center gap-1 py-3 border-b">
+                    <img src={Images.iconSquare} className="w-5 h-5" />
+                    <BaseText locale size={16} className="text-center">{formDataPage1.region}</BaseText>
+                  </div>
+                }
+                <div className="flex items-center gap-1 py-3 ">
+                  <img src={Images.iconTag} className="w-5 h-5" />
+                  {formDataPage1.hashtag.map((item, index) => {
+                    return (
+                      <div className="px-4 mr-1 rounded-lg bg-darkNight100">
+                        <BaseText locale size={16} className="text-center">{item}</BaseText>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          }
+          {formDataPage2?.priceList?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
+            {
+              formDataPage2.priceList.map((item, index) => {
+                return (
+                  <div className="py-2 border-t">
+                    <div
+                      className="flex items-center justify-between px-4 py-3 drop-shadow-lg"
+                      style={{
+                        backgroundImage: `url(${Images.bgDiscount})`,
+                        backgroundSize: '100% 100%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center',
+                      }}
+                    >
+                      <div className="flex gap-2">
+                        <img src={Images.discount1} className="w-11 h-11" />
+                        <div className="flex flex-col">
+                          <BaseText locale size={16} bold>본업체는 이벤트 중입니다.</BaseText>
+                          <BaseText locale size={16} bold>오늘도 즐거운 하루를 위해 5천원 할인</BaseText>
+                        </div>
+                      </div>
+                      <BaseText locale size={16} bold>34일남음</BaseText>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+          }
         </div>
       </div>
       <BaseModal
@@ -837,110 +922,12 @@ const NewStore = () => {
         </div>
       </BaseModal>
 
-      <BaseModal
+      <ModalCreateNewPrice
         isOpen={openModalCreateNewPrice}
         onClose={handleCloseModalCreateNewPrice}
         onSubmit={handleSubmitCreateNewPrice}
-        title="코스등록"
-        disableSubmitBtn={!dataNewPrice}
-      >
-
-        <div className="flex flex-col gap-4">
-          <ChatMessageFuncPart1
-            title="주간 야간별 요금을 각각 설정"
-            value='0'
-            onClick={(value) => { setIsShowPriceNight(value) }}
-            options={[
-              { value: '0', label: '아니오' },
-              { value: '1', label: '예' }
-            ]}
-          />
-          <BaseInput
-            title="코스이름"
-            placeholder="타이마사지"
-            value={dataNewPrice.name}
-            onChange={(value) => handleInputChangeNewPrice('name', value)}
-          />
-          <BaseInput
-            title="코스설명"
-            placeholder="타이마사지"
-            value={dataNewPrice.description}
-            onChange={(value) => handleInputChangeNewPrice('description', value)}
-          />
-          <BaseInputSelect
-            title="코스시간"
-            options={[
-              {
-                value: "1",
-                label: "1",
-              },
-              {
-                value: "2",
-                label: "2",
-              },
-              {
-                value: "3",
-                label: "3",
-              },
-            ]}
-            value={dataNewPrice.time}
-            onChange={(value) => handleInputChangeNewPrice('time', value)}
-            placeholder="시간선택"
-          />
-          <BaseInput
-            title="요금"
-            placeholder="0"
-            type="number"
-            value={dataNewPrice.amountBeforeDiscount}
-            onChange={(value) => handleInputChangeNewPrice('amountBeforeDiscount', value)}
-          />
-          <BaseInput
-            title="할인된 요금"
-            placeholder="0"
-            type="number"
-            value={dataNewPrice.amountAfterDiscount}
-            onChange={(value) => handleInputChangeNewPrice('amountAfterDiscount', value)}
-          />
-
-          {isShowPriceNight === '1' && <>
-            <BaseInput
-              title="야간 할인전 금액"
-              placeholder="0"
-              type="number"
-              value={dataNewPrice.amountBeforeNightDiscount}
-              onChange={(value) => handleInputChangeNewPrice('amountBeforeNightDiscount', value)}
-            />
-            <BaseInput
-              title="야간 할인된 금액"
-              placeholder="0"
-              type="number"
-              value={dataNewPrice.amountAfterNightDiscount}
-              onChange={(value) => handleInputChangeNewPrice('amountAfterNightDiscount', value)}
-            />
-          </>}
-
-          <BaseInputSelect
-            title="코스시간"
-            placeholder="코스시간"
-            options={[
-              {
-                value: "1",
-                label: "USD",
-              },
-              {
-                value: "2",
-                label: "VND",
-              },
-              {
-                value: "3",
-                label: "Won",
-              },
-            ]}
-            value={dataNewPrice.unit}
-            onChange={(value) => handleInputChangeNewPrice('unit', value)}
-          />
-        </div>
-      </BaseModal>
+        data={dataNewPrice}
+      />
 
       <ModalCreateNewManage
         isOpen={openModalCreateNewManage}

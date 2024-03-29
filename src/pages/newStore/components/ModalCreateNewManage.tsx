@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { BaseModal } from '../../components/modal/BaseModal'
-import { BaseText } from '../../components'
-import { classNames } from '../../utils/common'
-import Images from '../../assets/gen';
-import { BaseInput } from '../../components/input/BaseInput';
+import { BaseModal } from '../../../components/modal/BaseModal'
+import { BaseText } from '../../../components'
+import { classNames } from '../../../utils/common'
+import Images from '../../../assets/gen';
+import { BaseInput } from '../../../components/input/BaseInput';
 
 interface IProps {
     isOpen: boolean;
@@ -102,5 +102,3 @@ export const ModalCreateNewManage = (props: IProps) => {
         </BaseModal>
     )
 }
-
-export default ModalCreateNewManage
