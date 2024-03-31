@@ -9,12 +9,14 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import { DatePicker, GetProps, Input, Select } from "antd";
+import { DatePicker, GetProps, Input, Select, notification } from "antd";
 import { storeApi } from "../../apis/storeApi";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseModal2 } from "../../components/modal/BaseModal2";
 import dayjs from "dayjs";
 import { eventApi } from "../../apis/eventApi";
+import { ThemaInterface } from "../../entities";
+import { ThemaApi } from "../../apis/themaApi";
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 const { RangePicker } = DatePicker;
 const StorePage = () => {
@@ -30,8 +32,7 @@ const StorePage = () => {
     countShopExpired: 0,
     countShopOnEvent: 0,
   });
-  const [listCategory, setListCategory] = useState();
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedThema, setSelectedThema] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
   const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
@@ -41,6 +42,8 @@ const StorePage = () => {
   const [descriptionEvent, setDescriptionEvent] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [filter, setFilter] = useState<any>();
+  const [isUpdateSuccess, setIsUpdateSuccess] = useState(0);
+  const [themas, setThemas] = useState<any>([]);
 
   const { t } = useTranslation();
 
@@ -55,31 +58,25 @@ const StorePage = () => {
   const getCountStore = async () => {
     try {
       let resultCount: any = await storeApi.getCountStore();
-      console.log();
       if (resultCount.code === 200) {
         setCountStore(resultCount.results.object);
       }
     } catch (error) {}
   };
-  const getListCategory = async () => {
+  const getListThema = async () => {
     try {
-      let result: any = await storeApi.getListCategory({
-        limit: 50,
-        fields: '["name"]',
-      });
-      console.log("result", result);
-      if (result.code === 200) {
-        const transformedData = result?.results?.objects.rows.map(
-          (item: { id: any; name: any }) => ({
-            value: item.id,
-            label: item.name,
-          })
-        );
-        // add item to first array
-        transformedData.unshift({ value: "all", label: "all" });
-        setListCategory(transformedData);
-      }
-    } catch (error) {}
+      const data: Array<ThemaInterface> = await ThemaApi.getList();
+      const transformedData = data.map((item) => ({
+        value: item.id,
+        label: item.name,
+      }));
+      // // add item to first array
+      transformedData.unshift({ value: t("All"), label: t("All") });
+
+      setThemas(transformedData);
+    } catch (error) {
+      return [];
+    }
   };
   const _createEvent = async () => {
     try {
@@ -94,12 +91,12 @@ const StorePage = () => {
       };
       let result: any = await eventApi.createEvent(params);
       if (result.code === 200) {
-        setDescriptionEvent("");
-        setRangeValue(null);
-        handleEventCreationSuccess();
+        resetModal();
       }
-      console.log("@@@", result);
-    } catch (error) {}
+      refreshTable();
+    } catch (error) {
+      refreshTable();
+    }
   };
   const _editEvent = async () => {
     try {
@@ -112,18 +109,31 @@ const StorePage = () => {
         end_time: timeStampEnd,
         images: [],
       };
-      let result: any = await eventApi.editEvent(params, itemSelectShop.id);
+      let result: any = await eventApi.editEvent(
+        params,
+        itemSelectShop.events[0].id
+      );
       if (result.code === 200) {
-        setDescriptionEvent("");
-        setRangeValue(null);
-        handleEventCreationSuccess();
+        resetModal();
+        refreshTable();
       }
-      console.log("@@@", result);
-    } catch (error) {}
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+      refreshTable();
+    }
   };
-  const handleEventCreationSuccess = () => {};
+  const resetModal = () => {
+    setDescriptionEvent("");
+    setRangeValue(null);
+  };
+  const refreshTable = () => {
+    setIsUpdateSuccess(isUpdateSuccess + 1);
+  };
   useEffect(() => {
-    getListCategory();
+    getListThema();
     getCountStore();
     return () => {};
   }, []);
@@ -131,8 +141,8 @@ const StorePage = () => {
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
   };
-  const handleChangeCategory = (value: string) => {
-    setSelectedCategory(value);
+  const handleChangeThema = (value: string) => {
+    setSelectedThema(value);
   };
   const handleChangeFilter = (value: string) => {
     setSelectedFilterUser(value);
@@ -147,6 +157,7 @@ const StorePage = () => {
     const newFilter = { type: selectedFilterUser, value: valueKeywordFilter };
     setFilter(newFilter);
   };
+
   const getButtonStyle = (buttonKey: any) => {
     const isSelected = buttonKey === selectedButton;
     return {
@@ -211,11 +222,11 @@ const StorePage = () => {
           <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
-              placeholder={t("Category")}
-              defaultValue={t("Category")}
+              placeholder={t("Thema")}
+              defaultValue={t("Thema")}
               style={{ width: 110 }}
-              onChange={handleChangeCategory}
-              options={listCategory}
+              onChange={handleChangeThema}
+              options={themas}
             />
             <Select
               suffixIcon={<ArrowUpOutlined />}
@@ -301,7 +312,7 @@ const StorePage = () => {
           </div>
         </div>
         <StoreListTable
-          category={selectedCategory}
+          thema={selectedThema}
           typeStore={selectedButton}
           typeSorting={selectedSorting}
           filter={filter}
@@ -315,14 +326,14 @@ const StorePage = () => {
               const startDate = dayjs(new Date(+item.events[0].start_time));
               const endDate = dayjs(new Date(+item.events[0].end_time));
               setRangeValue([startDate, endDate]);
-              setDescriptionEvent(item.events[0].title);
+              setDescriptionEvent(item.events[0].description);
             } else {
               setIsEdit(false);
             }
             setItemSelectShop(item);
             setOpenModalCreateEvent(true);
           }}
-          onUpdate={handleEventCreationSuccess}
+          isUpdate={isUpdateSuccess}
         />
       </div>
       <BaseModal2
