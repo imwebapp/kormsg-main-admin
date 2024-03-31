@@ -14,21 +14,21 @@ import { SORTING, STORE_STATUS } from "../../utils/constants";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
-  category?: string;
+  thema?: string;
   typeSorting?: string;
   filter?: { type: string; value: any };
   onItemStoreClick?: (item: any) => void;
-  onUpdate?: () => void;
+  isUpdate?: Number;
 };
 export default function StoreListTable(props: StoreListTableProps) {
   const {
     className,
     typeStore,
-    category,
+    thema,
     typeSorting,
     filter,
     onItemStoreClick,
-    onUpdate,
+    isUpdate,
   } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
@@ -125,7 +125,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         return [["geolocation_api_type", "DESC"]];
     }
   }
-  function generateFilter(category?: string, status?: string) {
+  function generateFilter(status?: string) {
     let filterString = "";
 
     // Thêm điều kiện trạng thái
@@ -148,14 +148,6 @@ export default function StoreListTable(props: StoreListTableProps) {
       default:
         break;
     }
-
-    // Thêm điều kiện category nếu có
-    if (category && category !== "" && category !== "all") {
-      if (filterString !== "") {
-        filterString += ", ";
-      }
-      filterString += `"category_id": "${category}"`;
-    }
     if (
       filter &&
       (filter.type === "contact_phone" || filter.type === "title") &&
@@ -171,7 +163,6 @@ export default function StoreListTable(props: StoreListTableProps) {
   }
   const generateFields = () => {
     console.log("filter", filter);
-
     if (typeStore == STORE_STATUS.eventOngoing) {
       // default event on going
       return '["$all",{"events":["$all",{"$filter":{}}]}]';
@@ -185,14 +176,24 @@ export default function StoreListTable(props: StoreListTableProps) {
     ) {
       filterString = `,{"$filter":{"${filter.type}":{"$iLike":"%${filter.value}%"}}}`;
     }
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"${filterString}]},{"category":["$all",{"thema":["$all"]}]},{"events":["$all"]}]`;
+
+    // Thêm điều kiện category nếu có
+    let filterThema = "";
+    if (thema && thema !== "" && thema !== t("All")) {
+      filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
+    }
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"${filterString}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    console.log("fields", fields);
+
     return fields;
   };
 
   const getListStore = () => {
+    console.log("log log");
+
     // field all selected
     const fieldsCustom = generateFields();
-    const filterCustom = generateFilter(category, typeStore);
+    const filterCustom = generateFilter(typeStore);
     const orderCustom = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
@@ -210,7 +211,11 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   useEffect(() => {
     getListStore();
-  }, [typeStore, typeSorting, filter, category, onUpdate]);
+  }, []);
+
+  useEffect(() => {
+    getListStore();
+  }, [typeStore, typeSorting, filter, thema, isUpdate]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -234,7 +239,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       ),
     },
     {
-      title: t("Category"),
+      title: t("Thema"),
       dataIndex: ["category", "thema", "name"],
       render: (category) => (
         <div className="min-w-[40px]">

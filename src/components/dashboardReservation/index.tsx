@@ -159,7 +159,10 @@ export default function DashboardReservation(props: DashboardReservationProps) {
   };
   const renderPaymentAmount = (paymentAmount: any) => {
     if (paymentAmount && paymentAmount.length > 0) {
-      const discount = paymentAmount[0]?.discount;
+      const discount = paymentAmount[0]?.discount
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
       return discount ? (
         <span className="text-center font-bold">{discount}</span>
       ) : null;
