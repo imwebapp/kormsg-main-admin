@@ -87,13 +87,13 @@ export const ModalCreateNewManage = (props: IProps) => {
                 </div>
                 <BaseInput
                     title="이름"
-                    placeholder="추천 관리사"
+                    placeholder="예시)홍길동"
                     value={dataNewManage.name}
                     onChange={(value) => handleInputChangeNewManage('name', value)}
                 />
                 <BaseInput
                     title="소개"
-                    placeholder="너무 잘하고 착합니다. 당골지명 많은 분이세요"
+                    placeholder="예시) 안녕하세요  홍길동입니다 회원님들께 인사드립니다 제 주된 코스는 두피케어 피부관리 그리고 추가되어 전문적인 건식통증테라피(경혈지압과 체형교정) 아로마테라피 (다이어트 림프순환관리) 정성으로 회원님들께 보답하겠습니다"
                     value={dataNewManage.description}
                     onChange={(value) => handleInputChangeNewManage('description', value)}
                     textArea

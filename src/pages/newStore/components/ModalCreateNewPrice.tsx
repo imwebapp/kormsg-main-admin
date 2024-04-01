@@ -60,7 +60,7 @@ export const ModalCreateNewPrice = (props: IProps) => {
             isOpen={isOpen}
             onClose={handleCloseModalCreateNewPrice}
             onSubmit={handleSubmitCreateNewPrice}
-            title="담당자 등록"
+            title="코스등록"
             disableSubmitBtn={!dataNewPrice}
         >
             <div className="flex flex-col gap-4">
@@ -106,14 +106,14 @@ export const ModalCreateNewPrice = (props: IProps) => {
                     placeholder="시간선택"
                 />
                 <BaseInput
-                    title="요금"
+                    title="할인된 금액"
                     placeholder="0"
                     type="number"
                     value={dataNewPrice.amountBeforeDiscount}
                     onChange={(value) => handleInputChangeNewPrice('amountBeforeDiscount', value)}
                 />
                 <BaseInput
-                    title="할인된 요금"
+                    title="할인된 금액"
                     placeholder="0"
                     type="number"
                     value={dataNewPrice.amountAfterDiscount}
@@ -122,7 +122,7 @@ export const ModalCreateNewPrice = (props: IProps) => {
 
                 {isShowPriceNight === '1' && <>
                     <BaseInput
-                        title="야간 할인전 금액"
+                        title="야간 할인된 금액"
                         placeholder="0"
                         type="number"
                         value={dataNewPrice.amountBeforeNightDiscount}
@@ -138,8 +138,8 @@ export const ModalCreateNewPrice = (props: IProps) => {
                 </>}
 
                 <BaseInputSelect
-                    title="코스시간"
-                    placeholder="코스시간"
+                    title="결제가능한 화폐"
+                    placeholder=""
                     options={[
                         {
                             value: "1",
