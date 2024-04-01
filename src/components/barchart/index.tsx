@@ -58,22 +58,24 @@ export default function BaseBarChart() {
   ]);
   const [dateSelected, setDateSelected] = useState("today");
   const getInfoAnalytics = async () => {
-    let result = await analyticsApi.getInfo({
+    const params = {
       property: "properties/244725891",
-      dateRanges: [
-        {
-          startDate: dateSelected,
-          endDate: "today",
+      dimensions: [{ name: "browser" }, { name: "pageReferrer" }],
+      metrics: [{ name: "newUsers" }],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      dimensionFilter: {
+        filter: {
+          stringFilter: {
+            matchType: "FULL_REGEXP",
+            caseSensitive: false,
+            value: "^.+$", // check not null
+          },
+          fieldName: "pageReferrer",
         },
-      ],
-      dimensions: [{ name: "date" }],
-      metrics: [
-        { name: "activeUsers" },
-        { name: "screenPageViews" },
-        { name: "sessions" },
-        { name: "averageSessionDuration" },
-      ],
-    });
+      },
+    };
+    let result = await analyticsApi.getInfo(params);
+
     //  get user active today
     console.log("result", result.data[0]);
   };

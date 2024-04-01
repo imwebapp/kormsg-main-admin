@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
@@ -9,6 +9,7 @@ import { getURL } from "../../utils/common";
 import CustomTimePicker from "../calendar";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
+import { analyticsApi } from "../../apis/analyticsApi";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -20,28 +21,60 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [data, setData] = useState<any[]>([]);
+  const getInfoAnalytics = async () => {
+    const params = {
+      property: "properties/244725891",
+      dimensions: [{ name: "browser" }, { name: "pageReferrer" }],
+      metrics: [{ name: "newUsers" }],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      dimensionFilter: {
+        filter: {
+          stringFilter: {
+            matchType: "FULL_REGEXP",
+            caseSensitive: false,
+            value: "^.+$", // check not null
+          },
+          fieldName: "pageReferrer",
+        },
+      },
+    };
+    let result = await analyticsApi.getInfo(params);
+    const convertedData = result.data[0].rows.map((item: any) => ({
+      communication: item.dimensionValues[0].value,
+      url: item.dimensionValues[1].value,
+      click: item.metricValues[0].value,
+    }));
+    console.log("convertedData", convertedData);
+
+    setData(convertedData);
+  };
+  useEffect(() => {
+    getInfoAnalytics();
+    return () => {};
+  }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      url: "https://kormsg.com/",
-      click: 123,
-    });
-  }
   const columns: TableColumnsType<any> = [
     {
-      title: "",
-      render: (text) => <img className="w-6 h-6" src={Images.android} />,
+      title: "Communication",
+      dataIndex: "communication",
+      render: (communication) => <div>{communication}</div>,
     },
     {
       title: t("URL"),
-      render: ({ url }) => <a href={getURL(url)}>{url}</a>,
+      dataIndex: "url",
+      render: (url) => (
+        <a href={getURL(url)}>
+          {url.length > 80 ? url.slice(0, 80) + "..." : url.slice(0, 80)}
+        </a>
+      ),
+      width: "75%",
     },
     {
-      title: t("Click"),
+      title: "Click",
       dataIndex: "click",
+      render: (click) => <div>{click}</div>,
     },
   ];
 
@@ -52,10 +85,7 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
           Referral URL
         </BaseText>
         {!isViewAll ? (
-          <CustomButton
-            onClick={() => navigate(Url.dashboardReferral)}
-            locale
-          >
+          <CustomButton onClick={() => navigate(Url.dashboardReferral)} locale>
             View all
           </CustomButton>
         ) : (

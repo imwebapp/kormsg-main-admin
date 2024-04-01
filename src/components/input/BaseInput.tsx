@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import Images from "../../assets/gen";
@@ -10,11 +10,13 @@ interface IProps {
   titleSize?: number;
   required?: boolean;
   isError?: boolean;
-  value: string | number;
-  onChange: (value: string | any) => void;
-  onBlur?: () => void;
+  textArea?: boolean;
+  value?: string | number;
+  defaultValue?: string | number;
+  onChange?: (value: string | any) => void;
+  onBlur?: (value?: string | any) => void;
   onFocus?: () => void;
-  onSave?: () => void;
+  onSave?: (value?: string | any) => void;
   autoFocus?: boolean;
   placeholder?: string;
   type?: "text" | "password" | "number" | "email";
@@ -26,33 +28,36 @@ interface IProps {
   iconLeft?: ReactNode | string;
   iconLeftInactive?: ReactNode | string;
   iconRight?: ReactNode | string;
+  widgetRight?: ReactNode;
   iconRightInactive?: ReactNode | string;
+  rows?: number;
 };
 
 export const BaseInput = (props: IProps) => {
-  const { title, titleSize, required, value, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const {  title, titleSize, required, value, defaultValue, textArea,rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
+
   const handleFocus = () => {
     onFocus && onFocus();
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
-    onBlur && onBlur()
+  const handleBlur = (event : any) => {
+    onBlur && onBlur(event.target.value)
     setIsFocused(false);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event:any) => {
     if (event.key === 'Enter') {
       if (onSave) {
-        onSave();
+        onSave(event.target.value);
       }
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(event.target.value);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
+    onChange && onChange(event.target.value);
   };
 
   return (
@@ -76,7 +81,25 @@ export const BaseInput = (props: IProps) => {
             <img src={iconLeft || Images.emailIconActive} className={classNames('w-6 h-6 mr-3')} />
           ) : iconLeft
         )}
-        <input
+        {textArea ? (
+          <textarea
+            className={classNames(
+              'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
+              isError ? ' bg-dustRed50' : '',
+              styleInput || ""
+            )}
+            value={value}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            disabled={disabled}
+            placeholder={t(placeholder || '')}
+            autoFocus={autoFocus}
+            onKeyDown={handleKeyDown}
+            rows={rows || 5}
+            {...rest}
+          />
+        ) : <input
           className={classNames(
             'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
             isError ? ' bg-dustRed50' : '',
@@ -84,6 +107,7 @@ export const BaseInput = (props: IProps) => {
           )}
           type={type || "text"}
           value={value}
+          defaultValue={defaultValue}
           onChange={handleChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -92,10 +116,11 @@ export const BaseInput = (props: IProps) => {
           autoFocus={autoFocus}
           onKeyDown={handleKeyDown}
           {...rest}
-        />
-        {iconRight && (
+        />}
+        {iconRight &&   (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
         )}
+        {widgetRight}
       </div>
     </div>
 

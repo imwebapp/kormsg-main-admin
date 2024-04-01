@@ -18,4 +18,7 @@ export const storeApi = {
   getCountStore: () => {
     return axiosClient.get(`${STORE}/count_shop`);
   },
+  getListThema: (params?: any) => {
+    return axiosClient.get(`${CATEGORY}`, { params });
+  },
 };

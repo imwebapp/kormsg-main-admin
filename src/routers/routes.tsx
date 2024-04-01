@@ -12,6 +12,8 @@ import {
   UserDetail,
   ReservationDetails,
   AppVersion,
+  BulletinPage,
+  SeoPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -63,7 +65,7 @@ const routes = [
   },
   {
     path: Url.bulletinBoard,
-    element: <div className="p-4">coming soon</div>,
+    element: <BulletinPage/>,
   },
   {
     path: Url.store,
@@ -117,7 +119,7 @@ const routes = [
   },
   {
     path: Url.seo,
-    element: <div className="p-4">coming soon</div>,
+    element: <SeoPage />,
   },
   {
     path: Url.setting,

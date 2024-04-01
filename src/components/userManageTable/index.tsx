@@ -48,14 +48,17 @@ export default function UserManageTable(props: UserManageTableProps) {
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => { };
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("onSelectChange", newSelectedRowKeys);
+  };
 
-  const storeStatus = (title: string, value: number, account_type?: any) => {
+  const storeStatus = (title: string, item: any, value: number, account_type?: any) => {
+    console.log("storeStatus: ", item, "xx", title, "yy", value, 'zz', account_type);
     if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
     return (
-      <div className="flex flex-row">
+      <div className="flex flex-row cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}>
         <BaseText locale medium size={16}>
           {title}
         </BaseText>
@@ -114,8 +117,8 @@ export default function UserManageTable(props: UserManageTableProps) {
       </div>
     )
   }
-  const renderJumpLimit = (jump_limit: number, account_type?: any) => {
-    if (account_type === TypeUser.ADMIN) {
+  const renderJumpLimit = (item: any, jump_limit: number, account_type?: any,) => {
+    if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
     return (
@@ -123,7 +126,7 @@ export default function UserManageTable(props: UserManageTableProps) {
         <CustomButton className="w-10" primary>
           {jump_limit}
         </CustomButton>
-        <CustomButton locale primary>
+        <CustomButton locale primary onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.HISTORY_PAYMENT } })}>
           View history
         </CustomButton>
       </div>
@@ -151,18 +154,18 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Jump up limit"),
-      render: ({ jump_limit, account_type }) => renderJumpLimit(jump_limit, account_type),
+      render: (item: any) => renderJumpLimit(item, item?.jump_limit, item?.account_type),
     },
     {
       title: t("Store status"),
-      render: ({ current_active_post, current_pending_post, current_expired_post, current_rejected_post, current_recommendation_post, account_type }) => (
+      render: (item: any) => (
         <div className="flex flex-col gap-1 min-w-[230px]">
-          {storeStatus("Announcement Store", current_active_post, account_type)}
-          {storeStatus("Store under review", current_pending_post, account_type)}
-          {storeStatus("Stores that refuse review", current_rejected_post, account_type)}
-          {storeStatus("Expired store", current_expired_post, account_type)}
-          {storeStatus("Recommended store", current_recommendation_post, account_type)}
-          {storeStatus("During the event", 0, account_type)}
+          {storeStatus("Announcement Store", item, item.current_active_post, item.account_type)}
+          {storeStatus("Store under review", item, item.current_pending_post, item.account_type)}
+          {storeStatus("Stores that refuse review", item, item.current_rejected_post, item.account_type)}
+          {storeStatus("Expired store", item, item.current_expired_post, item.account_type)}
+          {storeStatus("Recommended store", item, item.current_recommendation_post, item.account_type)}
+          {storeStatus("During the event", item, 0, item.account_type)}
         </div>
       ),
     },
@@ -196,10 +199,10 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: "",
-      render: ({ }) => (
+      render: (item: any) => (
         <div className="flex flex-row items-center w-[50px]">
-          <img src={Images.edit} className="w-6 h-6 cursor-pointer" />
-          <img src={Images.dot} className="w-6 h-6 cursor-pointer" />
+          <img src={Images.edit} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })} />
+          <img src={Images.dot} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })} />
         </div>
       ),
     },
@@ -220,7 +223,7 @@ export default function UserManageTable(props: UserManageTableProps) {
 
   return (
     <BaseTable
-      onSelectChange={() => { }}
+      onSelectChange={onSelectChange}
       className={className}
       pagination={{ pageSize: 10 }}
       columns={columns}

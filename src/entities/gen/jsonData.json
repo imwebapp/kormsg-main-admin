@@ -1,18 +1,23 @@
 {
-  "name": "John",
-  "age": 30,
-  "birthdate": "1990-01-01",
-  "isStudent": false,
-  "hobbies": [
-    "reading",
-    "gaming"
-  ],
-  "hobbies2": [
-    1,
-    2
-  ],
-  "address": {
-    "city": "New York",
-    "country": "USA"
-  }
+  "id": "b94564f0-9463-11ee-ad8f-4f685460e1c9",
+  "status": true,
+  "created_at_unix_timestamp": "1701886652608",
+  "created_at": "2023-12-06T18:17:32.614Z",
+  "updated_at": "2024-03-28T06:56:34.589Z",
+  "deleted_at": null,
+  "name": "블로그",
+  "alias": "블로그",
+  "visible_boards": [],
+  "ids_shop_banner": [],
+  "bonus_point": false,
+  "review_require": false,
+  "mentor_status": false,
+  "is_for_adults": false,
+  "is_post_moderation": false,
+  "view_user_permissions": null,
+  "post_user_permissions": null,
+  "comment_user_permissions": null,
+  "view_group_ids": [],
+  "post_group_ids": [],
+  "comment_group_ids": []
 }

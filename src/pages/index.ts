@@ -11,6 +11,8 @@ import UserDetail from "./userDetail";
 import NewStore from "./newStore";
 import ReservationDetails from "./reservation-details";
 import AppVersion from "./appversion";
+import BulletinPage from "./bulletin";
+import SeoPage from "./seo";
 
 export {
   Login,
@@ -26,4 +28,6 @@ export {
   NewStore,
   ReservationDetails,
   AppVersion,
+  BulletinPage,
+  SeoPage
 };

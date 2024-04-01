@@ -4,16 +4,19 @@ import { ReactNode, useEffect, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import { useTranslation } from 'react-i18next';
+import { SELECT_ALL } from '../../utils/constants';
 
 interface InputProps extends SelectProps {
     title?: string;
     titleSize?: number;
     required?: boolean;
     isError?: boolean;
-    value?: string;
+    value?: any;
+    defaultValue?: any;
     size?: 'large' | 'middle' | 'small';
-    onChange: (value: string) => void;
-    options: { value: string | number, label: string, disabled?: boolean }[];
+    textInputSize?: number;
+    onChange: (value: any) => void;
+    options: { value: string | number, label: any, disabled?: boolean }[];
     disabled?: boolean;
     className?: string; // for tailwindcss
     styleTitle?: string;
@@ -25,18 +28,51 @@ interface InputProps extends SelectProps {
     iconRightInactive?: ReactNode;
     placeholder?: string;
     multiple?: boolean;
-};
+    allowClear?: boolean;
+}
 
 export const BaseInputSelect = (props: InputProps) => {
-    const { title, titleSize, required, value, onChange, className, size, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
+    const { title, titleSize, textInputSize, required, value, defaultValue, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const { t } = useTranslation();
-    const [valueSelect, setValueSelect] = useState<string | undefined>(value);
+    const [valueSelect, setValueSelect] = useState<any>(value);
+    const allValue = options.filter((item)=> item.value !== SELECT_ALL).map((item)=> item.value);
 
-    const handleChange = (value: string) => {
-        setValueSelect(value);
-        onChange(value);
+    const handleChange = (newValue: any) => {
+        console.log('newValue',newValue);
+        
+        if (multiple && Array.isArray(newValue) && newValue.length > 0 && !!options.find((item)=> item.value === SELECT_ALL)){
+            if ((newValue[newValue.length -1] === SELECT_ALL)) {
+                setValueSelect([SELECT_ALL]);
+                onChange(allValue);
+            } else if (newValue.includes(SELECT_ALL)) {
+                setValueSelect(newValue.filter((item)=> item!== SELECT_ALL));
+                onChange(newValue.filter((item)=> item!== SELECT_ALL));
+            } else if (!newValue.includes(SELECT_ALL) && newValue.length === options.length -1 ) {
+                setValueSelect([SELECT_ALL]);
+                onChange(allValue);
+            } else {
+                setValueSelect(newValue);
+                onChange(newValue);
+            }
+        } else {
+            setValueSelect(newValue);
+            onChange(newValue);
+        }
     };
+
+    useEffect(()=>{
+        if (multiple && Array.isArray(defaultValue) && defaultValue.length > 0){
+            if (!defaultValue.includes(SELECT_ALL) && defaultValue.length === options.length -1 ) {
+                setValueSelect([SELECT_ALL]);
+            } else {
+                setValueSelect(defaultValue);
+            }
+        } else {
+            setValueSelect(defaultValue);
+        }
+    },[defaultValue, options])
+
     useEffect(() => {
         if (value)
             setValueSelect(value);
@@ -71,27 +107,27 @@ export const BaseInputSelect = (props: InputProps) => {
             >
                 <Select
                     value={valueSelect}
+                    defaultValue={defaultValue}
                     placeholder={t(placeholder || '')}
                     onChange={handleChange}
                     disabled={disabled}
                     options={options}
                     size={size || 'large'}
-                    allowClear
+                    allowClear={allowClear != undefined ? allowClear : true}
                     mode={multiple ? 'multiple' : undefined}
-                    optionRender={(node) => {
-                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : valueSelect === node.value;
+                    optionRender={(node: any) => {
+                        const check = multiple ? (Array.isArray(valueSelect) && valueSelect.includes(node.value)) : (valueSelect === node.value || (!valueSelect && node.value === defaultValue));
                         return (
                             <div className={classNames('flex flex-row items-center ')}>
-                                <BaseText locale size={16} medium className={classNames(
+                                {typeof node.label === 'string' ? <BaseText locale size={textInputSize || 16} medium className={classNames(
                                     "w-full",
-                                    check ? 'text-blue' : "text-darkNight500"
-                                )}>
+                                    check ? 'text-blue' : "text-darkNight500", styleInput
+                                )} >
                                     {node.label}
-                                </BaseText>
+                                </BaseText> : node.label}
                                 {
-                                    valueSelect === node.value && <CheckOutlined style={{ marginLeft: '8px' }} />
+                                    !multiple && (valueSelect === node.value || (!valueSelect && node.value === defaultValue)) && <CheckOutlined style={{ marginLeft: '8px' }} />
                                 }
-
                             </div>
                         );
                     }}
