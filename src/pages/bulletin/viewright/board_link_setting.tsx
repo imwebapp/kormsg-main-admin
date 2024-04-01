@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { CategoryApi } from "../../../apis/categoryApi";
 import { TagApi } from "../../../apis/tagApi";
 import { NEW_ID } from "../viewleft";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
@@ -163,189 +164,289 @@ export default function BulletinSetting() {
     }
   };
 
+  const _buildImageAndName = () => {
+    return (
+      <>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium>
+            Image
+          </BaseText>
+          <input
+            type="file"
+            accept="image/*"
+            id="image-link"
+            style={{ display: "none" }}
+            onChange={handleImageChange}
+          />
+          <label
+            htmlFor="image-link"
+            className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
+          >
+            <img src={Images.upload} className="w-5 h-5 mr-2" />
+            <BaseText locale bold className="text-dayBreakBlue500">
+              Upload
+            </BaseText>
+          </label>
+        </div>
+        <div className="flex flex-row justify-center items-center mt-[10px]">
+          {boardSelected.image && (
+            <img
+              src={boardSelected.image}
+              alt=""
+              className="w-[100px] h-[100px] object-cover rounded-xl"
+            />
+          )}
+        </div>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium>
+            Board Name
+          </BaseText>
+          <BaseInput
+            key={Date.now()}
+            styleInputContainer="h-9"
+            onSave={(value) => {
+              updateOrCreateBoardLink({
+                ...boardSelected,
+                name: value,
+              });
+            }}
+            onBlur={(value) => {
+              updateOrCreateBoardLink({
+                ...boardSelected,
+                name: value,
+              });
+            }}
+            defaultValue={boardSelected.name}
+            placeholder="Typing...."
+            className="w-[170px]"
+          />
+        </div>
+      </>
+    );
+  };
+
+  const _buildBoardType = () => {
+    return (
+      <>
+        {" "}
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium>
+            Board Type
+          </BaseText>
+          <img
+            onClick={() => setShowBoardType(!isShowBoardType)}
+            src={
+              isShowBoardType ? Images.chevronUpTiny : Images.chevronDownTiny
+            }
+            width={24}
+            className="cursor-pointer"
+          />
+        </div>
+        {isShowBoardType && (
+          <div className="flex flex-wrap gap-[10px] mt-4">
+            {Object.keys(BOARD).map((item, index) => {
+              return (
+                <div
+                  onClick={() => {
+                    setBoardTypeSelected(item);
+                    getListThemaAndUpdateBoard(item);
+                  }}
+                  key={index}
+                  className={classNames(
+                    "w-20 h-20  rounded-xl flex justify-center items-center flex-col cursor-pointer",
+                    boardTypeSelected === item
+                      ? "bg-dayBreakBlue50"
+                      : "bg-darkNight50"
+                  )}
+                >
+                  <img
+                    src={
+                      boardTypeSelected === item ? Images.board2 : Images.board
+                    }
+                    className="w-6 h-6 mb-1"
+                  />
+                  <BaseText
+                    locale
+                    medium
+                    size={10}
+                    className={classNames(
+                      boardTypeSelected === item
+                        ? "text-dayBreakBlue500"
+                        : "text-darkNight500",
+                      "text-center"
+                    )}
+                  >
+                    {BOARD_TEXT[item]}
+                  </BaseText>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const _buildThema = () => {
+    return (
+      <>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium className="flex-1 mr-3">
+            Thema
+          </BaseText>
+          <BaseInputSelect
+            key={Date.now()}
+            className="!min-w-[100px]"
+            onChange={(value: any) => {
+              getCategories(value);
+            }}
+            defaultValue={boardSelected.thema_id}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={themas.map((item, index) => {
+              return {
+                label: t(item.name || ""),
+                value: item.id || "",
+              };
+            })}
+          />
+          <img
+            onClick={() => setOpenModalThema(true)}
+            src={Images.setting3}
+            className="w-[36px] ml-3 cursor-pointer"
+          />
+        </div>
+      </>
+    );
+  };
+
+  const _buildMapBrand = () => {
+    return (
+      <>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium>
+            Map Brand
+          </BaseText>
+          <BaseInputSelect
+            key={Date.now()}
+            placeholder="Select"
+            onChange={(value) => {
+              updateOrCreateBoardLink({
+                ...boardSelected,
+                geolocation_api_type: value,
+              });
+            }}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            defaultValue={boardSelected.geolocation_api_type}
+            options={Object.values(MAP_TYPE).map((item) => {
+              return {
+                label: t(item),
+                value: item,
+              };
+            })}
+          />
+        </div>
+      </>
+    );
+  };
+
+  const orderTag = async (
+    prev_index_number: number,
+    next_index_number: number
+  ) => {
+    console.log(prev_index_number, next_index_number);
+    try {
+      await TagApi.orderTag(tags[prev_index_number].id, {
+        prev_index_number: tags[prev_index_number].index,
+        next_index_number: tags[next_index_number].index,
+      });
+      getTagsWithThema();
+    } catch (error) {}
+  };
+
+  const onDragEndTag = (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+    orderTag(result.source.index, result.destination.index);
+  };
+
+  const _buildTags = () => {
+    return (
+      <>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium>
+            Tags
+          </BaseText>
+        </div>
+        {/* {tags.map((item, index) => {
+            return (
+              <div
+                key={index}
+                className="px-3 py-2 bg-darkNight50 rounded-full"
+              >
+                <BaseText size={12} medium>
+                  {item.name}
+                </BaseText>
+              </div>
+            );
+          })} */}
+        <DragDropContext onDragEnd={onDragEndTag}>
+          <Droppable droppableId="droppableTags">
+            {(provided) => (
+              <div
+                className="flex flex-wrap gap-3 mt-4"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {tags.map((item, index: number) => {
+                  return (
+                    <Draggable
+                      key={item.id}
+                      draggableId={item.id || NEW_ID}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                        >
+                          <div className="px-3 py-2 bg-darkNight50 rounded-full">
+                            <BaseText size={12} medium>
+                              {item.name}
+                            </BaseText>
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </>
+    );
+  };
+
   return (
     <div className="flex flex-col">
       <BaseText locale medium className="mt-4">
         SREEN
       </BaseText>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Image
-        </BaseText>
-        <input
-          type="file"
-          accept="image/*"
-          id="image-link"
-          style={{ display: "none" }}
-          onChange={handleImageChange}
-        />
-        <label
-          htmlFor="image-link"
-          className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
-        >
-          <img src={Images.upload} className="w-5 h-5 mr-2" />
-          <BaseText locale bold className="text-dayBreakBlue500">
-            Upload
-          </BaseText>
-        </label>
-      </div>
-      <div className="flex flex-row justify-center items-center mt-[10px]">
-        {boardSelected.image && (
-          <img
-            src={boardSelected.image}
-            alt=""
-            className="w-[100px] h-[100px] object-cover rounded-xl"
-          />
-        )}
-      </div>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Board Name
-        </BaseText>
-        <BaseInput
-          key={Date.now()}
-          styleInputContainer="h-9"
-          onSave={(value) => {
-            updateOrCreateBoardLink({
-              ...boardSelected,
-              name: value,
-            });
-          }}
-          onBlur={(value) => {
-            updateOrCreateBoardLink({
-              ...boardSelected,
-              name: value,
-            });
-          }}
-          defaultValue={boardSelected.name}
-          placeholder="Typing...."
-          className="w-[170px]"
-        />
-      </div>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Board Type
-        </BaseText>
-        <img
-          onClick={() => setShowBoardType(!isShowBoardType)}
-          src={isShowBoardType ? Images.chevronUpTiny : Images.chevronDownTiny}
-          width={24}
-          className="cursor-pointer"
-        />
-      </div>
-      {isShowBoardType && (
-        <div className="flex flex-wrap gap-[10px] mt-4">
-          {Object.keys(BOARD).map((item, index) => {
-            return (
-              <div
-                onClick={() => {
-                  setBoardTypeSelected(item);
-                  getListThemaAndUpdateBoard(item);
-                }}
-                key={index}
-                className={classNames(
-                  "w-20 h-20  rounded-xl flex justify-center items-center flex-col cursor-pointer",
-                  boardTypeSelected === item
-                    ? "bg-dayBreakBlue50"
-                    : "bg-darkNight50"
-                )}
-              >
-                <img
-                  src={
-                    boardTypeSelected === item ? Images.board2 : Images.board
-                  }
-                  className="w-6 h-6 mb-1"
-                />
-                <BaseText
-                  locale
-                  medium
-                  size={10}
-                  className={classNames(
-                    boardTypeSelected === item
-                      ? "text-dayBreakBlue500"
-                      : "text-darkNight500",
-                    "text-center"
-                  )}
-                >
-                  {BOARD_TEXT[item]}
-                </BaseText>
-              </div>
-            );
-          })}
-        </div>
-      )}
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium className="flex-1 mr-3">
-          Thema
-        </BaseText>
-        <BaseInputSelect
-          key={Date.now()}
-          className="!min-w-[100px]"
-          onChange={(value: any) => {
-            getCategories(value);
-          }}
-          defaultValue={boardSelected.thema_id}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          placeholder="Select"
-          options={themas.map((item, index) => {
-            return {
-              label: t(item.name || ""),
-              value: item.id || "",
-            };
-          })}
-        />
-        <img
-          onClick={() => setOpenModalThema(true)}
-          src={Images.setting3}
-          className="w-[36px] ml-3 cursor-pointer"
-        />
-      </div>
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Map Brand
-        </BaseText>
-        <BaseInputSelect
-          key={Date.now()}
-          placeholder="Select"
-          onChange={(value) => {
-            updateOrCreateBoardLink({
-              ...boardSelected,
-              geolocation_api_type: value,
-            });
-          }}
-          required={true}
-          allowClear={false}
-          size="middle"
-          textInputSize={12}
-          defaultValue={boardSelected.geolocation_api_type}
-          options={Object.values(MAP_TYPE).map((item) => {
-            return {
-              label: t(item),
-              value: item,
-            };
-          })}
-        />
-      </div>
+      {_buildImageAndName()}
+      {_buildBoardType()}
+      {_buildThema()}
+      {_buildMapBrand()}
+      {_buildTags()}
 
-      <div className="flex flex-row justify-between items-center mt-4">
-        <BaseText locale medium>
-          Tags
-        </BaseText>
-      </div>
-      <div className="flex flex-wrap gap-3 mt-4">
-        {tags.map((item, index) => {
-          return (
-            <div key={index} className="px-3 py-2 bg-darkNight50 rounded-full">
-              <BaseText size={12} medium>
-                {item.name}
-              </BaseText>
-            </div>
-          );
-        })}
-      </div>
       {boardSelected.id && boardSelected.id !== NEW_ID && (
         <CustomButton
           onClick={deleteBoardLink}

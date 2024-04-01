@@ -1,3 +1,4 @@
+
 import { ThemaInterface } from "../entities";
 import axiosClient from "./axiosClient";
 import { THEMA } from "./urlConfig";
