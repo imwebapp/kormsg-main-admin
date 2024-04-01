@@ -13,7 +13,7 @@ export default function BulletinLeft() {
   const { boardSelected, setBoardSelected, setLastRefresh, lastRefresh } =
     useBulletinState((state) => state);
   const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>([]);
-  const [cateDragging, setCateDragging] = useState(false);
+  const [linkCateDragging, setLinkCateDragging] = useState<number>();
 
   const _getBoardLinks = async () => {
     try {
@@ -81,7 +81,7 @@ export default function BulletinLeft() {
   };
 
   const onDragEndCategory = (result: any, linkIndex: number) => {
-    setCateDragging(false);
+    setLinkCateDragging(undefined);
     if (!result.destination) {
       return;
     }
@@ -92,8 +92,8 @@ export default function BulletinLeft() {
     // setBoardLinks(newItems);
   };
 
-  const onDragStartCate = () => {
-    setCateDragging(true);
+  const onDragStartCate = (linkIndex: number) => {
+    setLinkCateDragging(linkIndex);
   };
   const boardLinkItem = (item: BoardLinkInterface, index: any) => {
     return (
@@ -119,7 +119,7 @@ export default function BulletinLeft() {
           </BaseText>
         </div>
         <DragDropContext
-          onDragStart={onDragStartCate}
+          onDragStart={() => onDragStartCate(index)}
           onDragEnd={(result: any) => {
             onDragEndCategory(result, index);
           }}
@@ -170,7 +170,9 @@ export default function BulletinLeft() {
             );
           })}
         </div> */}
-        <div className={classNames(cateDragging ? "h-[24px]" : "")}></div>
+        <div
+          className={classNames(linkCateDragging === index ? "h-[24px]" : "")}
+        ></div>
       </div>
     );
   };
@@ -186,7 +188,7 @@ export default function BulletinLeft() {
           onClick={createBoardLink}
         />
       </div>
-      {/* {boardLinkItem({ id: "HOME", name: "Home" }, "HOME")} */}
+      {boardLinkItem({ id: "HOME", name: "Home" }, "HOME")}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppableThema">
           {(provided) => (
