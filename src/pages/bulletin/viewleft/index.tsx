@@ -7,6 +7,7 @@ import { BoardLinkApi } from "../../../apis/boardLinkApi";
 import { useBulletinState } from "../store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { CategoryApi } from "../../../apis/categoryApi";
+import { showError } from "../../../utils/showToast";
 
 export const NEW_ID = "NEW_ID";
 export default function BulletinLeft() {
@@ -36,60 +37,107 @@ export default function BulletinLeft() {
   }, [lastRefresh]);
 
   const orderLink = async (
-    prev_index_number: number,
-    next_index_number: number
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    linkIndex: number
   ) => {
-    console.log(prev_index_number, next_index_number);
     try {
-      await BoardLinkApi.orderLink(boardLinks[prev_index_number].id, {
-        prev_index_number: boardLinks[prev_index_number].index,
-        next_index_number: boardLinks[next_index_number].index,
+      await BoardLinkApi.orderLink(boardLinks[linkIndex].id, {
+        prev_index_number,
+        next_index_number,
       });
       _getBoardLinks();
-    } catch (error) {}
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+      _getBoardLinks();
+      setLastRefresh(Date.now());
+    }
   };
 
   const onDragEnd = (result: any) => {
-    if (!result.destination) {
-      return;
-    }
-    orderLink(result.source.index, result.destination.index);
+    try {
+      if (!result.destination) {
+        return;
+      }
 
-    // const newItems = [...boardLinks];
-    // const [reorderedItem] = newItems.splice(result.source.index, 1);
-    // newItems.splice(result.destination.index, 0, reorderedItem);
-    // setBoardLinks(newItems);
+      if (result.source.index < result.destination.index) {
+        orderLink(
+          boardLinks[result.destination.index]?.index,
+          boardLinks[result.destination.index + 1]?.index,
+          result.source.index
+        );
+      } else {
+        orderLink(
+          boardLinks[result.destination.index - 1]?.index,
+          boardLinks[result.destination.index]?.index,
+          result.source.index
+        );
+      }
+
+      const newItems = [...boardLinks];
+      const [reorderedItem] = newItems.splice(result.source.index, 1);
+      newItems.splice(result.destination.index, 0, reorderedItem);
+      setBoardLinks(newItems);
+    } catch (error) {}
   };
 
   const orderLinkCategory = async (
     prev_index_number: number,
     next_index_number: number,
-    linkIndex: number
+    id: string
   ) => {
     try {
-      await CategoryApi.orderLinkCategory(
-        boardLinks[linkIndex].categories?.[prev_index_number].id,
-        {
-          prev_index_number:
-            boardLinks[linkIndex].categories?.[prev_index_number].index,
-          next_index_number:
-            boardLinks[linkIndex].categories?.[next_index_number].index,
-        }
-      );
+      await CategoryApi.orderLinkCategory(id, {
+        prev_index_number,
+        next_index_number,
+      });
       _getBoardLinks();
-    } catch (error) {}
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+      _getBoardLinks();
+      setLastRefresh(Date.now());
+      console.log("err", error);
+    }
   };
 
   const onDragEndCategory = (result: any, linkIndex: number) => {
-    setLinkCateDragging(undefined);
-    if (!result.destination) {
-      return;
+    try {
+      setLinkCateDragging(undefined);
+      if (!result.destination) {
+        return;
+      }
+      if (result.source.index < result.destination.index) {
+        orderLinkCategory(
+          boardLinks[linkIndex].categories?.[result.destination.index]?.index,
+          boardLinks[linkIndex].categories?.[result.destination.index + 1]
+            ?.index,
+          boardLinks[linkIndex].categories?.[result.source.index].id
+        );
+      } else {
+        orderLinkCategory(
+          boardLinks[linkIndex].categories?.[result.destination.index - 1]
+            ?.index,
+          boardLinks[linkIndex].categories?.[result.destination.index]?.index,
+          boardLinks[linkIndex].categories?.[result.source.index].id
+        );
+      }
+
+      const newItems = [...boardLinks];
+      const [reorderedItem]: any = newItems[linkIndex].categories?.splice(
+        result.source.index,
+        1
+      );
+      newItems[linkIndex].categories?.splice(
+        result.destination.index,
+        0,
+        reorderedItem
+      );
+      setBoardLinks(newItems);
+    } catch (error) {
+      console.log("error", error);
     }
-    orderLinkCategory(result.source.index, result.destination.index, linkIndex);
-    // const newItems = [...boardLinks];
-    // const [reorderedItem] = newItems.splice(result.source.index, 1);
-    // newItems.splice(result.destination.index, 0, reorderedItem);
-    // setBoardLinks(newItems);
   };
 
   const onDragStartCate = (linkIndex: number) => {
@@ -124,9 +172,13 @@ export default function BulletinLeft() {
             onDragEndCategory(result, index);
           }}
         >
-          <Droppable droppableId={`droppableThema-${item.id}`}>
+          <Droppable droppableId={`droppableCate-${item.id}`}>
             {(provided) => (
-              <div ref={provided.innerRef} {...provided.droppableProps}>
+              <div
+                className="flex flex-col pl-8"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
                 {(item.categories || []).map((elem, i) => (
                   <Draggable
                     key={elem.category.id}
@@ -155,21 +207,6 @@ export default function BulletinLeft() {
             )}
           </Droppable>
         </DragDropContext>
-
-        {/* <div className="flex flex-col pl-8">
-          {(item.categories || []).map((elem, i) => {
-            return (
-              <BaseText
-                key={`category${i}`}
-                medium
-                size={16}
-                className="text-darkNight700"
-              >
-                {elem.category.name}
-              </BaseText>
-            );
-          })}
-        </div> */}
         <div
           className={classNames(linkCateDragging === index ? "h-[24px]" : "")}
         ></div>

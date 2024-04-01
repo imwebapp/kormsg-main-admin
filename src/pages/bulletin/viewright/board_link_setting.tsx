@@ -332,6 +332,7 @@ export default function BulletinSetting() {
           </BaseText>
           <BaseInputSelect
             key={Date.now()}
+            className="!min-w-[100px]"
             placeholder="Select"
             onChange={(value) => {
               updateOrCreateBoardLink({
@@ -357,24 +358,48 @@ export default function BulletinSetting() {
   };
 
   const orderTag = async (
-    prev_index_number: number,
-    next_index_number: number
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    tagIndex: number
   ) => {
     console.log(prev_index_number, next_index_number);
     try {
-      await TagApi.orderTag(tags[prev_index_number].id, {
-        prev_index_number: tags[prev_index_number].index,
-        next_index_number: tags[next_index_number].index,
+      await TagApi.orderTag(tags[tagIndex].id, {
+        prev_index_number,
+        next_index_number,
       });
       getTagsWithThema();
-    } catch (error) {}
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+      getTagsWithThema();
+      setLastRefresh(Date.now());
+    }
   };
 
   const onDragEndTag = (result: any) => {
     if (!result.destination) {
       return;
     }
-    orderTag(result.source.index, result.destination.index);
+    if (result.source.index < result.destination.index) {
+      orderTag(
+        tags[result.destination.index]?.index,
+        tags[result.destination.index + 1]?.index,
+        result.source.index
+      );
+    } else {
+      orderTag(
+        tags[result.destination.index - 1]?.index,
+        tags[result.destination.index]?.index,
+        result.source.index
+      );
+    }
+
+    const newItems = [...tags];
+    const [reorderedItem] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, reorderedItem);
+    setTags(newItems);
+    // orderTag(result.source.index, result.destination.index);
   };
 
   const _buildTags = () => {
@@ -385,6 +410,7 @@ export default function BulletinSetting() {
             Tags
           </BaseText>
         </div>
+
         {/* {tags.map((item, index) => {
             return (
               <div
@@ -397,6 +423,7 @@ export default function BulletinSetting() {
               </div>
             );
           })} */}
+
         <DragDropContext onDragEnd={onDragEndTag}>
           <Droppable droppableId="droppableTags">
             {(provided) => (

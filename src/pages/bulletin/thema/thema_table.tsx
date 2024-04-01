@@ -163,6 +163,7 @@ export default function ThemaTable() {
   return (
     <div>
       <BaseTable
+        sticky={{ offsetHeader: -20 }}
         className=""
         pagination={!{ pageSize: 100 }}
         columns={columns}
