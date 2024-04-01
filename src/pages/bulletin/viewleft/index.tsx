@@ -8,6 +8,7 @@ import { useBulletinState } from "../store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { CategoryApi } from "../../../apis/categoryApi";
 import { showError } from "../../../utils/showToast";
+import { BaseInput } from "../../../components/input/BaseInput";
 
 export const NEW_ID = "NEW_ID";
 export default function BulletinLeft() {
@@ -15,6 +16,7 @@ export default function BulletinLeft() {
     useBulletinState((state) => state);
   const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>([]);
   const [linkCateDragging, setLinkCateDragging] = useState<number>();
+  const [editBoardNameIndex, setBoardNameIndex] = useState();
 
   const _getBoardLinks = async () => {
     try {
@@ -143,6 +145,26 @@ export default function BulletinLeft() {
   const onDragStartCate = (linkIndex: number) => {
     setLinkCateDragging(linkIndex);
   };
+
+  const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
+    setBoardSelected(boardLink);
+    try {
+      if (boardLink.id && boardLink.id !== NEW_ID) {
+        const data = await BoardLinkApi.update(boardLink.id, boardLink);
+        setBoardSelected(data);
+      } else {
+        const { id, ...linkData } = boardLink;
+        const data = await BoardLinkApi.create(linkData);
+        console.log("data", data);
+        setBoardSelected(data);
+      }
+      setLastRefresh(Date.now());
+      setBoardNameIndex(undefined);
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   const boardLinkItem = (item: BoardLinkInterface, index: any) => {
     return (
       <div key={index} className={classNames("flex flex-col")}>
@@ -151,20 +173,50 @@ export default function BulletinLeft() {
             "px-3 py-2 mb-1 rounded flex items-center cursor-pointer",
             boardSelected?.id === item.id ? "bg-dayBreakBlue50" : ""
           )}
+          onDoubleClick={() => {
+            if (item.id !== "HOME" && item.id !== NEW_ID)
+              setTimeout(() => {
+                setBoardNameIndex(index);
+              }, 0);
+          }}
           onClick={() => {
             setBoardSelected(item);
             setLastRefresh(Date.now());
           }}
         >
-          <BaseText
-            bold
-            size={16}
-            className={classNames(
-              boardSelected?.id === item.id ? "text-dayBreakBlue500" : ""
-            )}
-          >
-            {item.name}
-          </BaseText>
+          {editBoardNameIndex === index &&
+          item.id !== "HOME" &&
+          item.id !== NEW_ID ? (
+            <BaseInput
+              // key={Date.now()}
+              styleInputContainer="h-9"
+              onSave={(value) => {
+                updateOrCreateBoardLink({
+                  ...boardSelected,
+                  name: value,
+                });
+              }}
+              onBlur={(value) => {
+                updateOrCreateBoardLink({
+                  ...boardSelected,
+                  name: value,
+                });
+              }}
+              defaultValue={item.name}
+              placeholder="Typing...."
+              className="w-[170px]"
+            />
+          ) : (
+            <BaseText
+              bold
+              size={16}
+              className={classNames(
+                boardSelected?.id === item.id ? "text-dayBreakBlue500" : ""
+              )}
+            >
+              {item.name}
+            </BaseText>
+          )}
         </div>
         <DragDropContext
           onDragStart={() => onDragStartCate(index)}
