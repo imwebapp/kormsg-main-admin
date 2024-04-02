@@ -39,13 +39,16 @@ export default function DashboardInflowDomaineTable(
       dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
     };
     let result = await analyticsApi.getInfo(params);
-    console.log("result.data[0].rows", result.data[0].rows);
 
     const convertedData = result.data[0].rows.map((item: any) => ({
       url: item.dimensionValues[0].value,
       view: item.metricValues[0].value,
     }));
-    setData(convertedData);
+    if (isViewAll) {
+      setData(convertedData);
+    } else {
+      setData(convertedData.slice(0, 10));
+    }
   };
   useEffect(() => {
     getInfoAnalytics();
