@@ -34,7 +34,7 @@ interface IProps {
 };
 
 export const BaseInput = (props: IProps) => {
-  const {  title, titleSize, required, value, defaultValue, textArea,rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft,widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const { title, titleSize, required, value, defaultValue, textArea, rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
 
@@ -43,12 +43,12 @@ export const BaseInput = (props: IProps) => {
     setIsFocused(true);
   };
 
-  const handleBlur = (event : any) => {
+  const handleBlur = (event: any) => {
     onBlur && onBlur(event.target.value)
     setIsFocused(false);
   };
 
-  const handleKeyDown = (event:any) => {
+  const handleKeyDown = (event: any) => {
     if (event.key === 'Enter') {
       if (onSave) {
         onSave(event.target.value);
@@ -117,9 +117,9 @@ export const BaseInput = (props: IProps) => {
           onKeyDown={handleKeyDown}
           {...rest}
         />}
-        {iconRight &&   (
+        {typeof iconRight === 'string' ? (
           <img src={iconRight || Images.emailIconActive} className={classNames('w-6 h-6 ml-3')} />
-        )}
+        ) : iconRight}
         {widgetRight}
       </div>
     </div>

@@ -11,6 +11,7 @@ import { Switch } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { groupApi } from "../../../apis/groupApi";
 import { userApi } from "../../../apis/userApi";
+import md5 from "md5";
 const listUserGroup = [
   {
     id: 2,
@@ -42,12 +43,13 @@ export const InformationTab = (props: IProps) => {
   const [showMemo, setShowMemo] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [formDataEditInfo, setFormDataEditInfo] = useState({
-    group_id: dataUser.group_id || "",
-    nickname: dataUser.nickname,
-    username: dataUser.username,
-    post_limit: dataUser.post_limit || 0,
-    memo: dataUser.memo || '',
+    group_id: dataUser?.group_id || "",
+    nickname: dataUser?.nickname,
+    username: dataUser?.username,
+    post_limit: dataUser?.post_limit || 0,
+    memo: dataUser?.memo || '',
   });
+  const [changePasswordValue, setChangePasswordValue] = useState('');
   const handleInputChange = (name: string, value: any) => {
     setFormDataEditInfo({ ...formDataEditInfo, [name]: value });
   };
@@ -68,18 +70,6 @@ export const InformationTab = (props: IProps) => {
     });
   };
 
-  const isFormDataValid = () => {
-    for (const key in formDataEditInfo) {
-      if (
-        key !== "memo" && key !== "post_limit" && 
-        !formDataEditInfo[key as keyof typeof formDataEditInfo]
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
   const handleEditInfo = () => {
     if (isFormDataValid()) {
       console.log("FormData is valid. Submitting...", formDataEditInfo);
@@ -93,6 +83,52 @@ export const InformationTab = (props: IProps) => {
     } else {
       console.log("FormData is not valid. Please fill all fields.");
     }
+  };
+
+  const [openModalChangePassword, setOpenModalChangePassword] = useState(false);
+
+  //change password
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const handleOpenModalChangePassword = () => {
+    // if (openModalEditInfo) {
+    //   handleCloseModalEditInfo();
+    // }
+    setOpenModalChangePassword(true);
+  };
+
+  const handleCloseModalChangePassword = () => {
+    setOpenModalChangePassword(false);
+    setChangePasswordValue('');
+  };
+
+  const handleChangePassword = () => {
+    console.log("Change password value: ", changePasswordValue);
+    if (changePasswordValue) {
+      const passwordValueConverted = md5(changePasswordValue);
+      console.log("passwordValueConverted: ", passwordValueConverted);
+      userApi.updateUser(dataUser.id, {
+        password: passwordValueConverted,
+      }).then((res: any) => {
+        console.log("res update password user: ", res.results.object);
+        setDataUser(res.results.object);
+      }).catch((err) => {
+        console.log("err update password user: ", err);
+      });
+    }
+    setChangePasswordValue('');
+    setOpenModalChangePassword(false);
+  };
+
+  const isFormDataValid = () => {
+    for (const key in formDataEditInfo) {
+      if (
+        key !== "memo" && key !== "post_limit" &&
+        !formDataEditInfo[key as keyof typeof formDataEditInfo]
+      ) {
+        return false;
+      }
+    }
+    return true;
   };
 
   useEffect(() => {
@@ -120,7 +156,7 @@ export const InformationTab = (props: IProps) => {
                 User name
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.nickname}
+                {dataUser?.nickname}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -128,7 +164,7 @@ export const InformationTab = (props: IProps) => {
                 ID Account
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.username}
+                {dataUser?.username}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -136,7 +172,7 @@ export const InformationTab = (props: IProps) => {
                 User Type
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {checkAccountType(dataUser.account_type).type}
+                {checkAccountType(dataUser?.account_type).type}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -144,7 +180,7 @@ export const InformationTab = (props: IProps) => {
                 Shop registration
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.current_active_post}
+                {dataUser?.current_active_post}
               </BaseText>
             </div>
             <div className={classNames('flex justify-between py-[20px] border-b border-darkNight100')}>
@@ -152,7 +188,7 @@ export const InformationTab = (props: IProps) => {
                 Payment information
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser.memo}
+                {dataUser?.memo}
               </BaseText>
             </div>
           </div>
@@ -160,11 +196,10 @@ export const InformationTab = (props: IProps) => {
             <CustomButton
               locale
               bold
-              onClick={() => console.log('Change password')}
+              onClick={handleOpenModalChangePassword}
               icon={<img src={Images.padlock} className={classNames('w-6 h-6')} />}
               className="py-6 text-dayBreakBlue500 border-dayBreakBlue500"
               children="Change password"
-              disabled
             />
             <CustomButton
               locale
@@ -215,7 +250,7 @@ export const InformationTab = (props: IProps) => {
           <CustomButton
             locale
             bold
-            onClick={() => console.log('Change password')}
+            onClick={handleOpenModalChangePassword}
             icon={<img src={Images.padlock} className={classNames('w-6 h-6')} />}
             className="py-6 text-dayBreakBlue500 border-dayBreakBlue500"
             children="Change password"
@@ -281,6 +316,32 @@ export const InformationTab = (props: IProps) => {
               />
             </div>
           </div>
+        </div>
+      </BaseModal>
+
+      <BaseModal
+        isOpen={openModalChangePassword}
+        onClose={handleCloseModalChangePassword}
+        onSubmit={handleChangePassword}
+        title="Change password"
+        disableSubmitBtn={!changePasswordValue}
+      >
+        <div className={classNames("flex flex-col gap-5")}>
+          <BaseInput
+            title="Enter New Password"
+            required
+            value={changePasswordValue}
+            onChange={(value) => setChangePasswordValue(value)}
+            placeholder="Enter New Password"
+            type={isShowPassword ? "text" : "password"}
+            iconRight={
+              <img
+                src={isShowPassword ? Images.eyeCross : Images.eye}
+                className={classNames("w-6 h-6 cursor-pointer")}
+                onClick={() => setIsShowPassword(!isShowPassword)}
+              />
+            }
+          />
         </div>
       </BaseModal>
     </>
