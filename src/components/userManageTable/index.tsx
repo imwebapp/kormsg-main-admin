@@ -40,10 +40,11 @@ type UserManageTableProps = {
   data: User[];
   className?: string; // for tailwindcss
   reload?: boolean;
+  onOpenJumpUp: (id: number, jumpLimit: number) => void;
 };
 
 export default function UserManageTable(props: UserManageTableProps) {
-  const { className, data, reload } = props;
+  const { className, data, reload, onOpenJumpUp } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
@@ -123,7 +124,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     }
     return (
       <div className="flex flex-col items-center gap-1">
-        <CustomButton className="w-10" primary>
+        <CustomButton className="w-10" primary onClick={() => { onOpenJumpUp(item.id, jump_limit) }}>
           {jump_limit}
         </CustomButton>
         <CustomButton locale primary onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.HISTORY_PAYMENT } })}>
