@@ -63,12 +63,12 @@ export default function DashboardInflowDomaineTable(
     {
       title: t("Domaine"),
       dataIndex: "url",
-
       render: (url) => (
         <div>
-          {url.length > 80 ? url.slice(0, 80) + "..." : url.slice(0, 80)}
+          {url.length > 60 ? url.slice(0, 60) + "..." : url.slice(0, 60)}
         </div>
       ),
+      width: "20%",
     },
     {
       title: t("View"),
