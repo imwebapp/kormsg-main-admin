@@ -19,4 +19,7 @@ export const BoardLinkApi = {
   delete: async (id: string) => {
     return await axiosClient.delete(`${BOARD_LINK}/${id}`);
   },
+  orderLink: async (id?: string, data?: any) => {
+    return await axiosClient.put(`${BOARD_LINK}/order-link/${id}`, data);
+  },
 };

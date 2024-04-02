@@ -1,3 +1,4 @@
+
 import { ThemaInterface } from "../entities";
 import axiosClient from "./axiosClient";
 import { THEMA } from "./urlConfig";
@@ -15,5 +16,8 @@ export const ThemaApi = {
   },
   createThema: async (data: ThemaInterface) => {
     return await axiosClient.post(THEMA, data);
+  },
+  cloneThema: async (id: string) => {
+    return await axiosClient.post(`${THEMA}/clone/${id}`);
   },
 };

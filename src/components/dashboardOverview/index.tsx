@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import CustomTimePicker from "../calendar";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
+import { analyticsApi } from "../../apis/analyticsApi";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -19,57 +20,72 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const [platformsSelected, setPlatformSelected] = useState<Array<string>>([]);
+  const [data, setData] = useState<any[]>([]);
+
   const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      date: "2025-12-12",
-      ip: "135 . 31 . 234",
-      address: `London, Park Lane no. ${i}`,
-      sale: 0,
-      order: 1,
-      joined: 4,
-      inquiry: 5,
-      comment: 2,
-    });
-  }
+
+  const getInfoAnalytics = async () => {
+    const params = {
+      property: "properties/244725891",
+      dimensions: [{ name: "firstUserPrimaryChannelGroup" }],
+      metrics: [
+        { name: "active28DayUsers" },
+        { name: "bounceRate" },
+        { name: "eventCount" },
+      ],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+    };
+    let result = await analyticsApi.getInfo(params);
+    console.log("result.data[0].rows", result.data[0].rows);
+
+    const convertedData = result.data[0].rows.map((item: any) => ({
+      name: item.dimensionValues[0].value,
+      userActive: item.metricValues[0].value,
+      bounceRate: item.metricValues[1].value,
+      eventCount: item.metricValues[2].value,
+    }));
+    setData(convertedData);
+  };
+  useEffect(() => {
+    getInfoAnalytics();
+    return () => {};
+  }, []);
   const columns: TableColumnsType<any> = [
     {
-      title: t("Date"),
-      dataIndex: "date",
+      title: t("Primary Channel"),
+      dataIndex: "name",
+    },
+    // {
+    //   title: t("IP Adress"),
+    //   dataIndex: "ip",
+    // },
+    {
+      title: t("User Active"),
+      dataIndex: "userActive",
+      // render: (text) => <img className="w-6 h-6" src={Images.android} />,
     },
     {
-      title: t("IP Adress"),
-      dataIndex: "ip",
+      title: t("Session"),
+      dataIndex: "bounceRate",
     },
     {
-      title: t("Use by"),
-      dataIndex: "user_by",
-      render: (text) => <img className="w-6 h-6" src={Images.android} />,
+      title: t("Number Of Events"),
+      dataIndex: "eventCount",
     },
-    {
-      title: t("Sales"),
-      dataIndex: "sale",
-    },
-    {
-      title: t("Orders"),
-      dataIndex: "order",
-    },
-    {
-      title: t("Joined"),
-      dataIndex: "joined",
-    },
-    {
-      title: t("Inquiry"),
-      dataIndex: "inquiry",
-    },
-    {
-      title: t("Comments"),
-      dataIndex: "comment",
-    },
+    // {
+    //   title: t("Joined"),
+    //   dataIndex: "joined",
+    // },
+    // {
+    //   title: t("Inquiry"),
+    //   dataIndex: "inquiry",
+    // },
+    // {
+    //   title: t("Comments"),
+    //   dataIndex: "comment",
+    // },
   ];
 
   const selectPlatformFilter = (value: string) => {

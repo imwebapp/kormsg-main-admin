@@ -9,4 +9,5 @@ export interface TagThemaInterface {
     name?: string;
     thema_id?: string;
     thema?: ThemaInterface;
+    index?: number;
 }

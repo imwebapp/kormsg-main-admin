@@ -45,7 +45,10 @@ export default class Images {
     static readonly adult = require("../../../src/assets/images/adult.png");
     static readonly android = require("../../../src/assets/images/android.png");
     static readonly android2 = require("../../../src/assets/images/android2.png");
+    static readonly archiveTick = require("../../../src/assets/images/archive-tick.png");
+    static readonly arrowDown = require("../../../src/assets/images/arrowDown.png");
     static readonly arrowLeft = require("../../../src/assets/images/arrowLeft.png");
+    static readonly arrowUp = require("../../../src/assets/images/arrowUp.png");
     static readonly board = require("../../../src/assets/images/board.png");
     static readonly board2 = require("../../../src/assets/images/board2.png");
     static readonly chevronDownTiny = require("../../../src/assets/images/chevron-down-tiny.png");
@@ -57,12 +60,15 @@ export default class Images {
     static readonly cross = require("../../../src/assets/images/cross.png");
     static readonly dataEmpty = require("../../../src/assets/images/dataEmpty.png");
     static readonly discount1 = require("../../../src/assets/images/discount 1.png");
+    static readonly documentCopy = require("../../../src/assets/images/document-copy.png");
     static readonly dot = require("../../../src/assets/images/dot.png");
     static readonly edit = require("../../../src/assets/images/edit.png");
     static readonly edit2 = require("../../../src/assets/images/edit2.png");
+    static readonly editIcon2 = require("../../../src/assets/images/editIcon2.png");
     static readonly editPencil = require("../../../src/assets/images/editPencil.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
     static readonly exportIcon = require("../../../src/assets/images/exportIcon.png");
+    static readonly eyeCross = require("../../../src/assets/images/eye-cross.png");
     static readonly eye = require("../../../src/assets/images/eye.png");
     static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly icon18 = require("../../../src/assets/images/icon18+.png");
@@ -89,6 +95,7 @@ export default class Images {
     static readonly statistic2 = require("../../../src/assets/images/statistic2.png");
     static readonly statistic3 = require("../../../src/assets/images/statistic3.png");
     static readonly statistic4 = require("../../../src/assets/images/statistic4.png");
+    static readonly trash2 = require("../../../src/assets/images/trash2.png");
     static readonly twoDot = require("../../../src/assets/images/twoDot.png");
     static readonly web = require("../../../src/assets/images/web.png");
     static readonly web2 = require("../../../src/assets/images/web2.png");

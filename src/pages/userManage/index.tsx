@@ -214,6 +214,48 @@ const UserManage = () => {
     }
   };
 
+  //jump up
+  const [openModalAddJumpUp, setOpenModalAddJumpUp] = useState(false);
+  const [valueInputJumpUp, setValueInputJumpUp] = useState(1);
+  const [JumpUpValue, setJumpUpValue] = useState({
+    id: "",
+    jumpLimit: 0,
+  });
+  const handleOpenModalJumpUp = (id: any, jumpLimit: number) => {
+    console.log("handleOpenModalJumpUp id: ", id, jumpLimit);
+    setJumpUpValue({
+      id: id,
+      jumpLimit: jumpLimit,
+    });
+    setOpenModalAddJumpUp(true);
+  };
+  const handleCloseModalJumpUp = () => {
+    setValueInputJumpUp(1);
+    setJumpUpValue({
+      id: "",
+      jumpLimit: 0,
+    });
+    setOpenModalAddJumpUp(false);
+  };
+  const handleJumpUp = async () => {
+    const dataUpdate = {
+      jump_limit: valueInputJumpUp + JumpUpValue.jumpLimit,
+    };
+    const res: any = await userApi.updateJumpLimit(JumpUpValue.id, dataUpdate);
+    console.log("res jump up: ", res);
+    listUser.map((item) => {
+      if (item.id === JumpUpValue.id) {
+        item.jump_limit = valueInputJumpUp + JumpUpValue.jumpLimit;
+      }
+    });
+    setValueInputJumpUp(1);
+    setJumpUpValue({
+      id: "",
+      jumpLimit: 0,
+    });
+    setOpenModalAddJumpUp(false);
+  };
+
   useEffect(() => {
     const convertFilter: any = {
       account_type: typeUserSelected.id,
@@ -387,8 +429,8 @@ const UserManage = () => {
                 className={classNames(
                   "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                 )}
-                onClick={() => {}}
-                // onDoubleClick={handleEditGroupName}
+                onClick={() => { }}
+              // onDoubleClick={handleEditGroupName}
               >
                 <CheckOutlined
                   className={classNames("text-dayBreakBlue500 text-xl")}
@@ -481,7 +523,7 @@ const UserManage = () => {
             })}
           </div>
 
-          <UserManageTable data={listUser} reload={reloading}  />
+          <UserManageTable data={listUser} reload={reloading} onOpenJumpUp={handleOpenModalJumpUp} />
 
         </div>
       </div>
@@ -501,6 +543,48 @@ const UserManage = () => {
           required
         />
       </BaseModal> */}
+
+      <BaseModal
+        isOpen={openModalAddJumpUp}
+        onClose={handleCloseModalJumpUp}
+        onSubmit={handleJumpUp}
+        title="Add"
+        disableSubmitBtn={!valueInputJumpUp}
+      >
+        <BaseText bold locale size={14}>
+          Jump- up limit
+        </BaseText>
+        <div className="flex items-center justify-between w-full px-2 py-3 mt-2 rounded-lg bg-darkNight50">
+          <img src={Images.minusCircle}
+            onClick={() => {
+              if (valueInputJumpUp <= 1) return;
+              setValueInputJumpUp(valueInputJumpUp - 1);
+            }}
+            className="w-6 h-6 cursor-pointer"
+          />
+          <input
+            value={valueInputJumpUp}
+            onChange={(e) => {
+              if (e.target.value === '' || Number(e.target.value) < 1) {
+                setValueInputJumpUp(1);
+              }
+              else
+                if (typeof (e.target.value) === 'string' && isNaN(Number(e.target.value))) {
+                  return;
+                }
+                else {
+                  setValueInputJumpUp(Number(e.target.value));
+                }
+            }}
+            className="flex font-bold text-center bg-darkNight50 focus:outline-none text-dark"
+          // type="number"
+          />
+          <img src={Images.plusCircle}
+            onClick={() => setValueInputJumpUp(valueInputJumpUp + 1)}
+            className="w-6 h-6 cursor-pointer"
+          />
+        </div>
+      </BaseModal>
 
       <BaseModal
         isOpen={openModalCreateUser}

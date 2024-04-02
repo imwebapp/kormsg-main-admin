@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import BaseText from "../text";
 import CustomButton from "../button";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import CustomTimePicker from "../calendar";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
+import { analyticsApi } from "../../apis/analyticsApi";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -15,32 +16,43 @@ type DashboardOverviewProps = {
 
 export default function DashboardVisitTable(props: DashboardOverviewProps) {
   const { className, isViewAll } = props;
+  console.log("isViewAll", isViewAll);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const [data, setData] = useState<any[]>([]);
+  const getInfoAnalytics = async () => {
+    const params = {
+      property: "properties/244725891",
+      dimensions: [{ name: "city" }],
+      metrics: [{ name: "active28DayUsers" }],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+    };
+    let result = await analyticsApi.getInfo(params);
+    const convertedData = result.data[0].rows.map((item: any) => ({
+      city: item.dimensionValues[0].value,
+      user: item.metricValues[0].value,
+    }));
+    if (isViewAll) {
+      setData(convertedData);
+    } else {
+      setData(convertedData.slice(0, 10));
+    }
+  };
+  useEffect(() => {
+    getInfoAnalytics();
+    return () => {};
+  }, []);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
-  const data = [];
-  for (let i = 0; i < 10; i++) {
-    data.push({
-      key: i,
-      name: "anh Duy",
-      url: "/Search",
-      click: 233,
-    });
-  }
   const columns: TableColumnsType<any> = [
     {
-      title: t("Name"),
-      dataIndex: "name",
+      title: t("City"),
+      dataIndex: "city",
     },
     {
-      title: t("URL"),
-      render: ({ url }) => <a href={url}>{url}</a>,
-    },
-    {
-      title: t("Click"),
-      dataIndex: "click",
+      title: t("User"),
+      dataIndex: "user",
     },
   ];
 
@@ -48,13 +60,10 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
     <>
       <div className="flex flex-row items-center justify-between">
         <BaseText locale size={24} bold>
-          Most visited pages
+          City Traffic
         </BaseText>
         {!isViewAll ? (
-          <CustomButton
-            onClick={() => navigate(Url.dashboardVisit)}
-            locale
-          >
+          <CustomButton onClick={() => navigate(Url.dashboardVisit)} locale>
             View all
           </CustomButton>
         ) : (

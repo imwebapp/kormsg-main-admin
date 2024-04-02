@@ -19,8 +19,11 @@ const UserDetail = () => {
   const location = useLocation();
   const formDataCreateUser = location?.state?.data;
   const initTab = location?.state?.initTab || INIT_TAB_USER_DETAIL.INFORMATION;
+  const isShowModalEdit = location?.state?.showModalEdit || false;
   const [optionSelected, setOptionSelected] = useState(initTab);
+  const [showModalEdit, setShowModalEdit] = useState(isShowModalEdit);
 
+  console.log("formDataCreateUserXX", showModalEdit);
   const checkGroup = (group: string) => {
     if (group === null) {
       return "All";
@@ -30,8 +33,14 @@ const UserDetail = () => {
   };
 
   const handleClickOption = (item: { title: string; value: string }) => {
-    console.log(item);
-    setOptionSelected(item.value);
+    if (item.value === optionSelected) {
+      return;
+    }
+    else {
+      setShowModalEdit(false);
+      setOptionSelected(item.value);
+    }
+
   };
   return (
     <>
@@ -46,7 +55,7 @@ const UserDetail = () => {
             )}
           >
             <img
-              src={formDataCreateUser.avatar || Images.avatarEmpty}
+              src={formDataCreateUser?.avatar || Images.avatarEmpty}
               className={classNames("w-11 h-11 rounded-full")}
               alt="Avatar"
             />
@@ -57,7 +66,7 @@ const UserDetail = () => {
                 size={28}
                 className={classNames("text-darkNight900")}
               >
-                {formDataCreateUser.nickname}
+                {formDataCreateUser?.nickname}
               </BaseText>
               <img
                 src={Images.icon18}
@@ -66,14 +75,14 @@ const UserDetail = () => {
               />
             </div>
             <BaseText size={16} className={classNames("text-darkNight900")}>
-              {formDataCreateUser.username}
+              {formDataCreateUser?.username}
             </BaseText>
             <div className={classNames("flex flex-row items-center gap-1")}>
               <BaseText
                 bold
-                className={checkAccountType(formDataCreateUser.account_type).CustomStyle}
+                className={checkAccountType(formDataCreateUser?.account_type).CustomStyle}
               >
-                {checkAccountType(formDataCreateUser.account_type).type}
+                {checkAccountType(formDataCreateUser?.account_type).type}
               </BaseText>
               <BaseText
                 medium
@@ -81,7 +90,7 @@ const UserDetail = () => {
                   "text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"
                 )}
               >
-                {checkGroup(formDataCreateUser.group)}
+                {checkGroup(formDataCreateUser?.group)}
               </BaseText>
             </div>
           </div>
@@ -117,12 +126,12 @@ const UserDetail = () => {
           style={{ height: "calc(100vh - 71px)" }}
         >
           {optionSelected === "information" ? (
-            <InformationTab dataUser={formDataCreateUser} />
+            <InformationTab dataUser={formDataCreateUser} showModalEdit={showModalEdit} />
           ) : null}
           {optionSelected === "shopInformation" ? (
             <ShopInformationTab dataUser={formDataCreateUser} />
           ) : null}
-          {optionSelected === "historyPayment" ? <HistoryPaymentTab  dataUser={formDataCreateUser} /> : null}
+          {optionSelected === "historyPayment" ? <HistoryPaymentTab dataUser={formDataCreateUser} /> : null}
         </div>
       </div>
     </>
