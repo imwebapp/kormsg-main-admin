@@ -19,6 +19,7 @@ const UserDetail = () => {
   const location = useLocation();
   const formDataCreateUser = location?.state?.data;
   const initTab = location?.state?.initTab || INIT_TAB_USER_DETAIL.INFORMATION;
+  const showModalEdit = location?.state?.showModalEdit || false;
   const [optionSelected, setOptionSelected] = useState(initTab);
 
   const checkGroup = (group: string) => {
@@ -117,7 +118,7 @@ const UserDetail = () => {
           style={{ height: "calc(100vh - 71px)" }}
         >
           {optionSelected === "information" ? (
-            <InformationTab dataUser={formDataCreateUser} />
+            <InformationTab dataUser={formDataCreateUser} showModalEdit={showModalEdit}/>
           ) : null}
           {optionSelected === "shopInformation" ? (
             <ShopInformationTab dataUser={formDataCreateUser} />

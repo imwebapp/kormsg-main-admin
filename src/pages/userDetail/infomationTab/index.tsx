@@ -31,11 +31,12 @@ const listUserGroup = [
 
 interface IProps {
   dataUser: User;
+  showModalEdit?: boolean;
 }
 
 export const InformationTab = (props: IProps) => {
   const navigate = useNavigate();
-  const [dataUser, setDataUser] = useState<User>(props.dataUser);
+  const [dataUser, setDataUser] = useState<User>(props?.dataUser);
   const [listUserGroup, setListUserGroup] = useState<any[]>([]);
   const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
@@ -99,11 +100,13 @@ export const InformationTab = (props: IProps) => {
       limit: 50, fields: '["$all"]'
     }).then((res: any) => {
       console.log("res getList Group: ", res.results.objects);
-
       setListUserGroup(res.results?.objects?.rows);
     })
       .catch((err) => {
         console.log("err getList Group: ", err);
+      })
+      .finally(() => {
+        props?.showModalEdit && handleOpenModalEditInfo();
       });
   }, []);
 

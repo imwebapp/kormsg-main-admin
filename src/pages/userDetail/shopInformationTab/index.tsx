@@ -8,25 +8,13 @@ import { shopApi } from "../../../apis/shopApi";
 
 const ListTabBar = [
   {
-    title: "Announcement Store",
+    title: "Announcement",
     value: "APPROVED",
     data: [],
     count: 0,
   },
   {
-    title: "Store under review",
-    value: "PENDING",
-    data: [],
-    count: 0,
-  },
-  {
-    title: "Stores that refuse review",
-    value: "REJECTED",
-    data: [],
-    count: 0,
-  },
-  {
-    title: "Expired store",
+    title: "Expiration",
     value: "EXPIRED",
     data: [],
     count: 0,
@@ -71,10 +59,6 @@ export const ShopInformationTab = (props: IProps) => {
     switch (type) {
       case "APPROVED":
         return dataUser.current_active_post;
-      case "PENDING":
-        return dataUser.current_pending_post;
-      case "REJECTED":
-        return dataUser.current_rejected_post;
       case "EXPIRED":
         return dataUser.current_expired_post;
       case "Recommended store":
@@ -91,12 +75,6 @@ export const ShopInformationTab = (props: IProps) => {
     switch (tabSelected.value) {
       case "APPROVED":
         type = "APPROVED";
-        break;
-      case "PENDING":
-        type = "PENDING";
-        break;
-      case "REJECTED":
-        type = "REJECTED";
         break;
       case "EXPIRED":
         type = "EXPIRED";
@@ -150,7 +128,7 @@ export const ShopInformationTab = (props: IProps) => {
               onClick={() => setTabSelected(item)}
               key={index}
               className={
-                "flex w-1/6 items-center justify-center pt-6 cursor-pointer border-b"
+                "flex w-1/4 items-center justify-center pt-6 cursor-pointer border-b"
               }
             >
               <div className="flex flex-col gap-4 ">
