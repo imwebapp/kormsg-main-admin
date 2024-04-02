@@ -45,9 +45,11 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
       url: item.dimensionValues[1].value,
       click: item.metricValues[0].value,
     }));
-    console.log("convertedData", convertedData);
-
-    setData(convertedData);
+    if (isViewAll) {
+      setData(convertedData);
+    } else {
+      setData(convertedData.slice(0, 10));
+    }
   };
   useEffect(() => {
     getInfoAnalytics();

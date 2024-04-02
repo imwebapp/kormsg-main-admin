@@ -53,6 +53,7 @@ export const listOptionUserDetail = [
 
 // export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
 export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
+export const BASE_URL_ANALYTICS = "https://ga.norehaja.com"; // analytics
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
@@ -110,14 +111,14 @@ export const BOARD_TEXT = {
 };
 
 export const ROUTE = {
-  SHOP: '/shop',
-  SHOP_SECOND: '/jump-up-shop',
-  EVENT: '/event',
-  POST: '/post',
-  BLOG: '/blog',
-  STORE_PROFILE: '/store_profile',
-  PROFILE_DESIGN1: '/profile_design1',
-}
+  SHOP: "/shop",
+  SHOP_SECOND: "/jump-up-shop",
+  EVENT: "/event",
+  POST: "/post",
+  BLOG: "/blog",
+  STORE_PROFILE: "/store_profile",
+  PROFILE_DESIGN1: "/profile_design1",
+};
 
 export const BOARD_ROUTE = {
   [BOARD.DISTANCE_ORDER_BOARD]: ROUTE.SHOP,
@@ -131,8 +132,7 @@ export const BOARD_ROUTE = {
   [BOARD.EVENT_BOARD]: ROUTE.EVENT,
   [BOARD.SHOP_SALES_BOARD]: ROUTE.SHOP,
   [BOARD.BLOG]: ROUTE.BLOG,
-}
-
+};
 
 export const VISIBLE_BOARDS = [
   BOARD.BULLETIN_BOARD,
@@ -157,26 +157,25 @@ export const MAP_TYPE = {
   GOOGLE: "GOOGLE",
 };
 
-export const SELECT_ALL = '__SELECT_ALL__'
+export const SELECT_ALL = "__SELECT_ALL__";
 
 export const USER_PERMISSION = {
   ALL: SELECT_ALL,
-  LOGIN_USER: 'LOGIN_USER',
-  NON_LOGIN_USER: 'NON_LOGIN_USER',
-  BIZ_USER: 'BIZ_USER',
-  PAID_USER: 'PAID_USER',
-  ADMIN: 'ADMIN'
+  LOGIN_USER: "LOGIN_USER",
+  NON_LOGIN_USER: "NON_LOGIN_USER",
+  BIZ_USER: "BIZ_USER",
+  PAID_USER: "PAID_USER",
+  ADMIN: "ADMIN",
 };
 
 export const USER_PERMISSION_TEXT = {
-  [USER_PERMISSION.ALL]: 'All users',
-  [USER_PERMISSION.LOGIN_USER]: 'Login user',
-  [USER_PERMISSION.NON_LOGIN_USER]: 'Non-logged in user',
-  [USER_PERMISSION.BIZ_USER]: 'Biz user',
-  [USER_PERMISSION.PAID_USER]: 'Paid member',
-  [USER_PERMISSION.ADMIN]: 'Manager',
-}
-
+  [USER_PERMISSION.ALL]: "All users",
+  [USER_PERMISSION.LOGIN_USER]: "Login user",
+  [USER_PERMISSION.NON_LOGIN_USER]: "Non-logged in user",
+  [USER_PERMISSION.BIZ_USER]: "Biz user",
+  [USER_PERMISSION.PAID_USER]: "Paid member",
+  [USER_PERMISSION.ADMIN]: "Manager",
+};
 
 export const CATEGORY_PART1 = {
   타이: "타이",
@@ -501,6 +500,3 @@ export const LIST_REGION = [
     ],
   },
 ];
-
-
-export enum REPORT { REPORT_LIST, AUTO_DELETED_LIST }
