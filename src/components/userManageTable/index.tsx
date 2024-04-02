@@ -1,4 +1,4 @@
-import { TableColumnsType } from "antd";
+import { TableColumnsType, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -160,10 +160,8 @@ export default function UserManageTable(props: UserManageTableProps) {
       title: t("Store status"),
       render: (item: any) => (
         <div className="flex flex-col gap-1 min-w-[230px]">
-          {storeStatus("Announcement Store", item, item.current_active_post, item.account_type)}
-          {storeStatus("Store under review", item, item.current_pending_post, item.account_type)}
-          {storeStatus("Stores that refuse review", item, item.current_rejected_post, item.account_type)}
-          {storeStatus("Expired store", item, item.current_expired_post, item.account_type)}
+          {storeStatus("Announcement", item, item.current_active_post, item.account_type)}
+          {storeStatus("Expiration", item, item.current_expired_post, item.account_type)}
           {storeStatus("Recommended store", item, item.current_recommendation_post, item.account_type)}
           {storeStatus("During the event", item, 0, item.account_type)}
         </div>
@@ -183,9 +181,11 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Store"),
       render: (item: any) => (
-        <div className="min-w-[30px] cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })}>
+        <div className="min-w-[30px] cursor-pointer " onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}>
           {/* <div className="min-w-[30px] cursor-pointer" onClick={() => console.log(item)}> */}
-          <img src={Images.eye} className="w-6 h-6" />
+          <Tooltip title={t('Detail')}>
+            <img src={Images.eye} className="w-6 h-6" />
+          </Tooltip>
         </div>
       ),
     },
@@ -201,7 +201,9 @@ export default function UserManageTable(props: UserManageTableProps) {
       title: "",
       render: (item: any) => (
         <div className="flex flex-row items-center w-[50px]">
-          <img src={Images.edit} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })} />
+          <Tooltip title={t('Edit')}>
+            <img src={Images.edit} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION, showModalEdit: true } })} />
+          </Tooltip>
           <img src={Images.dot} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })} />
         </div>
       ),
