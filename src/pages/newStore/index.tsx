@@ -593,12 +593,12 @@ const NewStore = () => {
             onChange={(value) => handleInputChange('category', value)}
           />
           <BaseInputSelect
-            title="태그"
+            title="Tag"
             options={listHashtag.map((item) => ({
               value: item.id,
               label: item.name,
             }))}
-            placeholder="태그를 선택해주세요"
+            placeholder="Select tags"
             value={formDataPage1.hashtag}
             onChange={(value) => handleInputChange('hashtag', value)}
             multiple
@@ -709,15 +709,15 @@ const NewStore = () => {
               </div>
               <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
                 <img src={Images.iconHeart} className="w-9 h-9" />
-                <BaseText locale size={16} className="text-center">전화</BaseText>
+                <BaseText locale size={16} className="text-center">찜하기</BaseText>
               </div>
               <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
                 <img src={Images.iconDirection} className="w-9 h-9" />
-                <BaseText locale size={16} className="text-center">전화</BaseText>
+                <BaseText locale size={16} className="text-center">길찾기</BaseText>
               </div>
               <div className="flex flex-col items-center justify-center flex-1 gap-1 cursor-pointer">
                 <img src={Images.share} className="w-9 h-9" />
-                <BaseText locale size={16} className="text-center">전화</BaseText>
+                <BaseText locale size={16} className="text-center">공유</BaseText>
               </div>
             </div>
           </div>}
@@ -774,6 +774,7 @@ const NewStore = () => {
             </div>
           }
           {formDataPage2?.priceList?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
+            <BaseText locale size={16} bold>가격표</BaseText>
             {
               formDataPage2.priceList.map((item, index) => {
                 return (
@@ -795,6 +796,24 @@ const NewStore = () => {
                         </div>
                       </div>
                       <BaseText locale size={16} bold>34일남음</BaseText>
+                    </div>
+                  </div>
+                )
+              })
+            }
+          </div>
+          }
+          {formDataPage2.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2.storeIntroduction}</BaseText>}
+          {formDataPage2?.manager?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
+            <BaseText size={16} bold>{t('담당자')}({formDataPage2?.manager?.length})</BaseText>
+            {
+              formDataPage2?.manager.map((item, index) => {
+                return (
+                  <div className="flex gap-3 p-2 border rounded-lg">
+                    <img src={item?.image || Images.avatarEmpty} className="w-[84px] h-[84px] rounded-lg" />
+                    <div className="flex flex-col justify-center w-full">
+                      <BaseText size={16} bold>{item?.name}</BaseText>
+                      <BaseText size={16} bold>{item?.description}</BaseText>
                     </div>
                   </div>
                 )

@@ -7,11 +7,13 @@ type TableProps = {
   pagination?: false | TablePaginationConfig | undefined;
   columns: TableColumnsType<any>;
   data: Array<object>;
+  sticky?: any;
   className?: string; // for tailwindcss
 };
 
 export default function BaseTable(props: TableProps) {
-  const { className, data, columns, onSelectChange, pagination } = props;
+  const { className, data, columns, onSelectChange, pagination, sticky } =
+    props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const _onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -27,6 +29,7 @@ export default function BaseTable(props: TableProps) {
   return (
     <>
       <Table
+        sticky={sticky}
         className={className}
         rowSelection={onSelectChange && rowSelection}
         pagination={pagination}

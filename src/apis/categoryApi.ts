@@ -4,7 +4,7 @@ import { CATEGORY } from "./urlConfig";
 
 export const CategoryApi = {
   getList: async (params?: object) => {
-    const res: any = await axiosClient.get(`${CATEGORY}/?fields=["$all"]&limit=50&order=[["created_at","DESC"]]`, { params });
+    const res: any = await axiosClient.get(`${CATEGORY}/?fields=["$all"]&limit=50&order=[["index","ASC"],["created_at","DESC"]]`, { params });
     return res?.results?.objects?.rows || []
   },
   updateCategory: async (id: string, data: CategoryInterface) => {
@@ -15,5 +15,8 @@ export const CategoryApi = {
   },
   createCategory: async (data: CategoryInterface) => {
     return await axiosClient.post(CATEGORY, data);
+  },
+  orderLinkCategory: async (id?: string, data?: any) => {
+    return await axiosClient.put(`link_category/order-link-category/${id}`, data);
   },
 };

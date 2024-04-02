@@ -19,9 +19,16 @@ const HeaderComponent = () => {
   const getSubTitle = (title: string, subtitle: string) => {
     return (
       <div className="flex flex-row line-clamp-1">
-        <BaseText locale size={20} bold className=" !text-darkNight600">
-          {title}
-        </BaseText>
+        <div onClick={() => navigate(Url.dashboard)}>
+          <BaseText
+            locale
+            size={20}
+            bold
+            className=" !text-darkNight600 cursor-pointer"
+          >
+            {title}
+          </BaseText>
+        </div>
         <BaseText size={20} bold>
           /
         </BaseText>
@@ -127,7 +134,15 @@ const HeaderComponent = () => {
   return (
     <div className="flex flex-row items-center justify-between h-full">
       <div className="flex flex-row items-center gap-3">
-        {isDetail && <img src={Images.arrowLeft} className="w-6 h-6" onClick={() => { navigate(-1) }} />}
+        {isDetail && (
+          <img
+            src={Images.arrowLeft}
+            className="w-6 h-6"
+            onClick={() => {
+              navigate(-1);
+            }}
+          />
+        )}
         <BaseText
           locale={typeof title === "string"}
           size={20}
