@@ -13,6 +13,7 @@ import ReservationDetails from "./reservation-details";
 import AppVersion from "./appversion";
 import BulletinPage from "./bulletin";
 import SeoPage from "./seo";
+import ReportPage from "./report";
 
 export {
   Login,
@@ -29,5 +30,6 @@ export {
   ReservationDetails,
   AppVersion,
   BulletinPage,
-  SeoPage
+  SeoPage,
+  ReportPage
 };

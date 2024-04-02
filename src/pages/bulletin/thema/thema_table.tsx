@@ -66,6 +66,16 @@ export default function ThemaTable() {
     }
   };
 
+  const cloneThema = async (id: string) => {
+    try {
+      await ThemaApi.cloneThema(id);
+      getListThema();
+      showSuccess("Success");
+    } catch (error) {
+      showError(error);
+    }
+  };
+
   const columns: TableColumnsType<ThemaInterface> = [
     {
       title: t("No"),
@@ -141,12 +151,17 @@ export default function ThemaTable() {
       render: ({ id }, record) => (
         <div className="flex flex-row items-center">
           <img
+            onClick={() => cloneThema(id)}
+            src={Images.copy}
+            className="w-6 h-6 cursor-pointer"
+          />
+          <img
             onClick={() => {
               setOpenModalEditThema(true);
               setThemaUpdating(record);
             }}
             src={Images.edit}
-            className="w-6 h-6 cursor-pointer"
+            className="w-6 h-6 ml-3 cursor-pointer"
           />
           <Popconfirm
             onConfirm={() => deleteThema(id)}

@@ -233,8 +233,8 @@ export default function BulletinLeft() {
               >
                 {(item.categories || []).map((elem, i) => (
                   <Draggable
-                    key={elem.category.id}
-                    draggableId={elem.category.id}
+                    key={elem.category?.id}
+                    draggableId={elem.category?.id}
                     index={i}
                   >
                     {(provided) => (
@@ -249,7 +249,7 @@ export default function BulletinLeft() {
                           size={16}
                           className="text-darkNight700"
                         >
-                          {elem.category.name}
+                          {elem.category?.name}
                         </BaseText>
                       </div>
                     )}

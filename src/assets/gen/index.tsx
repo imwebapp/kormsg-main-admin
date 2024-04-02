@@ -68,6 +68,7 @@ export default class Images {
     static readonly editPencil = require("../../../src/assets/images/editPencil.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
     static readonly exportIcon = require("../../../src/assets/images/exportIcon.png");
+    static readonly eyeCross = require("../../../src/assets/images/eye-cross.png");
     static readonly eye = require("../../../src/assets/images/eye.png");
     static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly icon18 = require("../../../src/assets/images/icon18+.png");

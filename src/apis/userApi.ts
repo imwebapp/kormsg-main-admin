@@ -14,4 +14,7 @@ export const userApi = {
   updateUser: (id: any, data: any) => {
     return axiosClient.put(`${USER}/${id}`, data);
   },
+  updateJumpLimit: (id: any, data: any) => {
+    return axiosClient.put(`${USER}/update_jump_limit/${id}`, data);
+  },
 };
