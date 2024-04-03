@@ -500,3 +500,7 @@ export const LIST_REGION = [
     ],
   },
 ];
+export enum REPORT {
+  REPORT_LIST,
+  AUTO_DELETED_LIST,
+}

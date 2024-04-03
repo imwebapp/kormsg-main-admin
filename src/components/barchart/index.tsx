@@ -16,6 +16,8 @@ import { classNames } from "../../utils/common";
 import { useLocalStorage } from "../../stores/localStorage";
 import moment from "moment";
 import { analyticsApi } from "../../apis/analyticsApi";
+import dayjs from "dayjs";
+import { notification } from "antd";
 
 export interface BarChartDataInterface {
   label: string;
@@ -30,54 +32,68 @@ export default function BaseBarChart() {
   const [uData, setuData] = useState<Array<number>>([]);
   const [xLabels, setxLabels] = useState<Array<string>>([]);
   const { t } = useTranslation();
-  const [data, setData] = useState<Array<BarChartDataInterface>>([
-    { label: "01", value: 1233 },
-    { label: "02", value: 3434 },
-    { label: "03", value: 2355 },
-    { label: "04", value: 3333 },
-    { label: "05", value: 3566 },
-    { label: "06", value: 8999 },
-    { label: "07", value: 6766 },
-    { label: "08", value: 4442 },
-    { label: "09", value: 1123 },
-    { label: "10", value: 1233 },
-    { label: "11", value: 8988 },
-    { label: "12", value: 6884 },
-    { label: "13", value: 3432 },
-    { label: "14", value: 6564 },
-    { label: "15", value: 5333 },
-    { label: "16", value: 7878 },
-    { label: "17", value: 3312 },
-    { label: "18", value: 2343 },
-    { label: "19", value: 4542 },
-    { label: "20", value: 1212 },
-    { label: "21", value: 6884 },
-    { label: "22", value: 3242 },
-    { label: "23", value: 2884 },
-    { label: "24", value: 5884 },
-  ]);
+  const [data, setData] = useState<Array<BarChartDataInterface>>([]);
+
   const [dateSelected, setDateSelected] = useState("today");
   const getInfoAnalytics = async () => {
     const params = {
       property: "properties/244725891",
-      dimensions: [{ name: "browser" }, { name: "pageReferrer" }],
-      metrics: [{ name: "newUsers" }],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
-      dimensionFilter: {
+      dimensions: [{ name: "firstSessionDate" }],
+      metrics: [{ name: "screenPageViews" }],
+      dateRanges: [
+        {
+          startDate:
+            dateSelected !== null && dateSelected !== "today"
+              ? dateSelected
+              : "30daysAgo",
+          endDate: "today",
+        },
+      ],
+      metricFilter: {
         filter: {
-          stringFilter: {
-            matchType: "FULL_REGEXP",
-            caseSensitive: false,
-            value: "^.+$", // check not null
+          numericFilter: {
+            operation: "GREATER_THAN",
+            value: { int64Value: "0" },
           },
-          fieldName: "pageReferrer",
+          fieldName: "screenPageViews",
         },
       },
+      orderBys: [
+        {
+          dimension: {
+            orderType: "ALPHANUMERIC",
+            dimensionName: "firstSessionDate",
+          },
+        },
+      ],
+      metricAggregations: ["MAXIMUM"],
     };
-    let result = await analyticsApi.getInfo(params);
+    // if(dateSelected !)
+    console.log("s", dateSelected);
 
-    //  get user active today
-    console.log("result", result.data[0]);
+    if (dayjs(dateSelected).isBefore(dayjs()) || dateSelected === "today") {
+      let result = await analyticsApi.getInfo(params);
+
+      //  get user active today
+      const convertedData = result.data[0].rows.map((item: any) => ({
+        label: dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("DD/MM"),
+        value: item.metricValues[0].value,
+      }));
+      const selectedData = convertedData.filter(
+        (item: any) =>
+          item.label === dayjs(dateSelected, "YYYY-MM-DD").format("DD/MM")
+      );
+      if (dateSelected && dateSelected !== "today") {
+        setData(selectedData);
+      } else {
+        setData(convertedData.slice(-30));
+      }
+    } else {
+      notification.warning({
+        message: "Please select a date smaller than the current date",
+        description: "Date Invalid",
+      });
+    }
   };
   useEffect(() => {
     getInfoAnalytics();
@@ -125,9 +141,14 @@ export default function BaseBarChart() {
         <div className="flex flex-row items-center">
           <CustomTimePicker
             onDataChange={({ value }) => {
-              const date = moment(value.$d).format("YYYY-MM-DD");
+              console.log("value", value);
+
+              const date =
+                value !== null && moment(value.$d).format("YYYY-MM-DD");
               if (date) {
                 setDateSelected(date);
+              } else {
+                setDateSelected("today");
               }
             }}
           />
