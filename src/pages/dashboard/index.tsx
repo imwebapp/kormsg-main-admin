@@ -16,7 +16,7 @@ const Dashboard = () => {
     <div className="p-6">
       <DashboardStatistic />
       <div className="flex flex-row w-full mt-4">
-        {/* <BaseBarChart /> */}
+        <BaseBarChart />
         <BasePieChart />
       </div>
       <BaseCard className="mt-4">

@@ -13,8 +13,6 @@ type PieChartProps = {
 };
 export default function BasePieChart(props: PieChartProps) {
   const { className } = props;
-  const [application, setApplication] = useState(45);
-  const [browser, setBrowser] = useState(55);
   const { t } = useTranslation();
   const [data, setData] = useState<any[]>([]);
 
@@ -63,7 +61,7 @@ export default function BasePieChart(props: PieChartProps) {
   //     const textElements: any = document.querySelectorAll("#pie-chart text");
   //     changeStyle(textElements);
   //   }, 400);
-  // }, [application, browser]);
+  // }, [data]);
   function getColorByIndex(index: any) {
     const colors = [
       "bg-rose-900",
@@ -75,7 +73,10 @@ export default function BasePieChart(props: PieChartProps) {
   }
   return (
     <BaseCard
-      className={classNames("flex flex-col justify-between w-full", className)}
+      className={classNames(
+        "flex flex-col justify-between w-[375px]",
+        className
+      )}
     >
       <div className="flex flex-row justify-between">
         <BaseText locale size={24} bold>
@@ -118,9 +119,9 @@ export default function BasePieChart(props: PieChartProps) {
             ]}
           />
         </div>
-        <div className="flex flex-row mt-10">
+        <div className="flex flex-row mt-10 max-w-[375px]">
           <div className="flex flex-row items-start justify-center">
-            <div className="h-full w-0 border-[0.5px] mx-4"></div>
+            {/* <div className="h-full w-0 border-[0.5px] mx-4"></div> */}
             {data.map((item, index) => (
               <>
                 <div
@@ -135,7 +136,7 @@ export default function BasePieChart(props: PieChartProps) {
                     {item.percentage}
                   </BaseText>
                 </div>
-                <div className="h-full w-0 border-[0.5px] mx-4"></div>
+                {/* <div className="h-full w-0 border-[0.5px] mx-4"></div> */}
               </>
             ))}
           </div>
