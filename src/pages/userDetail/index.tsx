@@ -126,7 +126,7 @@ const UserDetail = () => {
           style={{ height: "calc(100vh - 71px)" }}
         >
           {optionSelected === "information" ? (
-            <InformationTab dataUser={formDataCreateUser} showModalEdit={showModalEdit} />
+            <InformationTab dataUser={formDataCreateUser} showModalEdit={showModalEdit} onShowHistoryPayment={() => setOptionSelected(INIT_TAB_USER_DETAIL.HISTORY_PAYMENT)} />
           ) : null}
           {optionSelected === "shopInformation" ? (
             <ShopInformationTab dataUser={formDataCreateUser} />
