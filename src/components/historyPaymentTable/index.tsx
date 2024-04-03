@@ -29,7 +29,7 @@ export default function HistoryPaymentTable(props: HistoryPaymentProps) {
     },
     {
       title: t("Detail"),
-      dataIndex: "note",
+      dataIndex: "content",
     },
     {
       title: t("Contact Id"),

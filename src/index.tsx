@@ -1,10 +1,11 @@
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
+import AppMain from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "./i18n";
 import { ConfigProvider } from "antd";
+import { App } from "antd";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -18,9 +19,11 @@ root.render(
       },
     }}
   >
-    <Suspense fallback={<div>Loading</div>}>
-      <App />
-    </Suspense>
+    <App>
+      <Suspense fallback={<div>Loading</div>}>
+        <AppMain />
+      </Suspense>
+    </App>
   </ConfigProvider>
 );
 
