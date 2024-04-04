@@ -33,58 +33,53 @@ export default function BaseBarChart() {
   const [xLabels, setxLabels] = useState<Array<string>>([]);
   const { t } = useTranslation();
   const [data, setData] = useState<Array<BarChartDataInterface>>([]);
-
   const [dateSelected, setDateSelected] = useState("today");
+  const [optionTime, setOptionTime] = useState(t("Days"));
   const getInfoAnalytics = async () => {
     const params = {
       property: "properties/244725891",
-      dimensions: [{ name: "firstSessionDate" }],
+      dimensions: [{ name: optionTime === t("Hours") ? "hour" : "date" }],
       metrics: [{ name: "screenPageViews" }],
       dateRanges: [
         {
           startDate:
             dateSelected !== null && dateSelected !== "today"
               ? dateSelected
+              : optionTime === "Hours"
+              ? "today"
               : "30daysAgo",
           endDate: "today",
         },
       ],
-      metricFilter: {
-        filter: {
-          numericFilter: {
-            operation: "GREATER_THAN",
-            value: { int64Value: "0" },
-          },
-          fieldName: "screenPageViews",
-        },
-      },
       orderBys: [
         {
           dimension: {
-            orderType: "ALPHANUMERIC",
-            dimensionName: "firstSessionDate",
+            orderType: "NUMERIC",
+            dimensionName: optionTime === "Hours" ? "hour" : "date",
           },
         },
       ],
-      metricAggregations: ["MAXIMUM"],
     };
-    // if(dateSelected !)
-    console.log("s", dateSelected);
-
     if (dayjs(dateSelected).isBefore(dayjs()) || dateSelected === "today") {
       let result = await analyticsApi.getInfo(params);
-
       //  get user active today
       const convertedData = result.data[0].rows.map((item: any) => ({
-        label: dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("DD/MM"),
+        label:
+          optionTime === "Hours"
+            ? item.dimensionValues[0].value
+            : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("DD/MM"),
         value: item.metricValues[0].value,
       }));
       const selectedData = convertedData.filter(
         (item: any) =>
           item.label === dayjs(dateSelected, "YYYY-MM-DD").format("DD/MM")
       );
-      if (dateSelected && dateSelected !== "today") {
-        setData(selectedData);
+      if (optionTime !== "Hours") {
+        if (dateSelected && dateSelected !== "today") {
+          setData(selectedData);
+        } else {
+          setData(convertedData.slice(-30));
+        }
       } else {
         setData(convertedData.slice(-30));
       }
@@ -98,7 +93,7 @@ export default function BaseBarChart() {
   useEffect(() => {
     getInfoAnalytics();
     return () => {};
-  }, [dateSelected]);
+  }, [dateSelected, optionTime]);
 
   useEffect(() => {
     if (data[0]) {
@@ -141,8 +136,6 @@ export default function BaseBarChart() {
         <div className="flex flex-row items-center">
           <CustomTimePicker
             onDataChange={({ value }) => {
-              console.log("value", value);
-
               const date =
                 value !== null && moment(value.$d).format("YYYY-MM-DD");
               if (date) {
@@ -157,6 +150,7 @@ export default function BaseBarChart() {
             options={[t("Hours"), t("Days")]}
             onChange={(value) => {
               console.log(value); // string
+              setOptionTime(value);
             }}
           />
         </div>
