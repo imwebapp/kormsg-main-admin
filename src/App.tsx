@@ -4,8 +4,7 @@ import { BrowserRouter, Link } from "react-router-dom";
 import "./App.css";
 import Router from "./routers";
 import { useLocalStorage } from "./stores/localStorage";
-
-const App: React.FC = () => {
+const AppMain: React.FC = () => {
   const { locale } = useLocalStorage((state) => state);
   useEffect(() => {
     i18next.changeLanguage(locale);
@@ -18,4 +17,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default AppMain;

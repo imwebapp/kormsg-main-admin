@@ -13,13 +13,14 @@ type DashboardReservationProps = {
   className?: string; // for tailwindcss
   selectedButton?: string;
   dateTimeSelect?: any;
+  valueSearch?: string;
 };
 
 export default function DashboardReservation(props: DashboardReservationProps) {
-  const { className, isViewAll, selectedButton, dateTimeSelect } = props;
+  const { className, isViewAll, selectedButton, dateTimeSelect, valueSearch } =
+    props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [listReservation, setListReservation] = useState<any>();
-
   const { t } = useTranslation();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
@@ -35,12 +36,21 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     // TIMESTAMP SELECT RANGE
     const startTimestamp = moment(dateTimeSelect[0]).valueOf();
     const endTimestamp = moment(dateTimeSelect[1]).valueOf();
-
+    // Tạo mảng điều kiện "$or"
+    const orCondition = {
+      $or: [
+        { contact: { $iLike: `%${valueSearch}%` } },
+        { "$user.nickname$": { $iLike: `%${valueSearch}%` } },
+        { "$seller.nickname$": { $iLike: `%${valueSearch}%` } },
+        { "$shop.title$": { $iLike: `%${valueSearch}%` } },
+      ],
+    };
     const date = startTimestamp
       ? { date: { $gte: startTimestamp, $lte: endTimestamp } }
       : {};
     // filter getlist reservation
-    const filter = JSON.stringify({ ...type, ...date });
+    const filter = JSON.stringify({ ...type, ...date, ...orCondition });
+    console.log("filter", filter);
 
     reservationApi
       .getList({
@@ -55,7 +65,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       .catch((err) => {
         console.log("err: ", err);
       });
-  }, [selectedButton, dateTimeSelect]);
+  }, [selectedButton, dateTimeSelect, valueSearch]);
   const renderPaymentStatus = (paymentMethod: string) => {
     let text = "";
     let backgroundColor = "";
@@ -235,7 +245,6 @@ export default function DashboardReservation(props: DashboardReservationProps) {
         pagination={!!isViewAll ? { pageSize: 10 } : false}
         columns={columns}
         data={listReservation}
-        // data={data}
       />
     </>
   );

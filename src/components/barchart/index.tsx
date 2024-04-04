@@ -67,12 +67,12 @@ export default function BaseBarChart() {
         label:
           optionTime === "Hours"
             ? item.dimensionValues[0].value
-            : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("DD/MM"),
+            : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("MM/DD"),
         value: item.metricValues[0].value,
       }));
       const selectedData = convertedData.filter(
         (item: any) =>
-          item.label === dayjs(dateSelected, "YYYY-MM-DD").format("DD/MM")
+          item.label === dayjs(dateSelected, "YYYY-MM-DD").format("MM/DD")
       );
       if (optionTime !== "Hours") {
         if (dateSelected && dateSelected !== "today") {

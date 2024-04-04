@@ -7,7 +7,8 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RESERVATION_STATUS } from "../../utils/constants";
-
+import { BaseInput } from "../../components/input/BaseInput";
+import { SearchOutlined } from "@ant-design/icons";
 const ReservationDetails = () => {
   const data = {
     Totalreservationdetails: 84,
@@ -22,6 +23,7 @@ const ReservationDetails = () => {
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
   };
+  const [valueSearch, setValueSearch] = useState("");
 
   const listButton = () => {
     return (
@@ -110,6 +112,7 @@ const ReservationDetails = () => {
     <div className="p-6">
       <div className="flex flex-row justify-between item-center">
         {listButton()}
+
         <CustomTimePicker
           range
           onDataChange={({ value, dateString }) => {
@@ -119,12 +122,26 @@ const ReservationDetails = () => {
           }}
         />
       </div>
+      <div className="flex my-5">
+        <BaseInput
+          placeholder="Search user"
+          className="w-2/4"
+          value={valueSearch}
+          onChange={(value) => {
+            setValueSearch(value);
+          }}
+          iconLeft={
+            <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
+          }
+        />
+      </div>
       <div className="flex flex-row gap-4 mt-4">
         <BaseCard className="flex-1 w-full">
           <DashboardReservation
             isViewAll={true}
             selectedButton={selectedButton}
             dateTimeSelect={dateTimeSelect}
+            valueSearch={valueSearch}
           />
         </BaseCard>
       </div>
