@@ -18,6 +18,7 @@ export default function BaseSegmented(props: CustomButtonProps) {
     <Segmented<string>
       rootClassName={className}
       options={options}
+      defaultValue={options[1]}
       onChange={onChange}
     />
   );
