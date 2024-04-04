@@ -17,4 +17,10 @@ export const userApi = {
   updateJumpLimit: (id: any, data: any) => {
     return axiosClient.put(`${USER}/update_jump_limit/${id}`, data);
   },
+  getListPaymentHistory: (params?: any) => {
+    return axiosClient.get(`/user_payment_history`, { params });
+  },
+  updateUserPaymentHistory: (data: any) => {
+    return axiosClient.post(`/user_payment_history`, data);
+  },
 };

@@ -7,11 +7,13 @@ import { BaseModal } from "../../../components/modal/BaseModal";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { useEffect, useState } from "react";
-import { Switch } from "antd";
+import { Switch, App } from "antd";
 import { EyeOutlined } from "@ant-design/icons";
 import { groupApi } from "../../../apis/groupApi";
 import { userApi } from "../../../apis/userApi";
 import md5 from "md5";
+import { ListTypeUser } from "../../../utils/constants";
+import { Url } from "../../../routers/paths";
 const listUserGroup = [
   {
     id: 2,
@@ -33,22 +35,26 @@ const listUserGroup = [
 interface IProps {
   dataUser: User;
   showModalEdit?: boolean;
+  onShowHistoryPayment?: () => void;
 }
 
 export const InformationTab = (props: IProps) => {
   const navigate = useNavigate();
+  const { message } = App.useApp();
   const [dataUser, setDataUser] = useState<User>(props?.dataUser);
+  console.log("dataUserXXXX: ", dataUser);
   const [listUserGroup, setListUserGroup] = useState<any[]>([]);
   const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
-  const [showMemo, setShowMemo] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [formDataEditInfo, setFormDataEditInfo] = useState({
+    account_type: dataUser?.account_type || "",
     group_id: dataUser?.group_id || "",
     nickname: dataUser?.nickname,
     username: dataUser?.username,
     post_limit: dataUser?.post_limit || 0,
-    memo: dataUser?.memo || '',
   });
+  console.log("formDataEditInfo: ", formDataEditInfo);
+  const [memoValue, setMemoValue] = useState("");
   const [changePasswordValue, setChangePasswordValue] = useState('');
   const handleInputChange = (name: string, value: any) => {
     setFormDataEditInfo({ ...formDataEditInfo, [name]: value });
@@ -62,27 +68,29 @@ export const InformationTab = (props: IProps) => {
   const handleCloseModalEditInfo = () => {
     setOpenModalEditInfo(false);
     setFormDataEditInfo({
+      account_type: dataUser?.account_type || "",
       group_id: dataUser.group_id || "",
       nickname: dataUser.nickname || "",
       username: dataUser.username || "",
       post_limit: dataUser.post_limit || 0,
-      memo: dataUser.memo || "",
     });
   };
 
   const handleEditInfo = () => {
     if (isFormDataValid()) {
       console.log("FormData is valid. Submitting...", formDataEditInfo);
-      setOpenModalEditInfo(false);
       userApi.updateUser(dataUser.id, formDataEditInfo).then((res: any) => {
         console.log("res update user: ", res.results.object);
         setDataUser(res.results.object);
+        message.success("Edit user successfully");
       }).catch((err) => {
         console.log("err update user: ", err);
+        message.error("Edit user failed");
       });
     } else {
       console.log("FormData is not valid. Please fill all fields.");
     }
+    setOpenModalEditInfo(false);
   };
 
   const [openModalChangePassword, setOpenModalChangePassword] = useState(false);
@@ -104,19 +112,43 @@ export const InformationTab = (props: IProps) => {
   const handleChangePassword = () => {
     console.log("Change password value: ", changePasswordValue);
     if (changePasswordValue) {
-      const passwordValueConverted = md5(changePasswordValue);
+      const trimPassword = changePasswordValue.trim();
+      const passwordValueConverted = md5(trimPassword);
       console.log("passwordValueConverted: ", passwordValueConverted);
       userApi.updateUser(dataUser.id, {
         password: passwordValueConverted,
       }).then((res: any) => {
         console.log("res update password user: ", res.results.object);
         setDataUser(res.results.object);
+        message.success("Update password successfully");
       }).catch((err) => {
         console.log("err update password user: ", err);
+        message.error("Update password failed");
       });
     }
     setChangePasswordValue('');
     setOpenModalChangePassword(false);
+  };
+
+  //update Memo
+  const handleUpdateMemo = () => {
+    console.log("update memo");
+    if (memoValue.trim() === "") {
+      return;
+    }
+    const dataUpdate = {
+      user_id: dataUser.id,
+      content: memoValue.trim(),
+    };
+    userApi.updateUserPaymentHistory(dataUpdate).then((res: any) => {
+      console.log("res update memo: ", res.results.object);
+      message.success("Update memo successfully");
+    }
+    ).catch((err) => {
+      console.log("err update memo: ", err);
+      message.error("Update memo failed");
+    });
+
   };
 
   const isFormDataValid = () => {
@@ -143,6 +175,26 @@ export const InformationTab = (props: IProps) => {
       })
       .finally(() => {
         props?.showModalEdit && handleOpenModalEditInfo();
+      });
+
+    //get list payment history
+    userApi
+      .getListPaymentHistory({
+        fields: JSON.stringify([
+          "$all",
+        ]),
+        filter: JSON.stringify({
+          user_id: `${dataUser.id}`,
+        }),
+        limit: 50,
+        page: 1,
+      })
+      .then((res: any) => {
+        console.log("res getList PaymentHistory API", res.results?.objects?.rows);
+        setMemoValue(res.results?.objects?.rows[0]?.content || "");
+      })
+      .catch((err) => {
+        console.log("err getList PaymentHistory API", err);
       });
   }, []);
 
@@ -188,7 +240,7 @@ export const InformationTab = (props: IProps) => {
                 Payment information
               </BaseText>
               <BaseText medium className={classNames('text-darkNight900')}>
-                {dataUser?.memo}
+                {memoValue}
               </BaseText>
             </div>
           </div>
@@ -222,9 +274,22 @@ export const InformationTab = (props: IProps) => {
       >
         <div className={classNames(" flex flex-col gap-5")}>
           <BaseInputSelect
+            title="User Type"
+            required
+            defaultValue={formDataEditInfo?.account_type}
+            value={formDataEditInfo?.account_type}
+            onChange={(value) => handleInputChange("account_type", value)}
+            placeholder="Select"
+            options={(ListTypeUser || []).map((item) => ({
+              value: item.id,
+              label: item.name,
+            }))}
+          />
+          <BaseInputSelect
             title="Group"
             required
-            value={formDataEditInfo.group_id}
+            defaultValue={formDataEditInfo?.group_id}
+            value={formDataEditInfo?.group_id}
             onChange={(value) => handleInputChange("group_id", value)}
             placeholder="Select a group"
             options={(listUserGroup || []).map((item) => ({
@@ -289,7 +354,7 @@ export const InformationTab = (props: IProps) => {
               <BaseText locale bold className={classNames('text-darkNight900')}>
                 Memo
               </BaseText>
-              <div className="flex items-center justify-center gap-1 border-b cursor-pointer border-dayBreakBlue500" onClick={() => setShowMemo(!showMemo)}>
+              <div className="flex items-center justify-center gap-1 border-b cursor-pointer border-dayBreakBlue500" onClick={props?.onShowHistoryPayment}>
                 <EyeOutlined
                   className="justify-center w-5 h-5 text-dayBreakBlue500"
                 />
@@ -301,16 +366,15 @@ export const InformationTab = (props: IProps) => {
             <div className="flex gap-2">
               <BaseInput
                 required
-                value={formDataEditInfo.memo}
-                onChange={(value) => handleInputChange("memo", value)}
-                placeholder="Id account"
+                value={memoValue}
+                onChange={(value) => setMemoValue(value)}
+                placeholder="Payment information"
                 className="w-full"
-                type={showMemo ? "text" : "password"}
               />
               <CustomButton
                 locale
                 bold
-                onClick={() => console.log('save')}
+                onClick={handleUpdateMemo}
                 className="py-6 border-none text-dayBreakBlue500 bg-dayBreakBlue50 hover:bg-dayBreakBlue500 hover:text-white"
                 children="Save"
               />
