@@ -1,6 +1,6 @@
 import { BaseText } from "../../../components";
 import { Radio, RadioChangeEvent } from 'antd';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { classNames } from "../../../utils/common";
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +23,11 @@ export const ChatMessageFuncPart1 = (props: IChatMessageFuncPart1) => {
         setSelectedValue(newValue);
         onClick(newValue); // Pass the selected value to the onClick handler
     };
+    useEffect(() => {
+        if (value !== selectedValue){
+            setSelectedValue(value)
+        }
+    }, [value]);
     return (
         <div className="flex flex-col gap-2">
             <BaseText locale size={16} bold>

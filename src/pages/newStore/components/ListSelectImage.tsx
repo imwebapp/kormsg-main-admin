@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BaseText } from '../../../components';
 import Images from '../../../assets/gen';
 import { App } from 'antd';
@@ -6,15 +6,14 @@ import { App } from 'antd';
 type ImageOrEmpty = File | null;
 interface IProps {
     onImagesChange?: any;
+    listImages?: any;
 }
 
 export const ListSelectImage = (props: IProps) => {
-    const { onImagesChange } = props;
+    const { listImages, onImagesChange } = props;
     const { message } = App.useApp();
     const initialImages = Array.from({ length: 9 }, () => null);
     const [selectedImages, setSelectedImages] = useState<Array<ImageOrEmpty>>(initialImages);
-
-    console.log('selectedImages', selectedImages);
 
     const handleImageClick = (index: number) => {
         document.getElementById(`file-input-${index}`)?.click();
@@ -56,6 +55,17 @@ export const ListSelectImage = (props: IProps) => {
         return newArr;
     };
 
+    useEffect(() => {
+        if (listImages && listImages.length <= 9) {
+            const newSelectedImages = [...initialImages];
+            listImages.forEach((image: any, index: number) => {
+                newSelectedImages[index] = image;
+            });
+            setSelectedImages(newSelectedImages);
+        } else if (listImages && listImages.length > 9) {
+            setSelectedImages(listImages.slice(0, 9));
+        }
+    }, [listImages]);
 
     return (
         <div className="flex flex-col gap-3">
@@ -79,7 +89,7 @@ export const ListSelectImage = (props: IProps) => {
                                 onClick={() => handleRemoveImage(0)}
                             />
                             <img
-                                src={URL.createObjectURL(selectedImages[0]!)}
+                                src={typeof selectedImages[0] === 'string' ? selectedImages[0] : URL.createObjectURL(selectedImages[0]!)}
                                 className="w-full h-full rounded-lg"
                                 alt="Image"
                                 onClick={() => handleImageClick(0)}
@@ -111,7 +121,7 @@ export const ListSelectImage = (props: IProps) => {
                                 style={{ display: 'none' }}
                                 multiple
                             />
-                            {selectedImages[index] && (
+                            {/* {selectedImages[index] && (
                                 <div className="relative flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-darkNight50">
                                     <img
                                         src={Images.closeCircle}
@@ -120,11 +130,36 @@ export const ListSelectImage = (props: IProps) => {
                                         onClick={() => handleRemoveImage(index)}
                                     />
                                     <img
-                                        src={URL.createObjectURL(selectedImages[index]!)}
+                                        src={(typeof selectedImages[index] === 'string' && typeof selectedImages[index] !== null) ? selectedImages[index] : URL.createObjectURL(selectedImages[index]!)}
                                         className="w-full h-full rounded-lg"
                                         alt="Image"
                                         onClick={() => handleImageClick(index)}
                                     />
+                                </div>
+                            )} */}
+                            {selectedImages[index] && (
+                                <div className="relative flex flex-col items-center justify-center w-full h-full rounded-lg cursor-pointer bg-darkNight50">
+                                    <img
+                                        src={Images.closeCircle}
+                                        className="absolute z-10 w-8 h-8 cursor-pointer top-2 right-2"
+                                        alt="closeCircle"
+                                        onClick={() => handleRemoveImage(index)}
+                                    />
+                                    {typeof selectedImages[index] === 'string' ? (
+                                        <img
+                                            src={selectedImages[index]|| Images.exportIcon}
+                                            className="w-full h-full rounded-lg"
+                                            alt="Image"
+                                            onClick={() => handleImageClick(index)}
+                                        />
+                                    ) : (
+                                        <img
+                                            src={URL.createObjectURL(selectedImages[index]!)}
+                                            className="w-full h-full rounded-lg"
+                                            alt="Image"
+                                            onClick={() => handleImageClick(index)}
+                                        />
+                                    )}
                                 </div>
                             )}
                             {!selectedImages[index] && (
@@ -164,7 +199,7 @@ export const ListSelectImage = (props: IProps) => {
 
                                 />
                                 <img
-                                    src={URL.createObjectURL(selectedImages[index]!)}
+                                    src={typeof selectedImages[index] === 'string' ? (selectedImages[index] || Images.exportIcon) : URL.createObjectURL(selectedImages[index]!)}
                                     className="w-full h-full rounded-lg"
                                     alt="Image"
                                     onClick={() => handleImageClick(index)}

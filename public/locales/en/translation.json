@@ -277,15 +277,18 @@
   "소개": "Introduction",
   "예시) 안녕하세요  홍길동입니다 회원님들께 인사드립니다 제 주된 코스는 두피케어 피부관리 그리고 추가되어 전문적인 건식통증테라피(경혈지압과 체형교정) 아로마테라피 (다이어트 림프순환관리) 정성으로 회원님들께 보답하겠습니다": "Example) Hello, this is Hong Gil-dong. My main courses are scalp care, skin care, and additional professional dry pain therapy (acupressure and body correction) aromatherapy (diet lymph circulation management). I will repay you with sincerity.",
   "매장의 소개해주세요 구글 혹은 네이버에 노출 될 수 있으니 소개글과 노출 원하는 키워드도 같이 입력바랍니다. 예시: 강남케어, 강남맛집,강남추천 등~": "Please introduce the store. It can be exposed on Google or Naver, so please enter the introduction and the keywords you want to expose. Example: Gangnam Care, Gangnam Restaurant, Gangnam Recommended, etc.",
-  "Image": "Image",
   "Declaration": "Declaration",
   "Writer": "Writer",
   "Report list": "Report list",
-  "Title": "Title",
   "Auto-deleted list": "Auto-deleted list",
   "Action": "Action",
   "Creation time": "Creation time",
   "Set automatic deletion count": "Set automatic deletion count",
   "Comment report list": "Comment report list",
-  "Community Report List": "Community Report List"
+  "Community Report List": "Community Report List",
+  "Minutes": "Minutes",
+  "You can enter a minimum of 0 minutes and a maximum of 240 minutes.": "You can enter a minimum of 0 minutes and a maximum of 240 minutes.",
+  "DAY": "Day",
+  "NIGHT": "Night",
+  "KRW": "KRW"
 }

@@ -30,11 +30,6 @@ export const PriceListTab = (props: IProps) => {
 
     console.log('data PriceListTab', dataPrice);
 
-    useEffect(() => {
-        if (data)
-            setDataPrice(data);
-    }, [data])
-
     const handlePercentageDecrease = (amountBeforeDiscount: number, amountAfterDiscount: number) => {
         return ((amountBeforeDiscount - amountAfterDiscount) / amountBeforeDiscount * 100).toFixed(0) + '%';
     }
@@ -68,6 +63,11 @@ export const PriceListTab = (props: IProps) => {
         onDelete && onDelete()
     }
 
+    useEffect(() => {
+        if (data)
+            setDataPrice(data);
+    }, [data])
+
     return (
         <div className='flex flex-col items-center justify-center gap-4'>
             {
@@ -81,7 +81,7 @@ export const PriceListTab = (props: IProps) => {
                                             bold
                                             size={18}
                                         >
-                                            {item?.name} ({item?.time})
+                                            {item?.title} ({item?.running_time})
                                         </BaseText>
                                         <BaseText
                                             size={16}
@@ -90,14 +90,20 @@ export const PriceListTab = (props: IProps) => {
                                         >
                                             {item?.description}
                                         </BaseText>
-                                        <div className='flex gap-1'>
-                                            <BaseText size={16} locale color='text-primary' bold>요금</BaseText>
-                                            <BaseText size={16} bold>{item?.amountBeforeDiscount} {item?.unit}</BaseText>
-                                            <BaseText size={16} className='line-through'>{item?.amountAfterDiscount} {item?.unit}</BaseText>
-                                            <BaseText size={16} bold color='text-cyan600'>{handlePercentageDecrease(item?.amountBeforeDiscount, item?.amountAfterDiscount)}</BaseText>
-                                        </div>
+                                        {
+                                            (item?.prices || []).map((price: any, index: number) => {
+                                                return (
+                                                    <div className='flex gap-1'>
+                                                        <BaseText size={16} locale color='text-primary' bold>{price.name}</BaseText>
+                                                        <BaseText size={16} bold>{price?.discount} {item?.unit}</BaseText>
+                                                        <BaseText size={16} className='line-through'>{price?.price} {item?.unit}</BaseText>
+                                                        <BaseText size={16} bold color='text-cyan600'>{handlePercentageDecrease(price?.price, price?.discount)}</BaseText>
+                                                    </div>
+                                                )
+                                            })
+                                        }
                                     </div>
-                                    <img src={Images.twoDot} className='w-6 h-6' onClick={() => handleShowOption(index)}/>
+                                    <img src={Images.twoDot} className='w-6 h-6' onClick={() => handleShowOption(index)} />
                                 </div>
                                 {
                                     showOptionIndex === index && (

@@ -269,12 +269,6 @@ const UserManage = () => {
         { email: { $like: `%${valueSearch}%` } },
       ];
     }
-    if (valueSearch !== "") {
-      convertFilter['$or'] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-      ];
-    }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
       // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
@@ -473,6 +467,7 @@ const UserManage = () => {
                 <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
               }
             />
+            
             <div className={classNames("flex gap-4")}>
               <CustomButton
                 primary

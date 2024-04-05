@@ -24,6 +24,8 @@ import { TagApi } from "../../apis/tagApi";
 import { useDaumPostcodePopup } from 'react-daum-postcode'
 import { InputMultiImage } from "../../components/input/InputMultiImage";
 import { ListSelectImage } from "./components/ListSelectImage";
+import { UserFilter } from "./components/UserFilter";
+import { ShopFilter } from "./components/ShopFilter";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -35,12 +37,15 @@ interface IFormDataPage1 {
   storeOpeningHours: string;
   thema: string;
   category: string;
-  region: string;
+  regionProvince: string;
+  regionDistrict: string;
   hashtag: string[];
-  subway: string;
-  chatMessageFunc: string;
-  stampSetting: string;
-  reservationFuncSetting: string;
+  subwayLocation: string;
+  subwayLine: string;
+  subwayStation: string;
+  chatMessageFunc: boolean | string;
+  stampSetting: boolean | string;
+  reservationFuncSetting: boolean | string;
 }
 
 interface INewPrice {
@@ -53,6 +58,25 @@ interface INewPrice {
   amountBeforeNightDiscount?: number;
   amountAfterNightDiscount?: number;
   unit: string;
+  created_at?: string;
+  created_at_unix_timestamp?: number;
+  updated_at?: string;
+  images?: string[];
+  limit_in_one_day?: number;
+  order?: number;
+  recommended?: boolean;
+  status?: boolean;
+  prices:
+  {
+    id: string;
+    name: string;
+    discount: string;
+    price: string;
+    status?: boolean;
+    created_at?: number;
+    created_at_unix_timestamp?: string;
+    updated_at?: string;
+  }[];
 }
 interface INewManger {
   id: string;
@@ -77,26 +101,6 @@ const listOptionPart2 = [
   },
 ];
 
-const dataPrice: Array<INewPrice> = [
-  {
-    id: '1dataPrice',
-    name: "가격표",
-    description: "가격표",
-    time: '2022-12-12',
-    amountBeforeDiscount: 100,
-    amountAfterDiscount: 90,
-    unit: 'USD',
-  },
-  {
-    id: '2dataPrice',
-    name: "가격표2",
-    description: "가격표2",
-    time: '2023-12-12',
-    amountBeforeDiscount: 150,
-    amountAfterDiscount: 100,
-    unit: 'Won',
-  }
-];
 const dataManage: Array<INewManger> = [
   {
     id: '1dataPrice',
@@ -133,17 +137,7 @@ const NewStore = () => {
   console.log('subway123123123::::::', subwaySelected, ':::::', subwaySelectedChild, ';::::::::', subwaySelectedDetails);
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
-  const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({
-    id: '',
-    name: '',
-    description: '',
-    time: '',
-    amountBeforeDiscount: undefined,
-    amountAfterDiscount: undefined,
-    amountBeforeNightDiscount: undefined,
-    amountAfterNightDiscount: undefined,
-    unit: '',
-  });
+  const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({} as INewPrice);
 
   const [openModalCreateNewManage, setOpenModalCreateNewManage] = useState<boolean>(false);
   const [dataNewManage, setDataNewManage] = useState<INewManger>({
@@ -171,7 +165,7 @@ const NewStore = () => {
 
   const handleSubmitRegion = () => {
     console.log('submit region');
-    handleInputChange('region', regionSelectedChild.value);
+    setFormDataPage1({ ...formDataPage1, regionProvince: regionSelected.id, regionDistrict: regionSelectedChild.value });
     setOpenModalRegion(false);
   };
 
@@ -181,7 +175,7 @@ const NewStore = () => {
 
   const handleSubmitSubway = () => {
     console.log('submit subway');
-    handleInputChange('subway', subwaySelected.name + ' ' + subwaySelectedChild.name + ' ' + subwaySelectedDetails);
+    setFormDataPage1({ ...formDataPage1, subwayLocation: subwaySelected.name, subwayLine: subwaySelectedChild.name, subwayStation: subwaySelectedDetails });
     setOpenModalSubway(false);
   };
 
@@ -189,7 +183,7 @@ const NewStore = () => {
     setOpenModalCreateNewPrice(false);
   };
 
-  const handleSubmitCreateNewPrice = () => {
+  const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
     console.log('submit create new price: ', dataNewPrice);
     setOpenModalCreateNewPrice(false);
   };
@@ -206,6 +200,9 @@ const NewStore = () => {
     setOpenModalCreateNewManage(false);
   };
 
+  const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
+  const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] = useState<any>();
+  console.log('storeOwnerMembershipSettingXX', storeOwnerMembershipSetting);
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
     storeCopyFunc: '',
     storeOwnerMembershipSetting: '',
@@ -217,9 +214,12 @@ const NewStore = () => {
     storeOpeningHours: '',
     thema: '',
     category: '',
-    region: '',
+    regionProvince: '',
+    regionDistrict: '',
     hashtag: [],
-    subway: '',
+    subwayLocation: '',
+    subwayLine: '',
+    subwayStation: '',
     chatMessageFunc: '',
     stampSetting: '',
     reservationFuncSetting: '',
@@ -227,8 +227,8 @@ const NewStore = () => {
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
     storeIntroduction: '',
-    priceList: dataPrice,
-    manager: dataManage,
+    priceList: [],
+    manager: [],
   });
 
   console.log('formDataPage1', formDataPage1);
@@ -250,7 +250,7 @@ const NewStore = () => {
   const handleImagesChange = (images: File) => {
     console.log('storeImages:::::::::', images);
     handleInputChange('storeImages', images);
-};
+  };
 
   //popup address
   const scriptUrl = 'URL_TO_DAUM_POSTCODE_SCRIPT';
@@ -323,6 +323,8 @@ const NewStore = () => {
           label: item.name,
         }));
         setListHashtag(transformedDataListHashtag)
+
+        setFormDataPage1({ ...formDataPage1 });
       })
         .catch((err) => {
           // handle error
@@ -330,6 +332,51 @@ const NewStore = () => {
     }
 
   }, [formDataPage1.thema]);
+
+  useEffect(() => {
+    if (storeCopyFunc) {
+      console.log('storeCopyFuncXX', storeCopyFunc);
+      setStoreOwnerMembershipSetting(storeCopyFunc?.user);
+      setRegionSelected(
+        {
+          id: storeCopyFunc?.shop_province,
+          name: storeCopyFunc?.shop_province,
+        }
+      )
+      setRegionSelectedChild(
+        {
+          title: storeCopyFunc?.shop_district,
+          value: storeCopyFunc?.shop_district,
+        }
+      )
+      setFormDataPage1({
+        storeCopyFunc: storeCopyFunc?.id,
+        storeOwnerMembershipSetting: '',
+        storeName: storeCopyFunc?.title || '',
+        storeNumber: storeCopyFunc?.contact_phone || '',
+        storeAddress: storeCopyFunc?.address || '',
+        storeAddressDetails: storeCopyFunc?.address_2 || '',
+        storeImages: storeCopyFunc?.images || [],
+        storeOpeningHours: storeCopyFunc?.opening_hours || '',
+        thema: storeCopyFunc?.category.thema_id || '',
+        category: storeCopyFunc?.category_id || '',
+        regionProvince: storeCopyFunc?.shop_province || '',
+        regionDistrict: storeCopyFunc?.shop_district || '',
+        hashtag: storeCopyFunc?.tag_ids,
+        subwayLocation: storeCopyFunc?.subway_location || '',
+        subwayLine: storeCopyFunc?.subway_line || '',
+        subwayStation: storeCopyFunc?.subway_station || '',
+        chatMessageFunc: storeCopyFunc?.messenger_status || false,
+        stampSetting: storeCopyFunc?.loyalty_status || false,
+        reservationFuncSetting: storeCopyFunc?.reservation_status || false,
+      });
+      setFormDataPage2({
+        storeIntroduction: storeCopyFunc?.description_content || storeCopyFunc?.description || '',
+        priceList: storeCopyFunc?.courses || [],
+        manager: storeCopyFunc?.mentors || [],
+      })
+    }
+  }, [storeCopyFunc]);
 
   return (
     <Layout className="h-screen bg-white">
@@ -363,17 +410,20 @@ const NewStore = () => {
         style={{ height: "calc(100vh - 71px)" }}
       >
         <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto ">
-          <BaseInput
-            title="매장 복사 기능"
-            placeholder="복사할 매장을 검색해주세요"
-            value={formDataPage1.storeCopyFunc}
-            onChange={(value) => handleInputChange('storeCopyFunc', value)}
+          <ShopFilter
+            value={storeCopyFunc}
+            onChange={(value) => {
+              console.log('value SHOP PARENT', value);
+              setStoreCopyFunc(value);
+              handleInputChange('0', value?.title);
+            }}
           />
-          <BaseInput
-            title="매장 주인 회원 설정"
-            placeholder="회원을 닉네임 혹은 아이디로 검색해주세요"
-            value={formDataPage1.storeOwnerMembershipSetting}
-            onChange={(value) => handleInputChange('storeOwnerMembershipSetting', value)}
+          <UserFilter
+            value={storeOwnerMembershipSetting}
+            onChange={(value) => {
+              setStoreOwnerMembershipSetting(value);
+              handleInputChange('storeOwnerMembershipSetting', value?.nickname);
+            }}
           />
           <BaseInput
             title="매장 이름"
@@ -414,7 +464,7 @@ const NewStore = () => {
               사진은 최소 1장이상 등록해주세요
             </BaseText>
           </div>
-          <ListSelectImage onImagesChange={handleImagesChange} />
+          <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
           <ListCategoryPart1 title="영업시간" value="" placeholder="영업시간을 설정해주세요" onClick={() => { setOpenModalOpenHours(true) }} />
           <BaseInputSelect
             title="Theme"
@@ -447,32 +497,38 @@ const NewStore = () => {
               </>
             )
           }
-          <ListCategoryPart1 title="지역" value={formDataPage1.region} placeholder="지역을 선택해주세요" onClick={() => { setOpenModalRegion(true) }} />
-          <ListCategoryPart1 title="지하철" value={formDataPage1.subway} placeholder="지하철을 선택해주세요" onClick={() => { setOpenModalSubway(true) }} />
+          <ListCategoryPart1 title="지역" value={formDataPage1?.regionProvince + formDataPage1?.regionDistrict} placeholder="지역을 선택해주세요" onClick={() => { setOpenModalRegion(true) }} />
+          <ListCategoryPart1 title="지하철" value={formDataPage1?.subwayLocation + formDataPage1?.subwayLine + formDataPage1?.subwayStation} placeholder="지하철을 선택해주세요" onClick={() => { setOpenModalSubway(true) }} />
 
           <ChatMessageFuncPart1
             title="채팅 메시지 기능"
-            value=''
-            onClick={(value) => { console.log('click Chat message function', value) }}
+            value={formDataPage1?.chatMessageFunc === '' ? '' : (formDataPage1?.chatMessageFunc ? '1' : '2')}
+            onClick={(value) => {
+              handleInputChange('chatMessageFunc', value === '1' ? true : false);
+            }}
             options={[
               { value: '1', label: '활성화' },
               { value: '2', label: '비활성화' }
             ]} />
           <ChatMessageFuncPart1
             title="스탬프 설정"
-            value=''
-            onClick={(value) => { console.log('click Stamp settings', value) }}
+            value={formDataPage1?.stampSetting === '' ? '' : (formDataPage1?.stampSetting ? '1' : '2')}
+            onClick={(value) => {
+              handleInputChange('stampSetting', value === '1' ? true : false);
+            }}
             options={[
-              { value: '11', label: '활성화' },
-              { value: '22', label: '비활성화' }
+              { value: '1', label: '활성화' },
+              { value: '2', label: '비활성화' }
             ]} />
           <ChatMessageFuncPart1
             title="예약기능 설정"
-            value=''
-            onClick={(value) => { console.log('click Reservation function settings', value) }}
+            value={formDataPage1?.reservationFuncSetting === '' ? '' : (formDataPage1?.reservationFuncSetting ? '1' : '2')}
+            onClick={(value) => {
+              handleInputChange('reservationFuncSetting', value === '1' ? true : false);
+            }}
             options={[
-              { value: '111', label: '활성화' },
-              { value: '222', label: '비활성화' }
+              { value: '1', label: '활성화' },
+              { value: '2', label: '비활성화' }
             ]} />
         </div>
 
@@ -480,7 +536,7 @@ const NewStore = () => {
         <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
           <BaseInput
             onChange={(value) => handleInputChangePage2('storeIntroduction', value)}
-            value={formDataPage2.storeIntroduction}
+            value={formDataPage2?.storeIntroduction}
             placeholder="매장의 소개해주세요
             구글 혹은 네이버에 노출 될 수 있으니
             소개글과 노출 원하는 키워드도 같이
@@ -543,7 +599,7 @@ const NewStore = () => {
 
 
         <div className="flex flex-col w-1/3 p-4 overflow-auto ">
-          {formDataPage1.storeImages[0] && <img src={URL.createObjectURL(formDataPage1?.storeImages[0])} className="w-full h-[260px]" />}
+          {formDataPage1.storeImages[0] && <img src={typeof formDataPage1.storeImages[0] === 'string' ? formDataPage1.storeImages[0] : URL.createObjectURL(formDataPage1?.storeImages[0])} className="w-full h-[260px]" />}
           {formDataPage1.storeName && <div className="p-4 border">
             <BaseText locale size={16} bold className="flex justify-center py-8 border-b">{formDataPage1.storeName}</BaseText>
             <div className="flex py-4">
