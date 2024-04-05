@@ -62,7 +62,7 @@ export const ManageTab = (props: IProps) => {
                         return (
                             <>
                                 <div className='flex w-full gap-3 p-4 border rounded-lg'>
-                                    <img src={item?.image || Images.avatarEmpty} className='rounded-full w-[60px] h-[60px]' onClick={() => { }} />
+                                    <img src={item?.images[0] || Images.avatarEmpty} className='rounded-full w-[60px] h-[60px]' onClick={() => { }} />
                                     <div className='flex flex-col w-full gap-2'>
                                         <BaseText
                                             bold

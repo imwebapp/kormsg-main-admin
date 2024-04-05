@@ -9,7 +9,7 @@ interface IProps {
   title?: string;
   titleSize?: number;
   required?: boolean;
-  isError?: boolean;
+  isError?: boolean | string;
   textArea?: boolean;
   value?: string | number;
   defaultValue?: string | number;
@@ -70,6 +70,7 @@ export const BaseInput = (props: IProps) => {
           {required && (<span className="text-red-500">*</span>)}
         </div>
       )}
+
       <div
         className={classNames('flex flex-row items-center rounded-lg px-3 py-3 bg-darkNight50 w-full ',
           isFocused ? 'border border-blue' : 'border border-darkNight50',
@@ -122,6 +123,11 @@ export const BaseInput = (props: IProps) => {
         ) : iconRight}
         {widgetRight}
       </div>
+      {isError && (
+        <BaseText locale size={12} className=" text-dustRed500">
+          {isError}
+        </BaseText>
+      )}
     </div>
 
   );

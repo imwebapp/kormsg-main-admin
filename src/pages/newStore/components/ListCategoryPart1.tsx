@@ -19,7 +19,7 @@ export const ListCategoryPart1 = (props: IListCategoryPart) => {
                 {title}
             </BaseText>
             <div className="flex justify-between p-3 rounded-lg bg-darkNight50" onClick={onClick}>
-                <BaseText size={16} bold className={classNames(value ? "" : 'text-darkNight300')}>{t(value || placeholder || "")}</BaseText>
+                <BaseText size={16} className={classNames(value ? "" : 'text-darkNight300')}>{t(value || placeholder || "")}</BaseText>
                 <DownOutlined />
             </div>
         </div>
