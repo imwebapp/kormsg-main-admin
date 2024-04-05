@@ -53,7 +53,6 @@ const UserManage = () => {
   );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
-  const [valueSearch, setValueSearch] = useState("");
   const [valueInputCreateGroup, setValueInputCreateGroup] = useState("");
   const [formDataCreateUser, setFormDataCreateUser] = useState({
     userType: "",
@@ -79,6 +78,7 @@ const UserManage = () => {
 
   const [reloading, setReloading] = useState(false);
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
 
   console.log("reloading: ", reloading);
 
@@ -262,25 +262,18 @@ const UserManage = () => {
   const handleChangeTextKeyword = (e: any) => {
     setValueKeywordFilter(e.target.value);
   };
-
-  useEffect(() => {
+  const handleChangeFilter = (value: string) => {
+    setSelectedFilterUser(value);
+  };
+  const searchUser = () => {
     const convertFilter: any = {
       account_type: typeUserSelected.id,
     };
     if (groupSelected.id !== 1) {
       convertFilter["group_id"] = groupSelected.id;
     }
-    if (valueSearch !== "") {
-      convertFilter["$or"] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-      ];
-    }
-    if (valueSearch !== "") {
-      convertFilter["$or"] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-      ];
+    if (valueKeywordFilter !== "") {
+      convertFilter[selectedFilterUser] = { $iLike: `%${valueKeywordFilter}%` };
     }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
@@ -316,7 +309,10 @@ const UserManage = () => {
           console.log("err: ", err);
         });
     }
-  }, [groupSelected, typeUserSelected, valueSearch]);
+  };
+  useEffect(() => {
+    searchUser();
+  }, [groupSelected, typeUserSelected]);
 
   useEffect(() => {
     userApi
@@ -468,53 +464,49 @@ const UserManage = () => {
           <div
             className={classNames("flex flex-row justify-between items-center")}
           >
-            <div>
-              <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-                <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
-                  <Select
-                    suffixIcon={<CaretDownOutlined />}
-                    bordered={false}
-                    placeholder="ID"
-                    defaultValue="ID"
-                    // onChange={handleChangeFilter}
-                    options={[
-                      {
-                        value: "username",
-                        label: "ID",
-                      },
-                      {
-                        value: "nickname",
-                        label: "nickname",
-                      },
-                      {
-                        value: "email",
-                        label: "gmail",
-                      },
-                      {
-                        value: "title",
-                        label: "title",
-                      },
-                      {
-                        value: "contact_phone",
-                        label: "Phone number",
-                      },
-                    ]}
-                    className="flex-1"
-                  />
-                </div>
-                <Input
-                  className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
-                  placeholder="Keyword"
-                  onChange={handleChangeTextKeyword}
-                  value={valueKeywordFilter}
+            <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[1000px] w-[651px] max-md:flex-wrap my-4">
+              <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+                <Select
+                  suffixIcon={<CaretDownOutlined />}
+                  bordered={false}
+                  placeholder="ID"
+                  defaultValue="ID"
+                  onChange={handleChangeFilter}
+                  options={[
+                    {
+                      value: "username",
+                      label: "ID",
+                    },
+                    {
+                      value: "nickname",
+                      label: "nickname",
+                    },
+                    {
+                      value: "email",
+                      label: "gmail",
+                    },
+                    {
+                      value: "phone",
+                      label: "Phone number",
+                    },
+                  ]}
+                  className="flex-1"
                 />
-                <CustomButton
-                  className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
-                  onClick={() => {}}
-                >
-                  {t("Search")}
-                </CustomButton>
               </div>
+              <Input
+                className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+                placeholder="Keyword"
+                onChange={handleChangeTextKeyword}
+                value={valueKeywordFilter}
+              />
+              <CustomButton
+                className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
+                onClick={() => {
+                  searchUser();
+                }}
+              >
+                {t("Search")}
+              </CustomButton>
             </div>
             <div className={classNames("flex gap-4")}>
               <CustomButton
