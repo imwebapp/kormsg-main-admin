@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BaseModal } from '../../../components/modal/BaseModal'
 import { BaseText } from '../../../components'
-import { classNames } from '../../../utils/common'
+import { classNames, generateRandomID } from '../../../utils/common'
 import Images from '../../../assets/gen';
 import { BaseInput } from '../../../components/input/BaseInput';
 import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
@@ -12,7 +12,7 @@ interface IProps {
     isOpen: boolean;
     onClose?: () => void;
     onSubmit?: (data: any) => void;
-    data: {
+    data?: {
         id: string;
         name: string;
         description: string;
@@ -27,12 +27,22 @@ interface IProps {
 export const ModalCreateNewPrice = (props: IProps) => {
     const { isOpen, onClose, onSubmit, data } = props
     const [t] = useTranslation();
-    const [dataNewPrice, setDataNewPrice] = useState<any>(data);
+    const [dataNewPrice, setDataNewPrice] = useState<any>({
+        id: '',
+        name: '',
+        description: '',
+        time: undefined,
+        amountBeforeDiscount: undefined,
+        amountAfterDiscount: undefined,
+        amountBeforeNightDiscount: undefined,
+        amountAfterNightDiscount: undefined,
+        unit: 'KRW',
+    });
     const [isShowPriceNight, setIsShowPriceNight] = useState<string>('0');
     const [isErrorTime, setIsErrorTime] = useState<string>('')
 
     const handleInputChangeNewPrice = (name: string, value: any) => {
-        if (name === 'time' && value <= 0 || value > 240) {
+        if (name === 'time' && (value < 0 || value > 240)) {
             setIsErrorTime('You can enter a minimum of 0 minutes and a maximum of 240 minutes.')
         }
         else {
@@ -52,13 +62,59 @@ export const ModalCreateNewPrice = (props: IProps) => {
                 amountAfterDiscount: undefined,
                 amountBeforeNightDiscount: undefined,
                 amountAfterNightDiscount: undefined,
-                unit: '',
+                unit: 'KRW',
             }
         )
         onClose && onClose();
     }
     const handleSubmitCreateNewPrice = () => {
-        onSubmit && onSubmit(dataNewPrice);
+        setIsShowPriceNight('0');
+        setDataNewPrice(
+            {
+                id: '',
+                name: '',
+                description: '',
+                time: undefined,
+                amountBeforeDiscount: undefined,
+                amountAfterDiscount: undefined,
+                amountBeforeNightDiscount: undefined,
+                amountAfterNightDiscount: undefined,
+                unit: 'KRW',
+            }
+        )
+        const dataPrices = (dataNewPrice?.amountBeforeNightDiscount && dataNewPrice?.amountAfterNightDiscount) ? [
+            {
+                id: generateRandomID(),
+                name: "DAY",
+                price: dataNewPrice?.amountBeforeDiscount,
+                discount: dataNewPrice?.amountAfterDiscount,
+            },
+            {
+                id: generateRandomID(),
+                name: "NIGHT",
+                price: dataNewPrice?.amountBeforeNightDiscount,
+                discount: dataNewPrice?.amountAfterNightDiscount,
+            }
+        ] : [
+            {
+                id: generateRandomID(),
+                name: "ALL",
+                price: dataNewPrice?.amountBeforeDiscount,
+                discount: dataNewPrice?.amountAfterDiscount,
+            }
+        ];
+        const dataConvert = {
+            id: generateRandomID(),
+            images: [],
+            thumbnails: [],
+            title: dataNewPrice?.name,
+            running_time: dataNewPrice?.time,
+            description: dataNewPrice?.description,
+            recommended: false,
+            unit: dataNewPrice?.unit,
+            prices: dataPrices,
+        }
+        onSubmit && onSubmit(dataConvert);
     }
 
     useEffect(() => {
@@ -158,9 +214,12 @@ export const ModalCreateNewPrice = (props: IProps) => {
                             label: t('KRW'),
                         },
                     ]}
-                    defaultValue="KRW"
+                    defaultValue={dataNewPrice.unit}
                     value={dataNewPrice.unit}
-                    onChange={(value) => handleInputChangeNewPrice('unit', value)}
+                    onChange={(value) => {
+                        console.log('valueXX', value);
+                        handleInputChangeNewPrice('unit', value)
+                    }}
                 />
             </div>
         </BaseModal>

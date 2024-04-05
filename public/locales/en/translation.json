@@ -290,5 +290,6 @@
   "You can enter a minimum of 0 minutes and a maximum of 240 minutes.": "You can enter a minimum of 0 minutes and a maximum of 240 minutes.",
   "DAY": "Day",
   "NIGHT": "Night",
-  "KRW": "KRW"
+  "KRW": "KRW",
+  "Charge": "Charge"
 }

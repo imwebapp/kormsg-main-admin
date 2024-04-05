@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Images from '../../../assets/gen';
 import { BaseText, CustomButton } from '../../../components';
 import { PlusOutlined } from '@ant-design/icons';
+import { generateRandomID } from '../../../utils/common';
 interface IProps {
     data?: {
         id: string,
@@ -16,11 +17,11 @@ interface IProps {
     }[];
     onCLickCreateNew?: () => void;
     onArchiveTick?: () => void;
-    onEdit?: () => void;
-    onUp?: () => void;
-    onDown?: () => void;
-    onCopy?: () => void;
-    onDelete?: () => void;
+    onEdit?: (item: any) => void;
+    onUp?: (index: number) => void;
+    onDown?: (index: number) => void;
+    onCopy?: (item: any) => void;
+    onDelete?: (index: number) => void;
 }
 
 export const PriceListTab = (props: IProps) => {
@@ -41,26 +42,37 @@ export const PriceListTab = (props: IProps) => {
     const handleArchiveTick = () => {
         console.log('Click Archive Tick')
         onArchiveTick && onArchiveTick()
+        setShowOptionIndex(null)
     }
-    const handleEdit = () => {
+    const handleEdit = (item: any) => {
         console.log('Click Edit')
-        onEdit && onEdit()
+        onEdit && onEdit(item)
+        setShowOptionIndex(null)
     }
-    const handleUp = () => {
-        console.log('Click Up')
-        onUp && onUp()
+    const handleUp = (index: number) => {
+        if (index > 0) {
+            console.log('Click Up')
+            onUp && onUp(index)
+        }
+        setShowOptionIndex(null)
     }
-    const handleDown = () => {
-        console.log('Click Down')
-        onDown && onDown()
+    const handleDown = (index: number) => {
+        if (index < dataPrice.length - 1) {
+            console.log('Click Down')
+            onDown && onDown(index)
+        }
+        setShowOptionIndex(null)
     }
-    const handleCopy = () => {
+    const handleCopy = (item: any) => {
         console.log('Click Copy')
-        onCopy && onCopy()
+        const newItem = { ...item, id: generateRandomID() };
+        onCopy && onCopy(newItem)
+        setShowOptionIndex(null)
     }
-    const handleDelete = () => {
+    const handleDelete = (index:number) => {
         console.log('Click Delete')
-        onDelete && onDelete()
+        onDelete && onDelete(index)
+        setShowOptionIndex(null)
     }
 
     useEffect(() => {
@@ -77,12 +89,12 @@ export const PriceListTab = (props: IProps) => {
                             <>
                                 <div className='flex justify-between w-full p-4 border rounded-lg'>
                                     <div className='flex flex-col gap-2'>
-                                        <BaseText
+                                        {(item?.title && item?.running_time) && <BaseText
                                             bold
                                             size={18}
                                         >
                                             {item?.title} ({item?.running_time})
-                                        </BaseText>
+                                        </BaseText>}
                                         <BaseText
                                             size={16}
                                             medium
@@ -94,7 +106,7 @@ export const PriceListTab = (props: IProps) => {
                                             (item?.prices || []).map((price: any, index: number) => {
                                                 return (
                                                     <div className='flex gap-1'>
-                                                        <BaseText size={16} locale color='text-primary' bold>{price.name}</BaseText>
+                                                        <BaseText size={16} locale color='text-primary' bold>{price?.name === 'ALL' ? 'Charge' : price?.name}</BaseText>
                                                         <BaseText size={16} bold>{price?.discount} {item?.unit}</BaseText>
                                                         <BaseText size={16} className='line-through'>{price?.price} {item?.unit}</BaseText>
                                                         <BaseText size={16} bold color='text-cyan600'>{handlePercentageDecrease(price?.price, price?.discount)}</BaseText>
@@ -117,35 +129,35 @@ export const PriceListTab = (props: IProps) => {
                                             </div>
                                             <div
                                                 className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleEdit}
+                                                onClick={() => handleEdit(item)}
                                             >
                                                 <img src={Images.editIcon2} className='w-5 h-5' />
                                                 <BaseText locale size={10} >수정</BaseText>
                                             </div>
                                             <div
                                                 className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleUp}
+                                                onClick={() => handleUp(index)}
                                             >
                                                 <img src={Images.arrowUp} className='w-5 h-5' />
                                                 <BaseText locale size={10} >위로</BaseText>
                                             </div>
                                             <div
                                                 className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleDown}
+                                                onClick={() => handleDown(index)}
                                             >
                                                 <img src={Images.arrowDown} className='w-5 h-5' />
                                                 <BaseText locale size={10} >아래로</BaseText>
                                             </div>
                                             <div
                                                 className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleCopy}
+                                                onClick={() => handleCopy(item)}
                                             >
                                                 <img src={Images.documentCopy} className='w-5 h-5' />
                                                 <BaseText locale size={10} >복제</BaseText>
                                             </div>
                                             <div
                                                 className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleDelete}
+                                                onClick={() => handleDelete(index)}
                                             >
                                                 <img src={Images.trash2} className='w-5 h-5' />
                                                 <BaseText locale size={10} >삭제</BaseText>

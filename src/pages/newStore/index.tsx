@@ -82,7 +82,7 @@ interface INewManger {
   id: string;
   name: string;
   description: string;
-  image: string;
+  images: string[];
 }
 interface IFormDataPage2 {
   storeIntroduction: string;
@@ -98,15 +98,6 @@ const listOptionPart2 = [
   {
     title: "담당자",
     value: "담당자",
-  },
-];
-
-const dataManage: Array<INewManger> = [
-  {
-    id: '1dataPrice',
-    name: "관리사 YK",
-    description: "너무 잘하고 착합니다, 단골지명 많은 분이 세요. 매주 화요일 근무해요! 부원장 이민영.",
-    image: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg',
   },
 ];
 
@@ -144,7 +135,7 @@ const NewStore = () => {
     id: '',
     name: '',
     description: '',
-    image: '',
+    images: [],
   });
   console.log('dataNewManage', dataNewManage);
 
@@ -185,6 +176,7 @@ const NewStore = () => {
 
   const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
     console.log('submit create new price: ', dataNewPrice);
+    handleInputChangePage2('priceList', [...formDataPage2?.priceList, dataNewPrice])
     setOpenModalCreateNewPrice(false);
   };
 
@@ -197,6 +189,7 @@ const NewStore = () => {
 
   const handleSubmitCreateNewManage = (dataNewManage: any) => {
     console.log('submit create new manage: ', dataNewManage);
+    handleInputChangePage2('manager', [...formDataPage2?.manager, dataNewManage])
     setOpenModalCreateNewManage(false);
   };
 
@@ -590,8 +583,32 @@ const NewStore = () => {
               />
               :
               <PriceListTab
-                data={formDataPage2.priceList}
+                data={formDataPage2?.priceList}
                 onCLickCreateNew={() => { setOpenModalCreateNewPrice(true) }}
+                onUp={(index) => {
+                  const list = formDataPage2.priceList;
+                  const temp = list[index];
+                  list[index] = list[index - 1];
+                  list[index - 1] = temp;
+                  handleInputChangePage2('priceList', list);
+                }}
+                onDown={(index) => {
+                  const list = formDataPage2.priceList;
+                  const temp = list[index];
+                  list[index] = list[index + 1];
+                  list[index + 1] = temp;
+                  handleInputChangePage2('priceList', list);
+                }}
+                onCopy={(item) => {
+                  console.log('item', item);
+
+                  handleInputChangePage2('priceList', [...formDataPage2.priceList, item]);
+                }}
+                onDelete={(index) => {
+                  const list = formDataPage2.priceList;
+                  list.splice(index, 1);
+                  handleInputChangePage2('priceList', list);
+                }}
               />}
           </div>
 
@@ -728,7 +745,7 @@ const NewStore = () => {
               formDataPage2?.manager.map((item, index) => {
                 return (
                   <div className="flex gap-3 p-2 border rounded-lg">
-                    <img src={item?.image || Images.avatarEmpty} className="w-[84px] h-[84px] rounded-lg" />
+                    <img src={item?.images[0] || Images.avatarEmpty} className="w-[84px] h-[84px] rounded-lg" />
                     <div className="flex flex-col justify-center w-full">
                       <BaseText size={16} bold>{item?.name}</BaseText>
                       <BaseText size={16} bold>{item?.description}</BaseText>
@@ -896,14 +913,13 @@ const NewStore = () => {
         isOpen={openModalCreateNewPrice}
         onClose={handleCloseModalCreateNewPrice}
         onSubmit={handleSubmitCreateNewPrice}
-        data={dataNewPrice}
+      // data={dataNewPrice}
       />
 
       <ModalCreateNewManage
         isOpen={openModalCreateNewManage}
         onClose={handleCloseModalCreateNewManage}
         onSubmit={handleSubmitCreateNewManage}
-        data={dataNewManage}
         onImageChange={handleImageCreateNewChange}
       />
     </Layout>
