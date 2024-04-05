@@ -10,6 +10,7 @@ import {
   PlusOutlined,
   TeamOutlined,
   SearchOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
 import { BaseModal } from "../../components/modal/BaseModal";
 import { User, classNames } from "../../utils/common";
@@ -22,6 +23,7 @@ import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
 import { ListTypeUser, TypeUser } from "../../utils/constants";
 import { employeeApi } from "../../apis/employeeApi";
+import { Input, Select } from "antd";
 
 const listUserGroups = [
   {
@@ -51,7 +53,6 @@ const UserManage = () => {
   );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
-  const [valueSearch, setValueSearch] = useState("");
   const [valueInputCreateGroup, setValueInputCreateGroup] = useState("");
   const [formDataCreateUser, setFormDataCreateUser] = useState({
     userType: "",
@@ -76,6 +77,9 @@ const UserManage = () => {
   const [isCreatingGroupName, setIsCreatingGroupName] = useState(false);
 
   const [reloading, setReloading] = useState(false);
+  const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
+
   console.log("reloading: ", reloading);
 
   console.log("listUser: ", listUser);
@@ -255,25 +259,21 @@ const UserManage = () => {
     });
     setOpenModalAddJumpUp(false);
   };
-
-  useEffect(() => {
+  const handleChangeTextKeyword = (e: any) => {
+    setValueKeywordFilter(e.target.value);
+  };
+  const handleChangeFilter = (value: string) => {
+    setSelectedFilterUser(value);
+  };
+  const searchUser = () => {
     const convertFilter: any = {
       account_type: typeUserSelected.id,
     };
     if (groupSelected.id !== 1) {
       convertFilter["group_id"] = groupSelected.id;
     }
-    if (valueSearch !== "") {
-      convertFilter['$or'] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-      ];
-    }
-    if (valueSearch !== "") {
-      convertFilter['$or'] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-      ];
+    if (valueKeywordFilter !== "") {
+      convertFilter[selectedFilterUser] = { $iLike: `%${valueKeywordFilter}%` };
     }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
@@ -294,7 +294,6 @@ const UserManage = () => {
         .catch((err: any) => {
           console.log("err: ", err);
         });
-
     } else {
       userApi
         .getList({
@@ -310,7 +309,10 @@ const UserManage = () => {
           console.log("err: ", err);
         });
     }
-  }, [groupSelected, typeUserSelected, valueSearch]);
+  };
+  useEffect(() => {
+    searchUser();
+  }, [groupSelected, typeUserSelected]);
 
   useEffect(() => {
     userApi
@@ -429,8 +431,8 @@ const UserManage = () => {
                 className={classNames(
                   "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                 )}
-                onClick={() => { }}
-              // onDoubleClick={handleEditGroupName}
+                onClick={() => {}}
+                // onDoubleClick={handleEditGroupName}
               >
                 <CheckOutlined
                   className={classNames("text-dayBreakBlue500 text-xl")}
@@ -462,17 +464,50 @@ const UserManage = () => {
           <div
             className={classNames("flex flex-row justify-between items-center")}
           >
-            <BaseInput
-              placeholder="Search user"
-              className="w-2/4"
-              value={valueSearch}
-              onChange={(value) => {
-                setValueSearch(value);
-              }}
-              iconLeft={
-                <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
-              }
-            />
+            <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[1000px] w-[651px] max-md:flex-wrap my-4">
+              <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
+                <Select
+                  suffixIcon={<CaretDownOutlined />}
+                  bordered={false}
+                  placeholder="ID"
+                  defaultValue="ID"
+                  onChange={handleChangeFilter}
+                  options={[
+                    {
+                      value: "username",
+                      label: "ID",
+                    },
+                    {
+                      value: "nickname",
+                      label: "nickname",
+                    },
+                    {
+                      value: "email",
+                      label: "gmail",
+                    },
+                    {
+                      value: "phone",
+                      label: "Phone number",
+                    },
+                  ]}
+                  className="flex-1"
+                />
+              </div>
+              <Input
+                className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+                placeholder="Keyword"
+                onChange={handleChangeTextKeyword}
+                value={valueKeywordFilter}
+              />
+              <CustomButton
+                className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
+                onClick={() => {
+                  searchUser();
+                }}
+              >
+                {t("Search")}
+              </CustomButton>
+            </div>
             <div className={classNames("flex gap-4")}>
               <CustomButton
                 primary
@@ -523,8 +558,11 @@ const UserManage = () => {
             })}
           </div>
 
-          <UserManageTable data={listUser} reload={reloading} onOpenJumpUp={handleOpenModalJumpUp} />
-
+          <UserManageTable
+            data={listUser}
+            reload={reloading}
+            onOpenJumpUp={handleOpenModalJumpUp}
+          />
         </div>
       </div>
       {/* <BaseModal
@@ -555,7 +593,8 @@ const UserManage = () => {
           Jump- up limit
         </BaseText>
         <div className="flex items-center justify-between w-full px-2 py-3 mt-2 rounded-lg bg-darkNight50">
-          <img src={Images.minusCircle}
+          <img
+            src={Images.minusCircle}
             onClick={() => {
               if (valueInputJumpUp <= 1) return;
               setValueInputJumpUp(valueInputJumpUp - 1);
@@ -565,21 +604,22 @@ const UserManage = () => {
           <input
             value={valueInputJumpUp}
             onChange={(e) => {
-              if (e.target.value === '' || Number(e.target.value) < 1) {
+              if (e.target.value === "" || Number(e.target.value) < 1) {
                 setValueInputJumpUp(1);
+              } else if (
+                typeof e.target.value === "string" &&
+                isNaN(Number(e.target.value))
+              ) {
+                return;
+              } else {
+                setValueInputJumpUp(Number(e.target.value));
               }
-              else
-                if (typeof (e.target.value) === 'string' && isNaN(Number(e.target.value))) {
-                  return;
-                }
-                else {
-                  setValueInputJumpUp(Number(e.target.value));
-                }
             }}
             className="flex font-bold text-center bg-darkNight50 focus:outline-none text-dark"
-          // type="number"
+            // type="number"
           />
-          <img src={Images.plusCircle}
+          <img
+            src={Images.plusCircle}
             onClick={() => setValueInputJumpUp(valueInputJumpUp + 1)}
             className="w-6 h-6 cursor-pointer"
           />
