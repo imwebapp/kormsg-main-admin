@@ -218,8 +218,8 @@ const NewStore = () => {
       //   }
       //   return item;
       // })
-      // setDataEditManager(undefined);
-      // setIndexEditManager(undefined);
+      setDataEditManager(undefined);
+      setIndexEditManager(undefined);
       // setFormDataPage2({ ...formDataPage2, manager: EditData});
       setOpenModalCreateNewManage(false);
       return;
