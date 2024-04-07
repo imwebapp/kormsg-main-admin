@@ -14,14 +14,19 @@ interface IProps {
     onSubmit?: (data: any) => void;
     data?: {
         id: string;
-        name: string;
         description: string;
-        time?: number | string;
-        amountBeforeDiscount?: number;
-        amountAfterDiscount?: number;
-        amountBeforeNightDiscount?: number;
-        amountAfterNightDiscount?: number;
         unit: string;
+        images: [],
+        thumbnails: [],
+        title: string,
+        running_time: string | number,
+        recommended: false,
+        prices: {
+            id: string,
+            name: string,
+            price: number,
+            discount: number,
+        }[],
     };
 }
 export const ModalCreateNewPrice = (props: IProps) => {
@@ -118,7 +123,21 @@ export const ModalCreateNewPrice = (props: IProps) => {
     }
 
     useEffect(() => {
-        data && setDataNewPrice(data);
+        console.log('data EDIT', data);
+
+        const dataEditConvert = {
+            id: data?.id,
+            name: data?.title,
+            description: data?.description,
+            time: data?.running_time,
+            amountBeforeDiscount: data?.prices[0]?.price || undefined,
+            amountAfterDiscount: data?.prices[0]?.discount || undefined,
+            amountBeforeNightDiscount: data?.prices[1]?.price || undefined,
+            amountAfterNightDiscount: data?.prices[1]?.discount || undefined,
+            unit: data?.unit,
+        }
+        if(data?.prices?.length === 2) setIsShowPriceNight('1');
+        data && setDataNewPrice(dataEditConvert);
     }, [data]);
 
     return (

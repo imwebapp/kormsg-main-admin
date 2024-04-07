@@ -53,11 +53,12 @@ interface INewPrice {
   name: string;
   description: string;
   time: string;
+  unit: string;
+  running_time: string | number;
   amountBeforeDiscount?: number;
   amountAfterDiscount?: number;
   amountBeforeNightDiscount?: number;
   amountAfterNightDiscount?: number;
-  unit: string;
   created_at?: string;
   created_at_unix_timestamp?: number;
   updated_at?: string;
@@ -129,6 +130,8 @@ const NewStore = () => {
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
   const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({} as INewPrice);
+  const [dataEditPrice, setDataEditPrice] = useState();
+  const [indexEditPrice, setIndexEditPrice] = useState<number>();
 
   const [openModalCreateNewManage, setOpenModalCreateNewManage] = useState<boolean>(false);
   const [dataNewManage, setDataNewManage] = useState<INewManger>({
@@ -137,7 +140,11 @@ const NewStore = () => {
     description: '',
     images: [],
   });
-  console.log('dataNewManage', dataNewManage);
+  const [dataEditManager, setDataEditManager] = useState();
+  const [indexEditManager, setIndexEditManager] = useState<number>();
+
+  console.log('dataEditManager: ', indexEditManager, dataNewManage);
+  
 
   const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
 
@@ -175,6 +182,21 @@ const NewStore = () => {
   };
 
   const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
+
+    if (dataEditPrice && indexEditPrice !== undefined) {
+      console.log('submit edit price: ', dataNewPrice);
+      const EditData = formDataPage2?.priceList.map((item, index) => {
+        if (index === indexEditPrice) {
+          item = dataNewPrice;
+        }
+        return item;
+      })
+      setDataEditPrice(undefined);
+      setIndexEditPrice(undefined);
+      setFormDataPage2({ ...formDataPage2, priceList: EditData});
+      setOpenModalCreateNewPrice(false);
+      return;
+    }
     console.log('submit create new price: ', dataNewPrice);
     handleInputChangePage2('priceList', [...formDataPage2?.priceList, dataNewPrice])
     setOpenModalCreateNewPrice(false);
@@ -183,12 +205,27 @@ const NewStore = () => {
   const handleCloseModalCreateNewManage = () => {
     setOpenModalCreateNewManage(false);
   };
-  const handleImageCreateNewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageCreateNewManager = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Image Create New Manage (File)
   };
 
   const handleSubmitCreateNewManage = (dataNewManage: any) => {
+    if (dataEditManager && indexEditManager !== undefined) {
+      console.log('submit edit Manager: ', dataNewManage);
+      // const EditData = formDataPage2?.manager.map((item, index) => {
+      //   if (index === indexEditManager) {
+      //     item = dataNewManage;
+      //   }
+      //   return item;
+      // })
+      // setDataEditManager(undefined);
+      // setIndexEditManager(undefined);
+      // setFormDataPage2({ ...formDataPage2, manager: EditData});
+      setOpenModalCreateNewManage(false);
+      return;
+    }
     console.log('submit create new manage: ', dataNewManage);
+
     handleInputChangePage2('manager', [...formDataPage2?.manager, dataNewManage])
     setOpenModalCreateNewManage(false);
   };
@@ -370,6 +407,20 @@ const NewStore = () => {
       })
     }
   }, [storeCopyFunc]);
+
+  useEffect(() => {
+    if (dataEditPrice) {
+      console.log('dataEditPrice', dataEditPrice);
+      setOpenModalCreateNewPrice(true);
+    }
+  }, [dataEditPrice]);
+
+  useEffect(() => {
+    if (dataEditManager) {
+      console.log('dataEditManager', dataEditManager);
+      setOpenModalCreateNewManage(true);
+    }
+  }, [dataEditManager]);
 
   return (
     <Layout className="h-screen bg-white">
@@ -578,22 +629,61 @@ const NewStore = () => {
           <div>
             {optionPart2Selected === "담당자" ?
               <ManageTab
-                data={formDataPage2.manager}
+                data={formDataPage2?.manager}
                 onCLickCreateNew={() => { setOpenModalCreateNewManage(true) }}
+                onArchiveTick={(index: number) => {
+                  console.log('index', index);
+                }}
+                onEdit={(item, index) => {
+                  setDataEditManager({ ...item });
+                  setIndexEditManager(index);
+                }}
+                onUp={(index) => {
+                  const list = formDataPage2?.manager;
+                  const temp = list[index];
+                  list[index] = list[index - 1];
+                  list[index - 1] = temp;
+                  handleInputChangePage2('manager', list);
+                }}
+                onDown={(index) => {
+                  const list = formDataPage2?.manager;
+                  const temp = list[index];
+                  list[index] = list[index + 1];
+                  list[index + 1] = temp;
+                  handleInputChangePage2('manager', list);
+                }}
+                onCopy={(item) => {
+                  console.log('item', item);
+
+                  handleInputChangePage2('manager', [...formDataPage2?.manager, item]);
+                }}
+                onDelete={(index) => {
+                  const list = formDataPage2?.manager;
+                  list.splice(index, 1);
+                  handleInputChangePage2('manager', list);
+                }}
               />
               :
               <PriceListTab
                 data={formDataPage2?.priceList}
                 onCLickCreateNew={() => { setOpenModalCreateNewPrice(true) }}
+                onArchiveTick={(index: number) => {
+                  console.log('index', index);
+                }}
+                onEdit={(item, index) => {
+                  console.log('itemXtt', item);
+                  setDataEditPrice({ ...item });
+                  setIndexEditPrice(index);
+                }}
                 onUp={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   const temp = list[index];
                   list[index] = list[index - 1];
                   list[index - 1] = temp;
                   handleInputChangePage2('priceList', list);
                 }}
                 onDown={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   const temp = list[index];
                   list[index] = list[index + 1];
                   list[index + 1] = temp;
@@ -602,10 +692,10 @@ const NewStore = () => {
                 onCopy={(item) => {
                   console.log('item', item);
 
-                  handleInputChangePage2('priceList', [...formDataPage2.priceList, item]);
+                  handleInputChangePage2('priceList', [...formDataPage2?.priceList, item]);
                 }}
                 onDelete={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   list.splice(index, 1);
                   handleInputChangePage2('priceList', list);
                 }}
@@ -711,7 +801,7 @@ const NewStore = () => {
           {formDataPage2?.priceList?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
             <BaseText locale size={16} bold>가격표</BaseText>
             {
-              formDataPage2.priceList.map((item, index) => {
+              formDataPage2?.priceList.map((item, index) => {
                 return (
                   <div className="py-2 border-t">
                     <div
@@ -738,7 +828,7 @@ const NewStore = () => {
             }
           </div>
           }
-          {formDataPage2.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2.storeIntroduction}</BaseText>}
+          {formDataPage2?.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2?.storeIntroduction}</BaseText>}
           {formDataPage2?.manager?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
             <BaseText size={16} bold>{t('담당자')}({formDataPage2?.manager?.length})</BaseText>
             {
@@ -913,14 +1003,15 @@ const NewStore = () => {
         isOpen={openModalCreateNewPrice}
         onClose={handleCloseModalCreateNewPrice}
         onSubmit={handleSubmitCreateNewPrice}
-      // data={dataNewPrice}
+        data={dataEditPrice}
       />
 
       <ModalCreateNewManage
         isOpen={openModalCreateNewManage}
         onClose={handleCloseModalCreateNewManage}
         onSubmit={handleSubmitCreateNewManage}
-        onImageChange={handleImageCreateNewChange}
+        onImageChange={handleImageCreateNewManager}
+        data={dataEditManager}
       />
     </Layout>
   );
