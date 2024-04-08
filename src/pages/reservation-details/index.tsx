@@ -9,14 +9,8 @@ import { useTranslation } from "react-i18next";
 import { RESERVATION_STATUS } from "../../utils/constants";
 import { BaseInput } from "../../components/input/BaseInput";
 import { SearchOutlined } from "@ant-design/icons";
+import { reservationApi } from "../../apis/reservationApi";
 const ReservationDetails = () => {
-  const data = {
-    Totalreservationdetails: 84,
-    PaymentDetails: 24,
-    OutstandingPaymentHistory: 24,
-    CancellationDetails: 32,
-    StoreSettlementDetails: 69,
-  };
   const [selectedButton, setSelectedButton] = useState(RESERVATION_STATUS.ALL);
   const [dateTimeSelect, setDateTimeSelect] = useState(["", ""]);
   const { t } = useTranslation();
@@ -24,6 +18,26 @@ const ReservationDetails = () => {
     setSelectedButton(buttonName);
   };
   const [valueSearch, setValueSearch] = useState("");
+  const [data, setData] = useState({
+    total: 0,
+    pending: 0,
+    approve: 0,
+    unsuccess: 0,
+    complete: 0,
+  });
+
+  useEffect(() => {
+    const getCountReservation = async () => {
+      try {
+        let result: any = await reservationApi.getCountReservation();
+        if (result.code === 200) {
+          setData(result.results.object);
+        }
+      } catch (error) {}
+    };
+    getCountReservation();
+    return () => {};
+  }, []);
 
   const listButton = () => {
     return (
@@ -39,7 +53,7 @@ const ReservationDetails = () => {
           onClick={() => handleButtonClick(RESERVATION_STATUS.ALL)}
         >
           {t("Total reservation details")}
-          {"(" + data.Totalreservationdetails + ")"}
+          {"(" + data.total + ")"}
         </CustomButton>
         <CustomButton
           className="text-base font-medium rounded-full"
@@ -56,7 +70,7 @@ const ReservationDetails = () => {
           onClick={() => handleButtonClick(RESERVATION_STATUS.COMPLETED)}
         >
           {t("Payment details")}
-          {"(" + data.PaymentDetails + ")"}
+          {"(" + data.complete + ")"}
         </CustomButton>
         <CustomButton
           className="text-base font-medium rounded-full"
@@ -69,7 +83,7 @@ const ReservationDetails = () => {
           onClick={() => handleButtonClick(RESERVATION_STATUS.PENDING)}
         >
           {t("Outstanding Payment History")}
-          {"(" + data.OutstandingPaymentHistory + ")"}
+          {"(" + data.pending + ")"}
         </CustomButton>
         <CustomButton
           className="text-base font-medium rounded-full"
@@ -86,7 +100,7 @@ const ReservationDetails = () => {
           onClick={() => handleButtonClick(RESERVATION_STATUS.CANCELLED)}
         >
           {t("Cancellation details")}
-          {"(" + data.CancellationDetails + ")"}
+          {"(" + data.unsuccess + ")"}
         </CustomButton>
         <CustomButton
           className="text-base font-medium rounded-full"
@@ -103,7 +117,7 @@ const ReservationDetails = () => {
           onClick={() => handleButtonClick(RESERVATION_STATUS.REJECTED)}
         >
           {t("Store settlement details")}
-          {"(" + data.StoreSettlementDetails + ")"}
+          {"(" + data.approve + ")"}
         </CustomButton>
       </div>
     );
