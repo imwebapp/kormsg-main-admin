@@ -144,8 +144,8 @@ export const VISIBLE_BOARDS = [
 
 export const NAVBAR = {
   HOME: "Home",
-  EVENT: "Event",
-  POST: "Post",
+  // EVENT: "Event",
+  // POST: "Post",
   CONVERSATION: "Conversation",
   RESERVATION: "Reservation",
   SHORT_VIDEO: "Short video",
