@@ -5,4 +5,7 @@ export const reservationApi = {
   getList: (params?: any) => {
     return axiosClient.get(`${RESERVATION}`, { params });
   },
+  getCountReservation: () => {
+    return axiosClient.get(`${RESERVATION}/state`);
+  },
 };
