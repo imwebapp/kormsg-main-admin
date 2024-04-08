@@ -8,12 +8,20 @@ type TableProps = {
   columns: TableColumnsType<any>;
   data: Array<object>;
   sticky?: any;
+  maxContent?: boolean;
   className?: string; // for tailwindcss
 };
 
 export default function BaseTable(props: TableProps) {
-  const { className, data, columns, onSelectChange, pagination, sticky } =
-    props;
+  const {
+    className,
+    data,
+    columns,
+    onSelectChange,
+    pagination,
+    sticky,
+    maxContent,
+  } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const _onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -29,6 +37,7 @@ export default function BaseTable(props: TableProps) {
   return (
     <>
       <Table
+        scroll={maxContent ? { x: "max-content" } : {}}
         sticky={sticky}
         className={className}
         rowSelection={onSelectChange && rowSelection}

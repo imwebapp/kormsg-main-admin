@@ -12,7 +12,12 @@ import { useEffect, useState } from "react";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
 import { ThemaDetail } from "./thema_detail";
-import { BOARD } from "../../../utils/constants";
+import {
+  BOARD,
+  SELECT_ALL,
+  USER_PERMISSION,
+  USER_PERMISSION_TEXT,
+} from "../../../utils/constants";
 import {
   CategoryInterface,
   TagThemaInterface,
@@ -22,6 +27,8 @@ import { ThemaApi } from "../../../apis/themaApi";
 import { showError, showSuccess } from "../../../utils/showToast";
 import { CategoryApi } from "../../../apis/categoryApi";
 import { TagApi } from "../../../apis/tagApi";
+import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
+import { groupApi } from "../../../apis/groupApi";
 
 export default function ThemaTable() {
   const { t } = useTranslation();
@@ -32,12 +39,45 @@ export default function ThemaTable() {
   const [lastOpenTag, setLastOpenTag] = useState(Date.now());
   const [lastOpenThema, setLastOpenThema] = useState(Date.now());
   const [themaUpdating, setThemaUpdating] = useState<ThemaInterface>();
+  const [groupUsers, setGroupUsers] = useState([]);
+
+  const getGroupUser = async () => {
+    try {
+      const repon: any = await groupApi.getList();
+      setGroupUsers(repon?.results?.objects?.rows || []);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getGroupUser();
+  }, []);
+
+  const convertThema = (thema: ThemaInterface) => {
+    const viewGroup: any = thema?.groups
+      ?.filter((item) => item.group_view)
+      .map((item) => item.group_view.id);
+
+    const postGroup: any = thema?.groups
+      ?.filter((item) => item.group_post)
+      .map((item) => item.group_post.id);
+
+    const commentGroup: any = thema?.groups
+      ?.filter((item) => item.group_comment)
+      .map((item) => item.group_comment.id);
+
+    return {
+      ...thema,
+      view_group_ids: viewGroup,
+      post_group_ids: postGroup,
+      comment_group_ids: commentGroup,
+    };
+  };
 
   const getListThema = async () => {
     try {
       setThemas([]);
       const data: Array<ThemaInterface> = await ThemaApi.getList();
-      setThemas(data);
+      setThemas(data.map((item) => convertThema(item)));
     } catch (error) {
       return [];
     }
@@ -79,10 +119,12 @@ export default function ThemaTable() {
   const columns: TableColumnsType<ThemaInterface> = [
     {
       title: t("No"),
+      width: 60,
       render: (value, record, index) => <BaseText>{index + 1}</BaseText>,
     },
     {
       title: t("Id"),
+      width: 200,
       dataIndex: "id",
     },
     {
@@ -125,27 +167,168 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t("Reservation function point payment"),
-      render: ({ bonus_point, id }) => (
-        <Checkbox
-          defaultChecked={bonus_point}
-          onChange={(e: any) =>
-            updateThema({ id, bonus_point: e.target.checked })
-          }
-        ></Checkbox>
+      title: t("View"),
+      width: 220,
+      render: ({ view_group_ids, view_user_permissions, id }) => (
+        <div className="flex flex-col gap-y-2">
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, view_user_permissions: value });
+            }}
+            defaultValue={view_user_permissions}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={Object.values(USER_PERMISSION).map((item, index) => {
+              return {
+                label: t(USER_PERMISSION_TEXT[item]),
+                value: item,
+              };
+            })}
+          />
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, view_group_ids: value });
+            }}
+            defaultValue={view_group_ids}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={[
+              { label: t("All users"), value: SELECT_ALL },
+              ...groupUsers.map((item: any, index) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              }),
+            ]}
+          />
+        </div>
       ),
     },
     {
-      title: t("Community"),
-      render: ({ review_require, id }) => (
-        <Checkbox
-          defaultChecked={review_require}
-          onChange={(e: any) =>
-            updateThema({ id, review_require: e.target.checked })
-          }
-        ></Checkbox>
+      title: t("Writing"),
+      width: 220,
+      render: ({ post_user_permissions, post_group_ids, id }) => (
+        <div className="flex flex-col gap-y-2">
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, post_user_permissions: value });
+            }}
+            defaultValue={post_user_permissions}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={Object.values(USER_PERMISSION).map((item, index) => {
+              return {
+                label: t(USER_PERMISSION_TEXT[item]),
+                value: item,
+              };
+            })}
+          />
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, post_group_ids: value });
+            }}
+            defaultValue={post_group_ids}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={[
+              { label: t("All users"), value: SELECT_ALL },
+              ...groupUsers.map((item: any, index) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              }),
+            ]}
+          />
+        </div>
       ),
     },
+    {
+      title: t("Comments"),
+      width: 220,
+      render: ({ comment_user_permissions, comment_group_ids, id }) => (
+        <div className="flex flex-col gap-y-2">
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, comment_user_permissions: value });
+            }}
+            defaultValue={comment_user_permissions}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={Object.values(USER_PERMISSION).map((item, index) => {
+              return {
+                label: t(USER_PERMISSION_TEXT[item]),
+                value: item,
+              };
+            })}
+          />
+          <BaseInputSelect
+            multiple
+            onChange={(value: any) => {
+              updateThema({ id, comment_group_ids: value });
+            }}
+            defaultValue={comment_group_ids}
+            required={true}
+            allowClear={false}
+            size="middle"
+            textInputSize={12}
+            placeholder="Select"
+            options={[
+              { label: t("All users"), value: SELECT_ALL },
+              ...groupUsers.map((item: any, index) => {
+                return {
+                  label: item.name,
+                  value: item.id,
+                };
+              }),
+            ]}
+          />
+        </div>
+      ),
+    },
+    // {
+    //   title: t("Reservation function point payment"),
+    //   render: ({ bonus_point, id }) => (
+    //     <Checkbox
+    //       defaultChecked={bonus_point}
+    //       onChange={(e: any) =>
+    //         updateThema({ id, bonus_point: e.target.checked })
+    //       }
+    //     ></Checkbox>
+    //   ),
+    // },
+    // {
+    //   title: t("Community"),
+    //   render: ({ review_require, id }) => (
+    //     <Checkbox
+    //       defaultChecked={review_require}
+    //       onChange={(e: any) =>
+    //         updateThema({ id, review_require: e.target.checked })
+    //       }
+    //     ></Checkbox>
+    //   ),
+    // },
     {
       title: t("Actions"),
       render: ({ id }, record) => (
@@ -178,6 +361,7 @@ export default function ThemaTable() {
   return (
     <div>
       <BaseTable
+        maxContent
         sticky={{ offsetHeader: -20 }}
         className=""
         pagination={!{ pageSize: 100 }}
@@ -237,7 +421,11 @@ export default function ThemaTable() {
     </div>
   );
 }
-
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
 const ListCategory = ({ lastOpen, themaId }: any) => {
   const { t } = useTranslation();
   const [categories, setCategories] = useState<Array<CategoryInterface>>([]);
@@ -358,7 +546,10 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
     </div>
   );
 };
-
+///////////////////////////////////
+///////////////////////////////////
+///////////////////////////////////
+///////////////////////////////////
 const ListTags = ({ lastOpen, themaId }: any) => {
   const { t } = useTranslation();
   const [tags, setTags] = useState<Array<TagThemaInterface>>([]);
