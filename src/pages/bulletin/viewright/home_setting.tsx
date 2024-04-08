@@ -14,6 +14,8 @@ import { NavBarApi } from "../../../apis/navbarApi";
 import { NavBarInterface } from "../../../entities/navbar.entity";
 import { showError } from "../../../utils/showToast";
 import { useTranslation } from "react-i18next";
+import { BoardLinkApi } from "../../../apis/boardLinkApi";
+import { BoardLinkInterface } from "../../../entities";
 
 export default function HomeSetting() {
   return (
@@ -260,10 +262,39 @@ const Banner = () => {
   );
 };
 
+interface NavBarType {
+  name: string;
+  route?: string;
+  thema_id?: string;
+}
 const NavigationBar = () => {
   const [navbars, setNavbar] = useState<Array<NavBarInterface>>([]);
-  const { setLastRefresh } = useBulletinState((state) => state);
+  const [navbarType, setNavbarType] = useState<NavBarType[]>([]);
+  const { setLastRefresh, lastRefresh } = useBulletinState((state) => state);
   const { t } = useTranslation();
+
+  const _getBoardLinks = async () => {
+    try {
+      const respon = await BoardLinkApi.getList();
+      const data = [
+        ...Object.values(NAVBAR).map((item) => {
+          return { name: item };
+        }),
+        ...respon.map((item: BoardLinkInterface) => {
+          return {
+            name: item.name,
+            route: item.route,
+            thema_id: item.thema_id,
+          };
+        }),
+      ];
+      setNavbarType(data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    _getBoardLinks();
+  }, [lastRefresh]);
 
   const getNavBars = async () => {
     try {
@@ -324,6 +355,16 @@ const NavigationBar = () => {
     }
   };
 
+  const getValue = (item: NavBarInterface) => {
+    if (navbarType[0]) {
+      const index = navbarType
+        .map((item) => JSON.stringify(item))
+        .indexOf(item.type || "");
+      return index >= 0 ? index : null;
+    }
+    return;
+  };
+
   return (
     <>
       {useMemo(
@@ -374,21 +415,23 @@ const NavigationBar = () => {
                         onChange={(value) => {
                           updateNav({
                             ...item,
-                            type: value,
+                            type: JSON.stringify(navbarType[value]),
                           });
                         }}
-                        defaultValue={item.type}
+                        defaultValue={getValue(item)}
                         required={true}
                         allowClear={false}
                         size="middle"
                         textInputSize={12}
                         placeholder="Select"
-                        options={Object.values(NAVBAR).map((item) => {
-                          return {
-                            label: t(item),
-                            value: item,
-                          };
-                        })}
+                        options={(navbarType || []).map(
+                          (item: NavBarType, index: number) => {
+                            return {
+                              label: t(item.name),
+                              value: index,
+                            };
+                          }
+                        )}
                       />
                     </div>
                     <div className="flex flex-row mt-2">
@@ -469,7 +512,7 @@ const NavigationBar = () => {
             </div>
           </div>
         ),
-        [navbars, t]
+        [navbars, t, navbarType]
       )}
     </>
   );
