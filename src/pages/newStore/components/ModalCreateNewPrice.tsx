@@ -91,21 +91,21 @@ export const ModalCreateNewPrice = (props: IProps) => {
             {
                 id: generateRandomID(),
                 name: "DAY",
-                price: dataNewPrice?.amountBeforeDiscount,
-                discount: dataNewPrice?.amountAfterDiscount,
+                price: Number(dataNewPrice?.amountBeforeDiscount),
+                discount: Number(dataNewPrice?.amountAfterDiscount),
             },
             {
                 id: generateRandomID(),
                 name: "NIGHT",
-                price: dataNewPrice?.amountBeforeNightDiscount,
-                discount: dataNewPrice?.amountAfterNightDiscount,
+                price: Number(dataNewPrice?.amountBeforeNightDiscount),
+                discount: Number(dataNewPrice?.amountAfterNightDiscount),
             }
         ] : [
             {
                 id: generateRandomID(),
                 name: "ALL",
-                price: dataNewPrice?.amountBeforeDiscount,
-                discount: dataNewPrice?.amountAfterDiscount,
+                price: Number(dataNewPrice?.amountBeforeDiscount),
+                discount: Number(dataNewPrice?.amountAfterDiscount),
             }
         ];
         const dataConvert = {
