@@ -8,4 +8,7 @@ export const shopApi = {
   viewShop: (id: string, params?: any) => {
     return axiosClient.get(`${SHOP}/${id}`, {params})
   },
+  createShop: (data: any) => {
+    return axiosClient.post(`${SHOP}/create_shop`, data)
+  },
 }
