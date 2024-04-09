@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { BaseModal } from '../../../components/modal/BaseModal'
 import { BaseText } from '../../../components'
-import { classNames } from '../../../utils/common'
+import { classNames, generateRandomID } from '../../../utils/common'
 import Images from '../../../assets/gen';
 import { BaseInput } from '../../../components/input/BaseInput';
 
@@ -9,7 +9,7 @@ interface IProps {
     isOpen: boolean;
     onClose?: () => void;
     onSubmit?: (data: any) => void;
-    data: {
+    data?: {
         image: string;
         name: string;
         description: string;
@@ -19,17 +19,46 @@ interface IProps {
 export const ModalCreateNewManage = (props: IProps) => {
     const { isOpen, onClose, onSubmit, onImageChange, data } = props
 
-    const [dataNewManage, setDataNewManage] = useState<any>(data);
+    const [dataNewManage, setDataNewManage] = useState<any>({
+        image: '',
+        name: '',
+        description: '',
+    });
     const [image, setImage] = useState<string>(data?.image || Images.avatarEmpty);
 
     const handleInputChangeNewManage = (name: string, value: any) => {
         setDataNewManage({ ...dataNewManage, [name]: value });
     };
     const handleCloseModalCreateNewManage = () => {
+        setDataNewManage(
+            {
+                image: '',
+                name: '',
+                description: '',
+            }
+        )
+        setImage(Images.avatarEmpty);
         onClose && onClose();
     }
     const handleSubmitCreateNewManage = () => {
-        onSubmit && onSubmit(dataNewManage);
+        setDataNewManage(
+            {
+                image: '',
+                name: '',
+                description: '',
+            }
+        )
+        setImage(Images.avatarEmpty);
+        const dataConvert = {
+            id: generateRandomID(),
+            images: [image],
+            name: dataNewManage?.name,
+            description: dataNewManage?.description,
+            recommended: false,
+            like: 0,
+            order: 0,
+        };
+        onSubmit && onSubmit(dataConvert);
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

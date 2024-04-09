@@ -77,8 +77,7 @@ const UserManage = () => {
   const [isCreatingGroupName, setIsCreatingGroupName] = useState(false);
 
   const [reloading, setReloading] = useState(false);
-  const [valueKeywordFilter, setValueKeywordFilter] = useState("");
-  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
+  const [valueSearch, setValueSearch] = useState("");
 
   console.log("reloading: ", reloading);
 
@@ -259,12 +258,6 @@ const UserManage = () => {
     });
     setOpenModalAddJumpUp(false);
   };
-  const handleChangeTextKeyword = (e: any) => {
-    setValueKeywordFilter(e.target.value);
-  };
-  const handleChangeFilter = (value: string) => {
-    setSelectedFilterUser(value);
-  };
   const searchUser = () => {
     const convertFilter: any = {
       account_type: typeUserSelected.id,
@@ -272,8 +265,11 @@ const UserManage = () => {
     if (groupSelected.id !== 1) {
       convertFilter["group_id"] = groupSelected.id;
     }
-    if (valueKeywordFilter !== "") {
-      convertFilter[selectedFilterUser] = { $iLike: `%${valueKeywordFilter}%` };
+    if (valueSearch !== "") {
+      convertFilter["$or"] = [
+        { nickname: { $like: `%${valueSearch}%` } },
+        { email: { $like: `%${valueSearch}%` } },
+      ];
     }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
@@ -312,7 +308,7 @@ const UserManage = () => {
   };
   useEffect(() => {
     searchUser();
-  }, [groupSelected, typeUserSelected]);
+  }, [groupSelected, typeUserSelected, valueSearch]);
 
   useEffect(() => {
     userApi
@@ -465,48 +461,17 @@ const UserManage = () => {
             className={classNames("flex flex-row justify-between items-center")}
           >
             <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[1000px] w-[651px] max-md:flex-wrap my-4">
-              <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
-                <Select
-                  suffixIcon={<CaretDownOutlined />}
-                  bordered={false}
-                  placeholder="ID"
-                  defaultValue="ID"
-                  onChange={handleChangeFilter}
-                  options={[
-                    {
-                      value: "username",
-                      label: "ID",
-                    },
-                    {
-                      value: "nickname",
-                      label: "nickname",
-                    },
-                    {
-                      value: "email",
-                      label: "gmail",
-                    },
-                    {
-                      value: "phone",
-                      label: "Phone number",
-                    },
-                  ]}
-                  className="flex-1"
-                />
-              </div>
-              <Input
-                className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
-                placeholder="Keyword"
-                onChange={handleChangeTextKeyword}
-                value={valueKeywordFilter}
-              />
-              <CustomButton
-                className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
-                onClick={() => {
-                  searchUser();
+              <BaseInput
+                placeholder="Search user"
+                className="w-2/4"
+                value={valueSearch}
+                onChange={(value) => {
+                  setValueSearch(value);
                 }}
-              >
-                {t("Search")}
-              </CustomButton>
+                iconLeft={
+                  <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
+                }
+              />
             </div>
             <div className={classNames("flex gap-4")}>
               <CustomButton

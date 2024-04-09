@@ -157,3 +157,13 @@ export const ceilRemainingTime = (unixtimestamp: any) => {
       (24 * 60 * 60 * 1000)
   );
 };
+
+export const generateRandomID = () => {
+  // Generate a random number (e.g., between 1000 and 9999)
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  // Get the current timestamp
+  const timestamp = new Date().getTime();
+  // Combine timestamp and random number to create the ID
+  const id = `${timestamp}${randomNum}`;
+  return id;
+};

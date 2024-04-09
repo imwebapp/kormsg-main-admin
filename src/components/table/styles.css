@@ -9,3 +9,7 @@
 .ant-pagination-item-active{
     border: 1px solid #0866FF !important;
 }
+
+.ant-table-sticky-scroll {
+    display: none !important;
+}
