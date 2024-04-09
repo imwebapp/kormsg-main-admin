@@ -23,4 +23,7 @@ export const userApi = {
   updateUserPaymentHistory: (data: any) => {
     return axiosClient.post(`/user_payment_history`, data);
   },
+  delete: (id?: string) => {
+    return axiosClient.delete(`${USER}/${id}`);
+  },
 };

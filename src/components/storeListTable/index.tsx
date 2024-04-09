@@ -10,7 +10,10 @@ import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
 import { SORTING, STORE_STATUS } from "../../utils/constants";
-
+import dayjs from "dayjs";
+import { BaseModal2 } from "../modal/BaseModal2";
+import { Slide } from "react-slideshow-image";
+import "react-slideshow-image/dist/styles.css";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -19,6 +22,7 @@ type StoreListTableProps = {
   filter?: { type: string; value: any };
   onItemStoreClick?: (item: any) => void;
   isUpdate?: Number;
+  onRefresh?: () => void;
 };
 export default function StoreListTable(props: StoreListTableProps) {
   const {
@@ -28,11 +32,15 @@ export default function StoreListTable(props: StoreListTableProps) {
     typeSorting,
     filter,
     onItemStoreClick,
+    onRefresh,
     isUpdate,
   } = props;
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isShowModalMap, setIsShowModalMap] = useState(false);
+  const [isShowImages, setIsShowImages] = useState(false);
+  const [listImageShop, setListImageShop] = useState([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const renderEventAction = (item: any, events: any) => {
     return (
@@ -113,6 +121,45 @@ export default function StoreListTable(props: StoreListTableProps) {
       });
     }
   };
+
+  const approvePendingShop = async (id: string) => {
+    try {
+      const params = {
+        expired_date: dayjs().add(1, "month").valueOf(),
+        state: "APPROVED",
+        geolocation_api_type: "NAVER",
+      };
+      let result: any = await storeApi.approveStore(params, [id]);
+      if (result.code === 200) {
+        notification.success({
+          message: "Approve Store Success",
+        });
+        if (onRefresh) {
+          onRefresh();
+        }
+      }
+    } catch (error) {}
+  };
+  const rejectPendingShop = async (id: string) => {
+    try {
+      const params = {
+        state: "REJECTED",
+        denied_message: null,
+      };
+      let result: any = await storeApi.rejectStore(params, id);
+      console.log("tum lum", result);
+
+      if (result.code === 200) {
+        notification.success({
+          message: "Reject Store Success",
+        });
+        if (onRefresh) {
+          onRefresh();
+        }
+      }
+    } catch (error) {}
+  };
+
   function generateOrder(sorting: string | undefined) {
     switch (sorting) {
       case SORTING.NONE:
@@ -216,7 +263,29 @@ export default function StoreListTable(props: StoreListTableProps) {
   useEffect(() => {
     getListStore();
   }, [typeStore, typeSorting, filter, thema, isUpdate]);
-  const columns: TableColumnsType<any> = [
+  const generateMap = (latitude: any, longitude: any) => {
+    if (!naver.maps) window.location.reload();
+    const mapElement = document.getElementById("map");
+    if (mapElement && mapElement.innerHTML !== "") {
+      mapElement.innerHTML = ""; // Xóa nội dung của thẻ div
+    }
+    const map = new naver.maps.Map("map", {
+      center: new naver.maps.LatLng(latitude, longitude),
+      zoom: 18,
+    });
+    new naver.maps.Marker({
+      position: new naver.maps.LatLng(latitude, longitude),
+      map,
+      icon: {
+        content: `<div style="position: relative">
+          <img src="${Images.mapPin}" style="width : 40px; height: 47px" alt="">
+          <img src="${Images.discount1}" style="position: absolute; width : 30px; height: 30px; top: 5px; left : 5px; border-radius: 30px" />
+        </div>`,
+        size: new naver.maps.Size(30, 35),
+      },
+    });
+  };
+  let dynamicColumns: TableColumnsType<any> = [
     {
       title: t("No"),
       render: (text, record, index) => (
@@ -307,16 +376,167 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
   ];
 
+  // Kiểm tra giá trị của typeStore
+  if (typeStore === STORE_STATUS.underReview) {
+    const additionalColumns: TableColumnsType<any> = [
+      {
+        title: t("No"),
+        render: (text: any, record: any, index: number) => (
+          <div className="min-w-[40px]">
+            <BaseText>{(currentPage - 1) * 10 + index + 1}</BaseText>
+          </div>
+        ),
+      },
+      {
+        title: t("Id"),
+        dataIndex: ["user", "username"],
+        width: "10%",
+      },
+      {
+        title: t("Nickname"),
+        dataIndex: ["user", "nickname"],
+      },
+      {
+        title: t("Title"),
+        dataIndex: "title",
+        render: (title) => (
+          <div className="min-w-[200px]">
+            <BaseText>{title}</BaseText>
+          </div>
+        ),
+      },
+      {
+        title: t("Thema"),
+        dataIndex: ["category", "thema", "name"],
+        render: (category) => (
+          <div className="min-w-[40px]">
+            <BaseText>{category}</BaseText>
+          </div>
+        ),
+      },
+      {
+        title: t("Category"),
+        dataIndex: ["category", "name"],
+      },
+      {
+        title: t("Geolocation"),
+        dataIndex: ["geolocation_api_type"],
+      },
+      {
+        title: t("Phone Contact"),
+        dataIndex: ["contact_phone"],
+      },
+      {
+        title: t("Address"),
+        dataIndex: ["address"],
+        width: "10%",
+      },
+      {
+        title: t("Information"),
+        width: "10%",
+        render: (text, record) => (
+          <div className="flex flex-row items-center w-[50px] gap-2">
+            <img
+              src={Images.icImage}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() => {
+                setIsShowImages(true);
+                setListImageShop(record.images);
+              }}
+            />
+            <img
+              src={Images.mapPoint}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() => {
+                setIsShowModalMap(true);
+                generateMap(record.latitude, record.longitude);
+              }}
+            />
+            <img
+              src={Images.information}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() => {
+                console.log(record);
+              }}
+            />
+          </div>
+        ),
+      },
+      {
+        title: t("Action"),
+        render: (text, record) => (
+          <div className="flex gap-2 justify-center px-3 py-2.5 text-xs font-bold leading-5 text-center text-white whitespace-nowrap">
+            <button
+              className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg"
+              onClick={() => {
+                approvePendingShop(record.id);
+              }}
+            >
+              Approve
+            </button>
+            <button
+              className="justify-center px-2 py-1.5 bg-red-600 rounded-lg"
+              onClick={() => {
+                rejectPendingShop(record.id);
+              }}
+            >
+              Reject
+            </button>
+            <img src={Images.edit2} alt="" className="w-7 h-7 cursor-pointer" />
+          </div>
+        ),
+      },
+    ];
+    dynamicColumns = additionalColumns;
+  }
+
   return (
-    <BaseTable
-      // onSelectChange={() => {}}
-      className={className}
-      pagination={{
-        pageSize: 10,
-        onChange: handlePageChange,
-      }}
-      columns={columns}
-      data={listStore}
-    />
+    <>
+      <BaseTable
+        // onSelectChange={() => {}}
+        className={className}
+        pagination={{
+          pageSize: 10,
+          onChange: handlePageChange,
+        }}
+        columns={dynamicColumns}
+        data={listStore}
+      />
+      <BaseModal2
+        width={1000}
+        isOpen={isShowModalMap}
+        isHideAction={true}
+        onClose={() => {
+          setIsShowModalMap(false);
+        }}
+        title="Location"
+      >
+        <div
+          style={{
+            width: "962px",
+            height: "700px",
+            pointerEvents: "none",
+          }}
+        >
+          <div id="map" />
+        </div>
+      </BaseModal2>
+      <BaseModal2
+        isOpen={isShowImages}
+        isHideAction={true}
+        onClose={() => {
+          // setIsShowModalMap(false);
+          setIsShowImages(false);
+        }}
+      >
+        <Slide>
+          {listImageShop.map((image, index) => (
+            <div key={index} className="each-slide-effect">
+              <img src={image} alt={`mô_tả_hình_ảnh_${index}`} />
+            </div>
+          ))}
+        </Slide>
+      </BaseModal2>
+    </>
   );
 }

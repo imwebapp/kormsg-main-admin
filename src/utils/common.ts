@@ -1,5 +1,6 @@
 import moment from "moment";
 import { TypeUser } from "./constants";
+import 'moment/min/locales';
 
 export const classNames = (...names: (string | undefined | null)[]): string =>
   (names || []).filter((e) => !!e && typeof e === "string").join(" ");
@@ -158,7 +159,7 @@ export const ceilRemainingTime = (unixtimestamp: any) => {
       .endOf("day")
       .valueOf() -
       moment().valueOf()) /
-      (24 * 60 * 60 * 1000)
+    (24 * 60 * 60 * 1000)
   );
 };
 
@@ -171,3 +172,9 @@ export const generateRandomID = () => {
   const id = `${timestamp}${randomNum}`;
   return id;
 };
+
+export function formatTimeDiff(time: Date, locale: string) {
+  const currentTime = moment();
+  const timeDiff = moment(time).diff(currentTime);
+  return moment.duration(timeDiff).locale(locale).humanize(true);
+}

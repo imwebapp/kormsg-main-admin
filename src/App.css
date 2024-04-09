@@ -35,7 +35,9 @@
 .ant-modal-content{
   padding: 0 !important;
 }
-
+.ant-select-selection-item{
+  color: #141414 !important;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
