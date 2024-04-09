@@ -12,6 +12,7 @@ export const HISTORY = "/history";
 export const GROUP = "/group";
 export const CONVERSATION = "/conversation";
 export const RESERVATION = "/reservation";
+export const COURSE = "/course";
 
 export const MESSAGE = "/message";
 

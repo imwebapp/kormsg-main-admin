@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { BaseText, CustomButton } from '../../../components';
 import Images from '../../../assets/gen';
 import { PlusOutlined } from '@ant-design/icons';
+import { generateRandomID } from '../../../utils/common';
 
 interface IProps {
     data?: any;
     onCLickCreateNew?: () => void;
-    onArchiveTick?: () => void;
-    onEdit?: () => void;
-    onUp?: () => void;
-    onDown?: () => void;
-    onCopy?: () => void;
-    onDelete?: () => void;
+    onArchiveTick?: (index: number) => void;
+    onEdit?: (item: any, index: number) => void;
+    onUp?: (index: number) => void;
+    onDown?: (index: number) => void;
+    onCopy?: (item: any) => void;
+    onDelete?: (index: number) => void;
 }
 
 export const ManageTab = (props: IProps) => {
@@ -20,39 +21,50 @@ export const ManageTab = (props: IProps) => {
     const [showOptionIndex, setShowOptionIndex] = useState<number | null>(null);
     console.log('data ManageTab', dataManage);
 
-    useEffect(() => {
-        if (data)
-            setDataManage(data);
-    }, [data])
-
     const handleShowOption = (index: number) => {
         setShowOptionIndex((prevIndex) => (prevIndex === index ? null : index));
     }
 
-    const handleArchiveTick = () => {
+    const handleArchiveTick = (index: number) => {
         console.log('Click Archive Tick')
-        onArchiveTick && onArchiveTick()
+        onArchiveTick && onArchiveTick(index)
+        setShowOptionIndex(null)
     }
-    const handleEdit = () => {
+    const handleEdit = (item: any, index: number) => {
         console.log('Click Edit')
-        onEdit && onEdit()
+        onEdit && onEdit(item, index)
+        setShowOptionIndex(null)
     }
-    const handleUp = () => {
-        console.log('Click Up')
-        onUp && onUp()
+    const handleUp = (index: number) => {
+        if (index > 0) {
+            console.log('Click Up')
+            onUp && onUp(index)
+        }
+        setShowOptionIndex(null)
     }
-    const handleDown = () => {
-        console.log('Click Down')
-        onDown && onDown()
+    const handleDown = (index: number) => {
+        if (index < dataManage.length - 1) {
+            console.log('Click Down')
+            onDown && onDown(index)
+        }
+        setShowOptionIndex(null)
     }
-    const handleCopy = () => {
+    const handleCopy = (item: any) => {
         console.log('Click Copy')
-        onCopy && onCopy()
+        const newItem = { ...item, id: generateRandomID() };
+        onCopy && onCopy(newItem)
+        setShowOptionIndex(null)
     }
-    const handleDelete = () => {
+    const handleDelete = (index: number) => {
         console.log('Click Delete')
-        onDelete && onDelete()
+        onDelete && onDelete(index)
+        setShowOptionIndex(null)
     }
+
+    useEffect(() => {
+        if (data)
+            setDataManage(data);
+    }, [data])
 
     return (
         <div className='flex flex-col items-center justify-center gap-4'>
@@ -84,43 +96,43 @@ export const ManageTab = (props: IProps) => {
                                     showOptionIndex === index && (
                                         <div className='flex justify-between w-full px-3'>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleArchiveTick}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleArchiveTick(index)}
                                             >
                                                 <img src={Images.archiveTick} className='w-5 h-5' />
                                                 <BaseText locale size={10} >추천</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleEdit}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleEdit(item, index)}
                                             >
                                                 <img src={Images.editIcon2} className='w-5 h-5' />
                                                 <BaseText locale size={10} >수정</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleUp}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleUp(index)}
                                             >
                                                 <img src={Images.arrowUp} className='w-5 h-5' />
                                                 <BaseText locale size={10} >위로</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleDown}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleDown(index)}
                                             >
                                                 <img src={Images.arrowDown} className='w-5 h-5' />
                                                 <BaseText locale size={10} >아래로</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleCopy}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleCopy(item)}
                                             >
                                                 <img src={Images.documentCopy} className='w-5 h-5' />
                                                 <BaseText locale size={10} >복제</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleDelete}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleDelete(index)}
                                             >
                                                 <img src={Images.trash2} className='w-5 h-5' />
                                                 <BaseText locale size={10} >삭제</BaseText>

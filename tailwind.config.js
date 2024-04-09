@@ -10,6 +10,8 @@ module.exports = {
         dark: "#141414",
         goldenPurple50: "#F9F0FF",
         purple: "#722ED1",
+        gray5: "#B1B5C3",
+        gray8: "#F9F9F9",
         darkNight50: "#F6F6F6",
         darkNight100: "#E8E8E8",
         darkNight200: "#D0D0D0",

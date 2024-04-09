@@ -16,8 +16,8 @@ interface IProps {
         unit: string,
     }[];
     onCLickCreateNew?: () => void;
-    onArchiveTick?: () => void;
-    onEdit?: (item: any) => void;
+    onArchiveTick?: (index: number) => void;
+    onEdit?: (item: any, index: number) => void;
     onUp?: (index: number) => void;
     onDown?: (index: number) => void;
     onCopy?: (item: any) => void;
@@ -39,14 +39,14 @@ export const PriceListTab = (props: IProps) => {
         setShowOptionIndex((prevIndex) => (prevIndex === index ? null : index));
     }
 
-    const handleArchiveTick = () => {
+    const handleArchiveTick = (index: number) => {
         console.log('Click Archive Tick')
-        onArchiveTick && onArchiveTick()
+        onArchiveTick && onArchiveTick(index)
         setShowOptionIndex(null)
     }
-    const handleEdit = (item: any) => {
+    const handleEdit = (item: any, index: number) => {
         console.log('Click Edit')
-        onEdit && onEdit(item)
+        onEdit && onEdit(item, index)
         setShowOptionIndex(null)
     }
     const handleUp = (index: number) => {
@@ -121,42 +121,42 @@ export const PriceListTab = (props: IProps) => {
                                     showOptionIndex === index && (
                                         <div className='flex justify-between w-full px-3'>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={handleArchiveTick}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleArchiveTick(index)}
                                             >
                                                 <img src={Images.archiveTick} className='w-5 h-5' />
                                                 <BaseText locale size={10} >추천</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
-                                                onClick={() => handleEdit(item)}
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
+                                                onClick={() => handleEdit(item, index)}
                                             >
                                                 <img src={Images.editIcon2} className='w-5 h-5' />
                                                 <BaseText locale size={10} >수정</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
                                                 onClick={() => handleUp(index)}
                                             >
                                                 <img src={Images.arrowUp} className='w-5 h-5' />
                                                 <BaseText locale size={10} >위로</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
                                                 onClick={() => handleDown(index)}
                                             >
                                                 <img src={Images.arrowDown} className='w-5 h-5' />
                                                 <BaseText locale size={10} >아래로</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
                                                 onClick={() => handleCopy(item)}
                                             >
                                                 <img src={Images.documentCopy} className='w-5 h-5' />
                                                 <BaseText locale size={10} >복제</BaseText>
                                             </div>
                                             <div
-                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg'
+                                                className='flex flex-col items-center justify-center w-[50px] h-[50px] gap-[2px] rounded-full border drop-shadow-lg cursor-pointer'
                                                 onClick={() => handleDelete(index)}
                                             >
                                                 <img src={Images.trash2} className='w-5 h-5' />

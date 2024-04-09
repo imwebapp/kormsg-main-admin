@@ -26,6 +26,11 @@ import { InputMultiImage } from "../../components/input/InputMultiImage";
 import { ListSelectImage } from "./components/ListSelectImage";
 import { UserFilter } from "./components/UserFilter";
 import { ShopFilter } from "./components/ShopFilter";
+import { ModalSelectOpeningHours } from "./components/ModalSelectOpeningHours";
+import { UploadApi } from "../../apis/uploadApi";
+import { App } from 'antd';
+import { shopApi } from "../../apis/shopApi";
+import { courseApi } from "../../apis/courseApi";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -53,11 +58,13 @@ interface INewPrice {
   name: string;
   description: string;
   time: string;
+  unit: string;
+  running_time: string | number;
+  title?: string;
   amountBeforeDiscount?: number;
   amountAfterDiscount?: number;
   amountBeforeNightDiscount?: number;
   amountAfterNightDiscount?: number;
-  unit: string;
   created_at?: string;
   created_at_unix_timestamp?: number;
   updated_at?: string;
@@ -106,6 +113,7 @@ const { Header } = Layout;
 const NewStore = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { message } = App.useApp();
 
   const [listThema, setListThema] = useState<any>([]);
   const [listCategory, setListCategory] = useState<any>([]);
@@ -129,6 +137,8 @@ const NewStore = () => {
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
   const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({} as INewPrice);
+  const [dataEditPrice, setDataEditPrice] = useState();
+  const [indexEditPrice, setIndexEditPrice] = useState<number>();
 
   const [openModalCreateNewManage, setOpenModalCreateNewManage] = useState<boolean>(false);
   const [dataNewManage, setDataNewManage] = useState<INewManger>({
@@ -137,7 +147,11 @@ const NewStore = () => {
     description: '',
     images: [],
   });
-  console.log('dataNewManage', dataNewManage);
+  const [dataEditManager, setDataEditManager] = useState();
+  const [indexEditManager, setIndexEditManager] = useState<number>();
+
+  console.log('dataEditManager: ', indexEditManager, dataNewManage);
+
 
   const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
 
@@ -145,8 +159,9 @@ const NewStore = () => {
     setOpenModalOpenHours(false);
   };
 
-  const handleSubmitOpenHours = () => {
-    console.log('submit open hours');
+  const handleSubmitOpenHours = (value: string) => {
+    console.log('submit open hours', value);
+    setFormDataPage1({ ...formDataPage1, storeOpeningHours: value });
     setOpenModalOpenHours(false);
   };
 
@@ -175,6 +190,21 @@ const NewStore = () => {
   };
 
   const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
+
+    if (dataEditPrice && indexEditPrice !== undefined) {
+      console.log('submit edit price: ', dataNewPrice);
+      const EditData = formDataPage2?.priceList.map((item, index) => {
+        if (index === indexEditPrice) {
+          item = dataNewPrice;
+        }
+        return item;
+      })
+      setDataEditPrice(undefined);
+      setIndexEditPrice(undefined);
+      setFormDataPage2({ ...formDataPage2, priceList: EditData });
+      setOpenModalCreateNewPrice(false);
+      return;
+    }
     console.log('submit create new price: ', dataNewPrice);
     handleInputChangePage2('priceList', [...formDataPage2?.priceList, dataNewPrice])
     setOpenModalCreateNewPrice(false);
@@ -183,12 +213,27 @@ const NewStore = () => {
   const handleCloseModalCreateNewManage = () => {
     setOpenModalCreateNewManage(false);
   };
-  const handleImageCreateNewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageCreateNewManager = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Image Create New Manage (File)
   };
 
   const handleSubmitCreateNewManage = (dataNewManage: any) => {
+    if (dataEditManager && indexEditManager !== undefined) {
+      console.log('submit edit Manager: ', dataNewManage);
+      // const EditData = formDataPage2?.manager.map((item, index) => {
+      //   if (index === indexEditManager) {
+      //     item = dataNewManage;
+      //   }
+      //   return item;
+      // })
+      setDataEditManager(undefined);
+      setIndexEditManager(undefined);
+      // setFormDataPage2({ ...formDataPage2, manager: EditData});
+      setOpenModalCreateNewManage(false);
+      return;
+    }
     console.log('submit create new manage: ', dataNewManage);
+
     handleInputChangePage2('manager', [...formDataPage2?.manager, dataNewManage])
     setOpenModalCreateNewManage(false);
   };
@@ -276,6 +321,109 @@ const NewStore = () => {
   };
   //end
 
+  const filterFiles = (arr: any) => {
+    return arr.filter((item: any) => item instanceof File);
+  }
+  const transformArray = (arr: any, processedStringsArray: string[]) => {
+    const resultArray: string[] = [];
+
+    const stringsLength = processedStringsArray.length;
+
+    let stringIndex = 0;
+
+    arr.forEach((item: any) => {
+      if (item instanceof File) {
+        if (stringIndex < stringsLength) {
+          resultArray.push(processedStringsArray[stringIndex]);
+          stringIndex++;
+        }
+      } else if (item !== null) {
+        resultArray.push(item);
+      }
+    });
+
+    return resultArray;
+  }
+
+  //Handle Create New Shop 
+  const handleCreateShop = async () => {
+    try {
+      //Upload Image
+
+      let resultArrayImageConvert: string[] = [];
+      let resultArrayThumbConvert: string[] = [];
+      let listImageUpdated: string[] = [];
+      let listThumbnailUpdated: string[] = [];
+      let filesArray: File[] = filterFiles(formDataPage1?.storeImages || [])
+      console.log('filesArray', filesArray);
+
+      if (filesArray.length > 0) {
+        const ResUploadImg = await UploadApi.uploadMultipleImages(filesArray);
+        console.log('ResUploadImg', ResUploadImg);
+        listImageUpdated = ResUploadImg?.high_quality_images.map((item: any) => item.url);
+        listThumbnailUpdated = ResUploadImg?.low_quality_images.map((item: any) => item.url);
+      }
+
+      console.log('listImageUpdated', listImageUpdated);
+      console.log('listThumbnailUpdated', listThumbnailUpdated);
+
+      if (
+        listImageUpdated.length > 0 && listThumbnailUpdated.length > 0
+      ) {
+        resultArrayImageConvert = transformArray(formDataPage1?.storeImages, listImageUpdated);
+        resultArrayThumbConvert = transformArray(formDataPage1?.storeImages, listThumbnailUpdated);
+      }
+
+      console.log('resultArrayImageConvert', resultArrayImageConvert);
+      console.log('resultArrayThumbConvert', resultArrayThumbConvert);
+
+      const DataCreateNewShop = {
+        address: formDataPage1?.storeAddress,
+        address_2: formDataPage1?.storeAddressDetails,
+        category_id: formDataPage1?.category,
+        contact_phone: formDataPage1?.storeNumber,
+        description: formDataPage2?.storeIntroduction,
+        images: resultArrayImageConvert,
+        latitude: 37.3957122,
+        longitude: 127.1105181,
+        opening_hours: formDataPage1?.storeOpeningHours,
+        shop_district: formDataPage1?.regionDistrict,
+        shop_province: formDataPage1?.regionProvince,
+        subway_line: formDataPage1?.subwayLine,
+        subway_location: formDataPage1?.subwayLocation,
+        subway_station: formDataPage1?.subwayStation,
+        tag_ids: formDataPage1?.hashtag,
+        thumbnails: resultArrayImageConvert,
+        title: formDataPage1?.storeName,
+        user_id: storeOwnerMembershipSetting?.id,
+        verified: true,
+      }
+      console.log('DataCreateNewShop', DataCreateNewShop);
+
+      let idNewShop: string = '';
+      const resCreateShop:any = await shopApi.createShop(DataCreateNewShop);
+
+      if(resCreateShop.code === 200){
+        idNewShop = resCreateShop?.results?.object?.shop?.id
+      }
+      console.log('resCreateShop', resCreateShop);
+
+      if(idNewShop){
+        const DataCourse = {
+          courses: formDataPage2?.priceList
+        }
+        console.log('DataCourse', DataCourse);
+        const resCreateCourse = await courseApi.createCourse(idNewShop, DataCourse);
+        console.log('resCreateCourse', resCreateCourse);
+      }
+      
+      
+    } catch (error) {
+      console.log('error CREATE NEW SHOP', error);
+      message.error('Create new shop failed');
+    }
+  };
+
   useEffect(() => {
     ThemaApi.getList().then((res) => {
       // set data
@@ -321,6 +469,8 @@ const NewStore = () => {
       })
         .catch((err) => {
           // handle error
+          console.log();
+
         });
     }
 
@@ -329,7 +479,10 @@ const NewStore = () => {
   useEffect(() => {
     if (storeCopyFunc) {
       console.log('storeCopyFuncXX', storeCopyFunc);
-      setStoreOwnerMembershipSetting(storeCopyFunc?.user);
+      setStoreOwnerMembershipSetting({
+        id: storeCopyFunc?.user_id,
+        nickname: storeCopyFunc?.user?.nickname,
+      });
       setRegionSelected(
         {
           id: storeCopyFunc?.shop_province,
@@ -344,7 +497,7 @@ const NewStore = () => {
       )
       setFormDataPage1({
         storeCopyFunc: storeCopyFunc?.id,
-        storeOwnerMembershipSetting: '',
+        storeOwnerMembershipSetting: storeCopyFunc?.user?.nickname || '',
         storeName: storeCopyFunc?.title || '',
         storeNumber: storeCopyFunc?.contact_phone || '',
         storeAddress: storeCopyFunc?.address || '',
@@ -371,6 +524,20 @@ const NewStore = () => {
     }
   }, [storeCopyFunc]);
 
+  useEffect(() => {
+    if (dataEditPrice) {
+      console.log('dataEditPrice', dataEditPrice);
+      setOpenModalCreateNewPrice(true);
+    }
+  }, [dataEditPrice]);
+
+  useEffect(() => {
+    if (dataEditManager) {
+      console.log('dataEditManager', dataEditManager);
+      setOpenModalCreateNewManage(true);
+    }
+  }, [dataEditManager]);
+
   return (
     <Layout className="h-screen bg-white">
       <Header className="bg-white border-b h-[71px] px-6">
@@ -389,10 +556,9 @@ const NewStore = () => {
           <div className="flex flex-row items-center">
             <CustomButton
               locale
-              onClick={() => console.log("Public")}
+              onClick={handleCreateShop}
               primary
               icon={<CheckOutlined />}
-              disabled
             >
               Public
             </CustomButton>
@@ -458,7 +624,7 @@ const NewStore = () => {
             </BaseText>
           </div>
           <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
-          <ListCategoryPart1 title="영업시간" value="" placeholder="영업시간을 설정해주세요" onClick={() => { setOpenModalOpenHours(true) }} />
+          <ListCategoryPart1 isLocale={false} title="영업시간" value={formDataPage1?.storeOpeningHours} placeholder="영업시간을 설정해주세요" onClick={() => { setOpenModalOpenHours(true) }} />
           <BaseInputSelect
             title="Theme"
             options={listThema}
@@ -578,22 +744,61 @@ const NewStore = () => {
           <div>
             {optionPart2Selected === "담당자" ?
               <ManageTab
-                data={formDataPage2.manager}
+                data={formDataPage2?.manager}
                 onCLickCreateNew={() => { setOpenModalCreateNewManage(true) }}
+                onArchiveTick={(index: number) => {
+                  console.log('index', index);
+                }}
+                onEdit={(item, index) => {
+                  setDataEditManager({ ...item });
+                  setIndexEditManager(index);
+                }}
+                onUp={(index) => {
+                  const list = formDataPage2?.manager;
+                  const temp = list[index];
+                  list[index] = list[index - 1];
+                  list[index - 1] = temp;
+                  handleInputChangePage2('manager', list);
+                }}
+                onDown={(index) => {
+                  const list = formDataPage2?.manager;
+                  const temp = list[index];
+                  list[index] = list[index + 1];
+                  list[index + 1] = temp;
+                  handleInputChangePage2('manager', list);
+                }}
+                onCopy={(item) => {
+                  console.log('item', item);
+
+                  handleInputChangePage2('manager', [...formDataPage2?.manager, item]);
+                }}
+                onDelete={(index) => {
+                  const list = formDataPage2?.manager;
+                  list.splice(index, 1);
+                  handleInputChangePage2('manager', list);
+                }}
               />
               :
               <PriceListTab
                 data={formDataPage2?.priceList}
                 onCLickCreateNew={() => { setOpenModalCreateNewPrice(true) }}
+                onArchiveTick={(index: number) => {
+                  console.log('index', index);
+                }}
+                onEdit={(item, index) => {
+                  console.log('itemXtt', item);
+                  setDataEditPrice({ ...item });
+                  setIndexEditPrice(index);
+                }}
                 onUp={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   const temp = list[index];
                   list[index] = list[index - 1];
                   list[index - 1] = temp;
                   handleInputChangePage2('priceList', list);
                 }}
                 onDown={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   const temp = list[index];
                   list[index] = list[index + 1];
                   list[index + 1] = temp;
@@ -602,10 +807,10 @@ const NewStore = () => {
                 onCopy={(item) => {
                   console.log('item', item);
 
-                  handleInputChangePage2('priceList', [...formDataPage2.priceList, item]);
+                  handleInputChangePage2('priceList', [...formDataPage2?.priceList, item]);
                 }}
                 onDelete={(index) => {
-                  const list = formDataPage2.priceList;
+                  const list = formDataPage2?.priceList;
                   list.splice(index, 1);
                   handleInputChangePage2('priceList', list);
                 }}
@@ -654,7 +859,7 @@ const NewStore = () => {
                 {formDataPage1.storeOpeningHours &&
                   <div className="flex items-center gap-1 py-3 border-b">
                     <img src={Images.iconClock} className="w-5 h-5" />
-                    <BaseText locale size={16} className="text-center">{formDataPage1.storeOpeningHours}</BaseText>
+                    <BaseText size={16} className="text-center">{formDataPage1.storeOpeningHours}</BaseText>
                   </div>
                 }
                 {formDataPage1.storeNumber &&
@@ -711,7 +916,8 @@ const NewStore = () => {
           {formDataPage2?.priceList?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
             <BaseText locale size={16} bold>가격표</BaseText>
             {
-              formDataPage2.priceList.map((item, index) => {
+              formDataPage2?.priceList.map((item: INewPrice, index) => {
+                console.log('itemAA', item);
                 return (
                   <div className="py-2 border-t">
                     <div
@@ -726,11 +932,11 @@ const NewStore = () => {
                       <div className="flex gap-2">
                         <img src={Images.discount1} className="w-11 h-11" />
                         <div className="flex flex-col">
-                          <BaseText locale size={16} bold>본업체는 이벤트 중입니다.</BaseText>
-                          <BaseText locale size={16} bold>오늘도 즐거운 하루를 위해 5천원 할인</BaseText>
+                          <BaseText locale size={16} bold>{item?.title}</BaseText>
+                          <BaseText locale size={16} bold>{item?.description}</BaseText>
                         </div>
                       </div>
-                      <BaseText locale size={16} bold>34일남음</BaseText>
+                      <BaseText size={16} bold>{item?.running_time + t('Minutes')}</BaseText>
                     </div>
                   </div>
                 )
@@ -738,7 +944,7 @@ const NewStore = () => {
             }
           </div>
           }
-          {formDataPage2.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2.storeIntroduction}</BaseText>}
+          {formDataPage2?.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2?.storeIntroduction}</BaseText>}
           {formDataPage2?.manager?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
             <BaseText size={16} bold>{t('담당자')}({formDataPage2?.manager?.length})</BaseText>
             {
@@ -758,15 +964,13 @@ const NewStore = () => {
           }
         </div>
       </div>
-      <BaseModal
+
+      <ModalSelectOpeningHours
         isOpen={openModalOpenHours}
         onClose={handleCloseModalOpenHours}
-        onSubmit={handleSubmitOpenHours}
-        title="영업시간"
-        disableSubmitBtn={!formDataPage1.storeOpeningHours}
-      >
-        abc
-      </BaseModal>
+        onSubmit={(value) => handleSubmitOpenHours(value)}
+        data={formDataPage1?.storeOpeningHours}
+      />
 
       <BaseModal
         isOpen={openModalRegion}
@@ -913,14 +1117,15 @@ const NewStore = () => {
         isOpen={openModalCreateNewPrice}
         onClose={handleCloseModalCreateNewPrice}
         onSubmit={handleSubmitCreateNewPrice}
-      // data={dataNewPrice}
+        data={dataEditPrice}
       />
 
       <ModalCreateNewManage
         isOpen={openModalCreateNewManage}
         onClose={handleCloseModalCreateNewManage}
         onSubmit={handleSubmitCreateNewManage}
-        onImageChange={handleImageCreateNewChange}
+        onImageChange={handleImageCreateNewManager}
+        data={dataEditManager}
       />
     </Layout>
   );
