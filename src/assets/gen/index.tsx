@@ -38,6 +38,8 @@ export default class Images {
     static readonly subscription = require("../../../src/assets/images/Subscription.png");
     static readonly subscription2 = require("../../../src/assets/images/Subscription2.png");
     static readonly trash = require("../../../src/assets/images/Trash.png");
+    static readonly trash3 = require("../../../src/assets/images/Trash3.png");
+    static readonly undo = require("../../../src/assets/images/Undo.png");
     static readonly upload = require("../../../src/assets/images/Upload.png");
     static readonly uploadCloudIcon = require("../../../src/assets/images/UploadCloudIcon.png");
     static readonly userManage = require("../../../src/assets/images/User Manage.png");
@@ -81,6 +83,7 @@ export default class Images {
     static readonly iconPhone2 = require("../../../src/assets/images/iconPhone2.png");
     static readonly iconSquare = require("../../../src/assets/images/iconSquare.png");
     static readonly iconTag = require("../../../src/assets/images/iconTag.png");
+    static readonly infoCircle = require("../../../src/assets/images/info-circle.png");
     static readonly iphone = require("../../../src/assets/images/iphone.png");
     static readonly iphone2 = require("../../../src/assets/images/iphone2.png");
     static readonly logo = require("../../../src/assets/images/logo.jpg");

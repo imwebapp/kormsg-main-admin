@@ -4,6 +4,7 @@ import { classNames } from "../../utils/common";
 import CustomButton from "../button";
 import BaseText from "../text";
 import { Modal } from "antd";
+import BaseButton from "../baseButton";
 
 interface BaseModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ interface BaseModalProps {
   nameConfirm?: string;
   styleButtonCancel?: string;
   styleButtonConfirm?: string;
+  typeButtonConfirm?: "primary" | "default" | "danger";
   isHideAction?: boolean;
   afterOpenChange?: any;
 }
@@ -38,6 +40,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
     styleTitle,
     styleButtonCancel,
     styleButtonConfirm,
+    typeButtonConfirm,
     afterOpenChange,
   } = props;
   const [isShown, setIsShown] = useState<boolean>(isOpen);
@@ -88,24 +91,21 @@ export const BaseModal2 = (props: BaseModalProps) => {
       <div className="max-h-[80vh] px-6 py-4 overflow-auto">{children}</div>
       {!isHideAction && (
         <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
-          <CustomButton
+          <BaseButton
             onClick={closeModal}
-            locale
-            bold
-            className={classNames(" w-full py-6", styleButtonCancel)}
+            type="default"
+            className={styleButtonCancel}
           >
             {nameCancel || "Cancel"}
-          </CustomButton>
-          <CustomButton
+          </BaseButton>
+          <BaseButton
             onClick={submitModal}
-            primary
-            locale
-            bold
-            className={classNames("w-full py-6", styleButtonConfirm)}
+            className={styleButtonConfirm}
+            type={typeButtonConfirm}
             disabled={disableSubmitBtn}
           >
             {nameConfirm || "Confirm"}
-          </CustomButton>
+          </BaseButton>
         </div>
       )}
     </Modal>

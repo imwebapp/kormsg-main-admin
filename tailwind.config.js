@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         primary: "#0866FF",
         lightBlue: "#00CCFF",
+        greenNuggets: "#B5E4CA",
         dark: "#141414",
         goldenPurple50: "#F9F0FF",
         purple: "#722ED1",
@@ -23,7 +24,7 @@ module.exports = {
         dustRed500: "#F5222D",
         dustRed900: "#5C0011",
         volcano50: "#FFF2E8",
-        volcano500: "##FA541C",
+        volcano500: "#FA541C",
         volcano900: "#7A0B00",
         cyan50: "#E6FFFB",
         cyan500: "#13C2C2",
