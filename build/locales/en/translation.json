@@ -121,7 +121,7 @@
   "View": "View",
   "Save": "Save",
   "Public": "Public",
-  "Public2": "Public",
+  "Complete": "Complete",
   "New Shop": "New Shop",
   "Detail": "Detail",
   "Contact Id": "Contact ID",
@@ -294,5 +294,10 @@
   "KRW": "KRW",
   "Charge": "Charge",
   "Badger": "Badger",
-  "Restore": "Restore"
+  "Restore": "Restore",
+  "기업회원설정": "Corporate membership settings",
+  "Select all": "Select all",
+  "Delete all": "Delete all",
+  "예약가능 날짜와 시간을 설정해주...": "Please set the available date and time for reservation...",
+  "설정완료": "Setting complete"
 }
