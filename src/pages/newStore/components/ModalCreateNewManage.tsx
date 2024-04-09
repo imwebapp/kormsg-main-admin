@@ -5,7 +5,6 @@ import { classNames, generateRandomID } from '../../../utils/common'
 import Images from '../../../assets/gen';
 import { BaseInput } from '../../../components/input/BaseInput';
 import { UploadApi } from '../../../apis/uploadApi';
-import { App } from 'antd'
 interface IProps {
     isOpen: boolean;
     onClose?: () => void;
@@ -19,7 +18,6 @@ interface IProps {
 }
 export const ModalCreateNewManage = (props: IProps) => {
     const { isOpen, onClose, onSubmit, onImageChange, data } = props
-    const { message } = App.useApp();
 
     const [dataNewManage, setDataNewManage] = useState<any>({
         image: '',
@@ -63,11 +61,9 @@ export const ModalCreateNewManage = (props: IProps) => {
             const dataConvert = {
                 id: generateRandomID(),
                 images: [imageUploaded],
+                thumbnails: [imageUploaded],
                 name: dataNewManage?.name,
                 description: dataNewManage?.description,
-                recommended: false,
-                like: 0,
-                order: 0,
             };
             onSubmit && onSubmit(dataConvert);
         }

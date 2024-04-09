@@ -33,6 +33,7 @@ import { shopApi } from "../../apis/shopApi";
 import { courseApi } from "../../apis/courseApi";
 import { ModalSelectRegion } from "./components/ModalSelectRegion";
 import { ModalSelectReservationFunc } from "./components/ModalSelectReservationFunc";
+import { mentorApi } from "../../apis/mentorApi";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -151,7 +152,7 @@ const NewStore = () => {
   const [dataEditManager, setDataEditManager] = useState();
   const [indexEditManager, setIndexEditManager] = useState<number>();
 
-  console.log('dataEditManager: ', indexEditManager, dataNewManage);
+  console.log('dataEditManager: ', indexEditManager, dataEditManager);
 
 
   const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
@@ -234,15 +235,15 @@ const NewStore = () => {
   const handleSubmitCreateNewManage = (dataNewManage: any) => {
     if (dataEditManager && indexEditManager !== undefined) {
       console.log('submit edit Manager: ', dataNewManage);
-      // const EditData = formDataPage2?.manager.map((item, index) => {
-      //   if (index === indexEditManager) {
-      //     item = dataNewManage;
-      //   }
-      //   return item;
-      // })
+      const EditData = formDataPage2?.manager.map((item, index) => {
+        if (index === indexEditManager) {
+          item = dataNewManage;
+        }
+        return item;
+      })
       setDataEditManager(undefined);
       setIndexEditManager(undefined);
-      // setFormDataPage2({ ...formDataPage2, manager: EditData});
+      setFormDataPage2({ ...formDataPage2, manager: EditData});
       setOpenModalCreateNewManage(false);
       return;
     }
@@ -437,20 +438,32 @@ const NewStore = () => {
       console.log('resCreateShop', resCreateShop);
 
       if (idNewShop) {
-        const DataCourse = {
+
+        //create list price
+        const dataCourse = {
           courses: formDataPage2?.priceList
         }
-        console.log('DataCourse', DataCourse);
-        const resCreateCourse = await courseApi.createCourse(idNewShop, DataCourse);
+        console.log('dataCourse', dataCourse);
+        const resCreateCourse = await courseApi.createCourse(idNewShop, dataCourse);
         console.log('resCreateCourse', resCreateCourse);
 
-        const DataManage = {
-          mentors: formDataPage2?.manager
+        //create list mentor
+        const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
+            const dataConvert = {
+              ...item,
+              shop_id: idNewShop
+            }
+            return dataConvert;
+        })
+        const dataManager = {
+          mentors: listManagerConverted
         }
+        console.log('DataManageXXX', dataManager);
+        const resCreateMentors = await mentorApi.createMentors(idNewShop, dataManager);
+        console.log('resCreateMentors', resCreateMentors);
 
-        console.log('DataManageXXX', DataManage);
 
-
+        //final
         setLoadingScreen(false);
         message.success('Create new shop successfully');
         navigate(-1);
@@ -561,7 +574,6 @@ const NewStore = () => {
 
   useEffect(() => {
     if (dataEditManager) {
-      console.log('dataEditManager', dataEditManager);
       setOpenModalCreateNewManage(true);
     }
   }, [dataEditManager]);
@@ -782,7 +794,11 @@ const NewStore = () => {
               {optionPart2Selected === "담당자" ?
                 <ManageTab
                   data={formDataPage2?.manager}
-                  onCLickCreateNew={() => { setOpenModalCreateNewManage(true) }}
+                  onCLickCreateNew={() => { 
+                    setOpenModalCreateNewManage(true);
+                    setDataEditManager(undefined);
+                    setIndexEditManager(undefined);
+                   }}
                   onArchiveTick={(index: number) => {
                     console.log('index', index);
                   }}
