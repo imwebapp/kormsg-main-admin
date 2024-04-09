@@ -53,6 +53,7 @@ export default class Images {
     static readonly board2 = require("../../../src/assets/images/board2.png");
     static readonly chevronDownTiny = require("../../../src/assets/images/chevron-down-tiny.png");
     static readonly chevronUpTiny = require("../../../src/assets/images/chevron-up-tiny.png");
+    static readonly clockBlue = require("../../../src/assets/images/clockBlue.png");
     static readonly closeCircle = require("../../../src/assets/images/closeCircle.png");
     static readonly collapse = require("../../../src/assets/images/collapse.png");
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");

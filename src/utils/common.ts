@@ -138,6 +138,10 @@ export const convertDate = (timestamp: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+export const handleConvertCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US').format(amount);
+}
+
 export const mathRemainingTime = (unixtimestamp: any) => {
   // return new Date(parseInt(unixtimestamp))
   return (

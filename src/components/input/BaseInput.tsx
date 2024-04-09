@@ -5,7 +5,7 @@ import Images from "../../assets/gen";
 import { useTranslation } from 'react-i18next';
 import { InputProps } from 'antd';
 
-interface IProps {
+export interface IProps {
   title?: string;
   titleSize?: number;
   required?: boolean;

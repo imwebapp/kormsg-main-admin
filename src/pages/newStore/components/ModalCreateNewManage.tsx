@@ -4,7 +4,8 @@ import { BaseText } from '../../../components'
 import { classNames, generateRandomID } from '../../../utils/common'
 import Images from '../../../assets/gen';
 import { BaseInput } from '../../../components/input/BaseInput';
-
+import { UploadApi } from '../../../apis/uploadApi';
+import { App } from 'antd'
 interface IProps {
     isOpen: boolean;
     onClose?: () => void;
@@ -18,6 +19,7 @@ interface IProps {
 }
 export const ModalCreateNewManage = (props: IProps) => {
     const { isOpen, onClose, onSubmit, onImageChange, data } = props
+    const { message } = App.useApp();
 
     const [dataNewManage, setDataNewManage] = useState<any>({
         image: '',
@@ -25,6 +27,7 @@ export const ModalCreateNewManage = (props: IProps) => {
         description: '',
     });
     const [image, setImage] = useState<string>(data?.image || Images.avatarEmpty);
+    const [imageFile, setImageFile] = useState<any>(null);
 
     const handleInputChangeNewManage = (name: string, value: any) => {
         setDataNewManage({ ...dataNewManage, [name]: value });
@@ -40,30 +43,43 @@ export const ModalCreateNewManage = (props: IProps) => {
         setImage(Images.avatarEmpty);
         onClose && onClose();
     }
-    const handleSubmitCreateNewManage = () => {
-        setDataNewManage(
-            {
-                image: '',
-                name: '',
-                description: '',
+    const handleSubmitCreateNewManage = async () => {
+        try {
+            let imageUploaded = '';
+            if (imageFile !== null) {
+                const ResUploadImg = await UploadApi.uploadImage(imageFile);
+                console.log('ResUploadImg1111', ResUploadImg);
+                imageUploaded = ResUploadImg.url;
             }
-        )
-        setImage(Images.avatarEmpty);
-        const dataConvert = {
-            id: generateRandomID(),
-            images: [image],
-            name: dataNewManage?.name,
-            description: dataNewManage?.description,
-            recommended: false,
-            like: 0,
-            order: 0,
-        };
-        onSubmit && onSubmit(dataConvert);
+            setDataNewManage(
+                {
+                    image: '',
+                    name: '',
+                    description: '',
+                }
+            )
+            setImage(Images.avatarEmpty);
+            setImageFile(null);
+            const dataConvert = {
+                id: generateRandomID(),
+                images: [imageUploaded],
+                name: dataNewManage?.name,
+                description: dataNewManage?.description,
+                recommended: false,
+                like: 0,
+                order: 0,
+            };
+            onSubmit && onSubmit(dataConvert);
+        }
+        catch (error: any) {
+            console.log('error', error);
+        }
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setImageFile(file);
             setImage(URL.createObjectURL(file));
             onImageChange && onImageChange(e);
         }

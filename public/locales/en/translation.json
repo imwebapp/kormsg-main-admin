@@ -121,6 +121,7 @@
   "View": "View",
   "Save": "Save",
   "Public": "Public",
+  "Public2": "Public",
   "New Shop": "New Shop",
   "Detail": "Detail",
   "Contact Id": "Contact ID",
@@ -291,5 +292,6 @@
   "DAY": "Day",
   "NIGHT": "Night",
   "KRW": "KRW",
-  "Charge": "Charge"
+  "Charge": "Charge",
+  "예약가능 날짜와 시간을 설정해주...": "Please set the available date and time for reservation..."
 }
