@@ -601,7 +601,7 @@ const NewStore = () => {
                 primary
                 icon={<CheckOutlined />}
               >
-                Public2
+                Complete
               </CustomButton>
             </div>
           </div>
@@ -664,7 +664,7 @@ const NewStore = () => {
               </BaseText>
             </div>
             <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
-            <ListCategoryPart1 isLocale={false} title="영업시간" value={formDataPage1?.storeOpeningHours} placeholder="영업시간을 설정해주세요" onClick={() => { setOpenModalOpenHours(true) }} />
+            <ListCategoryPart1 isLocale={false} title="영업시간" value={formDataPage1?.storeOpeningHours} placeholder={t("영업시간을 설정해주세요")} onClick={() => { setOpenModalOpenHours(true) }} />
             <BaseInputSelect
               title="Theme"
               options={listThema}
@@ -698,8 +698,8 @@ const NewStore = () => {
                 </>
               )
             }
-            <ListCategoryPart1 title="지역" value={formDataPage1?.regionProvince + formDataPage1?.regionDistrict} placeholder="지역을 선택해주세요" onClick={() => { setOpenModalRegion(true) }} />
-            <ListCategoryPart1 title="지하철" value={formDataPage1?.subwayLocation + formDataPage1?.subwayLine + formDataPage1?.subwayStation} placeholder="지하철을 선택해주세요" onClick={() => { setOpenModalSubway(true) }} />
+            <ListCategoryPart1 title="지역" value={formDataPage1?.regionProvince + formDataPage1?.regionDistrict} placeholder={t("지역을 선택해주세요")} onClick={() => { setOpenModalRegion(true) }} />
+            <ListCategoryPart1 title="지하철" value={formDataPage1?.subwayLocation + formDataPage1?.subwayLine + formDataPage1?.subwayStation} placeholder={t("지하철을 선택해주세요")} onClick={() => { setOpenModalSubway(true) }} />
 
             <ChatMessageFuncPart1
               title="채팅 메시지 기능"
@@ -736,6 +736,7 @@ const NewStore = () => {
                 value={formDataPage1?.reservationFuncValue.length > 0 ? '설정완료' : ""}
                 placeholder="예약가능 날짜와 시간을 설정해주..."
                 onClick={() => { setOpenModalReservationFunc(true) }}
+                isLocale
               />
             }
           </div>

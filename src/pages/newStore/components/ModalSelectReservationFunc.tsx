@@ -96,8 +96,8 @@ export const ModalSelectReservationFunc = (props: IProps) => {
                 disableSubmitBtn={!(reservationSelectedList.length > 0)}
             >
                 <div className='flex gap-3 mb-5'>
-                    <Checkbox onChange={handleSelectAll} checked={selectAll}>전체</Checkbox>
-                    <Checkbox onChange={handleDeselectAll} checked={deselectAll}>전체</Checkbox>
+                    <Checkbox onChange={handleSelectAll} checked={selectAll}>{t('Select all')}</Checkbox>
+                    <Checkbox onChange={handleDeselectAll} checked={deselectAll}>{t('Delete all')}</Checkbox>
                 </div>
                 <div className="grid grid-cols-4 gap-3 grid-flow-rows">
                     {
