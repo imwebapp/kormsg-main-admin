@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.ff81c5bd.css",
-    "main.js": "/static/js/main.bc835fbe.js",
+    "main.js": "/static/js/main.b5f66aa5.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
     "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
@@ -30,6 +30,7 @@
     "static/media/Shopping2.png": "/static/media/Shopping2.9d7d934c034ac9631590.png",
     "static/media/iconPhone.png": "/static/media/iconPhone.1a1bef6334d83d8a0560.png",
     "static/media/Shopping.png": "/static/media/Shopping.5cb0d67556c9beb4964f.png",
+    "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
@@ -41,11 +42,11 @@
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
     "main.ff81c5bd.css.map": "/static/css/main.ff81c5bd.css.map",
-    "main.bc835fbe.js.map": "/static/js/main.bc835fbe.js.map",
+    "main.b5f66aa5.js.map": "/static/js/main.b5f66aa5.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.ff81c5bd.css",
-    "static/js/main.bc835fbe.js"
+    "static/js/main.b5f66aa5.js"
   ]
 }
