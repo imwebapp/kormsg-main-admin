@@ -291,5 +291,7 @@
   "DAY": "Day",
   "NIGHT": "Night",
   "KRW": "KRW",
-  "Charge": "Charge"
+  "Charge": "Charge",
+  "Badger": "Badger",
+  "Restore": "Restore"
 }

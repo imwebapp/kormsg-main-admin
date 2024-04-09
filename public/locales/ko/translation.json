@@ -149,7 +149,7 @@
   "Product reviews": "제품 리뷰",
   "Things": "것들",
   "Who can?": "누가 할 수 있나요?",
-  "Image": "영상",
+  "Image": "이미지",
   "Listing bulletin board": "매물 게시판",
   "Whether to be reviewed by administrator when uploading writing": "작성시 업로드 관리자 심사 여부",
   "Adult verification status": "성인인증 여부",
@@ -291,6 +291,7 @@
   "DAY": "낮",
   "NIGHT": "밤",
   "KRW": "원",
-  "Charge": "요금"
-
+  "Charge": "요금",
+  "Badger": "배져",
+  "Restore": "복원"
 }

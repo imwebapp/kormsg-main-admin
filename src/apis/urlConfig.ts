@@ -28,3 +28,4 @@ export const APP_VERSION = "/app_version";
 export const THEMA = "/thema";
 export const CATEGORY = "/category";
 export const TAG = "/tag";
+export const REPORT = "/report";
