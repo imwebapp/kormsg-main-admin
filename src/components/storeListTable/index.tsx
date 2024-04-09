@@ -47,7 +47,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       <div>
         {events && events.length === 0 && (
           <button
-            className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-pointer"
+            className="flex flex-col items-center justify-center gap-10 py-3 pl-3 text-black underline rounded cursor-pointer w-30"
             onClick={() => {
               console.log("items", item);
               handleItemClick(item);
@@ -60,7 +60,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           item.events.length > 0 &&
           item.events[0].state === "PENDING" && (
             <button
-              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10 text-black rounded  underline cursor-not-allowed"
+              className="flex flex-col items-center justify-center gap-10 py-3 pl-3 text-black underline rounded cursor-not-allowed w-30"
               disabled={mathRemainingTime(item.expired_date) < 0}
             >
               PENDING
@@ -70,7 +70,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           item.events.length > 0 &&
           item.events[0].state !== "PENDING" && (
             <button
-              className="flex w-30 pl-3 py-3  flex-col justify-center items-center gap-10  rounded  text-bold text-blue-700 underline"
+              className="flex flex-col items-center justify-center gap-10 py-3 pl-3 text-blue-700 underline rounded w-30 text-bold"
               onClick={() => {
                 handleItemClick(item);
               }}
@@ -352,7 +352,11 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("Management"),
       render: (text, record) => (
         <div className="flex flex-row items-center w-[50px] gap-2">
-          <img src={Images.edit2} className="w-6 h-6 cursor-pointer" />
+          <img src={Images.edit2} className="w-6 h-6 cursor-pointer"
+          onClick={() => {
+            console.log("edit store", record);
+          }}
+          />
           <img
             src={Images.copy}
             className="w-6 h-6 cursor-pointer"
