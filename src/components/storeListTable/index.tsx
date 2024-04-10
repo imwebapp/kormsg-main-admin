@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import { BaseModal2 } from "../modal/BaseModal2";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
+import { Url } from "../../routers/paths";
+import { useNavigate } from "react-router-dom";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -35,13 +37,14 @@ export default function StoreListTable(props: StoreListTableProps) {
     onRefresh,
     isUpdate,
   } = props;
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [listStore, setListStore] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
   const [listImageShop, setListImageShop] = useState([]);
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => { };
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -138,7 +141,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           onRefresh();
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const rejectPendingShop = async (id: string) => {
     try {
@@ -157,7 +160,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           onRefresh();
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   function generateOrder(sorting: string | undefined) {
@@ -339,7 +342,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Store"),
-      render: ({}) => (
+      render: ({ }) => (
         <div
           className="min-w-[30px] cursor-pointer"
           onClick={() => handleClick()}
@@ -353,9 +356,10 @@ export default function StoreListTable(props: StoreListTableProps) {
       render: (text, record) => (
         <div className="flex flex-row items-center w-[50px] gap-2">
           <img src={Images.edit2} className="w-6 h-6 cursor-pointer"
-          onClick={() => {
-            console.log("edit store", record);
-          }}
+            onClick={() => {
+              console.log("edit store", record);
+              navigate(Url.newStore, { state: { dataEdit: record } })
+            }}
           />
           <img
             src={Images.copy}
