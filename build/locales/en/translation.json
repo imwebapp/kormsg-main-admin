@@ -300,5 +300,18 @@
   "Delete all": "Delete all",
   "예약가능 날짜와 시간을 설정해주...": "Please set the available date and time for reservation...",
   "설정완료": "Setting complete",
-  "Delete user": "Delete user"
+  "Delete user": "Delete user",
+  "Publication time": "Publication time",
+  "Today": "Today",
+  "Blog post": "Blog post",
+  "Open list": "Open list",
+  "Hashtag": "Hashtag",
+  "Content": "Content",
+  "Writing articles": "Writing articles",
+  "Review": "Review",
+  "Theme/Category" : "Theme/Category",
+  "Please enter a title": "Please enter a title",
+  "#Hashtags (maximum 30)": "#Hashtags (maximum 30)",
+  "Time" : "Time",
+  "Edit Shop": "Edit Shop"
 }
