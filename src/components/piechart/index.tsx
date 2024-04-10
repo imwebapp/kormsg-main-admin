@@ -26,12 +26,26 @@ export default function BasePieChart(props: PieChartProps) {
       }
     });
   };
-  const getInfoAnalytics = async () => {
+  const getInfoAnalyticsDeviceCategory = async () => {
     const params = {
       property: "properties/244725891",
-      dimensions: [{ name: "deviceCategory" }],
+      dimensions: [{ name: "platformDeviceCategory" }],
       metrics: [{ name: "active28DayUsers" }],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      dimensionFilter: {
+        filter: {
+          fieldName: "platformDeviceCategory",
+          inListFilter: { values: ["web / mobile", "web / desktop"] },
+        },
+      },
+      orderBys: [
+        {
+          dimension: {
+            orderType: "NUMERIC",
+            dimensionName: "platformDeviceCategory",
+          },
+        },
+      ],
     };
     let result = await analyticsApi.getInfo(params);
     const convertedData = result.data[0].rows.map((item: any) => {
@@ -51,17 +65,18 @@ export default function BasePieChart(props: PieChartProps) {
 
     setData(convertedData);
   };
+
   useEffect(() => {
-    getInfoAnalytics();
+    getInfoAnalyticsDeviceCategory();
     return () => {};
   }, []);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     const textElements: any = document.querySelectorAll("#pie-chart text");
-  //     changeStyle(textElements);
-  //   }, 400);
-  // }, [data]);
+  useEffect(() => {
+    setTimeout(() => {
+      const textElements: any = document.querySelectorAll("#pie-chart text");
+      changeStyle(textElements);
+    }, 400);
+  }, [data]);
   function getColorByIndex(index: any) {
     const colors = [
       "bg-rose-900",
@@ -84,7 +99,7 @@ export default function BasePieChart(props: PieChartProps) {
         </BaseText>
         <BaseInputSelect
           onChange={() => {}}
-          value="Weekly"
+          value={t("Monthly")}
           options={[
             {
               value: "Weekly",
@@ -126,11 +141,10 @@ export default function BasePieChart(props: PieChartProps) {
               <>
                 <div
                   className={classNames(
-                    `w-3 h-3 mt-1 rounded-full ${getColorByIndex(index)}`
+                    `w-3 h-3 mt-1.5 rounded-full ${getColorByIndex(index)}`
                   )}
                 />
-
-                <div className="flex flex-col pl-2">
+                <div className="flex flex-col pl-2 pr-2">
                   <BaseText locale>{item.name}</BaseText>
                   <BaseText size={18} bold>
                     {item.percentage}

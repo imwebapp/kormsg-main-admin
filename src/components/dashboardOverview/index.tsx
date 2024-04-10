@@ -21,6 +21,7 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
   const { t } = useTranslation();
   const [platformsSelected, setPlatformSelected] = useState<Array<string>>([]);
   const [data, setData] = useState<any[]>([]);
+  const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
 
   const navigate = useNavigate();
 
@@ -31,14 +32,15 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
       property: "properties/244725891",
       dimensions: [{ name: "firstUserPrimaryChannelGroup" }],
       metrics: [
-        { name: "active28DayUsers" },
+        { name: "activeUsers" },
         { name: "bounceRate" },
         { name: "eventCount" },
       ],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      dateRanges: [
+        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+      ],
     };
     let result = await analyticsApi.getInfo(params);
-    console.log("result.data[0].rows", result.data[0].rows);
 
     const convertedData = result.data[0].rows.map((item: any) => ({
       name: item.dimensionValues[0].value,
@@ -51,7 +53,7 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
   useEffect(() => {
     getInfoAnalytics();
     return () => {};
-  }, []);
+  }, [dateTimeSelect]);
   const columns: TableColumnsType<any> = [
     {
       title: t("Primary Channel"),
@@ -155,7 +157,16 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
           </CustomButton>
         ) : (
           <div className="flex flex-row gap-6">
-            <CustomTimePicker range />
+            <CustomTimePicker
+              range
+              onDataChange={({ value, dateString }) => {
+                if (dateString && dateString[0] !== "") {
+                  setDateTimeSelect(dateString);
+                } else {
+                  setDateTimeSelect(["30daysAgo", "today"]);
+                }
+              }}
+            />
             {filterPlatform()}
           </div>
         )}
