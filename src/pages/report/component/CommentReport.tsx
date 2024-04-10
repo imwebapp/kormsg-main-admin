@@ -10,19 +10,18 @@ import Images from "../../../assets/gen";
 import { useLocalStorage } from "../../../stores/localStorage";
 import { showError, showSuccess } from "../../../utils/showToast";
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
-import { PostInterface } from "../../../entities/post.entity";
 import { UserInterface } from "../../../entities";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { userApi } from "../../../apis/userApi";
 import { HomeSettingApi } from "../../../apis/homeSettingApi";
+import { ReviewInterface } from "../../../entities/review.entity";
 
-export default function CommunityReport() {
+export default function CommentReport() {
   const { t } = useTranslation();
   const { locale } = useLocalStorage((state) => state);
   const [selectedButton, setSelectedButton] = useState(REPORT.REPORT_LIST);
   const [reports, setReports] = useState<ReportInterface[]>([]);
-  const [openModalPostDetail, setOpenModalPostDetail] = useState();
   const [userDetail, setUserDetail] = useState();
   const [isTabDeleted, setTabDeleted] = useState(false);
   const [countReport, setCountReport] = useState(0);
@@ -53,19 +52,17 @@ export default function CommunityReport() {
   };
 
   const getCount = async () => {
-    console.log("get countttt");
-
     try {
-      const countReport = await ReportApi.getCountPost({
+      const countReport = await ReportApi.getCountReview({
         filter: JSON.stringify({
-          post_id: { $ne: null },
+          review_id: { $ne: null },
           is_solved: false,
         }),
       });
       setCountReport(countReport);
-      const countDeleted = await ReportApi.getCountPost({
+      const countDeleted = await ReportApi.getCountReview({
         filter: JSON.stringify({
-          post_id: { $ne: null },
+          review_id: { $ne: null },
           is_solved: true,
         }),
       });
@@ -78,9 +75,9 @@ export default function CommunityReport() {
 
   const getReport = async () => {
     try {
-      const reports = await ReportApi.getListPost({
+      const reports = await ReportApi.getListReview({
         filter: JSON.stringify({
-          post_id: { $ne: null },
+          review_id: { $ne: null },
           is_solved: isTabDeleted,
         }),
       });
@@ -93,10 +90,10 @@ export default function CommunityReport() {
     getReport();
   }, [isTabDeleted]);
 
-  const deleteReport = async (post_id: string) => {
+  const deleteReport = async (review_id: string) => {
     try {
       await ReportApi.delete({
-        items: JSON.stringify([post_id]),
+        items: JSON.stringify([review_id]),
       });
       getReport();
       getCount();
@@ -106,10 +103,10 @@ export default function CommunityReport() {
     }
   };
 
-  const restoreReport = async (post_id: string) => {
+  const restoreReport = async (review_id: string) => {
     try {
       await ReportApi.restore({
-        items: JSON.stringify([post_id]),
+        items: JSON.stringify([review_id]),
       });
       getReport();
       getCount();
@@ -126,41 +123,37 @@ export default function CommunityReport() {
     },
     {
       title: t("Image"),
-      render: ({ post }, record, index) => (
+      render: ({ review }, record, index) => (
         <img
-          onClick={() => setOpenModalPostDetail(post)}
           className="w-[136px] object-contain cursor-pointer"
-          src={post?.images && post?.images[0] ? post.images[0] : ""}
+          src={review?.images && review?.images[0] ? review.images[0] : ""}
         />
       ),
     },
     {
       title: t("Title"),
       width: 300,
-      render: ({ post }, record, index) => (
-        <div
-          className="cursor-pointer"
-          onClick={() => setOpenModalPostDetail(post)}
-        >
-          <BaseText size={16} medium className="line-clamp-2">
-            {post?.content}
+      render: ({ review }, record, index) => (
+        <div className="cursor-pointer">
+          <BaseText size={16} medium >
+            {review?.content}
           </BaseText>
         </div>
       ),
     },
     {
       title: t("Writer"),
-      render: ({ post }, record, index) => (
+      render: ({ review }, record, index) => (
         <div
           onClick={() => {
-            if (post?.user) {
-              setUserDetail(post?.user);
+            if (review?.user) {
+              setUserDetail(review?.user);
             }
           }}
           className="flex flex-row items-center gap-x-1 cursor-pointer"
         >
           <img
-            src={post?.user?.avatar || Images.logo}
+            src={review?.user?.avatar || Images.logo}
             className="w-8 h-8 rounded-full object-cover"
           />
           <BaseText size={16} medium>
@@ -189,11 +182,11 @@ export default function CommunityReport() {
     },
     {
       title: t("Action"),
-      render: ({ id, post_id }, record, index) => (
+      render: ({ id, review_id }, record, index) => (
         <>
           {isTabDeleted ? (
             <div
-              onClick={() => restoreReport(post_id)}
+              onClick={() => restoreReport(review_id)}
               className="py-2 px-3 bg-greenNuggets rounded flex justify-center items-center cursor-pointer gap-x-1 w-[100px]"
             >
               <img src={Images.undo} className="w-6 h-6" />
@@ -203,7 +196,7 @@ export default function CommunityReport() {
             </div>
           ) : (
             <div
-              onClick={() => deleteReport(post_id)}
+              onClick={() => deleteReport(review_id)}
               className="py-2 px-3 bg-dustRed500 rounded flex justify-center items-center cursor-pointer gap-x-1 w-[100px]"
             >
               <img src={Images.trash3} className="w-6 h-6" />
@@ -336,18 +329,6 @@ export default function CommunityReport() {
     <div className="p-4 py-0">
       {headerTable()}
       {bodyTable()}
-      <BaseModal2
-        isOpen={!!openModalPostDetail}
-        onClose={() => {
-          setOpenModalPostDetail(undefined);
-        }}
-        onSubmit={() => {
-          setOpenModalPostDetail(undefined);
-        }}
-        title="Detail"
-        isHideAction
-        children={<PostDetail post={openModalPostDetail} />}
-      ></BaseModal2>
 
       <BaseModal2
         isOpen={!!userDetail}
@@ -367,27 +348,6 @@ export default function CommunityReport() {
   );
 }
 
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-/////////////////////////////////////////
-type PostDetailType = {
-  post?: PostInterface;
-};
-const PostDetail = ({ post }: PostDetailType) => {
-  return (
-    <div>
-      <Carousel draggable autoplay>
-        {(post?.images || []).map((item) => (
-          <img src={item} className="rounded-lg mb-6" />
-        ))}
-      </Carousel>
-      <BaseText medium size={16}>
-        {post?.content}
-      </BaseText>
-    </div>
-  );
-};
 /////////////////////////////////////////
 /////////////////////////////////////////
 /////////////////////////////////////////

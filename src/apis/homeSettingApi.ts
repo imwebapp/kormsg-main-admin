@@ -26,5 +26,7 @@ export const HomeSettingApi = {
   settingAdultVerification: async () => {
     return await axiosClient.put(`${SETTING_ADMIN}`);
   },
-  
+  updateReportLimit: async (data: any) => {
+    return await axiosClient.put(`${SETTING_ADMIN}/report_limit`, data);
+  },
 };
