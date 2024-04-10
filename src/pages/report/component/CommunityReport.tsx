@@ -30,6 +30,8 @@ export default function CommunityReport() {
   const [isPendingSetLimit, setPendingSetLimit] = useState(false);
   const [limitReport, setLimitReport] = useState();
   const limitReportRef = useRef<any>(null);
+  const [page, setPage] = useState(1);
+  const limit = 50;
 
   useEffect(() => {
     limitReportRef?.current?.focus();
@@ -53,8 +55,6 @@ export default function CommunityReport() {
   };
 
   const getCount = async () => {
-    console.log("get countttt");
-
     try {
       const countReport = await ReportApi.getCountPost({
         filter: JSON.stringify({
@@ -83,14 +83,23 @@ export default function CommunityReport() {
           post_id: { $ne: null },
           is_solved: isTabDeleted,
         }),
+        limit: limit,
+        page,
       });
       setReports(reports);
     } catch (error) {}
   };
 
   useEffect(() => {
-    getCount();
     getReport();
+  }, [page]);
+
+  useEffect(() => {
+    setPage(0);
+    setTimeout(() => {
+      setPage(1);
+    }, 50);
+    getCount();
   }, [isTabDeleted]);
 
   const deleteReport = async (post_id: string) => {
@@ -319,8 +328,14 @@ export default function CommunityReport() {
       <BaseTable
         maxContent
         sticky={{ offsetHeader: 0 }}
-        className=""
-        pagination={!{ pageSize: 50 }}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: isTabDeleted ? countDeleted : countReport,
+          onChange: (page: number, pageSize: number) => {
+            setPage(page);
+          },
+        }}
         columns={columns}
         data={reports}
       />
