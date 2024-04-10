@@ -20,6 +20,7 @@ export default class Images {
     static readonly information = require("../../../src/assets/images/Information.png");
     static readonly krFlags = require("../../../src/assets/images/KR Flags.png");
     static readonly mapPoint = require("../../../src/assets/images/Map Point.png");
+    static readonly pinMap = require("../../../src/assets/images/Pin Map.png");
     static readonly pointHistory = require("../../../src/assets/images/Point History.png");
     static readonly pointHistory2 = require("../../../src/assets/images/Point History2.png");
     static readonly reports = require("../../../src/assets/images/Reports.png");
@@ -57,6 +58,7 @@ export default class Images {
     static readonly board2 = require("../../../src/assets/images/board2.png");
     static readonly chevronDownTiny = require("../../../src/assets/images/chevron-down-tiny.png");
     static readonly chevronUpTiny = require("../../../src/assets/images/chevron-up-tiny.png");
+    static readonly clockBlue = require("../../../src/assets/images/clockBlue.png");
     static readonly closeCircle = require("../../../src/assets/images/closeCircle.png");
     static readonly collapse = require("../../../src/assets/images/collapse.png");
     static readonly collapse2 = require("../../../src/assets/images/collapse2.png");
@@ -104,6 +106,7 @@ export default class Images {
     static readonly statistic4 = require("../../../src/assets/images/statistic4.png");
     static readonly trash2 = require("../../../src/assets/images/trash2.png");
     static readonly twoDot = require("../../../src/assets/images/twoDot.png");
+    static readonly userDefault = require("../../../src/assets/images/user_default.png");
     static readonly web = require("../../../src/assets/images/web.png");
     static readonly web2 = require("../../../src/assets/images/web2.png");
 }

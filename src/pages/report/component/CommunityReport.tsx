@@ -15,6 +15,7 @@ import { UserInterface } from "../../../entities";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { userApi } from "../../../apis/userApi";
+import { HomeSettingApi } from "../../../apis/homeSettingApi";
 
 export default function CommunityReport() {
   const { t } = useTranslation();
@@ -29,6 +30,27 @@ export default function CommunityReport() {
   const [isPendingSetLimit, setPendingSetLimit] = useState(false);
   const [limitReport, setLimitReport] = useState();
   const limitReportRef = useRef<any>(null);
+
+  useEffect(() => {
+    limitReportRef?.current?.focus();
+  }, [isPendingSetLimit]);
+
+  const getCountLimitReport = async () => {
+    try {
+      const respon = await HomeSettingApi.settingAdmin();
+      setLimitReport(respon.report_limit);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getCountLimitReport();
+  }, []);
+
+  const _setLimitReport = async (value: number) => {
+    try {
+      await HomeSettingApi.updateReportLimit({ report_limit: value });
+    } catch (error) {}
+  };
 
   const getCount = async () => {
     console.log("get countttt");
@@ -138,7 +160,11 @@ export default function CommunityReport() {
           className="flex flex-row items-center gap-x-1 cursor-pointer"
         >
           <img
-            src={post?.user?.avatar || Images.logo}
+            src={
+              post?.user
+                ? post?.user?.avatar || Images.userDefault
+                : Images.logo
+            }
             className="w-8 h-8 rounded-full object-cover"
           />
           <BaseText size={16} medium>
@@ -243,14 +269,6 @@ export default function CommunityReport() {
         ))}
       </div>
     );
-  };
-
-  useEffect(() => {
-    limitReportRef?.current?.focus();
-  }, [isPendingSetLimit]);
-
-  const _setLimitReport = (value: number) => {
-    console.log("cac", value);
   };
 
   const headerTable = () => {
@@ -387,7 +405,7 @@ const UserDetail = ({ user }: UserDetailType) => {
       <div className={classNames("flex flex-col gap-5")}>
         <div className="flex justify-center">
           <img
-            src={user?.avatar}
+            src={user?.avatar || Images.userDefault}
             className="w-[85px] h-[85px] rounded-full object-cover"
           />
         </div>

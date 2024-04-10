@@ -1,8 +1,9 @@
 {
   "files": {
-    "main.css": "/static/css/main.ee0e82ad.css",
-    "main.js": "/static/js/main.83622f9f.js",
+    "main.css": "/static/css/main.ff81c5bd.css",
+    "main.js": "/static/js/main.3615d42c.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
+    "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
     "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
@@ -20,6 +21,7 @@
     "static/media/iconPhone2.png": "/static/media/iconPhone2.180b6aef5bf0dd24279e.png",
     "static/media/Help Center2.png": "/static/media/Help Center2.2b5f3646d4519af9abe8.png",
     "static/media/App Version2.png": "/static/media/App Version2.c64330acdff28e5d652d.png",
+    "static/media/Information.png": "/static/media/Information.388a8ee062fac1d65bd6.png",
     "static/media/SEO Page2.png": "/static/media/SEO Page2.4d42c849e8b39da08242.png",
     "static/media/Help Center.png": "/static/media/Help Center.f0792b54fcc93ee6b734.png",
     "static/media/App Version.png": "/static/media/App Version.55c42beaa9664c887803.png",
@@ -29,6 +31,7 @@
     "static/media/Shopping2.png": "/static/media/Shopping2.9d7d934c034ac9631590.png",
     "static/media/iconPhone.png": "/static/media/iconPhone.1a1bef6334d83d8a0560.png",
     "static/media/Shopping.png": "/static/media/Shopping.5cb0d67556c9beb4964f.png",
+    "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
@@ -36,14 +39,15 @@
     "static/media/twoDot.png": "/static/media/twoDot.5dab7f8f3e4091a1dbdc.png",
     "static/media/Setting2.png": "/static/media/Setting2.09c489b2d3f1ad737ff5.png",
     "static/media/Setting.png": "/static/media/Setting.da43066134bc02086103.png",
+    "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.ee0e82ad.css.map": "/static/css/main.ee0e82ad.css.map",
-    "main.83622f9f.js.map": "/static/js/main.83622f9f.js.map",
+    "main.ff81c5bd.css.map": "/static/css/main.ff81c5bd.css.map",
+    "main.3615d42c.js.map": "/static/js/main.3615d42c.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ee0e82ad.css",
-    "static/js/main.83622f9f.js"
+    "static/css/main.ff81c5bd.css",
+    "static/js/main.3615d42c.js"
   ]
 }

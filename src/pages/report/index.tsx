@@ -7,6 +7,7 @@ import { classNames } from "../../utils/common";
 import TabBarItem from "./component/TabBarItem";
 import TabPane from "antd/es/tabs/TabPane";
 import CommunityReport from "./component/CommunityReport";
+import CommentReport from "./component/CommentReport";
 
 export default function ReportPage() {
   const [activeKey, setActiveKey] = useState("1");
@@ -27,7 +28,7 @@ export default function ReportPage() {
         }
         key="1"
       >
-       <CommunityReport/>
+        <CommunityReport key={Date.now()} />
       </TabPane>
       <TabPane
         tab={
@@ -39,7 +40,7 @@ export default function ReportPage() {
         }
         key="2"
       >
-        Content of Tab Pane 2
+        <CommentReport key={Date.now()}/>
       </TabPane>
     </Tabs>
   );

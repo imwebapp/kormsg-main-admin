@@ -11,4 +11,7 @@ export const shopApi = {
   createShop: (data: any) => {
     return axiosClient.post(`${SHOP}/create_shop`, data)
   },
+  updateShop: (id: string, data: any) => {
+    return axiosClient.put(`${SHOP}/${id}`, data)
+  }
 }

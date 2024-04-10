@@ -13,6 +13,7 @@ export const GROUP = "/group";
 export const CONVERSATION = "/conversation";
 export const RESERVATION = "/reservation";
 export const COURSE = "/course";
+export const MENTOR = "/mentor";
 
 export const MESSAGE = "/message";
 

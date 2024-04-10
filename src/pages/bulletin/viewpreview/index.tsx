@@ -31,14 +31,10 @@ export default function BulletinPreview() {
 
   return (
     <div className="flex-1 max-h-[calc(100vh-72px)] min-w-[calc((100vh-120px)*0.52)] flex justify-center items-center relative">
-      <img
-        src={Images.home}
-        className="h-[calc(100vh-120px)] min-w-[calc((100vh-120px)*0.52)] absolute"
-      />
       <iframe
         key={key}
-        // className="absolute bottom-[34px] h-[calc(100vh-165px)] w-[calc((100vh-120px)*0.52-16px)] z-10 pointer-events-none"
-        className="absolute bottom-[34px] h-[calc(100vh-165px)] w-[calc((100vh-120px)*0.52-16px)] z-10"
+        className="h-[calc(100vh-165px)] border-[3px] border-dark rounded-2xl py-2 w-[calc((100vh-120px)*0.52)] z-10"
+        // className="h-[calc(100vh-165px)] border-[3px] border-dark rounded-2xl py-2 w-[calc((100vh-120px)*0.52)] z-10 pointer-events-none"
         src={url}
       ></iframe>
     </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Images from '../../../assets/gen';
 import { BaseText, CustomButton } from '../../../components';
 import { PlusOutlined } from '@ant-design/icons';
-import { generateRandomID } from '../../../utils/common';
+import { generateRandomID, handleConvertCurrency } from '../../../utils/common';
 interface IProps {
     data?: {
         id: string,
@@ -34,6 +34,7 @@ export const PriceListTab = (props: IProps) => {
     const handlePercentageDecrease = (amountBeforeDiscount: number, amountAfterDiscount: number) => {
         return ((amountBeforeDiscount - amountAfterDiscount) / amountBeforeDiscount * 100).toFixed(0) + '%';
     }
+    
 
     const handleShowOption = (index: number) => {
         setShowOptionIndex((prevIndex) => (prevIndex === index ? null : index));
@@ -69,7 +70,7 @@ export const PriceListTab = (props: IProps) => {
         onCopy && onCopy(newItem)
         setShowOptionIndex(null)
     }
-    const handleDelete = (index:number) => {
+    const handleDelete = (index: number) => {
         console.log('Click Delete')
         onDelete && onDelete(index)
         setShowOptionIndex(null)
@@ -107,8 +108,8 @@ export const PriceListTab = (props: IProps) => {
                                                 return (
                                                     <div className='flex gap-1'>
                                                         <BaseText size={16} locale color='text-primary' bold>{price?.name === 'ALL' ? 'Charge' : price?.name}</BaseText>
-                                                        <BaseText size={16} bold>{price?.discount} {item?.unit}</BaseText>
-                                                        <BaseText size={16} className='line-through'>{price?.price} {item?.unit}</BaseText>
+                                                        <BaseText size={16} bold>{handleConvertCurrency(price?.discount)} {item?.unit}</BaseText>
+                                                        <BaseText size={16} className='line-through'>{handleConvertCurrency(price?.price)} {item?.unit}</BaseText>
                                                         <BaseText size={16} bold color='text-cyan600'>{handlePercentageDecrease(price?.price, price?.discount)}</BaseText>
                                                     </div>
                                                 )
