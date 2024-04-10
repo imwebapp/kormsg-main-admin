@@ -135,7 +135,7 @@ export default function CommentReport() {
       width: 300,
       render: ({ review }, record, index) => (
         <div className="cursor-pointer">
-          <BaseText size={16} medium >
+          <BaseText size={16} medium>
             {review?.content}
           </BaseText>
         </div>
@@ -153,7 +153,11 @@ export default function CommentReport() {
           className="flex flex-row items-center gap-x-1 cursor-pointer"
         >
           <img
-            src={review?.user?.avatar || Images.logo}
+            src={
+              review?.user
+                ? review?.user?.avatar || Images.userDefault
+                : Images.logo
+            }
             className="w-8 h-8 rounded-full object-cover"
           />
           <BaseText size={16} medium>
@@ -361,7 +365,7 @@ const UserDetail = ({ user }: UserDetailType) => {
       <div className={classNames("flex flex-col gap-5")}>
         <div className="flex justify-center">
           <img
-            src={user?.avatar}
+            src={user?.avatar || Images.userDefault}
             className="w-[85px] h-[85px] rounded-full object-cover"
           />
         </div>

@@ -105,6 +105,7 @@ export default class Images {
     static readonly statistic4 = require("../../../src/assets/images/statistic4.png");
     static readonly trash2 = require("../../../src/assets/images/trash2.png");
     static readonly twoDot = require("../../../src/assets/images/twoDot.png");
+    static readonly userDefault = require("../../../src/assets/images/user_default.png");
     static readonly web = require("../../../src/assets/images/web.png");
     static readonly web2 = require("../../../src/assets/images/web2.png");
 }

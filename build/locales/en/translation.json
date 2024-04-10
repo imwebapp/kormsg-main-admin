@@ -299,5 +299,6 @@
   "Select all": "Select all",
   "Delete all": "Delete all",
   "예약가능 날짜와 시간을 설정해주...": "Please set the available date and time for reservation...",
-  "설정완료": "Setting complete"
+  "설정완료": "Setting complete",
+  "Delete user": "Delete user"
 }
