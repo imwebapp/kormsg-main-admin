@@ -1,16 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.e00ad5e4.css",
-    "main.js": "/static/js/main.42ca2ccf.js",
+    "main.css": "/static/css/main.dfd00547.css",
+    "main.js": "/static/js/main.a2ee0188.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
     "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
+    "static/media/success.png": "/static/media/success.b12095a36832b71df63c.png",
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
     "static/media/plusCircle.png": "/static/media/plusCircle.d2ef13685a665d11044b.png",
     "static/media/minusCircle.png": "/static/media/minusCircle.0174959b44bdf3a1e853.png",
     "static/media/iconGPS.png": "/static/media/iconGPS.916db9387568f068c446.png",
+    "static/media/Empty.png": "/static/media/Empty.3d49631542d57807847d.png",
     "static/media/Dashboard2.png": "/static/media/Dashboard2.f55d404bbe1fd74de53d.png",
     "static/media/closeCircle.png": "/static/media/closeCircle.2c1fdb01a083f35576ce.png",
     "static/media/Dashboard.png": "/static/media/Dashboard.a9a1718085c34c1d3fc3.png",
@@ -23,6 +25,7 @@
     "static/media/Help Center2.png": "/static/media/Help Center2.2b5f3646d4519af9abe8.png",
     "static/media/App Version2.png": "/static/media/App Version2.c64330acdff28e5d652d.png",
     "static/media/Information.png": "/static/media/Information.388a8ee062fac1d65bd6.png",
+    "static/media/Radio-active.png": "/static/media/Radio-active.a9d5c5d9b1113b7709f6.png",
     "static/media/SEO Page2.png": "/static/media/SEO Page2.4d42c849e8b39da08242.png",
     "static/media/Help Center.png": "/static/media/Help Center.f0792b54fcc93ee6b734.png",
     "static/media/App Version.png": "/static/media/App Version.55c42beaa9664c887803.png",
@@ -43,12 +46,12 @@
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.e00ad5e4.css.map": "/static/css/main.e00ad5e4.css.map",
-    "main.42ca2ccf.js.map": "/static/js/main.42ca2ccf.js.map",
+    "main.dfd00547.css.map": "/static/css/main.dfd00547.css.map",
+    "main.a2ee0188.js.map": "/static/js/main.a2ee0188.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e00ad5e4.css",
-    "static/js/main.42ca2ccf.js"
+    "static/css/main.dfd00547.css",
+    "static/js/main.a2ee0188.js"
   ]
 }
