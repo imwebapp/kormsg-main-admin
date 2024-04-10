@@ -14,6 +14,7 @@ import AppVersion from "./appversion";
 import BulletinPage from "./bulletin";
 import SeoPage from "./seo";
 import ReportPage from "./report";
+import BlogPage from "./blog";
 
 export {
   Login,
@@ -31,5 +32,6 @@ export {
   AppVersion,
   BulletinPage,
   SeoPage,
-  ReportPage
+  ReportPage,
+  BlogPage
 };

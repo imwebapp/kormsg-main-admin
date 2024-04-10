@@ -15,6 +15,7 @@ import {
   BulletinPage,
   SeoPage,
   ReportPage,
+  BlogPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -112,7 +113,7 @@ const routes = [
   },
   {
     path: Url.blogs,
-    element: <div className="p-4">coming soon</div>,
+    element: <BlogPage/>,
   },
   {
     path: Url.appVersion,

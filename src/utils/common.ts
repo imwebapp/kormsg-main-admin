@@ -178,3 +178,10 @@ export function formatTimeDiff(time: Date, locale: string) {
   const timeDiff = moment(time).diff(currentTime);
   return moment.duration(timeDiff).locale(locale).humanize(true);
 }
+
+export function formatHour(time: Date, locale: string) {
+  return moment(time).locale(locale).format('hh:mm A');
+}
+export function formatDate(time: Date, locale: string) {
+  return moment(time).locale(locale).format('MMMM D, YYYY');
+}

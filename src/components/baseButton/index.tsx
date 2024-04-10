@@ -39,17 +39,21 @@ export default function BaseButton(props: PropsWithChildren<BaseButtonProps>) {
       {icon && (
         <img src={icon} className={classNames("w-6 h-6", classNameIcon)} />
       )}
-      <BaseText
-        locale
-        size={16}
-        bold
-        className={classNames(
-          type === "default" ? "text-dark" : "text-white",
-          classNameTitle
-        )}
-      >
-        {children}
-      </BaseText>
+      {typeof children === "string" ? (
+        <BaseText
+          locale
+          size={16}
+          bold
+          className={classNames(
+            type === "default" ? "text-dark" : "text-white",
+            classNameTitle
+          )}
+        >
+          {children}
+        </BaseText>
+      ) : (
+        children
+      )}
     </button>
   );
 }
