@@ -121,6 +121,7 @@
   "View": "보다",
   "Save": "구하다",
   "Public": "공공의",
+  "Complete": "완료",
   "New Shop": "새로운 상점",
   "Detail": "세부 사항",
   "Contact Id": "연락처 ID",
@@ -288,10 +289,15 @@
   "Community Report List": "커뮤니티 신고 목록",
   "Minutes": "분",
   "You can enter a minimum of 0 minutes and a maximum of 240 minutes.": "최소 0분에서 최대 240분까지 입력할 수 있습니다.",
-  "DAY": "낮",
-  "NIGHT": "밤",
+  "DAY": "주간",
+  "NIGHT": "야간",
   "KRW": "원",
   "Charge": "요금",
   "Badger": "배져",
-  "Restore": "복원"
+  "Restore": "복원",
+  "기업회원설정": "기업회원설정",
+  "Select all": "전체",
+  "Delete all": "전체",
+  "예약가능 날짜와 시간을 설정해주...": "예약가능 날짜와 시간을 설정해주...",
+  "설정완료": "설정완료"
 }

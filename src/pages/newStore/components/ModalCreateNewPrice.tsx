@@ -7,6 +7,7 @@ import { BaseInput } from '../../../components/input/BaseInput';
 import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
 import { ChatMessageFuncPart1 } from './ChatMessageFuncPart1';
 import { useTranslation } from 'react-i18next';
+import { CurrencyInput } from '../../../components/input/CurrencyInput';
 
 interface IProps {
     isOpen: boolean;
@@ -136,7 +137,7 @@ export const ModalCreateNewPrice = (props: IProps) => {
             amountAfterNightDiscount: data?.prices[1]?.discount || undefined,
             unit: data?.unit,
         }
-        if(data?.prices?.length === 2) setIsShowPriceNight('1');
+        if (data?.prices?.length === 2) setIsShowPriceNight('1');
         data && setDataNewPrice(dataEditConvert);
     }, [data]);
 
@@ -199,8 +200,17 @@ export const ModalCreateNewPrice = (props: IProps) => {
                     value={dataNewPrice.amountBeforeDiscount}
                     onChange={(value) => handleInputChangeNewPrice('amountBeforeDiscount', value)}
                 />
-                <BaseInput
+                {/* <BaseInput
                     title="할인된 금액"
+                    placeholder="0"
+                    type="number"
+                    value={dataNewPrice.amountAfterDiscount}
+                    onChange={(value) => handleInputChangeNewPrice('amountAfterDiscount', value)}
+                /> */}
+
+                <CurrencyInput
+                    title="할인된 금액"
+                    styleTitle='text-dayBreakBlue500'
                     placeholder="0"
                     type="number"
                     value={dataNewPrice.amountAfterDiscount}

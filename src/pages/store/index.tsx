@@ -334,6 +334,9 @@ const StorePage = () => {
             setOpenModalCreateEvent(true);
           }}
           isUpdate={isUpdateSuccess}
+          onRefresh={() => {
+            refreshTable();
+          }}
         />
       </div>
       <BaseModal2
