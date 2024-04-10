@@ -3,7 +3,7 @@ import { BaseText, CustomButton, HeaderComponent } from "../../components";
 
 import { Descriptions, Layout, Spin } from "antd";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Images from "../../assets/gen";
 import { CheckOutlined, DownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { BaseInput } from "../../components/input/BaseInput";
@@ -117,7 +117,10 @@ const { Header } = Layout;
 const NewStore = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const location = useLocation();
   const { message } = App.useApp();
+
+  const dataEditShop = location?.state?.dataEdit;
 
   const [loadingScreen, setLoadingScreen] = useState<boolean>(false);
 
@@ -173,7 +176,7 @@ const NewStore = () => {
 
   const handleSubmitModalReservationFunc = (value: any) => {
     console.log('submit ModalReservationFunc', value);
-    setFormDataPage1({ ...formDataPage1, reservationFuncValue: value});
+    setFormDataPage1({ ...formDataPage1, reservationFuncValue: value });
     setOpenModalReservationFunc(false);
   };
 
@@ -243,7 +246,7 @@ const NewStore = () => {
       })
       setDataEditManager(undefined);
       setIndexEditManager(undefined);
-      setFormDataPage2({ ...formDataPage2, manager: EditData});
+      setFormDataPage2({ ...formDataPage2, manager: EditData });
       setOpenModalCreateNewManage(false);
       return;
     }
@@ -253,6 +256,7 @@ const NewStore = () => {
     setOpenModalCreateNewManage(false);
   };
 
+  const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] = useState<any>();
   console.log('storeOwnerMembershipSettingXX', storeOwnerMembershipSetting);
@@ -285,7 +289,7 @@ const NewStore = () => {
     manager: [],
   });
 
-  console.log('formDataPage1', formDataPage1.chatMessageFunc, formDataPage1.stampSetting, formDataPage1.reservationFuncSetting, );
+  console.log('formDataPage1', formDataPage1.chatMessageFunc, formDataPage1.stampSetting, formDataPage1.reservationFuncSetting,);
   console.log('formDataPage2', formDataPage2);
 
   const handleInputChange = (name: string, value: any) => {
@@ -429,46 +433,85 @@ const NewStore = () => {
       }
       console.log('DataCreateNewShop', DataCreateNewShop);
 
-      let idNewShop: string = '';
-      const resCreateShop: any = await shopApi.createShop(DataCreateNewShop);
+      if (idEditedShop) {
+        //editShop
 
-      if (resCreateShop.code === 200) {
-        idNewShop = resCreateShop?.results?.object?.shop?.id
-      }
-      console.log('resCreateShop', resCreateShop);
+        const resUpdateShop: any = await shopApi.updateShop(idEditedShop, DataCreateNewShop);
+        console.log('resUpdateShop', resUpdateShop);
 
-      if (idNewShop) {
+        if (resUpdateShop.code === 200) {
 
-        //create list price
-        const dataCourse = {
-          courses: formDataPage2?.priceList
+          //create list price
+          const dataCourse = {
+            courses: formDataPage2?.priceList
+          }
+          console.log('dataCourse', dataCourse);
+          const resCreateCourse = await courseApi.createCourse(idEditedShop, dataCourse);
+          console.log('resCreateCourse', resCreateCourse);
+
+          //create list mentor
+          const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
+            const dataConvert = {
+              ...item,
+              shop_id: idEditedShop
+            }
+            return dataConvert;
+          })
+          const dataManager = {
+            mentors: listManagerConverted
+          }
+          console.log('DataManageXXX', dataManager);
+          const resCreateMentors = await mentorApi.createMentors(idEditedShop, dataManager);
+          console.log('resCreateMentors', resCreateMentors);
+
+          setLoadingScreen(false);
+          message.success('Update shop successfully');
+          navigate(-1);
         }
-        console.log('dataCourse', dataCourse);
-        const resCreateCourse = await courseApi.createCourse(idNewShop, dataCourse);
-        console.log('resCreateCourse', resCreateCourse);
+        return;
+      }
+      else {
+        //create new shop
 
-        //create list mentor
-        const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
+        let idNewShop: string = '';
+        const resCreateShop: any = await shopApi.createShop(DataCreateNewShop);
+
+        if (resCreateShop.code === 200) {
+          idNewShop = resCreateShop?.results?.object?.shop?.id
+        }
+        console.log('resCreateShop', resCreateShop);
+
+        if (idNewShop) {
+
+          //create list price
+          const dataCourse = {
+            courses: formDataPage2?.priceList
+          }
+          console.log('dataCourse', dataCourse);
+          const resCreateCourse = await courseApi.createCourse(idNewShop, dataCourse);
+          console.log('resCreateCourse', resCreateCourse);
+
+          //create list mentor
+          const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
             const dataConvert = {
               ...item,
               shop_id: idNewShop
             }
             return dataConvert;
-        })
-        const dataManager = {
-          mentors: listManagerConverted
+          })
+          const dataManager = {
+            mentors: listManagerConverted
+          }
+          console.log('DataManageXXX', dataManager);
+          const resCreateMentors = await mentorApi.createMentors(idNewShop, dataManager);
+          console.log('resCreateMentors', resCreateMentors);
+
+          setLoadingScreen(false);
+          message.success('Create new shop successfully');
+          navigate(-1);
+          return;
         }
-        console.log('DataManageXXX', dataManager);
-        const resCreateMentors = await mentorApi.createMentors(idNewShop, dataManager);
-        console.log('resCreateMentors', resCreateMentors);
-
-
-        //final
-        setLoadingScreen(false);
-        message.success('Create new shop successfully');
-        navigate(-1);
       }
-
 
     } catch (error: any) {
       console.log('error CREATE NEW SHOP', error);
@@ -477,6 +520,8 @@ const NewStore = () => {
     }
   };
 
+
+  //get list thema
   useEffect(() => {
     ThemaApi.getList().then((res) => {
       // set data
@@ -492,6 +537,7 @@ const NewStore = () => {
       });
   }, []);
 
+  //get list category and hashtag by thema
   useEffect(() => {
     if (formDataPage1.thema) {
       console.log('formDataPage1.thema', formDataPage1.thema);
@@ -528,6 +574,7 @@ const NewStore = () => {
 
   }, [formDataPage1.thema]);
 
+  //update data when copy shop
   useEffect(() => {
     if (storeCopyFunc) {
       console.log('storeCopyFuncXX', storeCopyFunc);
@@ -565,6 +612,112 @@ const NewStore = () => {
     }
   }, [storeCopyFunc]);
 
+  //update data when edit Shop
+  useEffect(() => {
+    if (dataEditShop) {
+      console.log('dataEditShopXX', dataEditShop);
+
+      mentorApi.getList({
+        fields: JSON.stringify(["$all"]),
+        filter: JSON.stringify({ "shop_id": { "$eq": dataEditShop?.id } }),
+      }).then((res) => {
+        console.log('res listMentors', res);
+
+      }).catch((err) => {
+        console.log('err listMentors', err);
+      });
+      setStoreOwnerMembershipSetting({
+        id: dataEditShop?.user_id,
+        nickname: dataEditShop?.user?.nickname,
+      });
+      setFormDataPage1({
+        storeCopyFunc: '',
+        storeOwnerMembershipSetting: dataEditShop?.user?.nickname || '',
+        storeName: dataEditShop?.title || '',
+        storeNumber: dataEditShop?.contact_phone || '',
+        storeAddress: dataEditShop?.address || '',
+        storeAddressDetails: dataEditShop?.address_2 || '',
+        storeImages: dataEditShop?.images || [],
+        storeOpeningHours: dataEditShop?.opening_hours || '',
+        thema: dataEditShop?.category?.thema_id || '',
+        category: dataEditShop?.category_id || '',
+        regionProvince: dataEditShop?.shop_province || '',
+        regionDistrict: dataEditShop?.shop_district || '',
+        hashtag: dataEditShop?.tag_ids,
+        subwayLocation: dataEditShop?.subway_location || '',
+        subwayLine: dataEditShop?.subway_line || '',
+        subwayStation: dataEditShop?.subway_station || '',
+        chatMessageFunc: dataEditShop?.messenger_status || false,
+        stampSetting: dataEditShop?.loyalty_status || false,
+        reservationFuncSetting: dataEditShop?.reservation_status || false,
+        reservationFuncValue: dataEditShop?.reservation_times || [],
+      });
+      setFormDataPage2({
+        storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
+        priceList: dataEditShop?.courses || [],
+        manager: dataEditShop?.mentors || [],
+      })
+    }
+  }, [dataEditShop])
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (dataEditShop) {
+      console.log('dataEditShopXX', dataEditShop);
+
+      mentorApi.getList({
+        fields: JSON.stringify(["$all"]),
+        filter: JSON.stringify({ "shop_id": { "$eq": dataEditShop?.id } }),
+      }).then((res: any) => {
+        console.log('res listMentors', res);
+        if (isMounted) {
+          setIdEditedShop(dataEditShop?.id);
+          setStoreOwnerMembershipSetting({
+            id: dataEditShop?.user_id,
+            nickname: dataEditShop?.user?.nickname,
+          });
+          setFormDataPage1({
+            storeCopyFunc: '',
+            storeOwnerMembershipSetting: dataEditShop?.user?.nickname || '',
+            storeName: dataEditShop?.title || '',
+            storeNumber: dataEditShop?.contact_phone || '',
+            storeAddress: dataEditShop?.address || '',
+            storeAddressDetails: dataEditShop?.address_2 || '',
+            storeImages: dataEditShop?.images || [],
+            storeOpeningHours: dataEditShop?.opening_hours || '',
+            thema: dataEditShop?.category?.thema_id || '',
+            category: dataEditShop?.category_id || '',
+            regionProvince: dataEditShop?.shop_province || '',
+            regionDistrict: dataEditShop?.shop_district || '',
+            hashtag: dataEditShop?.tag_ids,
+            subwayLocation: dataEditShop?.subway_location || '',
+            subwayLine: dataEditShop?.subway_line || '',
+            subwayStation: dataEditShop?.subway_station || '',
+            chatMessageFunc: dataEditShop?.messenger_status || false,
+            stampSetting: dataEditShop?.loyalty_status || false,
+            reservationFuncSetting: dataEditShop?.reservation_status || false,
+            reservationFuncValue: dataEditShop?.reservation_times || [],
+          });
+          setFormDataPage2({
+            storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
+            priceList: dataEditShop?.courses || [],
+            manager: res?.results?.objects?.rows || [],
+          })
+        }
+      }).catch((err) => {
+        console.log('err listMentors', err);
+        message.error('Failed to get mentor list');
+        navigate(-1);
+      });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dataEditShop]);
+
+  //update data when edit Price
   useEffect(() => {
     if (dataEditPrice) {
       console.log('dataEditPrice', dataEditPrice);
@@ -572,6 +725,7 @@ const NewStore = () => {
     }
   }, [dataEditPrice]);
 
+  //update data when edit Manager
   useEffect(() => {
     if (dataEditManager) {
       setOpenModalCreateNewManage(true);
@@ -795,11 +949,11 @@ const NewStore = () => {
               {optionPart2Selected === "담당자" ?
                 <ManageTab
                   data={formDataPage2?.manager}
-                  onCLickCreateNew={() => { 
+                  onCLickCreateNew={() => {
                     setOpenModalCreateNewManage(true);
                     setDataEditManager(undefined);
                     setIndexEditManager(undefined);
-                   }}
+                  }}
                   onArchiveTick={(index: number) => {
                     console.log('index', index);
                   }}

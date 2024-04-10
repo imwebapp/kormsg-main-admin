@@ -92,7 +92,7 @@ export const ModalSelectReservationFunc = (props: IProps) => {
                 isOpen={isOpen}
                 onClose={handleCloseModalReservationFunc}
                 onSubmit={handleSubmitModalReservationFunc}
-                title="기업회원설정"
+                title="Reservation time"
                 disableSubmitBtn={!(reservationSelectedList.length > 0)}
             >
                 <div className='flex gap-3 mb-5'>
