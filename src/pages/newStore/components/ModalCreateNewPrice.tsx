@@ -7,7 +7,7 @@ import { BaseInput } from '../../../components/input/BaseInput';
 import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
 import { ChatMessageFuncPart1 } from './ChatMessageFuncPart1';
 import { useTranslation } from 'react-i18next';
-import { CurrencyInput } from '../../../components/input/CurrencyInput';
+import CurrencyInput from 'react-currency-input-field';
 
 interface IProps {
     isOpen: boolean;
@@ -193,45 +193,59 @@ export const ModalCreateNewPrice = (props: IProps) => {
                         Minutes
                     </BaseText>}
                 />
-                <BaseInput
-                    title="할인된 금액"
-                    placeholder="0"
-                    type="number"
-                    value={dataNewPrice.amountBeforeDiscount}
-                    onChange={(value) => handleInputChangeNewPrice('amountBeforeDiscount', value)}
-                />
-                {/* <BaseInput
-                    title="할인된 금액"
-                    placeholder="0"
-                    type="number"
-                    value={dataNewPrice.amountAfterDiscount}
-                    onChange={(value) => handleInputChangeNewPrice('amountAfterDiscount', value)}
-                /> */}
 
-                <CurrencyInput
-                    title="할인된 금액"
-                    styleTitle='text-dayBreakBlue500'
-                    placeholder="0"
-                    type="number"
-                    value={dataNewPrice.amountAfterDiscount}
-                    onChange={(value) => handleInputChangeNewPrice('amountAfterDiscount', value)}
-                />
+                <div className='flex flex-col gap-2'>
+                    <BaseText locale bold>할인된 금액</BaseText>
+                    <CurrencyInput
+                        id="input-example"
+                        name="input-name"
+                        placeholder="0"
+                        defaultValue={dataNewPrice.amountAfterDiscount}
+                        decimalsLimit={2}
+                        onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeDiscount', values?.value)}
+                        className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
+                    />
+                </div>
+
+                <div className='flex flex-col gap-2'>
+                    <BaseText locale bold color='text-dayBreakBlue500'>할인된 금액</BaseText>
+                    <CurrencyInput
+                        id="input-example"
+                        name="input-name"
+                        placeholder="0"
+                        defaultValue={dataNewPrice.amountAfterDiscount}
+                        decimalsLimit={2}
+                        onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterDiscount', values?.value)}
+                        className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
+                    />
+                </div>
 
                 {isShowPriceNight === '1' && <>
-                    <BaseInput
-                        title="야간 할인된 금액"
-                        placeholder="0"
-                        type="number"
-                        value={dataNewPrice.amountBeforeNightDiscount}
-                        onChange={(value) => handleInputChangeNewPrice('amountBeforeNightDiscount', value)}
-                    />
-                    <BaseInput
-                        title="야간 할인된 금액"
-                        placeholder="0"
-                        type="number"
-                        value={dataNewPrice.amountAfterNightDiscount}
-                        onChange={(value) => handleInputChangeNewPrice('amountAfterNightDiscount', value)}
-                    />
+                    <div className='flex flex-col gap-2'>
+                        <BaseText locale bold>야간 할인된 금액</BaseText>
+                        <CurrencyInput
+                            id="input-example"
+                            name="input-name"
+                            placeholder="0"
+                            defaultValue={dataNewPrice.amountBeforeNightDiscount}
+                            decimalsLimit={2}
+                            onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeNightDiscount', values?.value)}
+                            className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
+                        />
+                    </div>
+
+                    <div className='flex flex-col gap-2'>
+                        <BaseText locale bold color='text-dayBreakBlue500'>야간 할인된 금액</BaseText>
+                        <CurrencyInput
+                            id="input-example"
+                            name="input-name"
+                            placeholder="0"
+                            defaultValue={dataNewPrice.amountAfterNightDiscount}
+                            decimalsLimit={2}
+                            onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterNightDiscount', values?.value)}
+                            className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
+                        />
+                    </div>
                 </>}
 
                 <BaseInputSelect
