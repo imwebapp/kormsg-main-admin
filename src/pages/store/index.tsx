@@ -153,10 +153,6 @@ const StorePage = () => {
   const handleChangeTextKeyword = (e: any) => {
     setValueKeywordFilter(e.target.value);
   };
-  const handleSearch = () => {
-    const newFilter = { type: selectedFilterUser, value: valueKeywordFilter };
-    setFilter(newFilter);
-  };
 
   const getButtonStyle = (buttonKey: any) => {
     const isSelected = buttonKey === selectedButton;
@@ -265,57 +261,19 @@ const StorePage = () => {
         </div>
         <div>
           <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-            <div className="flex flex-wrap flex-1 gap-2.5 gap-y-2.5 justify-between content-center px-4 py-2.5 rounded-xl border border-solid border-stone-300 text-neutral-900">
-              <Select
-                suffixIcon={<CaretDownOutlined />}
-                bordered={false}
-                placeholder="ID"
-                defaultValue="ID"
-                onChange={handleChangeFilter}
-                options={[
-                  {
-                    value: "username",
-                    label: "ID",
-                  },
-                  {
-                    value: "nickname",
-                    label: "nickname",
-                  },
-                  {
-                    value: "email",
-                    label: "gmail",
-                  },
-                  {
-                    value: "title",
-                    label: "title",
-                  },
-                  {
-                    value: "contact_phone",
-                    label: "Phone number",
-                  },
-                ]}
-                className="flex-1"
-              />
-            </div>
             <Input
               className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
               placeholder="Keyword"
               onChange={handleChangeTextKeyword}
               value={valueKeywordFilter}
             />
-            <CustomButton
-              className="self-center justify-center h-full px-5 py-3 font-bold text-white bg-blue-600 rounded-xl"
-              onClick={handleSearch}
-            >
-              {t("Search")}
-            </CustomButton>
           </div>
         </div>
         <StoreListTable
           thema={selectedThema}
           typeStore={selectedButton}
           typeSorting={selectedSorting}
-          filter={filter}
+          valueSearch={valueKeywordFilter}
           onItemStoreClick={(item) => {
             if (
               item.events &&

@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TableColumnsType, notification } from "antd";
 import BaseText from "../text";
-import CustomButton from "../button";
 import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
-import { BaseInputSelect } from "../input/BaseInputSelect";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
@@ -21,7 +19,7 @@ type StoreListTableProps = {
   typeStore?: string;
   thema?: string;
   typeSorting?: string;
-  filter?: { type: string; value: any };
+  valueSearch?: string;
   onItemStoreClick?: (item: any) => void;
   isUpdate?: Number;
   onRefresh?: () => void;
@@ -32,10 +30,10 @@ export default function StoreListTable(props: StoreListTableProps) {
     typeStore,
     thema,
     typeSorting,
-    filter,
     onItemStoreClick,
     onRefresh,
     isUpdate,
+    valueSearch,
   } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -44,7 +42,11 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
   const [listImageShop, setListImageShop] = useState([]);
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => { };
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
+  const [positionStore, setPositionStore] = useState({
+    lat: 0,
+    long: 0,
+  });
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -89,11 +91,8 @@ export default function StoreListTable(props: StoreListTableProps) {
       onItemStoreClick(itemId);
     }
   };
-  const handleClick = () => {
-    console.log("Div đã được click");
-  };
+  const handleClick = () => {};
   const handlePageChange = (page: any) => {
-    console.log("Trang hiện tại:", page);
     setCurrentPage(page);
   };
   const cloneStore = async (id: string) => {
@@ -141,7 +140,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           onRefresh();
         }
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   const rejectPendingShop = async (id: string) => {
     try {
@@ -160,7 +159,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           onRefresh();
         }
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   function generateOrder(sorting: string | undefined) {
@@ -198,41 +197,46 @@ export default function StoreListTable(props: StoreListTableProps) {
       default:
         break;
     }
-    if (
-      filter &&
-      (filter.type === "contact_phone" || filter.type === "title") &&
-      filter.value !== ""
-    ) {
-      if (filterString !== "") {
-        filterString += ", ";
-      }
-      filterString += `"${filter.type}":{"$iLike":"%${filter.value}%"}`;
-    }
+    // if (
+    //   filter &&
+    //   (filter.type === "contact_phone" || filter.type === "title") &&
+    //   filter.value !== ""
+    // ) {
+    //   if (filterString !== "") {
+    //     filterString += ", ";
+    //   }
+    //   filterString += `"${filter.type}":{"$iLike":"%${filter.value}%"}`;
+    // }
 
     return `{${filterString}}`;
   }
   const generateFields = () => {
-    console.log("filter", filter);
     if (typeStore == STORE_STATUS.eventOngoing) {
       // default event on going
       return '["$all",{"events":["$all",{"$filter":{}}]}]';
     }
-    let filterString = "";
-    if (
-      filter && // check exist filter
-      filter.type !== "contact_phone" && // check not phone user
-      filter.type !== "title" && // check not title user
-      filter.value !== "" // check empty value
-    ) {
-      filterString = `,{"$filter":{"${filter.type}":{"$iLike":"%${filter.value}%"}}}`;
+    const convertFilter: any = {};
+    if (valueSearch !== "") {
+      convertFilter["$filter"] = {
+        $or: [
+          { username: { $ilike: `%${valueSearch}%` } },
+          { nickname: { $ilike: `%${valueSearch}%` } },
+          { email: { $ilike: `%${valueSearch}%` } },
+        ],
+      };
     }
 
+    // {"user":["$all",${JSON.stringify(
+    //   convertFilter
+    // )}]}
     // Thêm điều kiện category nếu có
     let filterThema = "";
     if (thema && thema !== "" && thema !== t("All")) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"${filterString}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",${JSON.stringify(
+      convertFilter
+    )}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
     console.log("fields", fields);
 
     return fields;
@@ -265,28 +269,35 @@ export default function StoreListTable(props: StoreListTableProps) {
 
   useEffect(() => {
     getListStore();
-  }, [typeStore, typeSorting, filter, thema, isUpdate]);
+  }, [typeStore, typeSorting, thema, isUpdate, valueSearch]);
+  useEffect(() => {
+    if (positionStore.lat !== 0 && positionStore.long !== 0) {
+      generateMap(positionStore.lat, positionStore.long);
+    }
+    return () => {};
+  }, [positionStore]);
   const generateMap = (latitude: any, longitude: any) => {
     if (!naver.maps) window.location.reload();
-    const mapElement = document.getElementById("map");
-    if (mapElement && mapElement.innerHTML !== "") {
-      mapElement.innerHTML = ""; // Xóa nội dung của thẻ div
+    const container = document.getElementById("map");
+    if (container) {
+      if (container && container.innerHTML !== "") {
+        container.innerHTML = ""; // Xóa nội dung của thẻ div
+      }
+      const map = new naver.maps.Map("map", {
+        center: new naver.maps.LatLng(latitude, longitude),
+        zoom: 18,
+      });
+      new naver.maps.Marker({
+        position: new naver.maps.LatLng(latitude, longitude),
+        map,
+        icon: {
+          content: `<div style="position: relative">
+            <img src="${Images.pinMap}" style="width : 40px; height: 47px" alt="">
+          </div>`,
+          size: new naver.maps.Size(30, 35),
+        },
+      });
     }
-    const map = new naver.maps.Map("map", {
-      center: new naver.maps.LatLng(latitude, longitude),
-      zoom: 18,
-    });
-    new naver.maps.Marker({
-      position: new naver.maps.LatLng(latitude, longitude),
-      map,
-      icon: {
-        content: `<div style="position: relative">
-          <img src="${Images.mapPin}" style="width : 40px; height: 47px" alt="">
-          <img src="${Images.discount1}" style="position: absolute; width : 30px; height: 30px; top: 5px; left : 5px; border-radius: 30px" />
-        </div>`,
-        size: new naver.maps.Size(30, 35),
-      },
-    });
   };
   let dynamicColumns: TableColumnsType<any> = [
     {
@@ -342,7 +353,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Store"),
-      render: ({ }) => (
+      render: ({}) => (
         <div
           className="min-w-[30px] cursor-pointer"
           onClick={() => handleClick()}
@@ -355,10 +366,12 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("Management"),
       render: (text, record) => (
         <div className="flex flex-row items-center w-[50px] gap-2">
-          <img src={Images.edit2} className="w-6 h-6 cursor-pointer"
+          <img
+            src={Images.edit2}
+            className="w-6 h-6 cursor-pointer"
             onClick={() => {
               console.log("edit store", record);
-              navigate(Url.newStore, { state: { dataEdit: record } })
+              navigate(Url.newStore, { state: { dataEdit: record } });
             }}
           />
           <img
@@ -453,7 +466,12 @@ export default function StoreListTable(props: StoreListTableProps) {
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 setIsShowModalMap(true);
-                generateMap(record.latitude, record.longitude);
+                console.log(record);
+
+                setPositionStore({
+                  lat: record.latitude,
+                  long: record.longitude,
+                });
               }}
             />
             <img
@@ -522,7 +540,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             pointerEvents: "none",
           }}
         >
-          <div id="map" />
+          <div id="map" style={{ width: "961px", height: "700px" }} />
         </div>
       </BaseModal2>
       <BaseModal2

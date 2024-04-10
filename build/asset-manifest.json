@@ -1,9 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.ff81c5bd.css",
-    "main.js": "/static/js/main.3615d42c.js",
+    "main.css": "/static/css/main.e00ad5e4.css",
+    "main.js": "/static/js/main.42ca2ccf.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
+    "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
     "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
@@ -42,12 +43,12 @@
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.ff81c5bd.css.map": "/static/css/main.ff81c5bd.css.map",
-    "main.3615d42c.js.map": "/static/js/main.3615d42c.js.map",
+    "main.e00ad5e4.css.map": "/static/css/main.e00ad5e4.css.map",
+    "main.42ca2ccf.js.map": "/static/js/main.42ca2ccf.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ff81c5bd.css",
-    "static/js/main.3615d42c.js"
+    "static/css/main.e00ad5e4.css",
+    "static/js/main.42ca2ccf.js"
   ]
 }

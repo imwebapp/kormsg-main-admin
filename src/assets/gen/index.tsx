@@ -20,6 +20,7 @@ export default class Images {
     static readonly information = require("../../../src/assets/images/Information.png");
     static readonly krFlags = require("../../../src/assets/images/KR Flags.png");
     static readonly mapPoint = require("../../../src/assets/images/Map Point.png");
+    static readonly pinMap = require("../../../src/assets/images/Pin Map.png");
     static readonly pointHistory = require("../../../src/assets/images/Point History.png");
     static readonly pointHistory2 = require("../../../src/assets/images/Point History2.png");
     static readonly reports = require("../../../src/assets/images/Reports.png");
