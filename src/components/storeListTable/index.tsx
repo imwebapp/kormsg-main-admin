@@ -504,7 +504,12 @@ export default function StoreListTable(props: StoreListTableProps) {
             >
               Reject
             </button>
-            <img src={Images.edit2} alt="" className="w-7 h-7 cursor-pointer" />
+            <img src={Images.edit2} alt="" className="w-7 h-7 cursor-pointer"
+              onClick={() => {
+                console.log("edit store", record);
+                navigate(Url.newStore, { state: { dataEdit: record } });
+              }}
+            />
           </div>
         ),
       },
