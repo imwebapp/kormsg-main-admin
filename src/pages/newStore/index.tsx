@@ -1,39 +1,36 @@
 import { useEffect, useState } from "react";
-import { BaseText, CustomButton, HeaderComponent } from "../../components";
+import { BaseText, CustomButton } from "../../components";
 
-import { Descriptions, Layout, Spin } from "antd";
+import { CheckOutlined } from "@ant-design/icons";
+import { App, Layout, Spin } from "antd";
+import { useDaumPostcodePopup } from 'react-daum-postcode';
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
+import { CategoryApi } from "../../apis/categoryApi";
+import { courseApi } from "../../apis/courseApi";
+import { mentorApi } from "../../apis/mentorApi";
+import { shopApi } from "../../apis/shopApi";
+import { TagApi } from "../../apis/tagApi";
+import { ThemaApi } from "../../apis/themaApi";
+import { UploadApi } from "../../apis/uploadApi";
 import Images from "../../assets/gen";
-import { CheckOutlined, DownOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseInputSelect } from "../../components/input/BaseInputSelect";
-import { ListCategoryPart1 } from "./components/ListCategoryPart1";
-import { ChatMessageFuncPart1 } from "./components/ChatMessageFuncPart1";
-import { BaseModal } from "../../components/modal/BaseModal";
-import { BaseInputImage } from "../../components/input/BaseInputImage";
 import { classNames, handleConvertCurrency } from "../../utils/common";
-import { LIST_REGION, STATION } from "../../utils/constants";
+import { ChatMessageFuncPart1 } from "./components/ChatMessageFuncPart1";
+import { ListCategoryPart1 } from "./components/ListCategoryPart1";
+import { ListSelectImage } from "./components/ListSelectImage";
 import { ManageTab } from "./components/ManageTab";
-import { PriceListTab } from "./components/PriceListTab";
 import { ModalCreateNewManage } from "./components/ModalCreateNewManage";
 import { ModalCreateNewPrice } from "./components/ModalCreateNewPrice";
-import { ThemaApi } from "../../apis/themaApi";
-import { CategoryApi } from "../../apis/categoryApi";
-import { TagApi } from "../../apis/tagApi";
-import { useDaumPostcodePopup } from 'react-daum-postcode'
-import { InputMultiImage } from "../../components/input/InputMultiImage";
-import { ListSelectImage } from "./components/ListSelectImage";
-import { UserFilter } from "./components/UserFilter";
-import { ShopFilter } from "./components/ShopFilter";
 import { ModalSelectOpeningHours } from "./components/ModalSelectOpeningHours";
-import { UploadApi } from "../../apis/uploadApi";
-import { App } from 'antd';
-import { shopApi } from "../../apis/shopApi";
-import { courseApi } from "../../apis/courseApi";
 import { ModalSelectRegion } from "./components/ModalSelectRegion";
 import { ModalSelectReservationFunc } from "./components/ModalSelectReservationFunc";
-import { mentorApi } from "../../apis/mentorApi";
+import { ModalSelectSubway } from "./components/ModalSelectSubway";
+import { PriceListTab } from "./components/PriceListTab";
+import { ShopFilter } from "./components/ShopFilter";
+import { UserFilter } from "./components/UserFilter";
+import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -130,14 +127,7 @@ const NewStore = () => {
 
   const [openModalOpenHours, setOpenModalOpenHours] = useState<boolean>(false);
   const [openModalRegion, setOpenModalRegion] = useState<boolean>(false);
-
   const [openModalSubway, setOpenModalSubway] = useState<boolean>(false);
-  const [subwaySelected, setSubwaySelected] = useState<any>();
-  const [subwaySelectedChild, setSubwaySelectedChild] = useState<any>();
-  const [subwaySelectedDetails, setSubwaySelectedDetails] = useState<any>();
-
-  console.log('subway123123123::::::', subwaySelected, ':::::', subwaySelectedChild, ';::::::::', subwaySelectedDetails);
-
   const [openModalReservationFunc, setOpenModalReservationFunc] = useState<boolean>(false);
 
   const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
@@ -184,9 +174,9 @@ const NewStore = () => {
     setOpenModalSubway(false);
   };
 
-  const handleSubmitSubway = () => {
-    console.log('submit subway');
-    setFormDataPage1({ ...formDataPage1, subwayLocation: subwaySelected.name, subwayLine: subwaySelectedChild.name, subwayStation: subwaySelectedDetails });
+  const handleSubmitSubway = (value: any) => {
+    console.log('submit subway', value);
+    setFormDataPage1({ ...formDataPage1, subwayLocation: value?.subwaySelected.name, subwayLine: value?.subwaySelectedChild.name, subwayStation: value?.subwaySelectedDetails });
     setOpenModalSubway(false);
   };
 
@@ -745,7 +735,7 @@ const NewStore = () => {
                 bold
                 className="line-clamp-1"
               >
-                New Shop
+                {idEditedShop ? 'Edit Shop' : 'New Shop'}
               </BaseText>
             </div>
             <div className="flex flex-row items-center">
@@ -817,7 +807,8 @@ const NewStore = () => {
                 사진은 최소 1장이상 등록해주세요
               </BaseText>
             </div>
-            <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
+            {/* <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} /> */}
+            <ListSelectImageDrag onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
             <ListCategoryPart1 isLocale={false} title="영업시간" value={formDataPage1?.storeOpeningHours} placeholder={t("영업시간을 설정해주세요")} onClick={() => { setOpenModalOpenHours(true) }} />
             <BaseInputSelect
               title="Theme"
@@ -879,8 +870,13 @@ const NewStore = () => {
               title="예약기능 설정"
               value={formDataPage1?.reservationFuncSetting === '' ? '' : (formDataPage1?.reservationFuncSetting ? '1' : '2')}
               onClick={(value) => {
-                handleInputChange('reservationFuncSetting', value === '1' ? true : false);
-              }}
+                const isActivated = value === '1';
+                setFormDataPage1({
+                    ...formDataPage1,
+                    reservationFuncSetting: isActivated,
+                    reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : []
+                });
+            }}
               options={[
                 { value: '1', label: '활성화' },
                 { value: '2', label: '비활성화' }
@@ -1222,102 +1218,14 @@ const NewStore = () => {
           dataDistrict={formDataPage1?.regionDistrict}
         />
 
-        <BaseModal
+        <ModalSelectSubway
           isOpen={openModalSubway}
           onClose={handleCloseModalSubway}
-          onSubmit={handleSubmitSubway}
-          title="뒤로"
-          disableSubmitBtn={!subwaySelectedDetails}
-          isHideAction={!subwaySelectedChild}
-        >
-          <div className="flex flex-col gap-4">
-            {
-              subwaySelected ? (
-                <>
-                  {
-                    subwaySelectedChild ? (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <img src={Images.arrowLeft} className="w-6 h-6" onClick={() => { setSubwaySelectedDetails(undefined); setSubwaySelectedChild(undefined) }} />
-                          <BaseText size={24} medium>
-                            {subwaySelectedChild?.name}
-                          </BaseText>
-                        </div>
-                        <div className="grid grid-cols-4 gap-3 grid-flow-rows max-h-[400px]">
-                          {
-                            subwaySelectedChild?.stationSubwayList.map((item: string, index: number) => {
-                              return (
-                                <div
-                                  key={index}
-                                  className={classNames('flex h-fit items-center justify-center px-8 py-3 rounded-lg', subwaySelectedDetails === item ? 'bg-black' : 'bg-darkNight50')}
-                                  onClick={() => { setSubwaySelectedDetails(item) }}
-                                >
-                                  <BaseText locale size={16} bold className={classNames(subwaySelectedDetails === item ? 'text-white' : '')} >
-                                    {item}
-                                  </BaseText>
-                                </div>
-                              )
-                            })
-                          }
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <BaseText size={24} medium>
-                          지하철
-                        </BaseText>
-                        <div className="flex items-center gap-2">
-                          <img src={Images.arrowLeft} className="w-6 h-6" onClick={() => { setSubwaySelectedChild(undefined); setSubwaySelected(undefined) }} />
-                          <BaseText size={24} medium>
-                            {subwaySelected?.name}
-                          </BaseText>
-                        </div>
-                        <div className="grid grid-cols-3 gap-3 grid-flow-rows">
-                          {
-                            subwaySelected?.stationLineList.map((item: any, index: number) => {
-                              return (
-                                <div
-                                  key={index}
-                                  style={{ borderLeftColor: item.color }}
-                                  onClick={() => { setSubwaySelectedChild(item) }}
-                                  className={classNames('flex px-4 py-[20px] border-l-8', subwaySelectedChild?.name === item?.name ? 'bg-black' : '')}
-                                >
-                                  <BaseText locale size={16} bold className={classNames(subwaySelectedChild?.name === item?.name ? 'text-white' : '')}>
-                                    {item?.name}
-                                  </BaseText>
-                                </div>
-                              )
-                            })
-                          }
-                        </div>
-                      </>
-                    )
-                  }
-                </>
-              ) : (
-                <>
-                  <div className="grid grid-cols-3 gap-3 grid-flow-rows">
-                    {
-                      STATION.map((item, index) => {
-                        return (
-                          <div
-                            key={index}
-                            className={classNames('flex h-fit items-center justify-center px-8 py-3 rounded-lg', setSubwaySelected.name === item.name ? 'bg-black' : 'bg-darkNight50')}
-                            onClick={() => { setSubwaySelected(item) }}
-                          >
-                            <BaseText locale size={16} bold className={classNames(setSubwaySelected.name === item.name ? 'text-white' : '')} >
-                              {item.name}
-                            </BaseText>
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
-                </>
-              )
-            }
-          </div>
-        </BaseModal>
+          onSubmit={(value) => handleSubmitSubway(value)}
+          dataSubway={formDataPage1?.subwayLocation}
+          dataSubwayChild={formDataPage1?.subwayLine}
+          dataSubwayDetails={formDataPage1?.subwayStation}
+        />
 
         <ModalSelectReservationFunc
           isOpen={openModalReservationFunc}
