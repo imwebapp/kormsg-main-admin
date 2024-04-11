@@ -190,7 +190,7 @@ const StorePage = () => {
     ];
 
     return (
-      <div className="flex flex-row gap-4 mt-1">
+      <div className="flex flex-row gap-4 mt-1 mb-5">
         {buttonData.map(({ status, label, count }) => (
           <CustomButton
             key={status}
@@ -210,7 +210,14 @@ const StorePage = () => {
     <>
       <div className="p-6">
         <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
-          {listButton()}
+          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap w-full my-4">
+            <Input
+              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 max-md:pr-5"
+              placeholder="Keyword"
+              onChange={handleChangeTextKeyword}
+              value={valueKeywordFilter}
+            />
+          </div>
           <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
@@ -255,16 +262,8 @@ const StorePage = () => {
             </CustomButton>
           </div>
         </div>
-        <div>
-          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-            <Input
-              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 max-md:pr-5"
-              placeholder="Keyword"
-              onChange={handleChangeTextKeyword}
-              value={valueKeywordFilter}
-            />
-          </div>
-        </div>
+        {listButton()}
+
         <StoreListTable
           thema={selectedThema}
           typeStore={selectedButton}
