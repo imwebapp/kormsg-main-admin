@@ -194,57 +194,78 @@ export const ModalCreateNewPrice = (props: IProps) => {
                     </BaseText>}
                 />
 
-                <div className='flex flex-col gap-2'>
-                    <BaseText locale bold>할인된 금액</BaseText>
-                    <CurrencyInput
-                        id="input-example"
-                        name="input-name"
-                        placeholder="0"
-                        defaultValue={dataNewPrice.amountAfterDiscount}
-                        decimalsLimit={2}
-                        onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeDiscount', values?.value)}
-                        className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
-                    />
+                <div className='relative'>
+                    <div className='flex flex-col gap-2'>
+                        <BaseText locale bold>{isShowPriceNight === '1' ? '주간 할인전 금액' : '할인전 금액'}</BaseText>
+                        <div className='relative'>
+                            <CurrencyInput
+                                id="input-example"
+                                name="input-name"
+                                placeholder="0"
+                                defaultValue={dataNewPrice?.amountBeforeDiscount}
+                                decimalsLimit={2}
+                                onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeDiscount', values?.value)}
+                                className='w-full p-3 pr-8 font-bold rounded-lg bg-darkNight50 text-darkNight900 focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50'
+                            />
+                            <img src={Images.krw} className='absolute w-6 h-6 transform -translate-y-1/2 top-1/2 right-2' />
+                        </div>
+                    </div>
                 </div>
 
-                <div className='flex flex-col gap-2'>
-                    <BaseText locale bold color='text-dayBreakBlue500'>할인된 금액</BaseText>
-                    <CurrencyInput
-                        id="input-example"
-                        name="input-name"
-                        placeholder="0"
-                        defaultValue={dataNewPrice.amountAfterDiscount}
-                        decimalsLimit={2}
-                        onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterDiscount', values?.value)}
-                        className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
-                    />
+                <div className='relative'>
+                    <div className='flex flex-col gap-2'>
+                        <BaseText locale bold color='text-dayBreakBlue500'>{isShowPriceNight === '1' ? '주간 할인된 금액' : '할인된 금액'}</BaseText>
+                        <div className='relative'>
+                            <CurrencyInput
+                                id="input-example"
+                                name="input-name"
+                                placeholder="0"
+                                defaultValue={dataNewPrice?.amountAfterDiscount}
+                                decimalsLimit={2}
+                                onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterDiscount', values?.value)}
+                                className='w-full p-3 pr-8 font-bold rounded-lg bg-darkNight50 text-darkNight900 focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50'
+                            />
+                            <img src={Images.krwBlue} className='absolute w-6 h-6 transform -translate-y-1/2 top-1/2 right-2' />
+                        </div>
+                    </div>
                 </div>
 
                 {isShowPriceNight === '1' && <>
-                    <div className='flex flex-col gap-2'>
-                        <BaseText locale bold>야간 할인된 금액</BaseText>
-                        <CurrencyInput
-                            id="input-example"
-                            name="input-name"
-                            placeholder="0"
-                            defaultValue={dataNewPrice.amountBeforeNightDiscount}
-                            decimalsLimit={2}
-                            onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeNightDiscount', values?.value)}
-                            className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
-                        />
+
+                    <div className='relative'>
+                        <div className='flex flex-col gap-2'>
+                            <BaseText locale bold>야간 할인전 금액</BaseText>
+                            <div className='relative'>
+                                <CurrencyInput
+                                    id="input-example"
+                                    name="input-name"
+                                    placeholder="0"
+                                    defaultValue={dataNewPrice?.amountBeforeNightDiscount}
+                                    decimalsLimit={2}
+                                    onValueChange={(value, name, values) => handleInputChangeNewPrice('amountBeforeNightDiscount', values?.value)}
+                                    className='w-full p-3 pr-8 font-bold rounded-lg bg-darkNight50 text-darkNight900 focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50'
+                                />
+                                <img src={Images.krw} className='absolute w-6 h-6 transform -translate-y-1/2 top-1/2 right-2' />
+                            </div>
+                        </div>
                     </div>
 
-                    <div className='flex flex-col gap-2'>
-                        <BaseText locale bold color='text-dayBreakBlue500'>야간 할인된 금액</BaseText>
-                        <CurrencyInput
-                            id="input-example"
-                            name="input-name"
-                            placeholder="0"
-                            defaultValue={dataNewPrice.amountAfterNightDiscount}
-                            decimalsLimit={2}
-                            onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterNightDiscount', values?.value)}
-                            className='p-3 bg-darkNight50 rounded-lg text-darkNight900 w-full focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50 font-bold'
-                        />
+                    <div className='relative'>
+                        <div className='flex flex-col gap-2'>
+                            <BaseText locale bold color='text-dayBreakBlue500'>야간 할인된 금액</BaseText>
+                            <div className='relative'>
+                                <CurrencyInput
+                                    id="input-example"
+                                    name="input-name"
+                                    placeholder="0"
+                                    defaultValue={dataNewPrice?.amountAfterNightDiscount}
+                                    decimalsLimit={2}
+                                    onValueChange={(value, name, values) => handleInputChangeNewPrice('amountAfterNightDiscount', values?.value)}
+                                    className='w-full p-3 pr-8 font-bold rounded-lg bg-darkNight50 text-darkNight900 focus:outline-none focus:ring-2 focus:ring-darkNight100 focus:ring-opacity-50'
+                                />
+                                <img src={Images.krwBlue} className='absolute w-6 h-6 transform -translate-y-1/2 top-1/2 right-2' />
+                            </div>
+                        </div>
                     </div>
                 </>}
 
