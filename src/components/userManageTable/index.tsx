@@ -1,11 +1,11 @@
-import { TableColumnsType, Tooltip } from "antd";
+import { Popover, TableColumnsType, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Images from "../../assets/gen";
 import { Url } from "../../routers/paths";
 import { User, checkAccountType, convertDate } from "../../utils/common";
-import { INIT_TAB_USER_DETAIL } from "../../utils/constants";
+import { INIT_TAB_USER_DETAIL, PLATFORM } from "../../utils/constants";
 import CustomButton from "../button";
 import { BaseInput } from "../input/BaseInput";
 import BaseTable from "../table";
@@ -41,13 +41,26 @@ type UserManageTableProps = {
   className?: string; // for tailwindcss
   reload?: boolean;
   onOpenJumpUp: (id: number, jumpLimit: number) => void;
+  onDeleteUser: (id: string) => void;
 };
 
 export default function UserManageTable(props: UserManageTableProps) {
-  const { className, data, reload, onOpenJumpUp } = props;
+  const { className, data, reload, onOpenJumpUp, onDeleteUser } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
+  const [open, setOpen] = useState(false);
+  const [idOpen, setIdOpen] = useState<string>("");
+
+  const handleOpenChange = (newOpen: boolean, id: string) => {
+    setIdOpen(id);
+    setOpen(newOpen);
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    setOpen(false);
+    onDeleteUser && onDeleteUser(id);
+  };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log("onSelectChange", newSelectedRowKeys);
@@ -170,9 +183,13 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Date create/ By"),
-      render: ({ created_at }) => (
+      render: ({ platform_create, created_at }) => (
         <div className="flex flex-col items-center gap-2 min-w-[90px]">
-          <img src={Images.web} className="w-6 h-6" />
+          {
+            platform_create === PLATFORM.ANDROID ? <img src={Images.android} className="w-6 h-6" /> :
+              platform_create === PLATFORM.APPLE ? <img src={Images.iphone} className="w-6 h-6" /> :
+                <img src={Images.web} className="w-6 h-6" />
+          }
           <BaseText medium size={16}>
             {convertDate(created_at)}
           </BaseText>
@@ -192,9 +209,9 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Post/comment/ review/requests"),
-      render: ({ }) => (
+      render: ({ totalPost, totalReview}) => (
         <BaseText size={16} medium>
-          0/0/0/0
+          {totalPost}/0/{totalReview}/0
         </BaseText>
       ),
     },
@@ -205,7 +222,33 @@ export default function UserManageTable(props: UserManageTableProps) {
           <Tooltip title={t('Edit')}>
             <img src={Images.edit} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION, showModalEdit: true } })} />
           </Tooltip>
-          <img src={Images.dot} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION } })} />
+          <Popover
+            placement="bottomRight"
+            content={(
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION, showModalEdit: true } })}>
+                  <img src={Images.edit2} className="w-5 h-5 cursor-pointer" />
+                  <BaseText locale size={16}>
+                    Edit information
+                  </BaseText>
+                </div>
+                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => handleDeleteUser(item.id)}>
+                  <img src={Images.trash} className="w-5 h-5 cursor-pointer" />
+                  <BaseText locale size={16}>
+                    Delete user
+                  </BaseText>
+                </div>
+              </div>
+            )}
+            trigger="click"
+            open={idOpen === item.id ? open : false}
+            onOpenChange={(newOpen) => handleOpenChange(newOpen, item.id)}
+          >
+            <img
+              src={Images.dot}
+              className="w-6 h-6 cursor-pointer"
+            />
+          </Popover>
         </div>
       ),
     },

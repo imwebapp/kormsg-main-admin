@@ -186,6 +186,11 @@ export const CATEGORY_PART1 = {
   중국: "중국",
 };
 
+export const PLATFORM = {
+  APPLE: 'APPLE',
+  ANDROID: 'ANDROID',
+  BROWSER: 'BROWSER',
+}
 export const LIST_REGION = [
   {
     id: "서울",
