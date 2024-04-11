@@ -14,6 +14,8 @@ import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import { Url } from "../../routers/paths";
 import { useNavigate } from "react-router-dom";
+import { BaseInput } from "../input/BaseInput";
+import { userApi } from "../../apis/userApi";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -41,12 +43,16 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
+  const [isShowInfo, setIsShowInfo] = useState(false);
   const [listImageShop, setListImageShop] = useState([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const [positionStore, setPositionStore] = useState({
     lat: 0,
     long: 0,
   });
+  const [isShowDataHistory, setIsShowDataHistory] = useState(false);
+  const nameGroup = useRef("");
+  const [dataHistory, setDataHistory] = useState<any[]>([]);
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -263,6 +269,25 @@ export default function StoreListTable(props: StoreListTableProps) {
         console.log("err: ", err);
       });
   };
+  const getInfoPaymentHistory = (userId: string) => {
+    try {
+      userApi
+        .getListPaymentHistory({
+          fields: JSON.stringify(["$all"]),
+          filter: JSON.stringify({
+            user_id: `${userId}`,
+          }),
+          limit: 50,
+          page: 1,
+        })
+        .then((res: any) => {
+          setDataHistory(res.results?.objects?.rows);
+        })
+        .catch((err) => {
+          console.log("err getList PaymentHistory API", err);
+        });
+    } catch (error) {}
+  };
   useEffect(() => {
     getListStore();
   }, []);
@@ -478,7 +503,9 @@ export default function StoreListTable(props: StoreListTableProps) {
               src={Images.information}
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
-                console.log(record);
+                setIsShowInfo(!isShowInfo);
+                nameGroup.current = record.user.groups[0];
+                getInfoPaymentHistory(record.user.id);
               }}
             />
           </div>
@@ -504,7 +531,10 @@ export default function StoreListTable(props: StoreListTableProps) {
             >
               Reject
             </button>
-            <img src={Images.edit2} alt="" className="w-7 h-7 cursor-pointer"
+            <img
+              src={Images.edit2}
+              alt=""
+              className="w-7 h-7 cursor-pointer"
               onClick={() => {
                 console.log("edit store", record);
                 navigate(Url.newStore, { state: { dataEdit: record } });
@@ -563,6 +593,69 @@ export default function StoreListTable(props: StoreListTableProps) {
             </div>
           ))}
         </Slide>
+      </BaseModal2>
+      <BaseModal2
+        isOpen={isShowInfo}
+        onClose={() => {
+          setIsShowInfo(false);
+        }}
+        title="More"
+      >
+        <BaseInput
+          title="Group"
+          value={nameGroup.current}
+          disabled
+          className="mb-2"
+        />
+        <BaseText locale bold>
+          Memo
+        </BaseText>
+        <div className="mb-2">
+          <BaseText>
+            Depositor/Contact/Deposit date/Deposit amount/Exposure bulletin
+            board/Start date and End date/Uniquene
+          </BaseText>
+        </div>
+        <div className="flex gap-2 text-base leading-6  max-md:flex-wrap">
+          <BaseInput
+            value={dataHistory[0]?.content}
+            disabled
+            className="w-full"
+          />
+          <button
+            className="justify-center px-5 py-3 font-bold text-blue-600 whitespace-nowrap bg-sky-100 rounded-xl"
+            onClick={() => {
+              setIsShowDataHistory(!isShowDataHistory);
+            }}
+          >
+            Detail
+          </button>
+        </div>
+      </BaseModal2>
+      <BaseModal2
+        isOpen={isShowDataHistory}
+        onClose={() => {
+          setIsShowDataHistory(false);
+        }}
+      >
+        {dataHistory.map((item) => (
+          <div
+            className="flex flex-col border-b border-black py-2"
+            key={item.id}
+          >
+            <div style={{ flexDirection: "row", display: "flex" }}>
+              <span className="font-[700] text-[#0078FF]">
+                {moment(
+                  new Date(parseInt(item.created_at_unix_timestamp))
+                ).format("YYYY-MM-DD")}{" "}
+                |{" "}
+              </span>
+              <span className="font-[700] ml-2.5">담당자 아이디</span>
+              <span className="font-[700] text-[#0078FF]">:master</span>
+            </div>
+            <span>{item.content}</span>
+          </div>
+        ))}
       </BaseModal2>
     </>
   );
