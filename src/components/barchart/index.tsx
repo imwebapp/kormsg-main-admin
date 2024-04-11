@@ -33,7 +33,8 @@ export default function BaseBarChart() {
   const [xLabels, setxLabels] = useState<Array<string>>([]);
   const { t } = useTranslation();
   const [data, setData] = useState<Array<BarChartDataInterface>>([]);
-  const [dateSelected, setDateSelected] = useState("today");
+  const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
+
   const [optionTime, setOptionTime] = useState(t("Days"));
   const getInfoAnalytics = async () => {
     const params = {
@@ -41,15 +42,7 @@ export default function BaseBarChart() {
       dimensions: [{ name: optionTime === t("Hours") ? "hour" : "date" }],
       metrics: [{ name: "screenPageViews" }],
       dateRanges: [
-        {
-          startDate:
-            dateSelected !== null && dateSelected !== "today"
-              ? dateSelected
-              : optionTime === "Hours"
-              ? "today"
-              : "30daysAgo",
-          endDate: "today",
-        },
+        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
       ],
       orderBys: [
         {
@@ -60,40 +53,21 @@ export default function BaseBarChart() {
         },
       ],
     };
-    if (dayjs(dateSelected).isBefore(dayjs()) || dateSelected === "today") {
-      let result = await analyticsApi.getInfo(params);
-      //  get user active today
-      const convertedData = result.data[0].rows.map((item: any) => ({
-        label:
-          optionTime === "Hours"
-            ? item.dimensionValues[0].value
-            : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("MM/DD"),
-        value: item.metricValues[0].value,
-      }));
-      const selectedData = convertedData.filter(
-        (item: any) =>
-          item.label === dayjs(dateSelected, "YYYY-MM-DD").format("MM/DD")
-      );
-      if (optionTime !== "Hours") {
-        if (dateSelected && dateSelected !== "today") {
-          setData(selectedData);
-        } else {
-          setData(convertedData.slice(-30));
-        }
-      } else {
-        setData(convertedData.slice(-30));
-      }
-    } else {
-      notification.warning({
-        message: "Please select a date smaller than the current date",
-        description: "Date Invalid",
-      });
-    }
+    let result = await analyticsApi.getInfo(params);
+    //  get user active today
+    const convertedData = result.data[0].rows.map((item: any) => ({
+      label:
+        optionTime === "Hours"
+          ? item.dimensionValues[0].value
+          : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("MM/DD"),
+      value: item.metricValues[0].value,
+    }));
+    setData(convertedData.slice(-30));
   };
   useEffect(() => {
     getInfoAnalytics();
     return () => {};
-  }, [dateSelected, optionTime]);
+  }, [dateTimeSelect, optionTime]);
 
   useEffect(() => {
     if (data[0]) {
@@ -135,13 +109,12 @@ export default function BaseBarChart() {
         </BaseText>
         <div className="flex flex-row items-center">
           <CustomTimePicker
-            onDataChange={({ value }) => {
-              const date =
-                value !== null && moment(value.$d).format("YYYY-MM-DD");
-              if (date) {
-                setDateSelected(date);
+            range
+            onDataChange={({ value, dateString }) => {
+              if (dateString && dateString[0] !== "") {
+                setDateTimeSelect(dateString);
               } else {
-                setDateSelected("today");
+                setDateTimeSelect(["30daysAgo", "today"]);
               }
             }}
           />
