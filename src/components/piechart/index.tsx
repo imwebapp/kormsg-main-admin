@@ -10,18 +10,22 @@ import { analyticsApi } from "../../apis/analyticsApi";
 
 type PieChartProps = {
   className?: string; // for tailwindcss
+  date?: string[];
 };
 export default function BasePieChart(props: PieChartProps) {
-  const { className } = props;
+  const { className, date } = props;
   const { t } = useTranslation();
   const [data, setData] = useState<any[]>([]);
+  console.log("date", date);
 
   const changeStyle = (textElements: any) => {
     textElements.forEach((textElement: any) => {
       if (textElement) {
         const currentTransform = textElement.style.transform;
+        console.log("cur", currentTransform);
+
         if (!currentTransform.includes("scale")) {
-          textElement.style.cssText = `fill: white !important; transform: ${currentTransform} scale(0.4)`;
+          textElement.style.cssText = `font-size:8px;fill: white !important; transform: ${currentTransform} scale(0.4)`;
         }
       }
     });
@@ -30,8 +34,13 @@ export default function BasePieChart(props: PieChartProps) {
     const params = {
       property: "properties/244725891",
       dimensions: [{ name: "platformDeviceCategory" }],
-      metrics: [{ name: "active28DayUsers" }],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "today" }],
+      metrics: [{ name: "screenPageViews" }],
+      dateRanges: [
+        {
+          startDate: date ? date[0] : "30daysAgo",
+          endDate: date ? date[1] : "today",
+        },
+      ],
       dimensionFilter: {
         filter: {
           fieldName: "platformDeviceCategory",
@@ -69,7 +78,7 @@ export default function BasePieChart(props: PieChartProps) {
   useEffect(() => {
     getInfoAnalyticsDeviceCategory();
     return () => {};
-  }, []);
+  }, [date]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -93,29 +102,6 @@ export default function BasePieChart(props: PieChartProps) {
         className
       )}
     >
-      <div className="flex flex-row justify-between">
-        <BaseText locale size={24} bold>
-          Used by
-        </BaseText>
-        <BaseInputSelect
-          onChange={() => {}}
-          value={t("Monthly")}
-          options={[
-            {
-              value: "Weekly",
-              label: t("Weekly"),
-            },
-            {
-              value: "Monthly",
-              label: t("Monthly"),
-            },
-            {
-              value: "Annually",
-              label: t("Annually"),
-            },
-          ]}
-        />
-      </div>
       <div className="flex flex-col items-center mt-7">
         <div id="pie-chart" className="w-[160px] h-[160px] ">
           <PieChart

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   BaseBarChart,
   BasePieChart,
@@ -12,12 +12,19 @@ import {
 } from "../../components";
 
 const Dashboard = () => {
+  const [dateChart, setDateChart] = useState(["30daysAgo", "today"]);
   return (
     <div className="p-6">
       <DashboardStatistic />
       <div className="flex flex-row w-full mt-4">
-        <BaseBarChart />
-        <BasePieChart />
+        <BaseBarChart
+          onSelectDateTime={(value: any) => {
+            if (value) {
+              setDateChart(value);
+            }
+          }}
+        />
+        <BasePieChart date={dateChart} />
       </div>
       <BaseCard className="mt-4">
         <DashboardOverviewTable isViewAll={false} />
