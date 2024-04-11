@@ -54,7 +54,7 @@ export const listOptionUserDetail = [
 
 // export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
 export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
-export const BASE_URL_ANALYTICS = "https://ga.norehaja.com"; // analytics
+export const BASE_URL_ANALYTICS = "https://ga.bamgama.com"; // analytics
 export const BASE_URL_LINK_SHOP = "https://dev.kormsg.com/detail"; // link shop
 
 export const RESERVATION_STATUS = {
@@ -187,10 +187,10 @@ export const CATEGORY_PART1 = {
 };
 
 export const PLATFORM = {
-  APPLE: 'APPLE',
-  ANDROID: 'ANDROID',
-  BROWSER: 'BROWSER',
-}
+  APPLE: "APPLE",
+  ANDROID: "ANDROID",
+  BROWSER: "BROWSER",
+};
 export const LIST_REGION = [
   {
     id: "서울",

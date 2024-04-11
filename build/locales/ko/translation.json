@@ -319,5 +319,10 @@
   "Please enter a title": "제목을 입력하세요",
   "#Hashtags (maximum 30)": "#해시태그 (최대 30개)",
   "Time" : "시간",
-  "Edit Shop": "매장 수정"
+  "Edit Shop": "매장 수정",
+  "Views": "조회수",
+  "Post title": "글 제목",
+  "Date Created": "작성일",
+  "Article list": "기사 목록",
+  "Are you sure to delete": "삭제하시겠습니까?"
 }
