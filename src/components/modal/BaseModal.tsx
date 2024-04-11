@@ -43,7 +43,7 @@ export const BaseModal = (props: BaseModalProps) => {
 
   const submitModal = () => {
     onSubmit && onSubmit();
-    setIsShown(false);
+    // setIsShown(false);
   };
   const handleOutsideClick: MouseEventHandler<HTMLDivElement> = (event) => {
     if (event.target === event.currentTarget) {
