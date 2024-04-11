@@ -57,8 +57,6 @@ const StorePage = () => {
     try {
       let resultCount: any = await storeApi.getCountStore();
       if (resultCount.code === 200) {
-        console.log("123", resultCount);
-
         setCountStore(resultCount.results.object);
       }
     } catch (error) {}
