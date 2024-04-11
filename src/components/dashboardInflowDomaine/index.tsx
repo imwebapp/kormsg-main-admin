@@ -46,7 +46,7 @@ export default function DashboardInflowDomaineTable(
 
     const convertedData = result.data[0].rows.map((item: any) => ({
       url: item.dimensionValues[0].value,
-      view: item.metricValues[0].value,
+      click: item.metricValues[0].value,
     }));
     if (isViewAll) {
       setData(convertedData);
@@ -78,8 +78,8 @@ export default function DashboardInflowDomaineTable(
       width: "20%",
     },
     {
-      title: t("View"),
-      dataIndex: "view",
+      title: t("Click"),
+      dataIndex: "click",
     },
   ];
 
