@@ -23,7 +23,8 @@ import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
 import { ListTypeUser, TypeUser } from "../../utils/constants";
 import { employeeApi } from "../../apis/employeeApi";
-import { Input, Select } from "antd";
+import { Input, Select, App, Spin } from "antd";
+import { UploadApi } from "../../apis/uploadApi";
 
 const listUserGroups = [
   {
@@ -45,6 +46,10 @@ type ITypeUser = {
 const UserManage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { message } = App.useApp();
+
+  const [loadingScreen, setLoadingScreen] = useState(false);
+
   const [groupSelected, setGroupSelected] = useState<IGroups>(
     listUserGroups[0]
   );
@@ -62,6 +67,7 @@ const UserManage = () => {
     userName: "",
     avatar: "",
   });
+  const [imageCreateUser, setImageCreateUser] = useState<File>();
 
   const [countTypeUser, setCountTypeUser] = useState({
     countAdmin: 0,
@@ -185,6 +191,7 @@ const UserManage = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageCreateUser(file);
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
@@ -200,20 +207,64 @@ const UserManage = () => {
     }
   };
 
-  const handleCreateUser = () => {
-    if (isFormDataValid()) {
-      console.log("FormData is valid. Submitting...", formDataCreateUser);
-      setOpenModalCreateUser(false);
-      setFormDataCreateUser({
-        userType: "",
-        userGroup: "",
-        userId: "",
-        password: "",
-        userName: "",
-        avatar: "",
-      });
-    } else {
-      console.log("FormData is not valid. Please fill all fields.");
+  const handleCreateUser = async () => {
+    try {
+      console.log("FormDataCREATE is valid. Submitting...", typeof formDataCreateUser.userGroup);
+
+      //Upload Image
+      let resUploadImg: string = "";
+      setLoadingScreen(true);
+      if (imageCreateUser !== undefined) {
+        const ResUploadImg = await UploadApi.uploadImage(imageCreateUser);
+        console.log('ResUploadImg', ResUploadImg);
+        resUploadImg = ResUploadImg?.url;
+      }
+
+      const dataCreateConvert = {
+        account_type: formDataCreateUser?.userType,
+        approve: false,
+        attachments: [],
+        avatar: resUploadImg || null,
+        deposit_amount: null,
+        deposit_date: null,
+        depositor: null,
+        email: formDataCreateUser?.userId,
+        event_type: null,
+        exposure_bulletin_board: null,
+        group_id: formDataCreateUser?.userGroup == '1' ? null : formDataCreateUser.userGroup,
+        memo: null,
+        nickname: formDataCreateUser?.userName,
+        password: formDataCreateUser?.password,
+        phone: null,
+        post_limit: 1,
+        start_date: null,
+        uniqueness: null,
+        username: formDataCreateUser.userId,
+      }
+      console.log('dataCreateConvert', dataCreateConvert);
+
+      const resCreateUser: any = await userApi.createUser(dataCreateConvert);
+      console.log("resCreateUser: ", resCreateUser);
+      if (resCreateUser.code === 200) {
+        setListUser([resCreateUser?.results?.object, ...listUser]);
+        message.success("Create user successfully");
+        setLoadingScreen(false);
+        setFormDataCreateUser({
+          userType: "",
+          userGroup: "",
+          userId: "",
+          password: "",
+          userName: "",
+          avatar: "",
+        });
+        setImageCreateUser(undefined);
+        setOpenModalCreateUser(false);
+      }
+    }
+    catch (error: any) {
+      console.log("error Create user", error);
+      message.error(error?.response?.data?.message || "Create user failed");
+      setLoadingScreen(false);
     }
   };
 
@@ -258,6 +309,25 @@ const UserManage = () => {
     });
     setOpenModalAddJumpUp(false);
   };
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      setLoadingScreen(true);
+      const res: any = await userApi.delete(id);
+      if (res.code === 200) {
+        console.log("res delete user: ", res);
+        const newListUser = listUser.filter((item) => item.id !== id);
+        setListUser(newListUser);
+        setLoadingScreen(false);
+        message.success("Delete user successfully");
+      }
+    } catch (error: any) {
+      console.log("err delete user: ", error);
+      setLoadingScreen(false);
+      message.error("Delete user failed");
+    }
+  };
+
   const searchUser = () => {
     const convertFilter: any = {
       account_type: typeUserSelected.id,
@@ -296,6 +366,7 @@ const UserManage = () => {
           limit: 50,
           fields: '["$all"]',
           filter: JSON.stringify(convertFilter),
+          statistic: true
         })
         .then((res: any) => {
           console.log("res getList User: ", res.results.objects.rows);
@@ -320,7 +391,7 @@ const UserManage = () => {
       .catch((err) => {
         console.log("err getCount User: ", err);
       });
-  }, [groupSelected]);
+  }, [groupSelected, listUser]);
 
   useEffect(() => {
     groupApi
@@ -339,7 +410,7 @@ const UserManage = () => {
   }, []);
 
   return (
-    <>
+    <Spin spinning={loadingScreen} tip="Loading..." size="large" >
       <div
         className={classNames("flex overflow-hidden")}
         style={{ height: "calc(100vh - 71px)" }}
@@ -427,8 +498,8 @@ const UserManage = () => {
                 className={classNames(
                   "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                 )}
-                onClick={() => {}}
-                // onDoubleClick={handleEditGroupName}
+                onClick={() => { }}
+              // onDoubleClick={handleEditGroupName}
               >
                 <CheckOutlined
                   className={classNames("text-dayBreakBlue500 text-xl")}
@@ -527,6 +598,7 @@ const UserManage = () => {
             data={listUser}
             reload={reloading}
             onOpenJumpUp={handleOpenModalJumpUp}
+            onDeleteUser={handleDeleteUser}
           />
         </div>
       </div>
@@ -581,7 +653,7 @@ const UserManage = () => {
               }
             }}
             className="flex font-bold text-center bg-darkNight50 focus:outline-none text-dark"
-            // type="number"
+          // type="number"
           />
           <img
             src={Images.plusCircle}
@@ -591,6 +663,7 @@ const UserManage = () => {
         </div>
       </BaseModal>
 
+      {/* create user */}
       <BaseModal
         isOpen={openModalCreateUser}
         onClose={handleCloseModalCreateUser}
@@ -630,6 +703,7 @@ const UserManage = () => {
           <BaseInputSelect
             title="Type"
             required
+            defaultValue={formDataCreateUser.userType || undefined}
             value={formDataCreateUser.userType}
             onChange={(value) => handleInputChange("userType", value)}
             placeholder="Select type user"
@@ -641,6 +715,7 @@ const UserManage = () => {
           <BaseInputSelect
             title="Group"
             required
+            defaultValue={formDataCreateUser.userGroup || undefined}
             value={formDataCreateUser.userGroup}
             onChange={(value) => handleInputChange("userGroup", value)}
             placeholder="Select a group"
@@ -674,6 +749,7 @@ const UserManage = () => {
             value={formDataCreateUser.password}
             onChange={(value) => handleInputChange("password", value)}
             placeholder="Password"
+            type="password"
           />
           <BaseInput
             title="User name"
@@ -685,7 +761,7 @@ const UserManage = () => {
           />
         </div>
       </BaseModal>
-    </>
+    </Spin>
   );
 };
 

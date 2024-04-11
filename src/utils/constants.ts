@@ -55,6 +55,7 @@ export const listOptionUserDetail = [
 // export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
 export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
 export const BASE_URL_ANALYTICS = "https://ga.norehaja.com"; // analytics
+export const BASE_URL_LINK_SHOP = "https://dev.kormsg.com/detail"; // link shop
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
@@ -185,6 +186,11 @@ export const CATEGORY_PART1 = {
   중국: "중국",
 };
 
+export const PLATFORM = {
+  APPLE: 'APPLE',
+  ANDROID: 'ANDROID',
+  BROWSER: 'BROWSER',
+}
 export const LIST_REGION = [
   {
     id: "서울",
@@ -192,61 +198,61 @@ export const LIST_REGION = [
     children: [
       {
         value: "강남/역삼/삼성",
-        title: "강남/역삼/삼성"
+        title: "강남/역삼/삼성",
       },
       {
         value: "신사/청담/압구정",
-        title: "신사/청담/압구정"
+        title: "신사/청담/압구정",
       },
       {
         value: "서초/교대/사당",
-        title: "서초/교대/사당"
+        title: "서초/교대/사당",
       },
       {
         value: "잠실/송파/강동",
-        title: "잠실/송파/강동"
+        title: "잠실/송파/강동",
       },
       {
         value: "을지로/명동/중구/동대문",
-        title: "을지로/명동/중구/동대문"
+        title: "을지로/명동/중구/동대문",
       },
       {
         value: "서울역/이태원/용산",
-        title: "서울역/이태원/용산"
+        title: "서울역/이태원/용산",
       },
       {
         value: "종로/인사동",
-        title: "종로/인사동"
+        title: "종로/인사동",
       },
       {
         value: "홍대/합정/마포/서대문",
-        title: "홍대/합정/마포/서대문"
+        title: "홍대/합정/마포/서대문",
       },
       {
         value: "여의도",
-        title: "여의도"
+        title: "여의도",
       },
       {
         value: "영등포역",
-        title: "영등포역"
+        title: "영등포역",
       },
       {
         value: "구로/신도림/금천",
-        title: "구로/신도림/금천"
+        title: "구로/신도림/금천",
       },
       {
         value: "김포공항/염창/강서",
-        title: "김포공항/염창/강서"
+        title: "김포공항/염창/강서",
       },
       {
         value: "건대입구/성수/왕십리",
-        title: "건대입구/성수/왕십리"
+        title: "건대입구/성수/왕십리",
       },
       {
         value: "성북/강북/노원/도봉",
-        title: "성북/강북/노원/도봉"
-      }
-    ]
+        title: "성북/강북/노원/도봉",
+      },
+    ],
   },
   {
     id: "경기",
@@ -254,41 +260,41 @@ export const LIST_REGION = [
     children: [
       {
         value: "가평/청평/양평",
-        title: "가평/청평/양평"
+        title: "가평/청평/양평",
       },
       {
         value: "수원/화성",
-        title: "수원/화성"
+        title: "수원/화성",
       },
       {
         value: "고양/파주/김포",
-        title: "고양/파주/김포"
+        title: "고양/파주/김포",
       },
       {
         value: "의정부/포천/동두천",
-        title: "의정부/포천/동두천"
+        title: "의정부/포천/동두천",
       },
       {
         value: "용인/동탄",
-        title: "용인/동탄"
+        title: "용인/동탄",
       },
       {
         value: "오산/평택",
-        title: "오산/평택"
+        title: "오산/평택",
       },
       {
         value: "남양주/구리/성남/분당",
-        title: "남양주/구리/성남/분당"
+        title: "남양주/구리/성남/분당",
       },
       {
         value: "부천/광명시/시흥/안산",
-        title: "부천/광명시/시흥/안산"
+        title: "부천/광명시/시흥/안산",
       },
       {
         value: "안양/의왕/군포",
-        title: "안양/의왕/군포"
-      }
-    ]
+        title: "안양/의왕/군포",
+      },
+    ],
   },
   {
     id: "인천",
@@ -296,25 +302,25 @@ export const LIST_REGION = [
     children: [
       {
         value: "송도/소래포구",
-        title: "송도/소래포구"
+        title: "송도/소래포구",
       },
       {
         value: "인천국제공항/강화/을왕리",
-        title: "인천국제공항/강화/을왕리"
+        title: "인천국제공항/강화/을왕리",
       },
       {
         value: "영종도/월미도",
-        title: "영종도/월미도"
+        title: "영종도/월미도",
       },
       {
         value: "주안/간석/인천시청",
-        title: "주안/간석/인천시청"
+        title: "주안/간석/인천시청",
       },
       {
         value: "청라/계양/부평",
-        title: "청라/계양/부평"
-      }
-    ]
+        title: "청라/계양/부평",
+      },
+    ],
   },
   {
     id: "부산",
@@ -322,45 +328,45 @@ export const LIST_REGION = [
     children: [
       {
         value: "해운대/마린시티",
-        title: "해운대/마린시티"
+        title: "해운대/마린시티",
       },
       {
         value: "벡스코/센텀시티",
-        title: "벡스코/센텀시티"
+        title: "벡스코/센텀시티",
       },
       {
         value: "송정/기장/정관",
-        title: "송정/기장/정관"
+        title: "송정/기장/정관",
       },
       {
         value: "광안리/경성대",
-        title: "광안리/경성대"
+        title: "광안리/경성대",
       },
       {
         value: "부산역",
-        title: "부산역"
+        title: "부산역",
       },
       {
         value: "자갈치/남포동/영도",
-        title: "자갈치/남포동/영도"
+        title: "자갈치/남포동/영도",
       },
       {
         value: "송도/다대포",
-        title: "송도/다대포"
+        title: "송도/다대포",
       },
       {
         value: "서면/연산/범일",
-        title: "서면/연산/범일"
+        title: "서면/연산/범일",
       },
       {
         value: "동래/온천/금정구",
-        title: "동래/온천/금정구"
+        title: "동래/온천/금정구",
       },
       {
         value: "사상/강서/김해공항",
-        title: "사상/강서/김해공항"
-      }
-    ]
+        title: "사상/강서/김해공항",
+      },
+    ],
   },
   {
     id: "제주",
@@ -368,29 +374,29 @@ export const LIST_REGION = [
     children: [
       {
         value: "제주시/제주국제공항",
-        title: "제주시/제주국제공항"
+        title: "제주시/제주국제공항",
       },
       {
         value: "서귀포시/모슬포",
-        title: "서귀포시/모슬포"
+        title: "서귀포시/모슬포",
       },
       {
         value: "애월/한림/협재",
-        title: "애월/한림/협재"
+        title: "애월/한림/협재",
       },
       {
         value: "중문",
-        title: "중문"
+        title: "중문",
       },
       {
         value: "표선/성산",
-        title: "표선/성산"
+        title: "표선/성산",
       },
       {
         value: "함덕/김녕/세화",
-        title: "함덕/김녕/세화"
-      }
-    ]
+        title: "함덕/김녕/세화",
+      },
+    ],
   },
   {
     id: "강원",
@@ -398,33 +404,33 @@ export const LIST_REGION = [
     children: [
       {
         value: "강릉",
-        title: "강릉"
+        title: "강릉",
       },
       {
         value: "속초/고성",
-        title: "속초/고성"
+        title: "속초/고성",
       },
       {
         value: "양양(서피비치/낙산)",
-        title: "양양(서피비치/낙산)"
+        title: "양양(서피비치/낙산)",
       },
       {
         value: "춘천/인제/철원",
-        title: "춘천/인제/철원"
+        title: "춘천/인제/철원",
       },
       {
         value: "평창/정선/영월",
-        title: "평창/정선/영월"
+        title: "평창/정선/영월",
       },
       {
         value: "동해/삼척/태백",
-        title: "동해/삼척/태백"
+        title: "동해/삼척/태백",
       },
       {
         value: "홍천/횡성/원주",
-        title: "홍천/횡성/원주"
-      }
-    ]
+        title: "홍천/횡성/원주",
+      },
+    ],
   },
   {
     id: "경상",
@@ -432,33 +438,33 @@ export const LIST_REGION = [
     children: [
       {
         value: "대구/구미/안동/문경",
-        title: "대구/구미/안동/문경"
+        title: "대구/구미/안동/문경",
       },
       {
         value: "경주",
-        title: "경주"
+        title: "경주",
       },
       {
         value: "울산/양산",
-        title: "울산/양산"
+        title: "울산/양산",
       },
       {
         value: "거제/통영",
-        title: "거제/통영"
+        title: "거제/통영",
       },
       {
         value: "포항/영덕/울진/청송",
-        title: "포항/영덕/울진/청송"
+        title: "포항/영덕/울진/청송",
       },
       {
         value: "창원/마산/진해/김해/부곡",
-        title: "창원/마산/진해/김해/부곡"
+        title: "창원/마산/진해/김해/부곡",
       },
       {
         value: "남해/사천/하동/진주",
-        title: "남해/사천/하동/진주"
-      }
-    ]
+        title: "남해/사천/하동/진주",
+      },
+    ],
   },
   {
     id: "전라",
@@ -466,33 +472,33 @@ export const LIST_REGION = [
     children: [
       {
         value: "전주/완주",
-        title: "전주/완주"
+        title: "전주/완주",
       },
       {
         value: "광주/나주/함평",
-        title: "광주/나주/함평"
+        title: "광주/나주/함평",
       },
       {
         value: "여수",
-        title: "여수"
+        title: "여수",
       },
       {
         value: "순천/광양/담양/보성/화순",
-        title: "순천/광양/담양/보성/화순"
+        title: "순천/광양/담양/보성/화순",
       },
       {
         value: "남원/부인/정읍/고창/무주/구례",
-        title: "남원/부인/정읍/고창/무주/구례"
+        title: "남원/부인/정읍/고창/무주/구례",
       },
       {
         value: "군산/익산",
-        title: "군산/익산"
+        title: "군산/익산",
       },
       {
         value: "목포/신안/영광/진도/고흥/영암/완도/강진",
-        title: "목포/신안/영광/진도/고흥/영암/완도/강진"
-      }
-    ]
+        title: "목포/신안/영광/진도/고흥/영암/완도/강진",
+      },
+    ],
   },
   {
     id: "충청",
@@ -500,30 +506,30 @@ export const LIST_REGION = [
     children: [
       {
         value: "대전/세종",
-        title: "대전/세종"
+        title: "대전/세종",
       },
       {
         value: "천안/아산/도고",
-        title: "천안/아산/도고"
+        title: "천안/아산/도고",
       },
       {
         value: "안면도/태안/서산/덕산",
-        title: "안면도/태안/서산/덕산"
+        title: "안면도/태안/서산/덕산",
       },
       {
         value: "보령/대천/부여/공주/금산",
-        title: "보령/대천/부여/공주/금산"
+        title: "보령/대천/부여/공주/금산",
       },
       {
         value: "청주/음성/진천",
-        title: "청주/음성/진천"
+        title: "청주/음성/진천",
       },
       {
         value: "충주/제천/단양/괴산/증평",
-        title: "충주/제천/단양/괴산/증평"
-      }
-    ]
-  }
+        title: "충주/제천/단양/괴산/증평",
+      },
+    ],
+  },
 ];
 export enum REPORT {
   REPORT_LIST,

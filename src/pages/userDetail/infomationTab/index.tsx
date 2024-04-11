@@ -78,7 +78,7 @@ export const InformationTab = (props: IProps) => {
 
   const handleEditInfo = () => {
     if (isFormDataValid()) {
-      console.log("FormData is valid. Submitting...", formDataEditInfo);
+      console.log("FormDataEDIT is valid. Submitting...", formDataEditInfo);
       userApi.updateUser(dataUser.id, formDataEditInfo).then((res: any) => {
         console.log("res update user: ", res.results.object);
         setDataUser(res.results.object);
