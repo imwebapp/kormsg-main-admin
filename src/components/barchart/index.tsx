@@ -23,11 +23,15 @@ export interface BarChartDataInterface {
   label: string;
   value: number;
 }
+type BarChartProps = {
+  onSelectDateTime?: (dateTime: string[]) => void;
+};
 
 const columnYLabelWidth = 80;
 const columnWidth = 68;
 
-export default function BaseBarChart() {
+export default function BaseBarChart(props: BarChartProps) {
+  const { onSelectDateTime } = props;
   const { collapsed } = useLocalStorage((state) => state);
   const [uData, setuData] = useState<Array<number>>([]);
   const [xLabels, setxLabels] = useState<Array<string>>([]);
@@ -101,6 +105,9 @@ export default function BaseBarChart() {
     return width;
   };
 
+  useEffect(() => {
+    if (onSelectDateTime) onSelectDateTime(dateTimeSelect);
+  }, [dateTimeSelect]);
   return (
     <BaseCard className="flex-1 mr-4 flex flex-col items-end">
       <div className="flex flex-row w-full justify-between">

@@ -34,14 +34,12 @@ const StorePage = () => {
   });
   const [selectedThema, setSelectedThema] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
-  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
   const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
   const [itemSelectShop, setItemSelectShop] = useState<any>({});
   const [rangeValue, setRangeValue] = useState<any>(null);
   const [descriptionEvent, setDescriptionEvent] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [filter, setFilter] = useState<any>();
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(0);
   const [themas, setThemas] = useState<any>([]);
 
@@ -131,6 +129,7 @@ const StorePage = () => {
   };
   const refreshTable = () => {
     setIsUpdateSuccess(isUpdateSuccess + 1);
+    getCountStore();
   };
   useEffect(() => {
     getListThema();
@@ -143,9 +142,6 @@ const StorePage = () => {
   };
   const handleChangeThema = (value: string) => {
     setSelectedThema(value);
-  };
-  const handleChangeFilter = (value: string) => {
-    setSelectedFilterUser(value);
   };
   const handleChangeAdvertise = (value: string) => {
     setSelectedSorting(value);
@@ -262,7 +258,7 @@ const StorePage = () => {
         <div>
           <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
             <Input
-              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
+              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 max-md:pr-5"
               placeholder="Keyword"
               onChange={handleChangeTextKeyword}
               value={valueKeywordFilter}
