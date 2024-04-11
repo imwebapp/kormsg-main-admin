@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.f93ab787.css",
-    "main.js": "/static/js/main.9deb0f6d.js",
+    "main.css": "/static/css/main.2aef9209.css",
+    "main.js": "/static/js/main.6cd2f66a.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
@@ -38,6 +38,7 @@
     "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
+    "static/media/KRWBlue.png": "/static/media/KRWBlue.ea87863c016151233b2e.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
     "static/media/Bulletin Board.png": "/static/media/Bulletin Board.fd31a367d66034d0b766.png",
     "static/media/twoDot.png": "/static/media/twoDot.5dab7f8f3e4091a1dbdc.png",
@@ -46,12 +47,12 @@
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.f93ab787.css.map": "/static/css/main.f93ab787.css.map",
-    "main.9deb0f6d.js.map": "/static/js/main.9deb0f6d.js.map",
+    "main.2aef9209.css.map": "/static/css/main.2aef9209.css.map",
+    "main.6cd2f66a.js.map": "/static/js/main.6cd2f66a.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f93ab787.css",
-    "static/js/main.9deb0f6d.js"
+    "static/css/main.2aef9209.css",
+    "static/js/main.6cd2f66a.js"
   ]
 }
