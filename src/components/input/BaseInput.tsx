@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { classNames } from '../../utils/common';
 import BaseText from '../text';
 import Images from "../../assets/gen";
@@ -24,6 +24,7 @@ export interface IProps {
   className?: string; // for tailwindcss
   styleTitle?: string;
   styleInputContainer?: string;
+  clearOnSave?: boolean;
   styleInput?: string;
   iconLeft?: ReactNode | string;
   iconLeftInactive?: ReactNode | string;
@@ -34,9 +35,10 @@ export interface IProps {
 };
 
 export const BaseInput = (props: IProps) => {
-  const { title, titleSize, required, value, defaultValue, textArea, rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
+  const { title, titleSize, required, clearOnSave, value, defaultValue, textArea, rows, onChange, onBlur, onFocus, className, type, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, widgetRight, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, autoFocus, onSave, ...rest } = props;
   const [isFocused, setIsFocused] = useState(false);
   const { t } = useTranslation();
+  const inputRef = useRef<any>(null)
 
   const handleFocus = () => {
     onFocus && onFocus();
@@ -52,6 +54,7 @@ export const BaseInput = (props: IProps) => {
     if (event.key === 'Enter') {
       if (onSave) {
         onSave(event.target.value);
+        if (clearOnSave) inputRef.current.value = "" 
       }
     }
   };
@@ -84,6 +87,7 @@ export const BaseInput = (props: IProps) => {
         )}
         {textArea ? (
           <textarea
+            ref={inputRef}
             className={classNames(
               'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
               isError ? ' bg-dustRed50' : '',
@@ -101,6 +105,7 @@ export const BaseInput = (props: IProps) => {
             {...rest}
           />
         ) : <input
+          ref={inputRef}
           className={classNames(
             'w-full bg-darkNight50 focus:outline-none font-bold text-dark',
             isError ? ' bg-dustRed50' : '',

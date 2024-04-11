@@ -17,8 +17,8 @@ import DashboardVisitTable from "./dashboardVisitPage";
 import DashboardSearchTermTable from "./dashboardSearchTerm";
 import UserManageTable from "./userManageTable";
 import StoreListTable from "./storeListTable";
-
 import DashboardReservation from "./dashboardReservation";
+import BaseEditor from "./baseEditor";
 
 export {
   DashboardLayout,
@@ -41,4 +41,5 @@ export {
   UserManageTable,
   StoreListTable,
   DashboardReservation,
+  BaseEditor
 };

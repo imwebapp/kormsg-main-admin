@@ -182,6 +182,11 @@ export function formatTimeDiff(time: Date, locale: string) {
 export function formatHour(time: Date, locale: string) {
   return moment(time).locale(locale).format('hh:mm A');
 }
+
 export function formatDate(time: Date, locale: string) {
   return moment(time).locale(locale).format('MMMM D, YYYY');
+}
+
+export function formatTime(time: Date) {
+  return moment(time).format('YYYY-MM-DD');
 }

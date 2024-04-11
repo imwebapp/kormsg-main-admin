@@ -39,8 +39,6 @@ export const BaseInputSelect = (props: InputProps) => {
     const allValue = options.filter((item)=> item.value !== SELECT_ALL).map((item)=> item.value);
 
     const handleChange = (newValue: any) => {
-        console.log('newValue',newValue);
-        
         if (multiple && Array.isArray(newValue) && newValue.length > 0 && !!options.find((item)=> item.value === SELECT_ALL)){
             if ((newValue[newValue.length -1] === SELECT_ALL)) {
                 setValueSelect([SELECT_ALL]);
@@ -106,6 +104,7 @@ export const BaseInputSelect = (props: InputProps) => {
                 }}
             >
                 <Select
+                    className={styleInputContainer}
                     value={valueSelect}
                     defaultValue={defaultValue}
                     placeholder={t(placeholder || '')}

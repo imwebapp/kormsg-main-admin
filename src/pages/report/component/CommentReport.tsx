@@ -129,7 +129,7 @@ export default function CommentReport() {
     {
       title: t("No"),
       width: 60,
-      render: (value, record, index) => <BaseText>{index + 1}</BaseText>,
+      render: (value, record, index) => <BaseText>{index + 1 + (page - 1) * limit}</BaseText>,
     },
     {
       title: t("Image"),

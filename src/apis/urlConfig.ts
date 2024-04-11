@@ -6,6 +6,7 @@ export const SETTING_ADMIN = "/setting_admin";
 export const BANNER = "/banner";
 export const NAVBAR = "/navbar";
 export const BOARD_LINK = "/link";
+export const BLOG = "/blog";
 export const EMPLOYEE = "/employee";
 export const SHOP = "/shop";
 export const HISTORY = "/history";

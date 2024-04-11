@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Images from "../../../assets/gen";
 import { BOARD, BOARD_ROUTE } from "../../../utils/constants";
 import { useBulletinState } from "../store";
-const BASE_URL = "https://dev.kormsg.com";
+const BASE_URL = "https://pc.kormsg.com";
 
 export default function BulletinPreview() {
   const [key, setKeyIframe] = useState(0);

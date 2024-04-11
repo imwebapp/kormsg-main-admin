@@ -110,7 +110,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                                                     />
                                                     <img
                                                         src={typeof selectedImages[0] === 'string' ? selectedImages[0] : URL.createObjectURL(selectedImages[0]!)}
-                                                        className="w-full h-full rounded-lg"
+                                                        className="w-full h-full rounded-lg object-cover"
                                                         alt="Image"
                                                         onClick={() => handleImageClick(0)}
                                                     />
@@ -165,7 +165,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                                                             ) : (
                                                                 <img
                                                                     src={URL.createObjectURL(selectedImages[index]!)}
-                                                                    className="w-full h-full rounded-lg"
+                                                                    className="w-full h-full rounded-lg object-cover"
                                                                     alt="Image"
                                                                     onClick={() => handleImageClick(index)}
                                                                 />
@@ -216,7 +216,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                                                         />
                                                         <img
                                                             src={typeof selectedImages[index] === 'string' ? (selectedImages[index] || Images.exportIcon) : URL.createObjectURL(selectedImages[index]!)}
-                                                            className="w-full h-full rounded-lg"
+                                                            className="w-full h-full rounded-lg object-cover"
                                                             alt="Image"
                                                             onClick={() => handleImageClick(index)}
                                                         />

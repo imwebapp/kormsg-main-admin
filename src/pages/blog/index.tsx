@@ -4,15 +4,19 @@ import { BaseText } from "../../components";
 import { classNames } from "../../utils/common";
 import BlogDetail from "./components/BlogDetail";
 import BlogList from "./components/BlogList";
+import { useBlogState } from "./store";
 
 export default function BlogPage() {
-  const [tab, setTab] = useState(1);
+  const { tab, setTab, setBlog } = useBlogState((state) => state);
 
   const buildTab = () => {
     return (
       <div className="max-w-[86px] min-w-[86px] h-full border-r">
         <div
-          onClick={() => setTab(1)}
+          onClick={() => {
+            setBlog(undefined);
+            setTab(1);
+          }}
           className="cursor-pointer h-[90px] border-b flex flex-col justify-center items-center relative"
         >
           <img
@@ -34,7 +38,10 @@ export default function BlogPage() {
           ></div>
         </div>
         <div
-          onClick={() => setTab(2)}
+          onClick={() => {
+            setTab(2);
+            setBlog(undefined);
+          }}
           className="cursor-pointer h-[90px] border-b flex flex-col justify-center items-center relative"
         >
           <img

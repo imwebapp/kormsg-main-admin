@@ -9,6 +9,7 @@ type TableProps = {
   data: Array<object>;
   sticky?: any;
   maxContent?: boolean;
+  onRowClick?: (record: any, index: any) => void;
   className?: string; // for tailwindcss
 };
 
@@ -21,8 +22,10 @@ export default function BaseTable(props: TableProps) {
     pagination,
     sticky,
     maxContent,
+    onRowClick,
   } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [rowClickKey, setRowClickKey] = useState<any>();
 
   const _onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -34,16 +37,32 @@ export default function BaseTable(props: TableProps) {
     onChange: _onSelectChange,
   };
 
+  const getRowClassName = (record: any, index: any) => {
+    let classCustom = onRowClick ? "row-click" : "";
+    return rowClickKey === `${(pagination as any)?.current || ""}-${index}`
+      ? classCustom + " selected-row"
+      : classCustom;
+  };
+
   return (
     <>
       <Table
         scroll={maxContent ? { x: "max-content" } : {}}
         sticky={sticky}
         className={className}
+        rowClassName={getRowClassName}
         rowSelection={onSelectChange && rowSelection}
         pagination={pagination}
         columns={columns}
         dataSource={data}
+        onRow={(record, index) => ({
+          onClick: () => {
+            if (onRowClick) {
+              onRowClick(record, index);
+              setRowClickKey(`${(pagination as any)?.current || ""}-${index}`);
+            }
+          },
+        })}
       />
     </>
   );

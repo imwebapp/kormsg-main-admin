@@ -13,3 +13,15 @@
 .ant-table-sticky-scroll {
     display: none !important;
 }
+
+.ant-pagination-options{
+    display: none !important;
+}
+.selected-row > .ant-table-cell {
+    background: #E8E8E8 !important;
+    cursor: pointer;
+}
+
+.row-click{
+    cursor: pointer;
+}
