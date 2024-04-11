@@ -7,7 +7,11 @@ import { useTranslation } from "react-i18next";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
-import { SORTING, STORE_STATUS } from "../../utils/constants";
+import {
+  BASE_URL_LINK_SHOP,
+  SORTING,
+  STORE_STATUS,
+} from "../../utils/constants";
 import dayjs from "dayjs";
 import { BaseModal2 } from "../modal/BaseModal2";
 import { Slide } from "react-slideshow-image";
@@ -97,7 +101,10 @@ export default function StoreListTable(props: StoreListTableProps) {
       onItemStoreClick(itemId);
     }
   };
-  const handleClick = () => {};
+  const handleClick = (id: string) => {
+    const url = `${BASE_URL_LINK_SHOP}/${id}`;
+    window.open(url, "_blank");
+  };
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -378,10 +385,10 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Store"),
-      render: ({}) => (
+      render: (text, record) => (
         <div
           className="min-w-[30px] cursor-pointer"
-          onClick={() => handleClick()}
+          onClick={() => handleClick(record.id)}
         >
           <img src={Images.eye} className="w-6 h-6" />
         </div>
