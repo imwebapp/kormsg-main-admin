@@ -21,6 +21,8 @@ export default function DashboardSearchTermTable(
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const [data, setData] = useState<any[]>([]);
+  const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
+
   const navigate = useNavigate();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
@@ -28,8 +30,10 @@ export default function DashboardSearchTermTable(
     const params = {
       property: "properties/244725891",
       dimensions: [{ name: "country" }],
-      metrics: [{ name: "active28DayUsers" }],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      metrics: [{ name: "activeUsers" }],
+      dateRanges: [
+        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+      ],
     };
     let result = await analyticsApi.getInfo(params);
 
@@ -46,7 +50,7 @@ export default function DashboardSearchTermTable(
   useEffect(() => {
     getInfoAnalytics();
     return () => {};
-  }, []);
+  }, [dateTimeSelect]);
   const columns: TableColumnsType<any> = [
     {
       title: t("Country"),
@@ -79,7 +83,16 @@ export default function DashboardSearchTermTable(
           </CustomButton>
         ) : (
           <div className="flex flex-row gap-6">
-            <CustomTimePicker range />
+            <CustomTimePicker
+              range
+              onDataChange={({ value, dateString }) => {
+                if (dateString && dateString[0] !== "") {
+                  setDateTimeSelect(dateString);
+                } else {
+                  setDateTimeSelect(["30daysAgo", "today"]);
+                }
+              }}
+            />
           </div>
         )}
       </div>

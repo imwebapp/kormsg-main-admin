@@ -26,6 +26,8 @@ export default function DashboardInflowDomaineTable(
   const navigate = useNavigate();
   const [data, setData] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
+
   const handlePageChange = (page: any) => {
     console.log("Trang hiện tại:", page);
     setCurrentPage(page);
@@ -35,8 +37,10 @@ export default function DashboardInflowDomaineTable(
     const params = {
       property: "properties/244725891",
       dimensions: [{ name: "fullPageUrl" }],
-      metrics: [{ name: "active28DayUsers" }],
-      dateRanges: [{ startDate: "30daysAgo", endDate: "yesterday" }],
+      metrics: [{ name: "activeUsers" }],
+      dateRanges: [
+        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+      ],
     };
     let result = await analyticsApi.getInfo(params);
 
@@ -53,7 +57,7 @@ export default function DashboardInflowDomaineTable(
   useEffect(() => {
     getInfoAnalytics();
     return () => {};
-  }, []);
+  }, [dateTimeSelect]);
   const columns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -94,7 +98,16 @@ export default function DashboardInflowDomaineTable(
           </CustomButton>
         ) : (
           <div className="flex flex-row gap-6">
-            <CustomTimePicker range />
+            <CustomTimePicker
+              range
+              onDataChange={({ value, dateString }) => {
+                if (dateString && dateString[0] !== "") {
+                  setDateTimeSelect(dateString);
+                } else {
+                  setDateTimeSelect(["30daysAgo", "today"]);
+                }
+              }}
+            />
           </div>
         )}
       </div>
