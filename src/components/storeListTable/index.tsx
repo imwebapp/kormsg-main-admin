@@ -628,7 +628,7 @@ export default function StoreListTable(props: StoreListTableProps) {
               setIsShowDataHistory(!isShowDataHistory);
             }}
           >
-            Detail
+            View Detail
           </button>
         </div>
       </BaseModal2>
