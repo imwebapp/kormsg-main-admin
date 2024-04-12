@@ -331,5 +331,7 @@
   "Ascending": "Ascending",
   "None": "None",
   "Add": "Add",
-  "Representative image": "Representative image"
+  "Representative image": "Representative image",
+  "Upload image" : "Upload image",
+  "Representative" : "Avt"
 }
