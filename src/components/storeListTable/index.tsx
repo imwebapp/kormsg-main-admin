@@ -328,10 +328,6 @@ export default function StoreListTable(props: StoreListTableProps) {
     }
     return () => {};
   }, [positionStore]);
-  useEffect(() => {
-    console.log("countStore", countStore);
-    console.log("typeStore", typeStore);
-  }, [countStore, typeStore]);
   const generateMap = (latitude: any, longitude: any) => {
     if (!naver.maps) window.location.reload();
     const container = document.getElementById("map");
