@@ -482,6 +482,7 @@ export default function StoreListTable(props: StoreListTableProps) {
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 setIsShowImages(true);
+                idStore.current = record.id;
                 // setListImageShop(record.images);
               }}
             />
@@ -572,7 +573,6 @@ export default function StoreListTable(props: StoreListTableProps) {
           style={{
             width: "962px",
             height: "700px",
-            pointerEvents: "none",
           }}
         >
           <NaverMapComponent positionStore={positionStore} />
@@ -586,7 +586,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         }}
       >
         <iframe
-          src="https://dev.kormsg.com/detail/650896d0-f883-11ee-a62d-0bb94bbfc28f"
+          src={`${BASE_URL_LINK_SHOP}/${idStore.current}`}
           className="w-full h-[950px] pointer-events-none"
         />
       </BaseModal2>
