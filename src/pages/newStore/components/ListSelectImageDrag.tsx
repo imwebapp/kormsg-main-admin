@@ -3,14 +3,16 @@ import { BaseText } from '../../../components';
 import Images from '../../../assets/gen';
 import { App } from 'antd';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { classNames } from '../../../utils/common';
 type ImageOrEmpty = File | null;
 interface IProps {
     onImagesChange?: any;
     listImages?: any;
+    size?: 'large' | 'small'
 }
 
 export const ListSelectImageDrag = (props: IProps) => {
-    const { listImages, onImagesChange } = props;
+    const { listImages, onImagesChange, size = 'large' } = props;
     const { message } = App.useApp();
     const initialImages = Array.from({ length: 9 }, () => null);
     const [selectedImages, setSelectedImages] = useState<Array<ImageOrEmpty>>(initialImages);
@@ -88,7 +90,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                 {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-3">
                         <div className="flex gap-3">
-                            <div className='flex flex-col w-2/3 h-[380px]'>
+                            <div className={classNames('flex flex-col w-2/3', size === 'large' ? 'h-[380px]' : 'h-[280px]')}>
                                 <input
                                     id="file-input-0"
                                     type="file"
@@ -135,7 +137,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                             </div>
                             <div className="flex flex-col w-1/3 gap-3">
                                 {[1, 2].map((index) => (
-                                    <div key={index} className='flex h-[184px]'>
+                                    <div key={index} className={classNames('flex', size === 'large' ? 'h-[184px]' : 'h-[134px]')}>
                                         <input
                                             id={`file-input-${index}`}
                                             type="file"
@@ -158,7 +160,7 @@ export const ListSelectImageDrag = (props: IProps) => {
                                                             {typeof selectedImages[index] === 'string' ? (
                                                                 <img
                                                                     src={selectedImages[index] || Images.exportIcon}
-                                                                    className="w-full h-full rounded-lg"
+                                                                    className="w-full h-full rounded-lg object-cover"
                                                                     alt="Image"
                                                                     onClick={() => handleImageClick(index)}
                                                                 />
@@ -191,9 +193,9 @@ export const ListSelectImageDrag = (props: IProps) => {
                                 ))}
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 grid-flow-rows min-h-[380px]">
+                        <div className={classNames("grid grid-cols-3 gap-3 grid-flow-rows", size === 'large' ? 'min-h-[380px]' : 'min-h-[280px]')}>
                             {[3, 4, 5, 6, 7, 8].map((index) => (
-                                <div key={index} className='flex h-[184px]'>
+                                <div key={index} className={classNames('flex', size === 'large' ? 'h-[184px]' : 'h-[134px]')}>
                                     <input
                                         id={`file-input-${index}`}
                                         type="file"

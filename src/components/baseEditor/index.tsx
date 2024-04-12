@@ -1,7 +1,7 @@
 import JoditEditor from "jodit-react";
 import { useMemo, useRef, useState } from "react";
 import { BASE_URL } from "../../utils/constants";
-
+import "./index.css";
 type BaseEditorProps = {
   value?: string;
   defaultValue?: string;

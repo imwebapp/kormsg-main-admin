@@ -107,6 +107,7 @@ export default class Images {
     static readonly logo = require("../../../src/assets/images/logo.jpg");
     static readonly mapPin = require("../../../src/assets/images/map-pin.png");
     static readonly minusCircle = require("../../../src/assets/images/minusCircle.png");
+    static readonly noPost = require("../../../src/assets/images/noPost.png");
     static readonly padlock = require("../../../src/assets/images/padlock.png");
     static readonly plus = require("../../../src/assets/images/plus.png");
     static readonly plus2 = require("../../../src/assets/images/plus2.png");

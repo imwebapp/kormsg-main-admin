@@ -7,6 +7,8 @@ import { Popconfirm, TableColumnsType } from "antd";
 import { useTranslation } from "react-i18next";
 import Images from "../../../assets/gen";
 import { formatDate, formatTime } from "../../../utils/common";
+import { Preview } from "./Preview";
+import { showError, showSuccess } from "../../../utils/showToast";
 
 export default function BlogList() {
   return (
@@ -25,6 +27,15 @@ const BuildBlogList = () => {
   const limit = 50;
   const { setBlog, tab, setTab } = useBlogState((state) => state);
 
+  const deleteBlog = async (id: string) => {
+    try {
+      await BlogApi.delete(id);
+      _getList();
+      showSuccess("Delete successfully");
+    } catch (error) {
+      showError(error);
+    }
+  };
   const columns: TableColumnsType = [
     {
       title: t("No"),
@@ -70,7 +81,7 @@ const BuildBlogList = () => {
             className="w-6 h-6 ml-3 cursor-pointer"
           />
           <Popconfirm
-            onConfirm={() => {}}
+            onConfirm={() => deleteBlog(id)}
             title={t("Delete")}
             description={t("Are you sure to delete")}
           >
@@ -117,38 +128,6 @@ const BuildBlogList = () => {
         columns={columns}
         data={blogs}
       />
-    </div>
-  );
-};
-
-const Preview = () => {
-  const { blog } = useBlogState((state) => state);
-  return (
-    <div className="max-w-[468px] min-w-[468px] p-6 overflow-auto overflow-x-hidden flex flex-col">
-      <BaseText locale bold size={24}>
-        Review
-      </BaseText>
-      <BaseText locale bold size={24} className="mt-4">
-        {blog?.title}
-      </BaseText>
-      <div
-        className="mt-4 "
-        dangerouslySetInnerHTML={{ __html: blog?.content || "" }}
-      ></div>
-      <div className="flex flex-wrap flex-row gap-x-3">
-        {[
-          (blog?.tags || []).map((item, index) => (
-            <div
-              key={index}
-              className="relative  mt-3 px-4 py-1 bg-darkNight50 rounded-full flex justify-center items-center"
-            >
-              <BaseText className="text-darkNight700" medium>
-                #{item}
-              </BaseText>
-            </div>
-          )),
-        ]}
-      </div>
     </div>
   );
 };

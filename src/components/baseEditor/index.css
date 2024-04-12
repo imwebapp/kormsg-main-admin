@@ -1,0 +1,7 @@
+.jodit-add-new-line {
+    display: none !important;
+}
+
+.jodit_sticky>.jodit-toolbar__box {
+    top: -24px !important;
+}

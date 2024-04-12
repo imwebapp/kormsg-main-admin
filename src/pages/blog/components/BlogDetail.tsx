@@ -17,6 +17,9 @@ import { BlogApi } from "../../../apis/blogApi";
 import { showError, showSuccess } from "../../../utils/showToast";
 import { ListSelectImageDrag } from "../../newStore/components/ListSelectImageDrag";
 import { UploadApi } from "../../../apis/uploadApi";
+import { BlogInterface } from "../../../entities/blog.entity";
+import { Preview } from "./Preview";
+import { useCommonState } from "../../../stores/commonStorage";
 
 export default function BlogDetail() {
   return (
@@ -28,8 +31,9 @@ export default function BlogDetail() {
 }
 
 const CreateDetail = () => {
+  const { setLoading } = useCommonState((state) => state);
   const [isToday, setIsToday] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<any>(new Date());
+  const [selectedDate, setSelectedDate] = useState<any>();
   const { locale } = useLocalStorage((state) => state);
   const [content, setContent] = useState("");
   const [defaultContent, setDefaultContent] = useState("");
@@ -40,7 +44,6 @@ const CreateDetail = () => {
   const [cateSelected, setCateSelected] = useState<any>();
   const [hashTags, setHashTags] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
-  const [thumbnails, setThumbnails] = useState<string[]>([]);
   const { blog, setBlog } = useBlogState((state) => state);
 
   useEffect(() => {
@@ -52,23 +55,39 @@ const CreateDetail = () => {
     setDefaultContent(blog?.content || "");
     setSelectedDate(blog?.execute_at);
     setImages(blog?.images || []);
-    setThumbnails(blog?.thumbnails || []);
     if (blog?.execute_at) setIsToday(false);
+    getCategories(blog?.category?.thema_id);
   }, []);
 
   useEffect(() => {
     setBlog({
+      id: blog?.id,
       category_id: cateSelected,
       content,
       title,
       tags: hashTags,
       execute_at: selectedDate,
+      images: images,
+      thumbnails: images,
     });
-  }, [themaSelected, cateSelected, title, content, hashTags, selectedDate]);
+  }, [
+    themaSelected,
+    images,
+    cateSelected,
+    title,
+    content,
+    hashTags,
+    selectedDate,
+  ]);
 
   useEffect(() => {
-    if (!!isToday) setSelectedDate(undefined);
-  }, [isToday]);
+    if (!!selectedDate && !!isToday) {
+      setSelectedDate(null);
+    }
+    if (!selectedDate && !isToday) {
+      setSelectedDate(new Date());
+    }
+  }, [isToday, selectedDate]);
 
   const getThema = async () => {
     try {
@@ -84,9 +103,8 @@ const CreateDetail = () => {
   const getCategories = async (thema_id: string) => {
     try {
       setCategories([]);
-      setCateSelected(undefined);
       const data = await CategoryApi.getList({
-        filter: `{"themsa_id":"${thema_id}"}`,
+        filter: `{"thema_id":"${thema_id}"}`,
       });
       setCategories(data);
     } catch (error) {}
@@ -190,30 +208,15 @@ const CreateDetail = () => {
     );
   };
 
-  const onSubmit = async () => {
-    try {
-      await BlogApi.create(blog);
-      showSuccess("Create Success");
-    } catch (error) {
-      showError(error);
-    }
-  };
-  const handleImagesChange = async (data: any) => {
-    console.log("storeImages:::::::::", data);
-    return
-    let newThumbs = data;
+  const uploadImg = async () => {
     let newImgs = await Promise.all(
-      await data.map(async (item: any, index: number) => {
+      await (blog?.images || []).map(async (item: any, index: number) => {
         if (typeof item === "string") {
           return item;
         } else {
           try {
             if (!item) return;
             const img = await UploadApi.uploadMultipleImages([item]);
-            // newThumbs = newThumbs.map((thumbItem, thumbIndex) => {
-            //   if (thumbIndex === index) return item.low_quality_images[0].url;
-            //   return thumbItem;
-            // });
             return img.high_quality_images[0].url;
           } catch (error) {
             return item;
@@ -221,8 +224,40 @@ const CreateDetail = () => {
         }
       })
     );
-    console.log("newImgs", newImgs);
-    console.log("newThumbs", newThumbs);
+    setImages(newImgs);
+    return newImgs;
+  };
+
+  const onSubmit = async () => {
+    try {
+      setLoading(true);
+      const imgs = await uploadImg();
+      if (!blog?.id) {
+        const respon = await BlogApi.create({
+          ...blog,
+          images: imgs,
+          thumbnails: imgs,
+          status: true,
+        });
+        setBlog(respon);
+        showSuccess("Created successfully");
+      } else {
+        await BlogApi.update(blog?.id, {
+          ...blog,
+          images: imgs,
+          thumbnails: imgs,
+          status: true,
+        });
+        showSuccess("Updated successfully");
+      }
+    } catch (error) {
+      showError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleImagesChange = async (data: any) => {
+    setImages(data.filter((item: any) => !!item));
   };
 
   return (
@@ -240,8 +275,9 @@ const CreateDetail = () => {
           <img src={Images.chevronRightTiny} className="w-6 h-6" />
         </BaseButton> */}
         <div className="mt-6"></div>
-        <div className="">
+        <div className=" w-[420px]">
           <ListSelectImageDrag
+            size="small"
             onImagesChange={handleImagesChange}
             listImages={images}
           />
@@ -249,10 +285,11 @@ const CreateDetail = () => {
         <BaseInputSelect
           title="Thema"
           onChange={(value: any) => {
-            setThemaSelected(value);
             getCategories(value);
+            setCateSelected(null);
+            setThemaSelected(value);
           }}
-          defaultValue={themaSelected}
+          defaultValue={themas[0] ? themaSelected : null}
           value={0}
           allowClear={false}
           textInputSize={12}
@@ -274,7 +311,7 @@ const CreateDetail = () => {
             onChange={(value: any) => {
               setCateSelected(value);
             }}
-            defaultValue={categories[0] ? cateSelected : undefined}
+            defaultValue={categories[0] ? cateSelected : null}
             allowClear={false}
             textInputSize={12}
             className="mt-6"
@@ -348,38 +385,6 @@ const CreateDetail = () => {
           Blog post
         </BaseButton>
         <div className="h-10"></div>
-      </div>
-    </div>
-  );
-};
-
-const Preview = () => {
-  const { blog } = useBlogState((state) => state);
-  return (
-    <div className="max-w-[468px] min-w-[468px] p-6 overflow-auto flex flex-col">
-      <BaseText locale bold size={24}>
-        Review
-      </BaseText>
-      <BaseText locale bold size={24} className="mt-4">
-        {blog?.title}
-      </BaseText>
-      <div
-        className="mt-4"
-        dangerouslySetInnerHTML={{ __html: blog?.content || "" }}
-      ></div>
-      <div className="flex flex-wrap flex-row gap-x-3">
-        {[
-          (blog?.tags || []).map((item, index) => (
-            <div
-              key={index}
-              className="relative  mt-3 px-4 py-1 bg-darkNight50 rounded-full flex justify-center items-center"
-            >
-              <BaseText className="text-darkNight700" medium>
-                #{item}
-              </BaseText>
-            </div>
-          )),
-        ]}
       </div>
     </div>
   );

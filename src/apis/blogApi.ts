@@ -10,9 +10,10 @@ export const BlogApi = {
     return res?.results?.objects
   },
   create: async (data?: BlogInterface) => {
-    return await axiosClient.post(BLOG, data);
+    const res: any = await axiosClient.post(BLOG, data);
+    return res?.results?.object
   },
-  update: async (id: string, data?: BoardLinkInterface) => {
+  update: async (id?: string, data?: BlogInterface) => {
     const res: any = await axiosClient.put(`${BLOG}/${id}`, data);
     return res?.results?.object
   },

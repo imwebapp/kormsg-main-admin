@@ -315,14 +315,15 @@
   "Content": "Content",
   "Writing articles": "Writing articles",
   "Review": "Review",
-  "Theme/Category" : "Theme/Category",
+  "Theme/Category": "Theme/Category",
   "Please enter a title": "Please enter a title",
   "#Hashtags (maximum 30)": "#Hashtags (maximum 30)",
-  "Time" : "Time",
+  "Time": "Time",
   "Edit Shop": "Edit Shop",
   "Views": "Views",
   "Post title": "Post title",
   "Date Created": "Date Created",
   "Article list": "Article list",
-  "Are you sure to delete": "Are you sure to delete"
+  "Are you sure to delete": "Are you sure to delete",
+  "No posts yet": "No posts yets"
 }
