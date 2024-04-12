@@ -222,29 +222,27 @@ const StorePage = () => {
             <Select
               suffixIcon={<CaretDownOutlined />}
               placeholder={t("Thema")}
-              defaultValue={t("Thema")}
               style={{ width: 110 }}
               onChange={handleChangeThema}
               options={themas}
             />
             <Select
               suffixIcon={<ArrowUpOutlined />}
-              placeholder="Advertise"
-              defaultValue="Advertise"
+              placeholder={t("Advertise")}
               style={{ width: 120 }}
               onChange={handleChangeAdvertise}
               options={[
                 {
                   value: SORTING.NONE,
-                  label: "none",
+                  label: t("None"),
                 },
                 {
                   value: SORTING.DESC,
-                  label: "descending",
+                  label: t("Descending"),
                 },
                 {
                   value: SORTING.ASC,
-                  label: "ascending",
+                  label: t("Ascending"),
                 },
               ]}
             />
