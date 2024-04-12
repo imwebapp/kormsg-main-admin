@@ -34,6 +34,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
     isHideAction,
     title,
     children,
+    bodyStyle,
     disableSubmitBtn,
     nameCancel,
     nameConfirm,
@@ -88,7 +89,14 @@ export const BaseModal2 = (props: BaseModalProps) => {
           className="text-2xl text-gray-500 cursor-pointer"
         />
       </div>
-      <div className="max-h-[80vh] px-6 py-4 overflow-auto">{children}</div>
+      <div
+        className={classNames(
+          "max-h-[80vh] px-6 py-4 overflow-auto",
+          bodyStyle
+        )}
+      >
+        {children}
+      </div>
       {!isHideAction && (
         <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
           <BaseButton
