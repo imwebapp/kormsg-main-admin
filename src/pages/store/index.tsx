@@ -34,14 +34,12 @@ const StorePage = () => {
   });
   const [selectedThema, setSelectedThema] = useState("");
   const [selectedSorting, setSelectedSorting] = useState(SORTING.NONE);
-  const [selectedFilterUser, setSelectedFilterUser] = useState("username");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
   const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
   const [itemSelectShop, setItemSelectShop] = useState<any>({});
   const [rangeValue, setRangeValue] = useState<any>(null);
   const [descriptionEvent, setDescriptionEvent] = useState("");
   const [isEdit, setIsEdit] = useState(false);
-  const [filter, setFilter] = useState<any>();
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(0);
   const [themas, setThemas] = useState<any>([]);
 
@@ -131,6 +129,7 @@ const StorePage = () => {
   };
   const refreshTable = () => {
     setIsUpdateSuccess(isUpdateSuccess + 1);
+    getCountStore();
   };
   useEffect(() => {
     getListThema();
@@ -143,9 +142,6 @@ const StorePage = () => {
   };
   const handleChangeThema = (value: string) => {
     setSelectedThema(value);
-  };
-  const handleChangeFilter = (value: string) => {
-    setSelectedFilterUser(value);
   };
   const handleChangeAdvertise = (value: string) => {
     setSelectedSorting(value);
@@ -194,7 +190,7 @@ const StorePage = () => {
     ];
 
     return (
-      <div className="flex flex-row gap-4 mt-1">
+      <div className="flex flex-row gap-4 mt-1 mb-5">
         {buttonData.map(({ status, label, count }) => (
           <CustomButton
             key={status}
@@ -214,34 +210,39 @@ const StorePage = () => {
     <>
       <div className="p-6">
         <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
-          {listButton()}
+          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap w-full my-4">
+            <Input
+              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 max-md:pr-5"
+              placeholder="Keyword"
+              onChange={handleChangeTextKeyword}
+              value={valueKeywordFilter}
+            />
+          </div>
           <div className="flex gap-3 whitespace-nowrap">
             <Select
               suffixIcon={<CaretDownOutlined />}
               placeholder={t("Thema")}
-              defaultValue={t("Thema")}
               style={{ width: 110 }}
               onChange={handleChangeThema}
               options={themas}
             />
             <Select
               suffixIcon={<ArrowUpOutlined />}
-              placeholder="Advertise"
-              defaultValue="Advertise"
+              placeholder={t("Advertise")}
               style={{ width: 120 }}
               onChange={handleChangeAdvertise}
               options={[
                 {
                   value: SORTING.NONE,
-                  label: "none",
+                  label: t("None"),
                 },
                 {
                   value: SORTING.DESC,
-                  label: "descending",
+                  label: t("Descending"),
                 },
                 {
                   value: SORTING.ASC,
-                  label: "ascending",
+                  label: t("Ascending"),
                 },
               ]}
             />
@@ -259,16 +260,8 @@ const StorePage = () => {
             </CustomButton>
           </div>
         </div>
-        <div>
-          <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap my-4">
-            <Input
-              className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 text-zinc-400 max-md:pr-5"
-              placeholder="Keyword"
-              onChange={handleChangeTextKeyword}
-              value={valueKeywordFilter}
-            />
-          </div>
-        </div>
+        {listButton()}
+
         <StoreListTable
           thema={selectedThema}
           typeStore={selectedButton}

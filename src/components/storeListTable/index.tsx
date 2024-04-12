@@ -48,6 +48,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
   const [isShowInfo, setIsShowInfo] = useState(false);
+  const [isShowReasonDenied, setIsShowReasonDenied] = useState(false);
   const [listImageShop, setListImageShop] = useState([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const [positionStore, setPositionStore] = useState({
@@ -56,7 +57,9 @@ export default function StoreListTable(props: StoreListTableProps) {
   });
   const [isShowDataHistory, setIsShowDataHistory] = useState(false);
   const nameGroup = useRef("");
+  const idStore = useRef("");
   const [dataHistory, setDataHistory] = useState<any[]>([]);
+  const [deniedMessagse, setDeniedMessagse] = useState("");
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -155,14 +158,13 @@ export default function StoreListTable(props: StoreListTableProps) {
       }
     } catch (error) {}
   };
-  const rejectPendingShop = async (id: string) => {
+  const rejectPendingShop = async (id: string, denied_message: string | "") => {
     try {
       const params = {
         state: "REJECTED",
-        denied_message: null,
+        denied_message: denied_message,
       };
       let result: any = await storeApi.rejectStore(params, id);
-      console.log("tum lum", result);
 
       if (result.code === 200) {
         notification.success({
@@ -250,14 +252,11 @@ export default function StoreListTable(props: StoreListTableProps) {
     let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",${JSON.stringify(
       convertFilter
     )}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
-    console.log("fields", fields);
 
     return fields;
   };
 
   const getListStore = () => {
-    console.log("log log");
-
     // field all selected
     const fieldsCustom = generateFields();
     const filterCustom = generateFilter(typeStore);
@@ -533,7 +532,8 @@ export default function StoreListTable(props: StoreListTableProps) {
             <button
               className="justify-center px-2 py-1.5 bg-red-600 rounded-lg"
               onClick={() => {
-                rejectPendingShop(record.id);
+                idStore.current = record.id;
+                setIsShowReasonDenied(!isShowReasonDenied);
               }}
             >
               Reject
@@ -663,6 +663,24 @@ export default function StoreListTable(props: StoreListTableProps) {
             <span>{item.content}</span>
           </div>
         ))}
+      </BaseModal2>
+      <BaseModal2
+        isOpen={isShowReasonDenied}
+        onClose={() => {
+          setDeniedMessagse("");
+          setIsShowReasonDenied(false);
+        }}
+        onSubmit={() => {
+          rejectPendingShop(idStore.current, deniedMessagse);
+        }}
+      >
+        <BaseInput
+          title="Denied Message"
+          onChange={(value) => {
+            setDeniedMessagse(value);
+          }}
+          value={deniedMessagse}
+        />
       </BaseModal2>
     </>
   );
