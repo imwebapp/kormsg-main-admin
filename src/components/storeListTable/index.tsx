@@ -20,6 +20,7 @@ import { Url } from "../../routers/paths";
 import { useNavigate } from "react-router-dom";
 import { BaseInput } from "../input/BaseInput";
 import { userApi } from "../../apis/userApi";
+import NaverMapComponent from "./components/NaverMap";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -322,35 +323,6 @@ export default function StoreListTable(props: StoreListTableProps) {
   useEffect(() => {
     setCurrentPage(1);
   }, [typeStore]);
-  useEffect(() => {
-    if (positionStore.lat !== 0 && positionStore.long !== 0) {
-      generateMap(positionStore.lat, positionStore.long);
-    }
-    return () => {};
-  }, [positionStore]);
-  const generateMap = (latitude: any, longitude: any) => {
-    if (!naver.maps) window.location.reload();
-    const container = document.getElementById("map");
-    if (container) {
-      if (container && container.innerHTML !== "") {
-        container.innerHTML = ""; // Xóa nội dung của thẻ div
-      }
-      const map = new naver.maps.Map("map", {
-        center: new naver.maps.LatLng(latitude, longitude),
-        zoom: 18,
-      });
-      new naver.maps.Marker({
-        position: new naver.maps.LatLng(latitude, longitude),
-        map,
-        icon: {
-          content: `<div style="position: relative">
-            <img src="${Images.pinMap}" style="width : 40px; height: 47px" alt="">
-          </div>`,
-          size: new naver.maps.Size(30, 35),
-        },
-      });
-    }
-  };
   let dynamicColumns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -518,8 +490,6 @@ export default function StoreListTable(props: StoreListTableProps) {
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 setIsShowModalMap(true);
-                console.log(record);
-
                 setPositionStore({
                   lat: record.latitude,
                   long: record.longitude,
@@ -605,7 +575,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             pointerEvents: "none",
           }}
         >
-          <div id="map" style={{ width: "961px", height: "700px" }} />
+          <NaverMapComponent positionStore={positionStore} />
         </div>
       </BaseModal2>
       <BaseModal2
