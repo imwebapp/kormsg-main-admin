@@ -18,7 +18,7 @@
     display: none !important;
 }
 .selected-row > .ant-table-cell {
-    background: #E8E8E8 !important;
+    background: #E6F4FF !important;
     cursor: pointer;
 }
 
