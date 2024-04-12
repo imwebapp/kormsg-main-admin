@@ -19,11 +19,9 @@ export default function BaseEditor(props: BaseEditorProps) {
     },
     uploader: {
       insertImageAsBase64URI: false,
-      url: `${BASE_URL}/image/upload/1920`,
-      prepareData: function (formData: any) {
-        formData.append("image", formData.get("files[0]"));
-        formData.delete("files[0]");
-        return formData;
+      url: `${BASE_URL}/image/upload_multiple/300/1920`,
+      filesVariableName(i: number): string {
+        return `images`;
       },
       isSuccess: function (resp: any) {
         return !resp.error;
@@ -35,9 +33,11 @@ export default function BaseEditor(props: BaseEditorProps) {
         return resp;
       },
       defaultHandlerSuccess: function (data: any, resp: any) {
-        console.log(data);
         try {
-          editorRef.current.selection.insertImage(data.results.object.url);
+          const imgs = data.results.object.high_quality_images;
+          for (let img of imgs) {
+            editorRef.current.selection.insertImage(img.url);
+          }
         } catch (error) {}
       },
       error: function (e: any) {},

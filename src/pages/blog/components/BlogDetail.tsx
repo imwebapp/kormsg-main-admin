@@ -43,7 +43,8 @@ const CreateDetail = () => {
   const [themaSelected, setThemaSelected] = useState<any>();
   const [cateSelected, setCateSelected] = useState<any>();
   const [hashTags, setHashTags] = useState<string[]>([]);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<any>([]);
+  const [thumbnails, setThumbnails] = useState<any>([]);
   const { blog, setBlog } = useBlogState((state) => state);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const CreateDetail = () => {
     setDefaultContent(blog?.content || "");
     setSelectedDate(blog?.execute_at);
     setImages(blog?.images || []);
+    setThumbnails(blog?.thumbnails || []);
     if (blog?.execute_at) setIsToday(false);
     getCategories(blog?.category?.thema_id);
   }, []);
@@ -68,11 +70,12 @@ const CreateDetail = () => {
       tags: hashTags,
       execute_at: selectedDate,
       images: images,
-      thumbnails: images,
+      thumbnails: thumbnails,
     });
   }, [
     themaSelected,
     images,
+    thumbnails,
     cateSelected,
     title,
     content,
@@ -209,60 +212,130 @@ const CreateDetail = () => {
   };
 
   const uploadImg = async () => {
-    let newImgs = await Promise.all(
+    let img = await Promise.all(
       await (blog?.images || []).map(async (item: any, index: number) => {
         if (typeof item === "string") {
-          return item;
+          return {
+            images,
+            thumbnails,
+          };
         } else {
           try {
             if (!item) return;
             const img = await UploadApi.uploadMultipleImages([item]);
-            return img.high_quality_images[0].url;
+            return {
+              images: [img.high_quality_images[0].url],
+              thumbnails: [img.low_quality_images[0].url],
+            };
           } catch (error) {
             return item;
           }
         }
       })
     );
-    setImages(newImgs);
-    return newImgs;
+    return img[0]
+      ? img[0]
+      : {
+          images,
+          thumbnails,
+        };
   };
 
   const onSubmit = async () => {
     try {
       setLoading(true);
       const imgs = await uploadImg();
+
       if (!blog?.id) {
         const respon = await BlogApi.create({
           ...blog,
-          images: imgs,
-          thumbnails: imgs,
+          ...{ ...imgs },
         });
         setBlog(respon);
         showSuccess("Created successfully");
       } else {
         await BlogApi.update(blog?.id, {
           ...blog,
-          images: imgs,
-          thumbnails: imgs,
+          ...{ ...imgs },
         });
         showSuccess("Updated successfully");
       }
     } catch (error) {
+      console.log("error", error);
+
       showError(error);
     } finally {
       setLoading(false);
     }
   };
-  const handleImagesChange = async (data: any) => {
-    setImages(data.filter((item: any) => !!item));
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (file) {
+        setImages([file]);
+      }
+    } catch (error) {
+      showError(error);
+    }
+  };
+
+  const buildImage = () => {
+    return (
+      <>
+        {!images[0] ? (
+          <div>
+            <input
+              id="image-blog"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            <label
+              htmlFor="image-blog"
+              className="cursor-pointer flex-col w-[280px] h-[280px] rounded-xl bg-darkNight100 bg-opacity-80 justify-center items-center flex gap-y-3"
+            >
+              <div className="flex justify-center items-center w-[52px] h-[52px] rounded-full shadow-lg bg-white">
+                <img src={Images.exportIcon} className="w-6 h-6" />
+              </div>
+              <BaseText locale size={16} bold>
+                Upload image
+              </BaseText>
+            </label>
+          </div>
+        ) : (
+          <div className="w-[280px] h-[280px] rounded-xl relative">
+            <img
+              src={Images.closeCircle}
+              className="absolute z-10 w-8 h-8 cursor-pointer top-2 right-2"
+              alt="closeCircle"
+              onClick={() => setImages([])}
+            />
+            <div className="z-1 py-1 px-3 rounded-full bg-black bg-opacity-30 absolute top-3 left-3">
+              <BaseText locale bold size={16} className="text-white">
+                Representative
+              </BaseText>
+            </div>
+            <img
+              src={
+                typeof images[0] === "string"
+                  ? images[0]
+                  : URL.createObjectURL(images[0]!)
+              }
+              className="w-full h-full rounded-lg object-cover"
+              alt="Image"
+            />
+          </div>
+        )}
+      </>
+    );
   };
 
   return (
     <div className="flex-1 justify-center flex border-r p-6 overflow-auto no-scrollbar">
       <div className="max-w-[600px]">
-        <BaseText bold size={16} locale>
-          Representative image
+        <BaseText bold size={24} locale>
+          Writing articles
         </BaseText>
         {/* ///////////////////////////////////// */}
         {/* ///////////////////////////////////// */}
@@ -273,13 +346,7 @@ const CreateDetail = () => {
           <img src={Images.chevronRightTiny} className="w-6 h-6" />
         </BaseButton> */}
         <div className="mt-4"></div>
-        <div className=" w-[420px]">
-          <ListSelectImageDrag
-            size="small"
-            onImagesChange={handleImagesChange}
-            listImages={images}
-          />
-        </div>
+        {buildImage()}
         <BaseInputSelect
           title="Thema"
           onChange={(value: any) => {
