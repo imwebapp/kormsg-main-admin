@@ -52,16 +52,17 @@ export default function BaseBarChart(props: BarChartProps) {
         {
           dimension: {
             orderType: "NUMERIC",
-            dimensionName: optionTime === "Hours" ? "hour" : "date",
+            dimensionName: optionTime === t("Hours") ? "hour" : "date",
           },
         },
       ],
     };
+
     let result = await analyticsApi.getInfo(params);
     //  get user active today
     const convertedData = result.data[0].rows.map((item: any) => ({
       label:
-        optionTime === "Hours"
+        optionTime === t("Hours")
           ? item.dimensionValues[0].value
           : dayjs(item.dimensionValues[0].value, "YYYYMMDD").format("MM/DD"),
       value: item.metricValues[0].value,
@@ -118,9 +119,9 @@ export default function BaseBarChart(props: BarChartProps) {
           <CustomTimePicker
             range
             onDataChange={({ value, dateString }) => {
-              if (dateString && dateString[0] !== "") {
+              if (value && value[0] && value[1]) {
                 setDateTimeSelect(dateString);
-              } else {
+              } else if (value === null) {
                 setDateTimeSelect(["30daysAgo", "today"]);
               }
             }}

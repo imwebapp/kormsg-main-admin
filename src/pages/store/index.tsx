@@ -288,6 +288,7 @@ const StorePage = () => {
           onRefresh={() => {
             refreshTable();
           }}
+          countStore={countStore}
         />
       </div>
       <BaseModal2
