@@ -25,7 +25,7 @@ export default function BasePieChart(props: PieChartProps) {
         console.log("cur", currentTransform);
 
         if (!currentTransform.includes("scale")) {
-          textElement.style.cssText = `font-size:0.3em;fill: white !important; transform: ${currentTransform} scale(0.4);`;
+          textElement.style.cssText = `font-size:0.5em;fill: white !important; transform: ${currentTransform} scale(0.4);`;
         }
       }
     });
