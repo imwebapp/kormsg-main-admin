@@ -237,7 +237,6 @@ const CreateDetail = () => {
           ...blog,
           images: imgs,
           thumbnails: imgs,
-          status: true,
         });
         setBlog(respon);
         showSuccess("Created successfully");
@@ -246,7 +245,6 @@ const CreateDetail = () => {
           ...blog,
           images: imgs,
           thumbnails: imgs,
-          status: true,
         });
         showSuccess("Updated successfully");
       }
