@@ -25,7 +25,7 @@ export default function BasePieChart(props: PieChartProps) {
         console.log("cur", currentTransform);
 
         if (!currentTransform.includes("scale")) {
-          textElement.style.cssText = `font-size:8px;fill: white !important; transform: ${currentTransform} scale(0.4)`;
+          textElement.style.cssText = `font-size:0.3em;fill: white !important; transform: ${currentTransform} scale(0.4);`;
         }
       }
     });
@@ -81,10 +81,8 @@ export default function BasePieChart(props: PieChartProps) {
   }, [date]);
 
   useEffect(() => {
-    setTimeout(() => {
-      const textElements: any = document.querySelectorAll("#pie-chart text");
-      changeStyle(textElements);
-    }, 400);
+    const textElements: any = document.querySelectorAll("#pie-chart text");
+    changeStyle(textElements);
   }, [data]);
   function getColorByIndex(index: any) {
     const colors = [

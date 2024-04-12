@@ -26,6 +26,7 @@ type StoreListTableProps = {
   thema?: string;
   typeSorting?: string;
   valueSearch?: string;
+  countStore?: any;
   onItemStoreClick?: (item: any) => void;
   isUpdate?: Number;
   onRefresh?: () => void;
@@ -40,6 +41,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     onRefresh,
     isUpdate,
     valueSearch,
+    countStore,
   } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -49,7 +51,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowImages, setIsShowImages] = useState(false);
   const [isShowInfo, setIsShowInfo] = useState(false);
   const [isShowReasonDenied, setIsShowReasonDenied] = useState(false);
-  const [listImageShop, setListImageShop] = useState([]);
+  // const [listImageShop, setListImageShop] = useState([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const [positionStore, setPositionStore] = useState({
     lat: 0,
@@ -58,6 +60,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowDataHistory, setIsShowDataHistory] = useState(false);
   const nameGroup = useRef("");
   const idStore = useRef("");
+  const limit = 50;
   const [dataHistory, setDataHistory] = useState<any[]>([]);
   const [deniedMessagse, setDeniedMessagse] = useState("");
   const renderEventAction = (item: any, events: any) => {
@@ -201,7 +204,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         filterString += `"state":"PENDING"`;
         break;
       case STORE_STATUS.reviewRejected:
-        filterString += `{"$or":[{"denied_shop":{"$ne":null}},{"state":{"$in":["REJECTED"]}}]}`;
+        filterString += `"state":"REJECTED"`;
         break;
       case STORE_STATUS.adExpired:
         filterString += `"state":{"$in":["EXPIRED"]}`;
@@ -249,11 +252,28 @@ export default function StoreListTable(props: StoreListTableProps) {
     if (thema && thema !== "" && thema !== t("All")) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",${JSON.stringify(
+    //{"user":["$all",{"new_group":["$all"]}]}
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",{"new_group":["name"]},${JSON.stringify(
       convertFilter
     )}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
 
     return fields;
+  };
+  const getCountTotal = () => {
+    switch (typeStore) {
+      case STORE_STATUS.exposure:
+        return countStore.countShopActive;
+      case STORE_STATUS.underReview:
+        return countStore.countShopPending;
+      case STORE_STATUS.reviewRejected:
+        return countStore.countShopReject;
+      case STORE_STATUS.adExpired:
+        return countStore.countShopExpired;
+      case STORE_STATUS.eventOngoing:
+        return countStore.countShopOnEvent;
+      default:
+        return 50;
+    }
   };
 
   const getListStore = () => {
@@ -263,7 +283,8 @@ export default function StoreListTable(props: StoreListTableProps) {
     const orderCustom = JSON.stringify(generateOrder(typeSorting));
     storeApi
       .getList({
-        limit: 50,
+        limit: limit,
+        page: currentPage,
         fields: fieldsCustom,
         filter: filterCustom,
         order: orderCustom,
@@ -294,13 +315,13 @@ export default function StoreListTable(props: StoreListTableProps) {
         });
     } catch (error) {}
   };
-  useEffect(() => {
-    getListStore();
-  }, []);
 
   useEffect(() => {
     getListStore();
-  }, [typeStore, typeSorting, thema, isUpdate, valueSearch]);
+  }, [typeStore, typeSorting, thema, isUpdate, valueSearch, currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [typeStore]);
   useEffect(() => {
     if (positionStore.lat !== 0 && positionStore.long !== 0) {
       generateMap(positionStore.lat, positionStore.long);
@@ -335,7 +356,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("No"),
       render: (text, record, index) => (
         <div className="min-w-[40px]">
-          <BaseText>{(currentPage - 1) * 10 + index + 1}</BaseText>
+          <BaseText>{(currentPage - 1) * 50 + index + 1}</BaseText>
         </div>
       ),
     },
@@ -489,7 +510,7 @@ export default function StoreListTable(props: StoreListTableProps) {
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 setIsShowImages(true);
-                setListImageShop(record.images);
+                // setListImageShop(record.images);
               }}
             />
             <img
@@ -510,7 +531,7 @@ export default function StoreListTable(props: StoreListTableProps) {
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
                 setIsShowInfo(!isShowInfo);
-                nameGroup.current = record.user.groups[0];
+                nameGroup.current = record?.user?.new_group?.name;
                 getInfoPaymentHistory(record.user.id);
               }}
             />
@@ -560,7 +581,9 @@ export default function StoreListTable(props: StoreListTableProps) {
         // onSelectChange={() => {}}
         className={className}
         pagination={{
-          pageSize: 10,
+          current: currentPage,
+          pageSize: limit,
+          total: getCountTotal(),
           onChange: handlePageChange,
         }}
         columns={dynamicColumns}
@@ -589,17 +612,13 @@ export default function StoreListTable(props: StoreListTableProps) {
         isOpen={isShowImages}
         isHideAction={true}
         onClose={() => {
-          // setIsShowModalMap(false);
           setIsShowImages(false);
         }}
       >
-        <Slide>
-          {listImageShop.map((image, index) => (
-            <div key={index} className="each-slide-effect">
-              <img src={image} alt={`mô_tả_hình_ảnh_${index}`} />
-            </div>
-          ))}
-        </Slide>
+        <iframe
+          src="https://dev.kormsg.com/detail/650896d0-f883-11ee-a62d-0bb94bbfc28f"
+          className="w-full h-[950px] pointer-events-none"
+        />
       </BaseModal2>
       <BaseModal2
         isOpen={isShowInfo}
