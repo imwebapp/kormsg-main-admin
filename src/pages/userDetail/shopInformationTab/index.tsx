@@ -47,14 +47,16 @@ export const ShopInformationTab = (props: IProps) => {
     value: string;
     data: {
       id: string;
-      avatar: string;
+      avatar?: string;
       name: string;
-      timeStart: string;
-      timeEnd: string;
-      hashtag: string[];
+      timeStart?: string;
+      timeEnd?: string;
+      tag_ids: string[];
+      shop_tags: any[];
     }[];
     count: number;
   }>(ListTabBar[0]);
+  console.log("tabSelected", tabSelected.data);
   const checkCount = (type: string) => {
     switch (type) {
       case "APPROVED":
@@ -64,54 +66,70 @@ export const ShopInformationTab = (props: IProps) => {
       case "Recommended store":
         return dataUser.current_recommendation_post;
       case "During the event":
-        return dataUser.current_active_post;
+        return dataUser.current_on_event_shop;
       default:
         return 0;
     }
   };
 
   useEffect(() => {
-    let type = tabSelected.value;
+    let convertFields: any = [
+      "$all",
+      { user: ["$all"] },
+      { category: ["$all", { thema: ["$all"] }] },
+      { events: ["$all"] },
+      { shop_tags: ["$all"] },
+    ];
+
+    const convertFieldsDuringTheEvent: any = [
+      "$all", { events: ["$all", { "$filter": {} }] },
+      { shop_tags: ["$all"] },
+    ];
+
+    const convertFilter: any = {
+      user_id: `${dataUser.id}`,
+    };
     switch (tabSelected.value) {
       case "APPROVED":
-        type = "APPROVED";
+        convertFilter['$or'] = [
+          { denied_shop: { $ne: null } },
+          { state: { $in: ['APPROVED'] } },
+        ];
         break;
       case "EXPIRED":
-        type = "EXPIRED";
+        convertFilter['$or'] = [
+          { denied_shop: { $ne: null } },
+          { state: { $in: ['EXPIRED'] } },
+        ];
         break;
       case "Recommended store":
-        type = "APPROVED";
+        convertFilter['is_random_20_shop'] = true;
+        convertFilter['state'] = { $in: ['APPROVED'] };
         break;
       case "During the event":
-        type = "APPROVED";
+        convertFields = convertFieldsDuringTheEvent;
+        convertFilter['state'] = { $not: ['EXPIRED'] };
         break;
       default:
-        type = "APPROVED";
+        convertFilter['$or'] = [
+          { denied_shop: { $ne: null } },
+          { state: { $in: ['APPROVED'] } },
+        ];
         break;
     }
 
     shopApi
       .getList({
-        fields: JSON.stringify([
-          "$all",
-          { user: ["$all"] },
-          { category: ["$all", { thema: ["$all"] }] },
-          { events: ["$all"] },
-        ]),
-        filter: JSON.stringify({
-          user_id: `${dataUser.id}`,
-          $or: [
-            { denied_shop: { $ne: null } },
-            { state: { $in: [`${type}`] } },
-          ],
-        }),
+        fields: JSON.stringify(convertFields),
+        filter: JSON.stringify(convertFilter),
         limit: 50,
         page: 1,
       })
       .then((res: any) => {
+        console.log("res getList SHOP API", res.results.objects.rows);
         setTabSelected({
           ...tabSelected,
-          data: res.results.objects.rows,
+          data: res.results.objects.rows
         });
       })
       .catch((err) => {
@@ -152,7 +170,7 @@ export const ShopInformationTab = (props: IProps) => {
                     {checkCount(item.value)}
                   </BaseText>
                 </div>
-                {tabSelected.value === item.value ? (
+                {tabSelected?.value === item.value ? (
                   <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" />
                 ) : (
                   <div className="w-full h-1" />
@@ -164,7 +182,7 @@ export const ShopInformationTab = (props: IProps) => {
       </div>
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6">
-          {(tabSelected.data || []).map((item: any, index) => (
+          {(tabSelected?.data || []).map((item: any, index) => (
             <ItemShop
               key={index}
               id={item.id}
@@ -175,7 +193,8 @@ export const ShopInformationTab = (props: IProps) => {
               }
               name={item.title}
               timeOpening={item.opening_hours}
-              hashtag={[]}
+              hashtag={(item?.shop_tags || []).map((item: any) => `#${item.name}`)}
+              item={item}
               onClick={(id) => console.log(id)}
               className=""
             />

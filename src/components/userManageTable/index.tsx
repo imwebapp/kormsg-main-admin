@@ -5,36 +5,14 @@ import { useNavigate } from "react-router-dom";
 import Images from "../../assets/gen";
 import { Url } from "../../routers/paths";
 import { User, checkAccountType, convertDate } from "../../utils/common";
-import { INIT_TAB_USER_DETAIL, PLATFORM } from "../../utils/constants";
+import { INIT_TAB_USER_DETAIL, ListTypeUser, PLATFORM } from "../../utils/constants";
 import CustomButton from "../button";
 import { BaseInput } from "../input/BaseInput";
 import BaseTable from "../table";
 import BaseText from "../text";
 import { TypeUser } from "../../utils/constants";
 import { groupApi } from "../../apis/groupApi";
-
-const listUserGroup = [
-  {
-    id: 1,
-    name: "ALL",
-    count: 10,
-  },
-  {
-    id: 2,
-    name: "Group A",
-    count: 20,
-  },
-  {
-    id: 3,
-    name: "Group B",
-    count: 30,
-  },
-  {
-    id: 4,
-    name: "Group C",
-    count: 40,
-  },
-];
+import { BaseInputSelect } from "../input/BaseInputSelect";
 
 type UserManageTableProps = {
   data: User[];
@@ -93,17 +71,17 @@ export default function UserManageTable(props: UserManageTableProps) {
     return (
       <div className="flex flex-col gap-1">
         {/* <BaseInputSelect
-            required
-            value={account_type}
-            onChange={(value) => { }}
-            placeholder="Select type user"
-            options={ListTypeUser.map((item) => ({
-              value: item.id,
-              label: item.name,
-            }))}
-            className="min-w-[160px]"
-            disabled
-          /> */}
+          required
+          defaultValue={account_type}
+          value={account_type}
+          onChange={(value) => { }}
+          placeholder="Select type user"
+          options={ListTypeUser.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))}
+          className="min-w-[160px]"
+        /> */}
         <BaseText
           className={checkAccountType(account_type).CustomStyle}
           bold
@@ -112,16 +90,16 @@ export default function UserManageTable(props: UserManageTableProps) {
           {checkAccountType(account_type).type}
         </BaseText>
         {/* <BaseInputSelect
-            required
-            value={group === null ? 1 : group}
-            onChange={(value) => { }}
-            placeholder="Select type user"
-            options={listUserGroup.map((item) => ({
-              value: item.id,
-              label: item.name,
-            }))}
-            disabled
-          /> */}
+          required
+          defaultValue={group_id === null ? 1 : group_id}
+          value={group_id === null ? 1 : group_id}
+          onChange={(value) => { }}
+          placeholder="Select a group"
+          options={listUserGroup.map((item: any) => ({
+            value: item.id,
+            label: item.name,
+          }))}
+        /> */}
         <BaseText
           medium
           className={"text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"}
@@ -177,7 +155,7 @@ export default function UserManageTable(props: UserManageTableProps) {
           {storeStatus("Announcement", item, item.current_active_post, item.account_type)}
           {storeStatus("Expiration", item, item.current_expired_post, item.account_type)}
           {storeStatus("Recommended store", item, item.current_recommendation_post, item.account_type)}
-          {storeStatus("During the event", item, 0, item.account_type)}
+          {storeStatus("During the event", item, item.current_on_event_shop, item.account_type)}
         </div>
       ),
     },
@@ -209,9 +187,9 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Post/comment/ review/requests"),
-      render: ({ totalPost, totalReview}) => (
+      render: ({ totalPost, totalReview }) => (
         <BaseText size={16} medium>
-          {totalPost}/0/{totalReview}/0
+          {totalPost || 0}/0/{totalReview || 0}/0
         </BaseText>
       ),
     },

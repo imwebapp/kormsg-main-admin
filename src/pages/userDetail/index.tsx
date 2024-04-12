@@ -25,7 +25,7 @@ const UserDetail = () => {
 
   console.log("formDataCreateUserXX", showModalEdit);
   const checkGroup = (group: string) => {
-    if (group === null) {
+    if (group === null || group === undefined || group === "") {
       return "All";
     } else {
       return group;
