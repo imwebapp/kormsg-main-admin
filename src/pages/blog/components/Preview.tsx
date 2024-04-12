@@ -5,8 +5,6 @@ import Images from "../../../assets/gen";
 
 export const Preview = () => {
   const { blog } = useBlogState((state) => state);
-  console.log("blog", blog?.images);
-
   return (
     <div className="max-w-[468px] min-w-[468px] p-6 overflow-auto flex flex-col">
       {blog?.content ||
@@ -14,13 +12,10 @@ export const Preview = () => {
       blog?.title ||
       (blog?.tags && blog.tags[0]) ? (
         <>
-          <BaseText locale bold size={24}>
-            Review
-          </BaseText>
           <Carousel draggable autoplay className="h-[256px] rounded-lg mt-4">
             {(blog?.images || []).map((item) => (
               <img
-                src={
+              src={
                   typeof item === "string" ? item : URL.createObjectURL(item)
                 }
                 className="rounded-lg mb-6 h-[256px] object-cover"

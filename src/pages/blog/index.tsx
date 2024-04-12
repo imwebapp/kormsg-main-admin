@@ -14,7 +14,7 @@ export default function BlogPage() {
       <div className="max-w-[86px] min-w-[86px] h-full border-r">
         <div
           onClick={() => {
-            setBlog(undefined);
+            if (tab !== 1) setBlog(undefined);
             setTab(1);
           }}
           className="cursor-pointer h-[90px] border-b flex flex-col justify-center items-center relative"
@@ -40,7 +40,7 @@ export default function BlogPage() {
         <div
           onClick={() => {
             setTab(2);
-            setBlog(undefined);
+            if (tab !== 2) setBlog(undefined);
           }}
           className="cursor-pointer h-[90px] border-b flex flex-col justify-center items-center relative"
         >

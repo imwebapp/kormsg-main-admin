@@ -259,10 +259,10 @@ const CreateDetail = () => {
   };
 
   return (
-    <div className="flex-1 border-r p-6 overflow-auto no-scrollbar">
-      <div className="w-full max-w-[600px]">
-        <BaseText bold size={24} locale>
-          Writing articles
+    <div className="flex-1 justify-center flex border-r p-6 overflow-auto no-scrollbar">
+      <div className="max-w-[600px]">
+        <BaseText bold size={16} locale>
+          Representative image
         </BaseText>
         {/* ///////////////////////////////////// */}
         {/* ///////////////////////////////////// */}
@@ -272,7 +272,7 @@ const CreateDetail = () => {
           </BaseText>
           <img src={Images.chevronRightTiny} className="w-6 h-6" />
         </BaseButton> */}
-        <div className="mt-6"></div>
+        <div className="mt-4"></div>
         <div className=" w-[420px]">
           <ListSelectImageDrag
             size="small"
