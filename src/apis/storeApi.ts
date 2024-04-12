@@ -29,4 +29,17 @@ export const storeApi = {
   rejectStore: (params?: any, id?: string) => {
     return axiosClient.put(`${STORE}/${id}`, params);
   },
+  downloadExcel: (params?: any) => {
+    return axiosClient.get(`${STORE}/download_excel`, { params });
+  },
+  uploadExcel: async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file, file.name);
+    const res: any = await axiosClient.post(`${STORE}/import_excel`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res;
+  },
 };
