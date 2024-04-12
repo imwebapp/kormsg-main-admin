@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { BaseText, CustomButton, StoreListTable } from "../../components";
 import { Url } from "../../routers/paths";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SORTING, STORE_STATUS } from "../../utils/constants";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,6 +10,7 @@ import {
   CaretDownOutlined,
 } from "@ant-design/icons";
 import { DatePicker, GetProps, Input, Select, notification } from "antd";
+
 import { storeApi } from "../../apis/storeApi";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseModal2 } from "../../components/modal/BaseModal2";
@@ -17,7 +18,8 @@ import dayjs from "dayjs";
 import { eventApi } from "../../apis/eventApi";
 import { ThemaInterface } from "../../entities";
 import { ThemaApi } from "../../apis/themaApi";
-type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
+import Images from "../../assets/gen";
+import { showError } from "../../utils/showToast";
 const { RangePicker } = DatePicker;
 const StorePage = () => {
   // format date
@@ -42,7 +44,7 @@ const StorePage = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isUpdateSuccess, setIsUpdateSuccess] = useState(0);
   const [themas, setThemas] = useState<any>([]);
-
+  const fileExcelRef = useRef<any>(null);
   const { t } = useTranslation();
 
   const handleRangeChange = (value: any, dateString?: [string, string]) => {
@@ -121,6 +123,41 @@ const StorePage = () => {
         description: error.message,
       });
       refreshTable();
+    }
+  };
+  const downloadExcel = async () => {
+    try {
+      const params = {
+        fields: [
+          "$all",
+          { courses: ["$all", { prices: ["$all"] }] },
+          { user: ["$all"] },
+          { category: ["$all", { thema: ["$all"] }, { $filter: {} }] },
+          { events: ["$all"] },
+        ],
+        filter: { state: { $notIn: ["REJECTED", "EXPIRED"] } },
+        limit: 99999,
+        order: [["geolocation_api_type", "DESC"]],
+      };
+      let result: any = await storeApi.downloadExcel(params);
+      window.open(result.results?.object?.url, "_blank");
+    } catch (error) {}
+  };
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      const file = event.target.files?.[0];
+      if (file) {
+        const response: any = await storeApi.uploadExcel(file);
+        if (response.code === 200) {
+          notification.success({
+            message: "Upload Excell Success",
+          });
+        }
+      }
+    } catch (error) {
+      showError(error);
     }
   };
   const resetModal = () => {
@@ -260,7 +297,46 @@ const StorePage = () => {
             </CustomButton>
           </div>
         </div>
-        {listButton()}
+        <div className="flex justify-between">
+          {listButton()}
+
+          <div className="flex gap-3 text-base font-medium leading-6 text-neutral-900">
+            <div
+              className="flex gap-2 justify-center px-4 py-3 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+              onClick={() => {
+                downloadExcel();
+              }}
+            >
+              <img
+                src={Images.download}
+                alt="Excel download"
+                className="shrink-0 w-6 aspect-square"
+              />
+              <span>Download Excel</span>
+            </div>
+            <div
+              className="flex gap-2 justify-center px-4 py-3 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+              onClick={() => {
+                fileExcelRef?.current?.click();
+              }}
+            >
+              <img
+                src={Images.uploadExcel}
+                alt="Excel upload"
+                className="shrink-0 w-6 aspect-square"
+              />
+              <span>Upload Excel</span>
+              <input
+                ref={fileExcelRef}
+                onChange={handleFileChange}
+                id="fileExcel"
+                type="file"
+                className="hidden"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              />
+            </div>
+          </div>
+        </div>
 
         <StoreListTable
           thema={selectedThema}
