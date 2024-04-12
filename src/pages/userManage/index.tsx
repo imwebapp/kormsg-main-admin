@@ -600,7 +600,11 @@ const UserManage = () => {
                   count = countTypeUser.countPaidUser;
                   break;
                 case "ALL":
-                  count = countTypeUser.totalUser;
+                  if (groupSelected.id === 1)
+                    count = countTypeUser.totalUser;
+                  else {
+                    count = countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser;
+                  }
                   break;
                 default:
                   break;
