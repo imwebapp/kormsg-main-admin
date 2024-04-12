@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.a89d7ed7.css",
-    "main.js": "/static/js/main.7e923a43.js",
+    "main.css": "/static/css/main.71df875b.css",
+    "main.js": "/static/js/main.02e1ec9d.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
@@ -12,6 +12,7 @@
     "static/media/plusCircle.png": "/static/media/plusCircle.d2ef13685a665d11044b.png",
     "static/media/minusCircle.png": "/static/media/minusCircle.0174959b44bdf3a1e853.png",
     "static/media/iconGPS.png": "/static/media/iconGPS.916db9387568f068c446.png",
+    "static/media/noPost.png": "/static/media/noPost.082a217ec86981d12619.png",
     "static/media/Empty.png": "/static/media/Empty.3d49631542d57807847d.png",
     "static/media/Dashboard2.png": "/static/media/Dashboard2.f55d404bbe1fd74de53d.png",
     "static/media/closeCircle.png": "/static/media/closeCircle.2c1fdb01a083f35576ce.png",
@@ -47,12 +48,12 @@
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.a89d7ed7.css.map": "/static/css/main.a89d7ed7.css.map",
-    "main.7e923a43.js.map": "/static/js/main.7e923a43.js.map",
+    "main.71df875b.css.map": "/static/css/main.71df875b.css.map",
+    "main.02e1ec9d.js.map": "/static/js/main.02e1ec9d.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.a89d7ed7.css",
-    "static/js/main.7e923a43.js"
+    "static/css/main.71df875b.css",
+    "static/js/main.02e1ec9d.js"
   ]
 }
