@@ -9,6 +9,8 @@ import { ChatMessageFuncPart1 } from './ChatMessageFuncPart1';
 import { useTranslation } from 'react-i18next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { TimePicker, TimePickerProps } from 'antd';
+import dayjs from 'dayjs';
 
 const dataHour: any = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
 const dataMinutes: any = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
@@ -29,6 +31,9 @@ export const ModalSelectOpeningHours = (props: IProps) => {
     const [dataOpening, setDataOpening] = useState('00:00')
     const [dataClosing, setDataClosing] = useState('00:00')
     const [isSelected, setIsSelected] = useState(false)
+
+    console.log('dataOpening', dataOpening);
+    
 
     const handleCloseModalOpeningHours = () => {
         setIsSelected(false)
@@ -74,6 +79,17 @@ export const ModalSelectOpeningHours = (props: IProps) => {
         }
     };
 
+    const onChangeTime: TimePickerProps['onChange'] = (time, timeString) => {
+        if (typeof timeString === 'string') {
+            setDataOpening(timeString);
+        }
+    };
+    const onChangeTimeClosing: TimePickerProps['onChange'] = (time, timeString) => {
+        if (typeof timeString === 'string') {
+            setDataClosing(timeString);
+        }
+    };
+
     useEffect(() => {
         if (data) {
             const dataEditConvert = data && data.split('~');
@@ -107,7 +123,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
             onClose={handleCloseModalOpeningHours}
             onSubmit={handleSubmitModalOpeningHours}
             title="영업시간"
-            disableSubmitBtn={!dataOpening && !dataClosing}
+            disableSubmitBtn={!dataOpening || !dataClosing}
         >
             <div className='flex items-center gap-6 mb-4'>
                 <div
@@ -117,12 +133,19 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                         setIsSelected(false)
                     }}
                 >
-                    <BaseText locale>
+                    <BaseText locale className='mb-2'>
                         오픈시간
                     </BaseText>
-                    <BaseText bold>
+                    {/* <BaseText bold>
                         {dataOpening}
-                    </BaseText>
+                    </BaseText> */}
+                    <TimePicker
+                        defaultValue={dayjs('00:00', 'HH:mm')}
+                        value={dayjs(dataOpening, 'HH:mm')}
+                        changeOnScroll
+                        needConfirm={false}
+                        format={'HH:mm'} onChange={onChangeTime}
+                    />
                 </div>
                 <BaseText>
                     ~
@@ -135,15 +158,24 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                         setIsSelected(true)
                     }}
                 >
-                    <BaseText locale>
+                    <BaseText locale className='mb-2'>
                         마감시간
                     </BaseText>
-                    <BaseText bold>
+                    {/* <BaseText bold>
                         {dataClosing}
-                    </BaseText>
+                    </BaseText> */}
+                    <TimePicker
+                        defaultValue={dayjs('00:00', 'HH:mm')}
+                        value={dayjs(dataClosing, 'HH:mm')}
+                        changeOnScroll
+                        needConfirm={false}
+                        format={'HH:mm'}
+                        onChange={onChangeTimeClosing}
+                    />
+
                 </div>
             </div>
-            <div
+            {/* <div
                 className='flex gap-6 mb-4 border-[1.5px] h-[200px] rounded-lg border-gray5 '
             >
                 <div className='flex justify-center flex-grow'>
@@ -189,7 +221,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                         })}
                     </Tabs>
                 </div>
-            </div>
+            </div> */}
         </BaseModal >
     )
 }

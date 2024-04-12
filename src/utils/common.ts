@@ -50,6 +50,7 @@ export interface User {
   current_expired_post: number;
   current_rejected_post: number;
   current_recommendation_post: number;
+  current_on_event_shop: number;
   event_type: string;
   post_start_date: string | null;
   post_expired_date: string;
