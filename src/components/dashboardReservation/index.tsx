@@ -8,22 +8,35 @@ import { useTranslation } from "react-i18next";
 import { reservationApi } from "../../apis/reservationApi";
 import { RESERVATION_STATUS } from "../../utils/constants";
 import moment from "moment";
+import { formatDateTime } from "../../utils/common";
 type DashboardReservationProps = {
   isViewAll: boolean;
   className?: string; // for tailwindcss
   selectedButton?: string;
   dateTimeSelect?: any;
   valueSearch?: string;
+  countReservation?: any;
 };
 
 export default function DashboardReservation(props: DashboardReservationProps) {
-  const { className, isViewAll, selectedButton, dateTimeSelect, valueSearch } =
-    props;
+  const {
+    className,
+    isViewAll,
+    selectedButton,
+    dateTimeSelect,
+    valueSearch,
+    countReservation,
+  } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [listReservation, setListReservation] = useState<any>();
   const { t } = useTranslation();
+  const limit = 50;
 
+  const [currentPage, setCurrentPage] = useState(1);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
+  const handlePageChange = (page: any) => {
+    setCurrentPage(page);
+  };
   useEffect(() => {
     // field all selected
     const fields =
@@ -37,27 +50,30 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     const startTimestamp = moment(dateTimeSelect[0]).valueOf();
     const endTimestamp = moment(dateTimeSelect[1]).valueOf();
     // Tạo mảng điều kiện "$or"
-    const orCondition = {
-      $or: [
+    const orCondition: any = {};
+    if (valueSearch !== "") {
+      orCondition["$or"] = [
         { contact: { $iLike: `%${valueSearch}%` } },
         { "$user.nickname$": { $iLike: `%${valueSearch}%` } },
+        { "$user.username$": { $iLike: `%${valueSearch}%` } },
+        { "$user.email$": { $iLike: `%${valueSearch}%` } },
         { "$seller.nickname$": { $iLike: `%${valueSearch}%` } },
         { "$shop.title$": { $iLike: `%${valueSearch}%` } },
-      ],
-    };
+      ];
+    }
     const date = startTimestamp
       ? { date: { $gte: startTimestamp, $lte: endTimestamp } }
       : {};
     // filter getlist reservation
     const filter = JSON.stringify({ ...type, ...date, ...orCondition });
-    console.log("filter", filter);
 
     reservationApi
       .getList({
-        limit: 50,
+        limit: limit,
+        page: currentPage,
         fields: fields,
         filter: filter,
-        order: [["updated_at", "DESC"]],
+        order: JSON.stringify([["updated_at", "DESC"]]),
       })
       .then((res: any) => {
         setListReservation(res.results.objects.rows);
@@ -65,7 +81,10 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       .catch((err) => {
         console.log("err: ", err);
       });
-  }, [selectedButton, dateTimeSelect, valueSearch]);
+  }, [selectedButton, dateTimeSelect, valueSearch, currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedButton]);
   const renderPaymentStatus = (paymentMethod: string) => {
     let text = "";
     let backgroundColor = "";
@@ -138,26 +157,6 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       </div>
     );
   };
-  const formatDateTime = (timestampString: string, type: string) => {
-    const timestamp = parseInt(timestampString, 10);
-
-    if (isNaN(timestamp)) {
-      return "Invalid timestamp";
-    }
-
-    // Tạo đối tượng Date từ timestamp
-    const date = new Date(timestamp);
-
-    // Lấy các thành phần của ngày giờ
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-
-    // Trả về chuỗi ngày giờ định dạng
-    return type === "day" ? `${year}/${month}/${day}` : `${hours}:${minutes}`;
-  };
   const renderServiceType = (prices: any) => {
     const courseTitle = prices[0]?.course?.title ?? "";
     const runningTime = prices[0]?.course?.running_time ?? "";
@@ -179,7 +178,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     }
     return null;
   };
-  const columns: TableColumnsType<any> = [
+  let columns: TableColumnsType<any> = [
     {
       title: t("Reservation ID"),
       dataIndex: ["user", "email"],
@@ -236,15 +235,125 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       width: "5%",
     },
   ];
+  if (selectedButton === RESERVATION_STATUS.REJECTED) {
+    const additionalColumns: TableColumnsType<any> = [
+      {
+        title: t("날짜"),
+        dataIndex: ["user", "username"],
+        width: "10%",
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">2024-03-15</div>
+        ),
+      },
+      {
+        title: t("ID"),
+        dataIndex: ["id"],
+
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">213123@naver.com</div>
+        ),
+      },
+      {
+        title: t("매장명"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">Happysore</div>
+        ),
+      },
+      {
+        title: t("매장계좌번호"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">010-1234-1234</div>
+        ),
+      },
+      {
+        title: t(" 매장 연락처"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">010-1234-1234</div>
+        ),
+      },
+      {
+        title: t("총 예약 건수"),
+        dataIndex: ["user", "nickname"],
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">12</div>
+        ),
+      },
+      {
+        title: t("총 매출액 (₩)"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">1,500,000</div>
+        ),
+      },
+      {
+        title: t("예약 취소 건"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">12</div>
+        ),
+      },
+      {
+        title: t("수순매출액 (₩)"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">1,500,000</div>
+        ),
+      },
+      {
+        title: t("관리자 수수료 (₩)"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">1,500,000</div>
+        ),
+      },
+      {
+        title: t("매장 수령액 (₩)"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">1,500,000</div>
+        ),
+      },
+      {
+        title: t("정산 여부"),
+        dataIndex: "state",
+        render: (state) => renderReservationStatus(state),
+      },
+      {
+        title: t("비고"),
+        render: (text, record) => (
+          <div className="min-w-[30px] cursor-pointer">
+            취소 사유: 개인 사정
+          </div>
+        ),
+      },
+    ];
+    columns = additionalColumns;
+  }
+  const getCountTotal = () => {
+    switch (selectedButton) {
+      case RESERVATION_STATUS.ALL:
+        return countReservation.total;
+      case RESERVATION_STATUS.COMPLETED:
+        return countReservation.complete;
+      case RESERVATION_STATUS.REJECTED:
+        return countReservation.reject;
+      case RESERVATION_STATUS.CANCELLED:
+        return countReservation.cancel;
+      case RESERVATION_STATUS.APPROVED:
+        return countReservation.approve;
+      default:
+        return 50;
+    }
+  };
 
   return (
     <>
       <div className="flex flex-row justify-between items-center"></div>
       <BaseTable
         className={className}
-        pagination={!!isViewAll ? { pageSize: 10 } : false}
         columns={columns}
         data={listReservation}
+        pagination={{
+          current: currentPage,
+          pageSize: limit,
+          total: getCountTotal(),
+          onChange: handlePageChange,
+        }}
       />
     </>
   );
