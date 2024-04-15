@@ -20,16 +20,21 @@ type UserManageTableProps = {
   reload?: boolean;
   onOpenJumpUp: (id: number, jumpLimit: number) => void;
   onDeleteUser: (id: string) => void;
+  onDeleteUsers: (ids: string[]) => void;
+  onChangeTypeUser: (id: string, type: string) => void;
+  onChangeGroupUser: (id: string, groupId: string) => void;
 };
 
 export default function UserManageTable(props: UserManageTableProps) {
-  const { className, data, reload, onOpenJumpUp, onDeleteUser } = props;
+  const { className, data, reload, onOpenJumpUp, onDeleteUser, onDeleteUsers, onChangeTypeUser, onChangeGroupUser } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [idOpen, setIdOpen] = useState<string>("");
+  const [listRowSelected, setListRowSelected] = useState<string[]>([]);
 
+  console.log("ListRowSelected: ", listRowSelected);
   const handleOpenChange = (newOpen: boolean, id: string) => {
     setIdOpen(id);
     setOpen(newOpen);
@@ -39,9 +44,19 @@ export default function UserManageTable(props: UserManageTableProps) {
     setOpen(false);
     onDeleteUser && onDeleteUser(id);
   };
+  const handleDeleteUsers = async () => {
+    onDeleteUsers && onDeleteUsers(listRowSelected);
+    setListRowSelected([]);
+  };
+  const handleChangeTypeUser = async (id: string, type: string) => {
+    onChangeTypeUser(id, type);
+  }
+  const handleChangeGroupUser = async (id: string, groupId: string) => {
+    onChangeGroupUser(id, groupId);
+  }
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("onSelectChange", newSelectedRowKeys);
+    setListRowSelected(newSelectedRowKeys as string[]);
   };
 
   const storeStatus = (title: string, item: any, value: number, account_type?: any) => {
@@ -61,51 +76,83 @@ export default function UserManageTable(props: UserManageTableProps) {
     );
   };
 
-  const renderTypeAndGroup = (account_type: any, group_id: any) => {
+  const renderTypeAndGroup = (account_type: any, group_id: any, id: string) => {
     let groupName = "";
     listUserGroup.map((item: any) => {
       if (item.id === group_id) {
         groupName = item.name;
       }
     });
+    let bgColor = "";
+    switch (account_type) {
+      case TypeUser.BIZ_USER:
+        bgColor = "#F9F0FF";
+        break;
+      case TypeUser.FREE_USER:
+        bgColor = "#FFF2E8";
+        break;
+      case TypeUser.PAID_USER:
+        bgColor = "#E6F4FF";
+        break;
+      default:
+        break;
+    }
     return (
       <div className="flex flex-col gap-1">
-        {/* <BaseInputSelect
-          required
-          defaultValue={account_type}
-          value={account_type}
-          onChange={(value) => { }}
-          placeholder="Select type user"
-          options={ListTypeUser.map((item) => ({
-            value: item.id,
-            label: item.name,
-          }))}
-          className="min-w-[160px]"
-        /> */}
-        <BaseText
-          className={checkAccountType(account_type).CustomStyle}
-          bold
-          locale
-        >
-          {checkAccountType(account_type).type}
-        </BaseText>
-        {/* <BaseInputSelect
-          required
-          defaultValue={group_id === null ? 1 : group_id}
-          value={group_id === null ? 1 : group_id}
-          onChange={(value) => { }}
-          placeholder="Select a group"
-          options={listUserGroup.map((item: any) => ({
-            value: item.id,
-            label: item.name,
-          }))}
-        /> */}
-        <BaseText
-          medium
-          className={"text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"}
-        >
-          {groupName === '' ? 'All' : groupName}
-        </BaseText>
+        {
+          account_type !== TypeUser.ADMIN ? (
+            <div className="flex flex-col gap-1">
+              <BaseInputSelect
+                required
+                defaultValue={account_type}
+                value={account_type}
+                onChange={(value) => { handleChangeTypeUser(id, value) }}
+                placeholder="Select type user"
+                options={(ListTypeUser || []).slice(0, 3).map((item) => ({
+                  value: item.id,
+                  label: t(item.name),
+                }))}
+                className="min-w-[150px]"
+                customizeStyleSelect={
+                  {
+                    selectorBg: bgColor,
+                    colorBorder: bgColor,
+                  }
+                }
+                allowClear={false}
+              />
+              <BaseInputSelect
+                required
+                defaultValue={group_id === null ? 1 : group_id}
+                value={group_id === null ? 1 : group_id}
+                onChange={(value) => { handleChangeGroupUser(id, value) }}
+                placeholder="Select a group"
+                options={listUserGroup.map((item: any) => ({
+                  value: item.id,
+                  label: item.name,
+                }))}
+                allowClear={false}
+              />
+            </div>
+
+          ) : (
+            <div className="flex flex-col gap-1">
+              <BaseText
+                className={checkAccountType(account_type).CustomStyle}
+                bold
+                locale
+              >
+                {checkAccountType(account_type).type}
+              </BaseText>
+              <BaseText
+                medium
+                className={"text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"}
+              >
+                {groupName === '' ? 'All' : groupName}
+              </BaseText>
+            </div>
+          )
+        }
       </div>
     )
   }
@@ -142,7 +189,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Type/Group"),
-      render: ({ account_type, group_id }) => renderTypeAndGroup(account_type, group_id),
+      render: ({ account_type, group_id, id }) => renderTypeAndGroup(account_type, group_id, id),
     },
     {
       title: t("Jump up limit"),
@@ -151,7 +198,7 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Store status"),
       render: (item: any) => (
-        <div className="flex flex-col gap-1 min-w-[230px]">
+        <div className="flex flex-col gap-1 min-w-[180px]">
           {storeStatus("Announcement", item, item.current_active_post, item.account_type)}
           {storeStatus("Expiration", item, item.current_expired_post, item.account_type)}
           {storeStatus("Recommended store", item, item.current_recommendation_post, item.account_type)}
@@ -246,12 +293,17 @@ export default function UserManageTable(props: UserManageTableProps) {
   }, [reload]);
 
   return (
-    <BaseTable
-      onSelectChange={onSelectChange}
-      className={className}
-      pagination={{ pageSize: 10 }}
-      columns={columns}
-      data={data}
-    />
+    <div>
+      {listRowSelected.length > 0 ?
+        <img src={Images.trash2} className="w-10 h-10 p-2 rounded-lg bg-darkNight50" onClick={handleDeleteUsers} />
+        : <div className="h-10" />}
+      <BaseTable
+        onSelectChange={onSelectChange}
+        className={className}
+        pagination={{ pageSize: 10 }}
+        columns={columns}
+        data={data.map((item, index) => ({ ...item, key: item.id }))} // add key for each item
+      />
+    </div>
   );
 }

@@ -25,19 +25,22 @@ import { ListTypeUser, TypeUser } from "../../utils/constants";
 import { employeeApi } from "../../apis/employeeApi";
 import { Input, Select, App, Spin } from "antd";
 import { UploadApi } from "../../apis/uploadApi";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const listUserGroups = [
   {
     id: 1,
     name: "All",
     numberUser: 0,
+    index: 1,
   },
 ];
 
 type IGroups = {
-  id: number;
+  id: number | string;
   name: string;
   numberUser: number;
+  index: number;
 };
 type ITypeUser = {
   id: string;
@@ -92,6 +95,8 @@ const UserManage = () => {
   console.log("reloading: ", reloading);
 
   console.log("listUser: ", listUser);
+
+  console.log("listUserGroup: ", listUserGroup);
 
   const handleClickGroup = (group: IGroups) => {
     if (groupSelected && groupSelected.id === group.id) {
@@ -148,12 +153,14 @@ const UserManage = () => {
     }
     const res: any = await groupApi.create({ name: valueInputCreateGroup });
     if (res.code === 200) {
-      const newGroup = {
-        id: res.results.object.id,
-        name: valueInputCreateGroup,
-        numberUser: 0,
-      };
-      setListUserGroup([...listUserGroup, newGroup]);
+      // const newGroup = {
+      //   id: res.results.object.id,
+      //   name: valueInputCreateGroup,
+      //   numberUser: 0,
+      //   index: res.results.object.index,
+      // };
+      // setListUserGroup([...listUserGroup, newGroup]);
+      getListGroup();
       setValueInputCreateGroup("");
       setIsCreatingGroupName(false);
     } else {
@@ -352,6 +359,111 @@ const UserManage = () => {
     }
   };
 
+  const handleDeleteUsers = async (ids: string[]) => {
+    console.log("ids: ", ids);
+    try {
+      setLoadingScreen(true);
+      const res: any = await userApi.deleteUsers(JSON.stringify(ids));
+      if (res.code === 200) {
+        console.log("res delete users: ", res);
+        const newListUser = listUser.filter((item) => !ids.includes(item.id));
+        setListUser(newListUser);
+        setLoadingScreen(false);
+        message.success("Delete users successfully");
+      }
+    } catch (error: any) {
+      console.log("err delete users: ", error);
+      setLoadingScreen(false);
+      message.error("Delete users failed");
+    }
+  };
+
+  const handleUpdateTypeUser = async (id: string, type: string) => {
+    console.log('handleUpdateTypeUser', id, type);
+    try {
+      const res: any = await userApi.updateUser(id, { account_type: type });
+      console.log("res update type user: ", res);
+      if (res.code === 200) {
+        searchUser()
+        message.success("Update type user successfully");
+      }
+    } catch (error: any) {
+      console.log("err update type user: ", error);
+      message.error("Update type user failed");
+    }
+  }
+
+  const handleChangeGroupUser = async (id: string, group_id: string) => {
+    console.log('handleChangeGroupUser', id, group_id);
+    try {
+      const res: any = await userApi.updateUser(id, { group_id: group_id });
+      console.log("res update group user: ", res);
+      if (res.code === 200) {
+        await getListGroup();
+        searchUser()
+        message.success("Update group user successfully");
+      }
+    } catch (error: any) {
+      console.log("err update group user: ", error);
+      message.error("Update group user failed");
+    }
+  }
+
+  const orderGroup = async (
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    id: string
+  ) => {
+    try {
+      console.log("prev_index_number: ", prev_index_number, "next_index_number: ", next_index_number, "id: ", id);
+
+      if (prev_index_number === 1) {
+        const resOrderGroup = await groupApi.orderGroup(id, {
+          undefined,
+          next_index_number,
+        });
+        console.log("resOrderGroup: ", resOrderGroup);
+      }
+      else {
+        const resOrderGroup = await groupApi.orderGroup(id, {
+          prev_index_number,
+          next_index_number,
+        });
+        console.log("resOrderGroup: ", resOrderGroup);
+      }
+
+      await getListGroup();
+
+    } catch (error) {
+      message.error("Order group failed");
+    }
+  };
+
+  const handleDragEnd = async (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
+    const newListUserGroup = [...listUserGroup];
+    const [draggedItem] = newListUserGroup.splice(sourceIndex, 1);
+    newListUserGroup.splice(destinationIndex, 0, draggedItem);
+    // setListUserGroup(newListUserGroup);
+
+    const beforeIndex = destinationIndex > 0 ? destinationIndex - 1 : null;
+    const afterIndex = destinationIndex < newListUserGroup.length - 1 ? destinationIndex + 1 : null;
+
+    const beforeItemData = beforeIndex !== null ? newListUserGroup[beforeIndex] : null;
+    const afterItemData = afterIndex !== null ? newListUserGroup[afterIndex] : null;
+
+    await orderGroup(
+      beforeItemData?.index,
+      afterItemData?.index,
+      String(draggedItem.id)
+    );
+  };
+
   const searchUser = () => {
     const convertFilter: any = {};
     if (typeUserSelected.id !== 'ALL') {
@@ -402,6 +514,22 @@ const UserManage = () => {
         });
     }
   };
+
+  const getListGroup = async () => {
+    try {
+      const resListGroup: any = await groupApi.getList({
+        limit: 50,
+        fields: '["$all"]',
+      });
+      if (resListGroup?.code === 200) {
+        console.log("res getList Group: ", resListGroup.results?.objects?.rows);
+        listUserGroups[0].numberUser = resListGroup.results?.objects?.totalUser || 0;
+        setListUserGroup([listUserGroups[0], ...resListGroup.results?.objects?.rows]);
+      }
+    } catch (error: any) {
+      console.log("err getList Group: ", error);
+    }
+  };
   useEffect(() => {
     searchUser();
   }, [groupSelected, typeUserSelected, valueSearch]);
@@ -419,19 +547,7 @@ const UserManage = () => {
   }, [groupSelected, listUser]);
 
   useEffect(() => {
-    groupApi
-      .getList({
-        limit: 50,
-        fields: '["$all"]',
-      })
-      .then((res: any) => {
-        console.log("res getList Group: ", res.results.objects);
-        listUserGroups[0].numberUser = res.results?.objects?.totalUser || 0;
-        setListUserGroup([listUserGroups[0], ...res.results?.objects?.rows]);
-      })
-      .catch((err) => {
-        console.log("err getList Group: ", err);
-      });
+    getListGroup()
   }, []);
 
   return (
@@ -453,95 +569,170 @@ const UserManage = () => {
               }}
             />
           </div>
-          <div
-            className={classNames("overflow-y-auto")}
-            style={{ height: "calc(100% - 40px)" }}
-          >
-            {listUserGroup.map((item, index) => {
-              const checkSelected =
-                groupSelected && groupSelected.id === item.id;
-              return (
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="group-list">
+              {(provided) => (
                 <div
-                  className={classNames(
-                    "flex items-center gap-1 py-2 mb-2 cursor-pointer"
-                  )}
-                  onClick={() => handleClickGroup(item)}
-                  onDoubleClick={handleEditGroupName}
+                  {...provided.droppableProps} ref={provided.innerRef}
+                  className={classNames("overflow-y-auto")}
+                  style={{ height: "calc(100% - 40px)" }}
                 >
-                  {isEditingGroupName && groupSelected.id === item.id ? (
-                    <>
-                      {checkSelected && (
-                        <CheckOutlined
-                          className={classNames("text-dayBreakBlue500 text-xl")}
-                        />
+                  {listUserGroup.map((item, index) => {
+                    const checkSelected =
+                      groupSelected && groupSelected.id === item.id;
+                    const isAll = item.name === "All";
+
+                    if (isAll) {
+                      return (
+                        <div
+                          className={classNames(
+                            "flex items-center gap-1 py-2 mb-2 cursor-pointer"
+                          )}
+                          onClick={() => handleClickGroup(item)}
+                          onDoubleClick={handleEditGroupName}
+                        >
+                          {isEditingGroupName && groupSelected.id === item.id ? (
+                            <>
+                              {checkSelected && (
+                                <CheckOutlined
+                                  className={classNames("text-dayBreakBlue500 text-xl")}
+                                />
+                              )}
+                              <BaseInput
+                                value={newGroupName}
+                                onChange={(value) => setNewGroupName(value)}
+                                onBlur={handleSaveGroupName}
+                                onSave={handleSaveGroupName}
+                                autoFocus
+                                styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
+                                styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
+                              />
+                            </>
+                          ) : (
+                            <>
+                              {!isCreatingGroupName && checkSelected && (
+                                <CheckOutlined
+                                  className={classNames("text-dayBreakBlue500 text-xl")}
+                                />
+                              )}
+                              <BaseText
+                                medium
+                                size={14}
+                                className={classNames(
+                                  checkSelected && !isCreatingGroupName
+                                    ? "text-dayBreakBlue500"
+                                    : "pl-6"
+                                )}
+                              >
+                                {item.name}
+                              </BaseText>
+                              <span
+                                className={classNames(
+                                  "",
+                                  checkSelected && !isCreatingGroupName
+                                    ? "text-dayBreakBlue500 font-medium"
+                                    : "font-medium"
+                                )}
+                              >
+                                ({item?.numberUser || 0})
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <Draggable draggableId={`group-${index}`} index={index}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps} {...provided.dragHandleProps}
+                            className={classNames(
+                              "flex items-center gap-1 py-2 mb-2 cursor-pointer"
+                            )}
+                            onClick={() => handleClickGroup(item)}
+                            onDoubleClick={handleEditGroupName}
+                          >
+                            {isEditingGroupName && groupSelected.id === item.id ? (
+                              <>
+                                {checkSelected && (
+                                  <CheckOutlined
+                                    className={classNames("text-dayBreakBlue500 text-xl")}
+                                  />
+                                )}
+                                <BaseInput
+                                  value={newGroupName}
+                                  onChange={(value) => setNewGroupName(value)}
+                                  onBlur={handleSaveGroupName}
+                                  onSave={handleSaveGroupName}
+                                  autoFocus
+                                  styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
+                                  styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
+                                />
+                              </>
+                            ) : (
+                              <>
+                                {!isCreatingGroupName && checkSelected && (
+                                  <CheckOutlined
+                                    className={classNames("text-dayBreakBlue500 text-xl")}
+                                  />
+                                )}
+                                <BaseText
+                                  medium
+                                  size={14}
+                                  className={classNames(
+                                    checkSelected && !isCreatingGroupName
+                                      ? "text-dayBreakBlue500"
+                                      : "pl-6"
+                                  )}
+                                >
+                                  {item.name}
+                                </BaseText>
+                                <span
+                                  className={classNames(
+                                    "",
+                                    checkSelected && !isCreatingGroupName
+                                      ? "text-dayBreakBlue500 font-medium"
+                                      : "font-medium"
+                                  )}
+                                >
+                                  ({item?.numberUser || 0})
+                                </span>
+                              </>
+                            )}
+                          </div>)}
+                      </Draggable>
+                    );
+                  })}
+                  {isCreatingGroupName && (
+                    <div
+                      className={classNames(
+                        "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                       )}
+                      onClick={() => { }}
+                    // onDoubleClick={handleEditGroupName}
+                    >
+                      <CheckOutlined
+                        className={classNames("text-dayBreakBlue500 text-xl")}
+                      />
                       <BaseInput
-                        value={newGroupName}
-                        onChange={(value) => setNewGroupName(value)}
-                        onBlur={handleSaveGroupName}
-                        onSave={handleSaveGroupName}
+                        value={valueInputCreateGroup}
+                        onChange={(value) => setValueInputCreateGroup(value)}
+                        placeholder="Enter group name"
+                        onBlur={handleCreateGroup}
+                        onSave={handleCreateGroup}
                         autoFocus
                         styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
                         styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
                       />
-                    </>
-                  ) : (
-                    <>
-                      {!isCreatingGroupName && checkSelected && (
-                        <CheckOutlined
-                          className={classNames("text-dayBreakBlue500 text-xl")}
-                        />
-                      )}
-                      <BaseText
-                        medium
-                        size={14}
-                        className={classNames(
-                          checkSelected && !isCreatingGroupName
-                            ? "text-dayBreakBlue500"
-                            : "pl-6"
-                        )}
-                      >
-                        {item.name}
-                      </BaseText>
-                      <span
-                        className={classNames(
-                          "",
-                          checkSelected && !isCreatingGroupName
-                            ? "text-dayBreakBlue500 font-medium"
-                            : "font-medium"
-                        )}
-                      >
-                        ({item?.numberUser || 0})
-                      </span>
-                    </>
+                    </div>
                   )}
+                  {provided.placeholder}
                 </div>
-              );
-            })}
-            {isCreatingGroupName && (
-              <div
-                className={classNames(
-                  "flex items-center gap-1 py-2 mb-2 cursor-pointer"
-                )}
-                onClick={() => { }}
-              // onDoubleClick={handleEditGroupName}
-              >
-                <CheckOutlined
-                  className={classNames("text-dayBreakBlue500 text-xl")}
-                />
-                <BaseInput
-                  value={valueInputCreateGroup}
-                  onChange={(value) => setValueInputCreateGroup(value)}
-                  placeholder="Enter group name"
-                  onBlur={handleCreateGroup}
-                  onSave={handleCreateGroup}
-                  autoFocus
-                  styleInputContainer="w-full font-medium bg-white border rounded-lg border-dayBreakBlue500 text-darkNight900"
-                  styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
-                />
-              </div>
-            )}
-          </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </div>
         <div
           className={classNames("w-5/6 p-6 flex flex-col gap-6  overflow-auto")}
@@ -632,6 +823,9 @@ const UserManage = () => {
             reload={reloading}
             onOpenJumpUp={handleOpenModalJumpUp}
             onDeleteUser={handleDeleteUser}
+            onDeleteUsers={handleDeleteUsers}
+            onChangeTypeUser={handleUpdateTypeUser}
+            onChangeGroupUser={handleChangeGroupUser}
           />
         </div>
       </div>
