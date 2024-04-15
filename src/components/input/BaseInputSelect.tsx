@@ -22,6 +22,7 @@ interface InputProps extends SelectProps {
     styleTitle?: string;
     styleInputContainer?: string;
     styleInput?: string;
+    customizeStyleSelect?: any;
     iconLeft?: ReactNode;
     iconLeftInactive?: ReactNode;
     iconRight?: ReactNode;
@@ -32,21 +33,21 @@ interface InputProps extends SelectProps {
 }
 
 export const BaseInputSelect = (props: InputProps) => {
-    const { title, titleSize, textInputSize, required, value, defaultValue, onChange, className, size, allowClear, options, multiple, disabled, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
+    const { title, titleSize, textInputSize, required, value, defaultValue, onChange, className, size, allowClear, options, multiple, disabled, customizeStyleSelect, styleTitle, styleInputContainer, styleInput, iconLeft, iconRight, iconLeftInactive, iconRightInactive, isError, placeholder, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
     const { t } = useTranslation();
     const [valueSelect, setValueSelect] = useState<any>(value);
-    const allValue = options.filter((item)=> item.value !== SELECT_ALL).map((item)=> item.value);
+    const allValue = options.filter((item) => item.value !== SELECT_ALL).map((item) => item.value);
 
     const handleChange = (newValue: any) => {
-        if (multiple && Array.isArray(newValue) && newValue.length > 0 && !!options.find((item)=> item.value === SELECT_ALL)){
-            if ((newValue[newValue.length -1] === SELECT_ALL)) {
+        if (multiple && Array.isArray(newValue) && newValue.length > 0 && !!options.find((item) => item.value === SELECT_ALL)) {
+            if ((newValue[newValue.length - 1] === SELECT_ALL)) {
                 setValueSelect([SELECT_ALL]);
                 onChange(allValue);
             } else if (newValue.includes(SELECT_ALL)) {
-                setValueSelect(newValue.filter((item)=> item!== SELECT_ALL));
-                onChange(newValue.filter((item)=> item!== SELECT_ALL));
-            } else if (!newValue.includes(SELECT_ALL) && newValue.length === options.length -1 ) {
+                setValueSelect(newValue.filter((item) => item !== SELECT_ALL));
+                onChange(newValue.filter((item) => item !== SELECT_ALL));
+            } else if (!newValue.includes(SELECT_ALL) && newValue.length === options.length - 1) {
                 setValueSelect([SELECT_ALL]);
                 onChange(allValue);
             } else {
@@ -59,9 +60,9 @@ export const BaseInputSelect = (props: InputProps) => {
         }
     };
 
-    useEffect(()=>{
-        if (multiple && Array.isArray(defaultValue) && defaultValue.length > 0){
-            if (!defaultValue.includes(SELECT_ALL) && defaultValue.length === options.length -1 ) {
+    useEffect(() => {
+        if (multiple && Array.isArray(defaultValue) && defaultValue.length > 0) {
+            if (!defaultValue.includes(SELECT_ALL) && defaultValue.length === options.length - 1) {
                 setValueSelect([SELECT_ALL]);
             } else {
                 setValueSelect(defaultValue);
@@ -69,7 +70,7 @@ export const BaseInputSelect = (props: InputProps) => {
         } else {
             setValueSelect(defaultValue);
         }
-    },[defaultValue, options])
+    }, [defaultValue, options])
 
     useEffect(() => {
         if (value)
@@ -99,6 +100,7 @@ export const BaseInputSelect = (props: InputProps) => {
                             optionSelectedBg: '#ffffff',
                             optionSelectedColor: '#0866FF',
                             algorithm: true, // Enable algorithm
+                            ...customizeStyleSelect
                         },
                     },
                 }}

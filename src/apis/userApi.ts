@@ -26,4 +26,7 @@ export const userApi = {
   delete: (id?: string) => {
     return axiosClient.delete(`${USER}/${id}`);
   },
+  deleteUsers: (data: any) => {
+    return axiosClient.delete(`${USER}/?items=${data}`);
+  },
 };

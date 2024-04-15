@@ -1,17 +1,20 @@
-import axiosClient from './axiosClient'
-import {GROUP} from './urlConfig'
+import axiosClient from "./axiosClient";
+import { GROUP } from "./urlConfig";
 
 export const groupApi = {
   getList: (params?: any) => {
-    return axiosClient.get(`${GROUP}`, {params})
+    return axiosClient.get(`${GROUP}`, { params });
   },
   create: (data: any) => {
-    return axiosClient.post(`${GROUP}`, data)
+    return axiosClient.post(`${GROUP}`, data);
   },
   update: (id: string, data: any) => {
-    return axiosClient.put(`${GROUP}/${id}`, data)
+    return axiosClient.put(`${GROUP}/${id}`, data);
   },
   delete: (id: string) => {
-    return axiosClient.delete(`${GROUP}/${id}`)
+    return axiosClient.delete(`${GROUP}/${id}`);
   },
-}
+  orderGroup: (id: string, data?: any) => {
+    return axiosClient.put(`${GROUP}/order-group/${id}`, data);
+  },
+};

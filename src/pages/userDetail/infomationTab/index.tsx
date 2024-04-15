@@ -14,6 +14,7 @@ import { userApi } from "../../../apis/userApi";
 import md5 from "md5";
 import { ListTypeUser } from "../../../utils/constants";
 import { Url } from "../../../routers/paths";
+import { useTranslation } from "react-i18next";
 const listUserGroup = [
   {
     id: 2,
@@ -40,6 +41,7 @@ interface IProps {
 
 export const InformationTab = (props: IProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { message } = App.useApp();
   const [dataUser, setDataUser] = useState<User>(props?.dataUser);
   console.log("dataUserXXXX: ", dataUser);
@@ -282,7 +284,7 @@ export const InformationTab = (props: IProps) => {
             placeholder="Select"
             options={(ListTypeUser || []).slice(0, 3).map((item) => ({
               value: item.id,
-              label: item.name,
+              label: t(item.name),
             }))}
             disabled={formDataEditInfo?.account_type === 'ADMIN'}
           />
