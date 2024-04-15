@@ -349,6 +349,7 @@ const UserManage = () => {
         console.log("res delete user: ", res);
         const newListUser = listUser.filter((item) => item.id !== id);
         setListUser(newListUser);
+        getListGroup();
         setLoadingScreen(false);
         message.success("Delete user successfully");
       }
@@ -368,6 +369,7 @@ const UserManage = () => {
         console.log("res delete users: ", res);
         const newListUser = listUser.filter((item) => !ids.includes(item.id));
         setListUser(newListUser);
+        getListGroup();
         setLoadingScreen(false);
         message.success("Delete users successfully");
       }
