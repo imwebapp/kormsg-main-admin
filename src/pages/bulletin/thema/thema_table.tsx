@@ -332,7 +332,7 @@ export default function ThemaTable() {
     },
     {
       title: t("Review writing type"),
-      width: 220,
+      width: 160,
       render: ({ review_require, id }) => (
         <BaseInputSelect
           onChange={(value: any) => {
