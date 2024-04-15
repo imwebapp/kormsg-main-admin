@@ -18,12 +18,14 @@ const ReservationDetails = () => {
     setSelectedButton(buttonName);
   };
   const [valueSearch, setValueSearch] = useState("");
-  const [data, setData] = useState({
+  const [countReservation, setCountReservation] = useState({
     total: 0,
     pending: 0,
     approve: 0,
     unsuccess: 0,
     complete: 0,
+    reject: 0,
+    cancel: 0,
   });
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const ReservationDetails = () => {
       try {
         let result: any = await reservationApi.getCountReservation();
         if (result.code === 200) {
-          setData(result.results.object);
+          setCountReservation(result.results.object);
         }
       } catch (error) {}
     };
@@ -40,88 +42,55 @@ const ReservationDetails = () => {
   }, []);
 
   const listButton = () => {
+    // Mảng chứa thông tin cho mỗi nút
+    const buttons = [
+      {
+        status: RESERVATION_STATUS.ALL,
+        label: t("Total reservation details"),
+        count: countReservation.total,
+      },
+      {
+        status: RESERVATION_STATUS.COMPLETED,
+        label: t("Payment details"),
+        count: countReservation.complete,
+      },
+      {
+        status: RESERVATION_STATUS.PENDING,
+        label: t("Outstanding Payment History"),
+        count: countReservation.pending,
+      },
+      {
+        status: RESERVATION_STATUS.CANCELLED,
+        label: t("Cancellation details"),
+        count: countReservation.cancel,
+      },
+      {
+        status: RESERVATION_STATUS.REJECTED,
+        label: t("Store settlement details"),
+        count: countReservation.reject,
+      },
+    ];
+
     return (
       <div className="flex flex-row gap-4 mt-1">
-        <CustomButton
-          className="text-base font-medium rounded-full"
-          style={{
-            backgroundColor:
-              selectedButton === RESERVATION_STATUS.ALL ? "black" : "white",
-            color:
-              selectedButton === RESERVATION_STATUS.ALL ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(RESERVATION_STATUS.ALL)}
-        >
-          {t("Total reservation details")}
-          {"(" + data.total + ")"}
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full"
-          style={{
-            backgroundColor:
-              selectedButton === RESERVATION_STATUS.COMPLETED
-                ? "black"
-                : "white",
-            color:
-              selectedButton === RESERVATION_STATUS.COMPLETED
-                ? "white"
-                : "black",
-          }}
-          onClick={() => handleButtonClick(RESERVATION_STATUS.COMPLETED)}
-        >
-          {t("Payment details")}
-          {"(" + data.complete + ")"}
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full"
-          style={{
-            backgroundColor:
-              selectedButton === RESERVATION_STATUS.PENDING ? "black" : "white",
-            color:
-              selectedButton === RESERVATION_STATUS.PENDING ? "white" : "black",
-          }}
-          onClick={() => handleButtonClick(RESERVATION_STATUS.PENDING)}
-        >
-          {t("Outstanding Payment History")}
-          {"(" + data.pending + ")"}
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full"
-          style={{
-            backgroundColor:
-              selectedButton === RESERVATION_STATUS.CANCELLED
-                ? "black"
-                : "white",
-            color:
-              selectedButton === RESERVATION_STATUS.CANCELLED
-                ? "white"
-                : "black",
-          }}
-          onClick={() => handleButtonClick(RESERVATION_STATUS.CANCELLED)}
-        >
-          {t("Cancellation details")}
-          {"(" + data.unsuccess + ")"}
-        </CustomButton>
-        <CustomButton
-          className="text-base font-medium rounded-full"
-          style={{
-            backgroundColor:
-              selectedButton === RESERVATION_STATUS.REJECTED
-                ? "black"
-                : "white",
-            color:
-              selectedButton === RESERVATION_STATUS.REJECTED
-                ? "white"
-                : "black",
-          }}
-          onClick={() => handleButtonClick(RESERVATION_STATUS.REJECTED)}
-        >
-          {t("Store settlement details")}
-          {"(" + data.approve + ")"}
-        </CustomButton>
+        {buttons.map((button) => (
+          <CustomButton
+            key={button.status}
+            className="text-base h-11 font-medium rounded-full px-4 py-2.5"
+            style={{
+              backgroundColor:
+                selectedButton === button.status ? "black" : "white",
+              color: selectedButton === button.status ? "white" : "black",
+            }}
+            onClick={() => handleButtonClick(button.status)}
+          >
+            {button.label} ({button.count})
+          </CustomButton>
+        ))}
       </div>
     );
   };
+
   return (
     <div className="p-6">
       <div className="flex flex-row justify-between item-center">
@@ -156,6 +125,7 @@ const ReservationDetails = () => {
             selectedButton={selectedButton}
             dateTimeSelect={dateTimeSelect}
             valueSearch={valueSearch}
+            countReservation={countReservation}
           />
         </BaseCard>
       </div>

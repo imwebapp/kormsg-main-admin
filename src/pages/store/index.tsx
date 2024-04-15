@@ -231,7 +231,7 @@ const StorePage = () => {
         {buttonData.map(({ status, label, count }) => (
           <CustomButton
             key={status}
-            className="text-base font-medium rounded-full px-4 py-2.5"
+            className="text-base h-11 font-medium rounded-full px-4 py-2.5"
             style={getButtonStyle(status)}
             onClick={() => handleButtonClick(status)}
           >
@@ -300,9 +300,9 @@ const StorePage = () => {
         <div className="flex justify-between">
           {listButton()}
 
-          <div className="flex gap-3 text-base font-medium leading-6 text-neutral-900">
+          <div className="flex gap-3 text-base font-medium h-11 align-middle leading-6 text-neutral-900 align-center">
             <div
-              className="flex gap-2 justify-center px-4 py-3 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+              className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
               onClick={() => {
                 downloadExcel();
               }}
@@ -310,12 +310,12 @@ const StorePage = () => {
               <img
                 src={Images.download}
                 alt="Excel download"
-                className="shrink-0 w-6 aspect-square"
+                className="shrink-0 w-6 h-6 aspect-square"
               />
               <span>Download Excel</span>
             </div>
             <div
-              className="flex gap-2 justify-center px-4 py-3 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+              className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
               onClick={() => {
                 fileExcelRef?.current?.click();
               }}
@@ -323,7 +323,7 @@ const StorePage = () => {
               <img
                 src={Images.uploadExcel}
                 alt="Excel upload"
-                className="shrink-0 w-6 aspect-square"
+                className="shrink-0 w-6 h-6 aspect-square"
               />
               <span>Upload Excel</span>
               <input
