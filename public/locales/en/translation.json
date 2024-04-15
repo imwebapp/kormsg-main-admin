@@ -333,5 +333,11 @@
   "Add": "Add",
   "Representative image": "Representative image",
   "Upload image" : "Upload image",
-  "Representative" : "Avt"
+  "Representative" : "Avt",
+  "Available upon reservation": "Available upon reservation",
+  "Creation Permission": "Creation Permission",
+  "Comment & review permission": "Comment & review permission",
+  "Review writing type": "Review writing type",
+  "View permission": "View permission",
+  "Anyone can do it": "Anyone can do it"
 }

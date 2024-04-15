@@ -175,7 +175,7 @@
   "Select tags": "태그 선택",
   "Delete the category": "카테고리 삭제",
   "Delete the tag": "태그 삭제",
-  "Reservation function point payment": "예약기능 포인트 지급",
+  "Reservation function point payment": "예약기능 포인트지급",
   "Enter name": "이름을 입력하시오",
   "Enter Category": "카테고리 입력",
   "Recruit board": "모집 게시판",
@@ -333,5 +333,11 @@
   "Add": "추가",
   "Representative image": "대표 이미지",
   "Upload image" : "이미지 업로드",
-  "Representative" : "대표"
+  "Representative" : "대표",
+  "Available upon reservation": "예약시 가능",
+  "Creation Permission": "작성 권한",
+  "Comment & review permission": "댓글&리뷰 권한",
+  "Review writing type": "리뷰작성 타입",
+  "View permission": "보기 권한",
+  "Anyone can do it": "아무나 가능"
 }

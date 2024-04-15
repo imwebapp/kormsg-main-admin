@@ -167,7 +167,7 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t("View"),
+      title: t("View permission"),
       width: 220,
       render: ({ view_group_ids, view_user_permissions, id }) => (
         <div className="flex flex-col gap-y-2">
@@ -214,7 +214,7 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t("Writing"),
+      title: t("Creation Permission"),
       width: 220,
       render: ({ post_user_permissions, post_group_ids, id }) => (
         <div className="flex flex-col gap-y-2">
@@ -261,7 +261,7 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t("Comments"),
+      title: t("Comment & review permission"),
       width: 220,
       render: ({ comment_user_permissions, comment_group_ids, id }) => (
         <div className="flex flex-col gap-y-2">
@@ -307,28 +307,60 @@ export default function ThemaTable() {
         </div>
       ),
     },
-    // {
-    //   title: t("Reservation function point payment"),
-    //   render: ({ bonus_point, id }) => (
-    //     <Checkbox
-    //       defaultChecked={bonus_point}
-    //       onChange={(e: any) =>
-    //         updateThema({ id, bonus_point: e.target.checked })
-    //       }
-    //     ></Checkbox>
-    //   ),
-    // },
-    // {
-    //   title: t("Community"),
-    //   render: ({ review_require, id }) => (
-    //     <Checkbox
-    //       defaultChecked={review_require}
-    //       onChange={(e: any) =>
-    //         updateThema({ id, review_require: e.target.checked })
-    //       }
-    //     ></Checkbox>
-    //   ),
-    // },
+    {
+      title: t("Reservation function point payment"),
+      width: 160,
+      render: ({ bonus_point, id }) => (
+        <BaseInputSelect
+          onChange={(value: any) => {
+            updateThema({ id, bonus_point: value === "ON" ? true : false });
+          }}
+          defaultValue={bonus_point ? "ON" : "OFF"}
+          required={true}
+          allowClear={false}
+          size="middle"
+          textInputSize={12}
+          placeholder="Select"
+          options={["ON", "OFF"].map((item, index) => {
+            return {
+              label: item,
+              value: item,
+            };
+          })}
+        />
+      ),
+    },
+    {
+      title: t("Review writing type"),
+      width: 220,
+      render: ({ review_require, id }) => (
+        <BaseInputSelect
+          onChange={(value: any) => {
+            updateThema({
+              id,
+              review_require:
+                value === "Available upon reservation" ? true : false,
+            });
+          }}
+          defaultValue={
+            review_require ? "Available upon reservation" : "Anyone can do it"
+          }
+          required={true}
+          allowClear={false}
+          size="middle"
+          textInputSize={12}
+          placeholder="Select"
+          options={["Available upon reservation", "Anyone can do it"].map(
+            (item, index) => {
+              return {
+                label: t(item),
+                value: item,
+              };
+            }
+          )}
+        />
+      ),
+    },
     {
       title: t("Actions"),
       render: ({ id }, record) => (
