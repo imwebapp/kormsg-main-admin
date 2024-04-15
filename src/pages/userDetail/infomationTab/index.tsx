@@ -280,10 +280,11 @@ export const InformationTab = (props: IProps) => {
             value={formDataEditInfo?.account_type}
             onChange={(value) => handleInputChange("account_type", value)}
             placeholder="Select"
-            options={(ListTypeUser || []).map((item) => ({
+            options={(ListTypeUser || []).slice(0, 3).map((item) => ({
               value: item.id,
               label: item.name,
             }))}
+            disabled={formDataEditInfo?.account_type === 'ADMIN'}
           />
           <BaseInputSelect
             title="Group"
@@ -296,6 +297,7 @@ export const InformationTab = (props: IProps) => {
               value: item.id,
               label: item.name,
             }))}
+            disabled={formDataEditInfo?.account_type === 'ADMIN'}
           />
           <BaseInput
             title="Nickname"

@@ -14,6 +14,7 @@ export default class Images {
     static readonly cameraBlue = require("../../../src/assets/images/Camera Blue.png");
     static readonly dashboard = require("../../../src/assets/images/Dashboard.png");
     static readonly dashboard2 = require("../../../src/assets/images/Dashboard2.png");
+    static readonly download = require("../../../src/assets/images/Download.png");
     static readonly empty = require("../../../src/assets/images/Empty.png");
     static readonly helpCenter = require("../../../src/assets/images/Help Center.png");
     static readonly helpCenter2 = require("../../../src/assets/images/Help Center2.png");
@@ -52,6 +53,7 @@ export default class Images {
     static readonly undo = require("../../../src/assets/images/Undo.png");
     static readonly upload = require("../../../src/assets/images/Upload.png");
     static readonly uploadCloudIcon = require("../../../src/assets/images/UploadCloudIcon.png");
+    static readonly uploadExcel = require("../../../src/assets/images/UploadExcel.png");
     static readonly userManage = require("../../../src/assets/images/User Manage.png");
     static readonly userManage2 = require("../../../src/assets/images/User Manage2.png");
     static readonly adult = require("../../../src/assets/images/adult.png");

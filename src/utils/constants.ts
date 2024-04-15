@@ -18,7 +18,7 @@ export const ListTypeUser = [
   },
   {
     id: "PAID_USER",
-    name: "P",
+    name: "Paid User",
   },
   {
     id: "BIZ_USER",

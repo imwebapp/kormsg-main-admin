@@ -29,7 +29,7 @@ import { UploadApi } from "../../apis/uploadApi";
 const listUserGroups = [
   {
     id: 1,
-    name: "ALL",
+    name: "All",
     numberUser: 0,
   },
 ];
@@ -54,7 +54,10 @@ const UserManage = () => {
     listUserGroups[0]
   );
   const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
-    ListTypeUser[0]
+    {
+      id: 'ALL',
+      name: "All",
+    },
   );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
@@ -74,6 +77,7 @@ const UserManage = () => {
     countBizUser: 0,
     countFreeUser: 0,
     countPaidUser: 0,
+    totalUser: 0,
   });
 
   const [listUserGroup, setListUserGroup] = useState(listUserGroups);
@@ -243,6 +247,26 @@ const UserManage = () => {
       }
       console.log('dataCreateConvert', dataCreateConvert);
 
+
+      //create Admin
+      if (formDataCreateUser?.userType === TypeUser.ADMIN) {
+        console.log('CREATE ADMIN');
+        message.success("Create user successfully");
+        setLoadingScreen(false);
+        setFormDataCreateUser({
+          userType: "",
+          userGroup: "",
+          userId: "",
+          password: "",
+          userName: "",
+          avatar: "",
+        });
+        setImageCreateUser(undefined);
+        setOpenModalCreateUser(false);
+        return;
+      }
+
+      //create user
       const resCreateUser: any = await userApi.createUser(dataCreateConvert);
       console.log("resCreateUser: ", resCreateUser);
       if (resCreateUser.code === 200) {
@@ -329,9 +353,10 @@ const UserManage = () => {
   };
 
   const searchUser = () => {
-    const convertFilter: any = {
-      account_type: typeUserSelected.id,
-    };
+    const convertFilter: any = {};
+    if (typeUserSelected.id !== 'ALL') {
+      convertFilter["account_type"] = typeUserSelected.id;
+    }
     if (groupSelected.id !== 1) {
       convertFilter["group_id"] = groupSelected.id;
     }
@@ -401,7 +426,7 @@ const UserManage = () => {
       })
       .then((res: any) => {
         console.log("res getList Group: ", res.results.objects);
-        listUserGroups[0].numberUser = res.results?.objects?.count || 0;
+        listUserGroups[0].numberUser = res.results?.objects?.totalUser || 0;
         setListUserGroup([listUserGroups[0], ...res.results?.objects?.rows]);
       })
       .catch((err) => {
@@ -559,7 +584,7 @@ const UserManage = () => {
           </div>
 
           <div className={classNames("flex flex-row gap-3 items-center")}>
-            {ListTypeUser.map((item) => {
+            {[{ id: 'ALL', name: 'All' }, ...ListTypeUser].map((item) => {
               let count = 0;
               switch (item.id) {
                 case TypeUser.ADMIN:
@@ -574,9 +599,17 @@ const UserManage = () => {
                 case TypeUser.PAID_USER:
                   count = countTypeUser.countPaidUser;
                   break;
+                case "ALL":
+                  if (groupSelected.id === 1)
+                    count = countTypeUser.totalUser;
+                  else {
+                    count = countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser;
+                  }
+                  break;
                 default:
                   break;
               }
+              if (item.id === TypeUser.ADMIN && groupSelected.id !== 1) return;
               return (
                 <CustomButton
                   className="text-base font-medium rounded-full"
@@ -588,7 +621,7 @@ const UserManage = () => {
                   onClick={() => handleClickTypeUser(item)}
                 >
                   {t(item.name)}
-                  {"(" + count + ")"}
+                  {" (" + count + ")"}
                 </CustomButton>
               );
             })}
@@ -669,6 +702,7 @@ const UserManage = () => {
         onClose={handleCloseModalCreateUser}
         onSubmit={handleCreateUser}
         title="Create a user"
+        nameConfirm="적용"
         disableSubmitBtn={!isFormDataValid()}
       >
         <div className={classNames(" flex flex-col gap-4")}>
@@ -719,7 +753,7 @@ const UserManage = () => {
             value={formDataCreateUser.userGroup}
             onChange={(value) => handleInputChange("userGroup", value)}
             placeholder="Select a group"
-            options={(listUserGroup || []).map((item) => ({
+            options={(listUserGroup || []).slice(1).map((item) => ({
               value: item.id,
               label: item.name,
             }))}
