@@ -31,3 +31,6 @@ export const THEMA = "/thema";
 export const CATEGORY = "/category";
 export const TAG = "/tag";
 export const REPORT = "/report";
+export const SETTING = "/setting";
+export const FAQ_CATEGORY = "/faq_category";
+export const FAQ = "/faq";
