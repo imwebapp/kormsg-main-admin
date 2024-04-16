@@ -87,8 +87,6 @@ export default function BulletinSetting() {
   }, []);
 
   const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
-    console.log("boardLink", boardLink);
-
     setBoardSelected(boardLink);
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
@@ -97,8 +95,6 @@ export default function BulletinSetting() {
       } else {
         const { id, ...linkData } = boardLink;
         const data = await BoardLinkApi.create(linkData);
-        console.log("data", data);
-
         setBoardSelected(data);
       }
       setLastRefresh(Date.now());
@@ -118,6 +114,7 @@ export default function BulletinSetting() {
 
   useEffect(() => {
     getTagsWithThema();
+    setBoardTypeSelected(boardSelected.route || "");
   }, [boardSelected]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,7 +225,6 @@ export default function BulletinSetting() {
   const _buildBoardType = () => {
     return (
       <>
-        {" "}
         <div className="flex flex-row justify-between items-center mt-4">
           <BaseText locale medium>
             Board Type
