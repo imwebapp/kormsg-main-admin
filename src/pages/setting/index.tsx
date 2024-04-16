@@ -3,6 +3,7 @@ import { Tabs } from "antd";
 import TabBarItem from "./component/TabBarItem";
 import TabPane from "antd/es/tabs/TabPane";
 import BranchIntroduction from "./component/BranchIntroduction";
+import CompanyInformation from "./component/CompanyInformation";
 const SettingPage = () => {
   const [activeKey, setActiveKey] = useState("1");
 
@@ -21,7 +22,7 @@ const SettingPage = () => {
         tab={<TabBarItem index="2" activeKey={activeKey} title="회사 정보" />}
         key="2"
       >
-        <div>회사 정보</div>
+        <CompanyInformation />
       </TabPane>
       <TabPane
         tab={

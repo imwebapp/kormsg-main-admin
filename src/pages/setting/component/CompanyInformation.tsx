@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BaseEditor } from "../../../components";
 import { useTranslation } from "react-i18next";
 
-export default function BranchIntroduction() {
+export default function CompanyInformation() {
   const { t } = useTranslation();
 
   const [defaultContent, setDefaultContent] = useState("");
@@ -11,8 +11,6 @@ export default function BranchIntroduction() {
   const callDetailContent = async () => {};
 
   useEffect(() => {
-    console.log("content", content);
-
     callDetailContent();
   }, [content]);
   return (

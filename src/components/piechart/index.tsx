@@ -16,7 +16,6 @@ export default function BasePieChart(props: PieChartProps) {
   const { className, date } = props;
   const { t } = useTranslation();
   const [data, setData] = useState<any[]>([]);
-  console.log("date", date);
 
   const changeStyle = (textElements: any) => {
     textElements.forEach((textElement: any) => {
@@ -30,8 +29,8 @@ export default function BasePieChart(props: PieChartProps) {
       }
     });
   };
-  const getInfoAnalyticsDeviceCategory = async () => {
-    const params = {
+  const getInfoAnalyticsPlatform = async () => {
+    const paramsWeb = {
       property: "properties/244725891",
       dimensions: [{ name: "platformDeviceCategory" }],
       metrics: [{ name: "screenPageViews" }],
@@ -44,7 +43,7 @@ export default function BasePieChart(props: PieChartProps) {
       dimensionFilter: {
         filter: {
           fieldName: "platformDeviceCategory",
-          inListFilter: { values: ["web / mobile", "web / desktop"] },
+          inListFilter: { values: ["web / desktop", "web / mobile"] },
         },
       },
       orderBys: [
@@ -56,11 +55,41 @@ export default function BasePieChart(props: PieChartProps) {
         },
       ],
     };
-    let result = await analyticsApi.getInfo(params);
-    const convertedData = result.data[0].rows.map((item: any) => {
-      const value = parseFloat(item.metricValues[0].value);
-      const totalValue = result.data[0].rows.reduce(
-        (acc: any, curr: any) => acc + parseFloat(curr.metricValues[0].value),
+    const paramsApp = {
+      property: "properties/435982517",
+      dimensions: [{ name: "platform" }],
+      metrics: [{ name: "screenPageViews" }],
+      dateRanges: [
+        {
+          startDate: date ? date[0] : "30daysAgo",
+          endDate: date ? date[1] : "today",
+        },
+      ],
+      dimensionFilter: {
+        filter: {
+          fieldName: "platform",
+          inListFilter: { values: ["Android", "iOS"] },
+        },
+      },
+      orderBys: [
+        {
+          dimension: {
+            orderType: "NUMERIC",
+            dimensionName: "platform",
+          },
+        },
+      ],
+    };
+    let resultPlatformWeb = await analyticsApi.getInfo(paramsWeb);
+    let resultPlatformApp = await analyticsApi.getInfo(paramsApp);
+    const mergedResult = resultPlatformWeb?.data[0]?.rows?.concat(
+      resultPlatformApp?.data[0]?.rows
+    );
+
+    const convertedData = mergedResult.map((item: any) => {
+      const value = parseFloat(item?.metricValues[0]?.value);
+      const totalValue = mergedResult.reduce(
+        (acc: any, curr: any) => acc + parseFloat(curr?.metricValues[0]?.value),
         0
       );
       const percentage = (value / totalValue) * 100;
@@ -76,7 +105,7 @@ export default function BasePieChart(props: PieChartProps) {
   };
 
   useEffect(() => {
-    getInfoAnalyticsDeviceCategory();
+    getInfoAnalyticsPlatform();
     return () => {};
   }, [date]);
 

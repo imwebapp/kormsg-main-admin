@@ -46,7 +46,10 @@ export default function BaseBarChart(props: BarChartProps) {
       dimensions: [{ name: optionTime === t("Hours") ? "hour" : "date" }],
       metrics: [{ name: "screenPageViews" }],
       dateRanges: [
-        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+        {
+          startDate: dateTimeSelect ? dateTimeSelect[0] : "30daysAgo",
+          endDate: dateTimeSelect ? dateTimeSelect[1] : "today",
+        },
       ],
       orderBys: [
         {
