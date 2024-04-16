@@ -13,5 +13,11 @@ export const shopApi = {
   },
   updateShop: (id: string, data: any) => {
     return axiosClient.put(`${SHOP}/${id}`, data)
-  }
+  },
+  updateExpirationDateMultiple: (ids: string, data: any) => {
+    return axiosClient.put(`${SHOP}/update_expiration_date_multiple/?items=${ids}`, data)
+  },
+  updateForceExpiredMultiple: (ids: string, data: any) => {
+    return axiosClient.put(`${SHOP}/force_expired_multiple/?items=${ids}`, data)
+  },
 }
