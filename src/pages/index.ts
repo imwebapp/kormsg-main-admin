@@ -15,6 +15,7 @@ import BulletinPage from "./bulletin";
 import SeoPage from "./seo";
 import ReportPage from "./report";
 import BlogPage from "./blog";
+import SettingPage from "./setting";
 
 export {
   Login,
@@ -33,5 +34,6 @@ export {
   BulletinPage,
   SeoPage,
   ReportPage,
-  BlogPage
+  BlogPage,
+  SettingPage,
 };

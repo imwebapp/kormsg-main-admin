@@ -6,11 +6,15 @@ type BaseEditorProps = {
   value?: string;
   defaultValue?: string;
   onChange?: any;
+  height?: any;
 };
 
 export default function BaseEditor(props: BaseEditorProps) {
+  const { height } = props;
   const editorRef = useRef<any>(null);
+
   const config = {
+    height: height,
     readonly: false,
     events: {
       afterInit: (instance: any) => {

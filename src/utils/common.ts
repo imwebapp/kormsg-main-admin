@@ -1,6 +1,6 @@
 import moment from "moment";
 import { TypeUser } from "./constants";
-import 'moment/min/locales';
+import "moment/min/locales";
 
 export const classNames = (...names: (string | undefined | null)[]): string =>
   (names || []).filter((e) => !!e && typeof e === "string").join(" ");
@@ -141,8 +141,8 @@ export const convertDate = (timestamp: Date) => {
 };
 
 export const handleConvertCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US').format(amount);
-}
+  return new Intl.NumberFormat("en-US").format(amount);
+};
 
 export const mathRemainingTime = (unixtimestamp: any) => {
   // return new Date(parseInt(unixtimestamp))
@@ -160,7 +160,7 @@ export const ceilRemainingTime = (unixtimestamp: any) => {
       .endOf("day")
       .valueOf() -
       moment().valueOf()) /
-    (24 * 60 * 60 * 1000)
+      (24 * 60 * 60 * 1000)
   );
 };
 
@@ -181,13 +181,33 @@ export function formatTimeDiff(time: Date, locale: string) {
 }
 
 export function formatHour(time: Date, locale: string) {
-  return moment(time).locale(locale).format('hh:mm A');
+  return moment(time).locale(locale).format("hh:mm A");
 }
 
 export function formatDate(time: Date, locale: string) {
-  return moment(time).locale(locale).format('MMMM D, YYYY');
+  return moment(time).locale(locale).format("MMMM D, YYYY");
 }
 
 export function formatTime(time: Date) {
-  return moment(time).format('YYYY-MM-DD');
+  return moment(time).format("YYYY-MM-DD");
 }
+export const formatDateTime = (timestampString: string, type: string) => {
+  const timestamp = parseInt(timestampString, 10);
+
+  if (isNaN(timestamp)) {
+    return "Invalid timestamp";
+  }
+
+  // Tạo đối tượng Date từ timestamp
+  const date = new Date(timestamp);
+
+  // Lấy các thành phần của ngày giờ
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  // Trả về chuỗi ngày giờ định dạng
+  return type === "day" ? `${year}/${month}/${day}` : `${hours}:${minutes}`;
+};
