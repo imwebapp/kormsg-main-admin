@@ -334,12 +334,18 @@
   "None": "None",
   "Add": "Add",
   "Representative image": "Representative image",
-  "Upload image" : "Upload image",
-  "Representative" : "Avt",
+  "Upload image": "Upload image",
+  "Representative": "Avt",
   "Available upon reservation": "Available upon reservation",
   "Creation Permission": "Creation Permission",
   "Comment & review permission": "Comment & review permission",
   "Review writing type": "Review writing type",
   "View permission": "View permission",
-  "Anyone can do it": "Anyone can do it"
+  "Anyone can do it": "Anyone can do it",
+  "브랜드 소개": "Brand Introduction",
+  "회사 정보": "Company Information",
+  "자주 묻는 질문": "Frequently Asked Questions",
+  "고객 서비스": "Customer service",
+  "필터 지역 및 지하철 설정고객 서비스": "Filter region and subway settings",
+  "Update": "Update"
 }

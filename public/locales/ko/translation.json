@@ -334,12 +334,18 @@
   "None": "없음",
   "Add": "추가",
   "Representative image": "대표 이미지",
-  "Upload image" : "이미지 업로드",
-  "Representative" : "대표",
+  "Upload image": "이미지 업로드",
+  "Representative": "대표",
   "Available upon reservation": "예약시 가능",
   "Creation Permission": "작성 권한",
   "Comment & review permission": "댓글&리뷰 권한",
   "Review writing type": "리뷰작성 타입",
   "View permission": "보기 권한",
-  "Anyone can do it": "아무나 가능"
+  "Anyone can do it": "아무나 가능",
+  "브랜드 소개": "브랜드 소개",
+  "회사 정보": "회사 정보",
+  "자주 묻는 질문": "자주 묻는 질문",
+  "고객 서비스": "고객 서비스",
+  "필터 지역 및 지하철 설정고객 서비스": "필터 지역 및 지하철 설정",
+  "Update": "업데이트"
 }
