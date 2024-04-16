@@ -166,7 +166,7 @@ export default function CommunityReport() {
               setUserDetail(post?.user);
             }
           }}
-          className="flex flex-row items-center gap-x-1 cursor-pointer"
+          className="flex flex-row items-center cursor-pointer gap-x-1"
         >
           <img
             src={
@@ -174,7 +174,7 @@ export default function CommunityReport() {
                 ? post?.user?.avatar || Images.userDefault
                 : Images.logo
             }
-            className="w-8 h-8 rounded-full object-cover"
+            className="object-cover w-8 h-8 rounded-full"
           />
           <BaseText size={16} medium>
             Badger
@@ -267,7 +267,7 @@ export default function CommunityReport() {
         {buttonData.map(({ status, label, count }) => (
           <CustomButton
             key={status}
-            className="text-base h-11 font-medium rounded-full px-4"
+            className="px-4 text-base font-medium rounded-full h-11"
             style={getButtonStyle(status)}
             onClick={() => handleButtonClick(status)}
           >
@@ -288,12 +288,12 @@ export default function CommunityReport() {
           onClick={() => {
             setPendingSetLimit(true);
           }}
-          className="flex bg-blue-50 h-11 flex-row items-center gap-x-3 border border-blue-500 rounded-full"
+          className="flex flex-row items-center border border-blue-500 rounded-full bg-blue-50 h-11 gap-x-3"
         >
-          <BaseText locale medium size={16} className="text-blue-500 ml-3">
+          <BaseText locale medium size={16} className="ml-3 text-blue-500">
             Set automatic deletion count
           </BaseText>
-          <div className="w-11 h-11 rounded-full bg-blue-500 flex justify-center items-center ">
+          <div className="flex items-center justify-center bg-blue-500 rounded-full w-11 h-11 ">
             {!isPendingSetLimit ? (
               <BaseText bold className="text-white" size={18}>
                 {limitReport}
@@ -398,7 +398,7 @@ const PostDetail = ({ post }: PostDetailType) => {
     <div>
       <Carousel draggable autoplay>
         {(post?.images || []).map((item) => (
-          <img src={item} className="rounded-lg mb-6" />
+          <img src={item} className="mb-6 rounded-lg" />
         ))}
       </Carousel>
       <BaseText medium size={16}>

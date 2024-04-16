@@ -52,10 +52,7 @@ const UserManage = () => {
   const { message } = App.useApp();
 
   const [loadingScreen, setLoadingScreen] = useState(false);
-
-  const [groupSelected, setGroupSelected] = useState<IGroups>(
-    listUserGroups[0]
-  );
+  const [groupSelected, setGroupSelected] = useState<IGroups>(listUserGroups[0]);
   const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
     {
       id: 'ALL',
@@ -74,7 +71,6 @@ const UserManage = () => {
     avatar: "",
   });
   const [imageCreateUser, setImageCreateUser] = useState<File>();
-
   const [countTypeUser, setCountTypeUser] = useState({
     countAdmin: 0,
     countBizUser: 0,
@@ -92,11 +88,9 @@ const UserManage = () => {
   const [reloading, setReloading] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
 
-  console.log("reloading: ", reloading);
-
-  console.log("listUser: ", listUser);
-
-  console.log("listUserGroup: ", listUserGroup);
+  const [page, setPage] = useState(1);
+  const [totalCountUser, setTotalCountUser] = useState(0);
+  const limit = 10;
 
   const handleClickGroup = (group: IGroups) => {
     if (groupSelected && groupSelected.id === group.id) {
@@ -484,7 +478,11 @@ const UserManage = () => {
     if (typeUserSelected.id === TypeUser.ADMIN) {
       // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
       employeeApi
-        .getList({ limit: 50, fields: '["$all"]' })
+        .getList({
+          limit: limit,
+          page,
+          fields: '["$all"]'
+        })
         .then((res: any) => {
           console.log("res getList EMPLOYEE: ", res.results.objects.rows);
           const listUserConvert = res.results.objects.rows.map((item: any) => {
@@ -502,7 +500,8 @@ const UserManage = () => {
     } else {
       userApi
         .getList({
-          limit: 50,
+          limit: limit,
+          page,
           fields: '["$all"]',
           filter: JSON.stringify(convertFilter),
           statistic: true
@@ -533,8 +532,15 @@ const UserManage = () => {
     }
   };
   useEffect(() => {
-    searchUser();
+    setPage(0);
+    setTimeout(() => {
+      setPage(1);
+    }, 50);
   }, [groupSelected, typeUserSelected, valueSearch]);
+
+  useEffect(() => {
+    searchUser();
+  }, [page]);
 
   useEffect(() => {
     userApi
@@ -542,6 +548,30 @@ const UserManage = () => {
       .then((res: any) => {
         console.log("res getCount User: ", res);
         setCountTypeUser(res.results.object);
+        switch (typeUserSelected.id) {
+          case TypeUser.ADMIN:
+            setTotalCountUser(countTypeUser.countAdmin);
+
+            break;
+          case TypeUser.BIZ_USER:
+            setTotalCountUser(countTypeUser.countBizUser);
+            break;
+          case TypeUser.FREE_USER:
+            setTotalCountUser(countTypeUser.countFreeUser);
+            break;
+          case TypeUser.PAID_USER:
+            setTotalCountUser(countTypeUser.countPaidUser);
+            break;
+          case "ALL":
+            if (groupSelected.id === 1)
+              setTotalCountUser(countTypeUser.totalUser);
+            else {
+              setTotalCountUser(countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser);
+            }
+            break;
+          default:
+            break;
+        }
       })
       .catch((err) => {
         console.log("err getCount User: ", err);
@@ -782,6 +812,7 @@ const UserManage = () => {
               switch (item.id) {
                 case TypeUser.ADMIN:
                   count = countTypeUser.countAdmin;
+
                   break;
                 case TypeUser.BIZ_USER:
                   count = countTypeUser.countBizUser;
@@ -828,6 +859,14 @@ const UserManage = () => {
             onDeleteUsers={handleDeleteUsers}
             onChangeTypeUser={handleUpdateTypeUser}
             onChangeGroupUser={handleChangeGroupUser}
+            pagination={{
+              current: page,
+              pageSize: limit,
+              total: totalCountUser,
+              onChange: (page: number, pageSize: number) => {
+                setPage(page);
+              },
+            }}
           />
         </div>
       </div>
