@@ -16,6 +16,7 @@ import {
   SeoPage,
   ReportPage,
   BlogPage,
+  SettingPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -113,7 +114,7 @@ const routes = [
   },
   {
     path: Url.blogs,
-    element: <BlogPage/>,
+    element: <BlogPage />,
   },
   {
     path: Url.appVersion,
@@ -125,7 +126,7 @@ const routes = [
   },
   {
     path: Url.setting,
-    element: <div className="p-4">coming soon</div>,
+    element: <SettingPage />,
   },
 ];
 export default routes;
