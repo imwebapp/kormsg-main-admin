@@ -31,6 +31,7 @@ import { PriceListTab } from "./components/PriceListTab";
 import { ShopFilter } from "./components/ShopFilter";
 import { UserFilter } from "./components/UserFilter";
 import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
+import { BoardLinkApi } from "../../apis/boardLinkApi";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -525,6 +526,15 @@ const NewStore = () => {
       .catch((err) => {
         // handle error
       });
+    // BoardLinkApi.getList().then((res) => {
+    //   console.log('resX ThemaApi', res);
+    //   const transformedDataListThema = res.map((item: any) => ({
+    //     value: item.id,
+    //     label: item.name,
+    //   }));
+    //   console.log('transformedDataListThema', transformedDataListThema);
+    //   setListThema(transformedDataListThema)
+    // }).catch((err) => { });
   }, []);
 
   //get list category and hashtag by thema
@@ -872,11 +882,11 @@ const NewStore = () => {
               onClick={(value) => {
                 const isActivated = value === '1';
                 setFormDataPage1({
-                    ...formDataPage1,
-                    reservationFuncSetting: isActivated,
-                    reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : []
+                  ...formDataPage1,
+                  reservationFuncSetting: isActivated,
+                  reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : []
                 });
-            }}
+              }}
               options={[
                 { value: '1', label: '활성화' },
                 { value: '2', label: '비활성화' }

@@ -107,6 +107,7 @@ export default function UserManageTable(props: UserManageTableProps) {
         bgColor = "#E6F4FF";
         break;
       default:
+        bgColor = "#F6F6F6";
         break;
     }
     return (
@@ -135,14 +136,13 @@ export default function UserManageTable(props: UserManageTableProps) {
               />
               <BaseInputSelect
                 required
-                defaultValue={group_id === null ? 1 : group_id}
-                value={group_id === null ? 1 : group_id}
+                defaultValue={group_id === null ? undefined : group_id}
+                value={group_id === null ? undefined : group_id}
                 onChange={(value) => { handleChangeGroupUser(id, value) }}
                 placeholder="Select a group"
-                options={[{ id: 1, name: 'All' }, ...listUserGroup].map((item: any) => ({
+                options={[ ...listUserGroup].map((item: any) => ({
                   value: item.id,
                   label: item.name,
-                  disabled: item.id === 1,
                 }))}
                 allowClear={false}
               />
@@ -195,9 +195,12 @@ export default function UserManageTable(props: UserManageTableProps) {
       ),
     },
     {
-      title: t("Id"),
-      render: ({ username }) => (
-        <BaseText >{username}</BaseText>
+      title: t("Id/Phone number"),
+      render: ({ username, phone }) => (
+        <div className="flex flex-col justify-center">
+          <BaseText >{username}</BaseText>
+          <BaseText >{phone || t('not added by user')}</BaseText>
+        </div>
       ),
     },
     {

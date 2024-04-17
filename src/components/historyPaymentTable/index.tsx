@@ -8,18 +8,17 @@ import { useNavigate } from "react-router-dom";
 import { convertDateTime } from "../../utils/common";
 
 type HistoryPaymentProps = {
-  data: any[];  
+  data: any[];
   className?: string; // for tailwindcss
+  pagination?: {};
 };
 
 export default function HistoryPaymentTable(props: HistoryPaymentProps) {
-  const { className, data } = props;
+  const { className, data, pagination } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { t } = useTranslation();
   const [platformsSelected, setPlatformSelected] = useState<Array<string>>([]);
   const navigate = useNavigate();
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
 
   const columns: TableColumnsType<any> = [
     {
@@ -95,7 +94,7 @@ export default function HistoryPaymentTable(props: HistoryPaymentProps) {
   return (
     <BaseTable
       className={className}
-      pagination={{ pageSize: 10 }}
+      pagination={pagination || { pageSize: 10 }}
       columns={columns}
       data={data}
     />

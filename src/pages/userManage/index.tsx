@@ -579,6 +579,12 @@ const UserManage = () => {
   }, [groupSelected, listUser]);
 
   useEffect(() => {
+    if (typeUserSelected.id === TypeUser.ADMIN) {
+      setTypeUserSelected({ id: 'ALL', name: "All" });
+    }
+  }, [groupSelected]);
+
+  useEffect(() => {
     getListGroup()
   }, []);
 
