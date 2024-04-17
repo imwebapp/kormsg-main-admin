@@ -121,6 +121,18 @@ export const ShopInformationTab = (props: IProps) => {
       const startDate = dayjs(dateString[0], "YYYY.MM.DD");
       const endDate = dayjs(dateString[1], "YYYY.MM.DD");
       setRangeValue([startDate, endDate]);
+      setFormDataAddEvent({
+        ...formDataAddEvent,
+        start_time: startDate.valueOf(),
+        end_time: endDate.valueOf(),
+      })
+    }else{
+      setRangeValue(null);
+      setFormDataAddEvent({
+        ...formDataAddEvent,
+        start_time: "",
+        end_time: "",
+      })
     }
   };
 
