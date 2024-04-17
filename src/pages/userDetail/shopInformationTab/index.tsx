@@ -13,6 +13,7 @@ import { App, DatePicker, Popconfirm, Popover, Spin } from "antd";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { userApi } from "../../../apis/userApi";
 import { BASE_URL_LINK_SHOP } from "../../../utils/constants";
+import { eventApi } from "../../../apis/eventApi";
 
 const ListTabBar = [
   {
@@ -68,9 +69,11 @@ export const ShopInformationTab = (props: IProps) => {
       timeEnd?: string;
       tag_ids: string[];
       shop_tags: any[];
+      events?: any;
     }[];
     count: number;
   }>(ListTabBar[0]);
+  const [listShopNoEvent, setListShopNoEvent] = useState<any[]>([]);
   const [openModalCreateEvent, setOpenModalCreateEvent] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [rangeValue, setRangeValue] = useState<any>(null);
@@ -84,6 +87,19 @@ export const ShopInformationTab = (props: IProps) => {
     end_time: "",
     images: [],
   });
+
+  const isFormDataValid = () => {
+    for (const key in formDataAddEvent) {
+      if (
+        key !== "images" &&
+        !formDataAddEvent[key as keyof typeof formDataAddEvent]
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
 
   const checkCount = (type: string) => {
     switch (type) {
@@ -175,20 +191,38 @@ export const ShopInformationTab = (props: IProps) => {
   };
 
 
-  const _createEvent = async () => {
+  const handleCreateEvent = async () => {
     try {
       const timeStampStart = dayjs(rangeValue[0]).valueOf();
       const timeStampEnd = dayjs(rangeValue[1]).valueOf();
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
+      const params = {
+        description: formDataAddEvent.description,
+        shop_id: formDataAddEvent.shop_id,
+        start_time: timeStampStart,
+        end_time: timeStampEnd,
+        images: [],
+      };
+      let result: any = await eventApi.createEvent(params);
+      if (result.code === 200) {
+        message.success("Create event success");
+        setOpenModalCreateEvent(false);
+        setFormDataAddEvent({
+          shop_id: "",
+          description: "",
+          start_time: "",
+          end_time: "",
+          images: [],
+        });
+        setRangeValue(null);
+        _getListShop();
+        _getUser();
+        _getListShopOfUser();
 
-  const _editEvent = async () => {
-    try {
-      const timeStampStart = dayjs(rangeValue[0]).valueOf();
-      const timeStampEnd = dayjs(rangeValue[1]).valueOf();
-    } catch (error: any) {
+      }
+    } catch (error) {
+      console.log("error create event", error);
+      setOpenModalCreateEvent(false);
+      message.error("Create event failed");
     }
   };
 
@@ -278,6 +312,41 @@ export const ShopInformationTab = (props: IProps) => {
       });
   }
 
+  const _getListShopOfUser = () => {
+    let convertFields: any = [
+      "$all",
+      { user: ["$all"] },
+      { category: ["$all", { thema: ["$all"] }] },
+      { events: ["$all"] },
+      { shop_tags: ["$all"] },
+    ];
+    const convertFilter: any = {
+      user_id: `${dataUser.id}`,
+    };
+    convertFilter['$or'] = [
+      { denied_shop: { $ne: null } },
+      { state: { $in: ['APPROVED'] } },
+    ];
+    setLoadingScreen(true);
+    shopApi
+      .getList({
+        fields: JSON.stringify(convertFields),
+        filter: JSON.stringify(convertFilter),
+        limit: 50,
+        page: 1,
+      })
+      .then((res: any) => {
+        setLoadingScreen(false);
+        console.log("res getList SHOP API", res.results.objects.rows);
+        const shopsNoEvent = res?.results?.objects?.rows.filter((item: any) => item.events.length === 0);
+        setListShopNoEvent(shopsNoEvent);
+      })
+      .catch((err) => {
+        setLoadingScreen(false);
+        console.log("err getList SHOP API", err);
+      });
+  }
+
   useEffect(() => {
     _getListShop()
     setListShopSelected([]);
@@ -285,6 +354,7 @@ export const ShopInformationTab = (props: IProps) => {
 
   useEffect(() => {
     _getUser()
+    _getListShopOfUser();
   }, []);
 
   return (
@@ -334,25 +404,28 @@ export const ShopInformationTab = (props: IProps) => {
       </Spin>
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6 ">
-          {(tabSelected?.data || []).map((item: any, index) => (
-            <ItemShop
-              key={index}
-              id={item.id}
-              avatar={
-                item.images.length > 0
-                  ? item.images[0]
-                  : "https://via.placeholder.com/300"
-              }
-              name={item.title}
-              timeOpening={item.opening_hours}
-              hashtag={(item?.shop_tags || []).map((item: any) => `#${item.name}`)}
-              item={item}
-              onClick={(id) => handleClickShop(id)}
-              className=""
-              onShopSelected={handleShopSelected}
-              isUnCheck={listShopSelected.length === 0}
-            />
-          ))}
+          {(tabSelected?.data || []).map((item: any, index) => {
+            console.log("itemXX", item.events);
+            return (
+              <ItemShop
+                key={index}
+                id={item.id}
+                avatar={
+                  item.images.length > 0
+                    ? item.images[0]
+                    : "https://via.placeholder.com/300"
+                }
+                name={item.title}
+                timeOpening={item.opening_hours}
+                hashtag={(item?.shop_tags || []).map((item: any) => `#${item.name}`)}
+                item={item}
+                onClick={(id) => handleClickShop(id)}
+                className=""
+                onShopSelected={handleShopSelected}
+                isUnCheck={listShopSelected.length === 0}
+              />
+            )
+          })}
         </div>
         {listShopSelected.length > 0 && <div className="fixed bottom-6 right-6 left-1/4">
           <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
@@ -431,14 +504,7 @@ export const ShopInformationTab = (props: IProps) => {
 
       <BaseModal2
         isOpen={openModalCreateEvent}
-        onSubmit={() => {
-          setOpenModalCreateEvent(false);
-          if (isEdit) {
-            _editEvent();
-          } else {
-            _createEvent();
-          }
-        }}
+        onSubmit={handleCreateEvent}
         title="이벤트+"
         onClose={() => {
           setFormDataAddEvent({
@@ -451,22 +517,24 @@ export const ShopInformationTab = (props: IProps) => {
           setRangeValue(null);
           setOpenModalCreateEvent(false);
         }}
+        disableSubmitBtn={!isFormDataValid()}
       >
         <BaseInputSelect
+          required
           title="Store"
           defaultValue={formDataAddEvent.shop_id || undefined}
           value={formDataAddEvent.shop_id || undefined}
-          onChange={() => { }}
+          onChange={(value) => { setFormDataAddEvent({ ...formDataAddEvent, shop_id: value }) }}
           placeholder="Select"
-          options={(tabSelected?.data || []).map((item: any) => ({
+          options={(listShopNoEvent || []).map((item: any) => ({
             value: item.id,
             label: t(item.title),
           }))}
         />
 
         <div className="flex flex-col my-4">
-          <BaseText locale bold size={14}>
-            행사 기간
+          <BaseText bold size={14}>
+            {t('행사 기간')} <span className="text-red-500">*</span>
           </BaseText>
           <RangePicker
             defaultValue={undefined}
@@ -481,6 +549,7 @@ export const ShopInformationTab = (props: IProps) => {
         <BaseInput
           title="행사 설명"
           placeholder="예시) 오후 할인 1만원"
+          textArea
           value={formDataAddEvent.description}
           onChange={(value) => {
             setFormDataAddEvent({ ...formDataAddEvent, description: value });
