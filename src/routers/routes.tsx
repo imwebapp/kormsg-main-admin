@@ -17,6 +17,7 @@ import {
   ReportPage,
   BlogPage,
   SettingPage,
+  HelpCenter,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -98,7 +99,7 @@ const routes = [
   },
   {
     path: Url.helpCenter,
-    element: <div className="p-4">coming soon</div>,
+    element: <HelpCenter />,
   },
   {
     path: Url.report,

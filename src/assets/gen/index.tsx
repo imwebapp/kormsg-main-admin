@@ -16,6 +16,7 @@ export default class Images {
     static readonly dashboard2 = require("../../../src/assets/images/Dashboard2.png");
     static readonly download = require("../../../src/assets/images/Download.png");
     static readonly empty = require("../../../src/assets/images/Empty.png");
+    static readonly filter = require("../../../src/assets/images/Filter.png");
     static readonly helpCenter = require("../../../src/assets/images/Help Center.png");
     static readonly helpCenter2 = require("../../../src/assets/images/Help Center2.png");
     static readonly home = require("../../../src/assets/images/Home.png");
@@ -56,6 +57,7 @@ export default class Images {
     static readonly uploadExcel = require("../../../src/assets/images/UploadExcel.png");
     static readonly userManage = require("../../../src/assets/images/User Manage.png");
     static readonly userManage2 = require("../../../src/assets/images/User Manage2.png");
+    static readonly addFile = require("../../../src/assets/images/add-file.png");
     static readonly adult = require("../../../src/assets/images/adult.png");
     static readonly android = require("../../../src/assets/images/android.png");
     static readonly android2 = require("../../../src/assets/images/android2.png");

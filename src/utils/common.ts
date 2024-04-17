@@ -160,7 +160,7 @@ export const ceilRemainingTime = (unixtimestamp: any) => {
       .endOf("day")
       .valueOf() -
       moment().valueOf()) /
-      (24 * 60 * 60 * 1000)
+    (24 * 60 * 60 * 1000)
   );
 };
 
@@ -188,8 +188,11 @@ export function formatDate(time: Date, locale: string) {
   return moment(time).locale(locale).format("MMMM D, YYYY");
 }
 
-export function formatTime(time: Date) {
+export function formatTime(time?: Date) {
   return moment(time).format("YYYY-MM-DD");
+}
+export function formatTimeFull(time: Date, locale: string) {
+  return moment(time).format("YYYY-MM-DD hh:mm A");
 }
 export const formatDateTime = (timestampString: string, type: string) => {
   const timestamp = parseInt(timestampString, 10);
@@ -210,4 +213,14 @@ export const formatDateTime = (timestampString: string, type: string) => {
 
   // Trả về chuỗi ngày giờ định dạng
   return type === "day" ? `${year}/${month}/${day}` : `${hours}:${minutes}`;
+};
+
+export const convertParams = (obj: any) => {
+  const result: any = {};
+  for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+      result[key] = JSON.stringify(obj[key]);
+    }
+  }
+  return result;
 };

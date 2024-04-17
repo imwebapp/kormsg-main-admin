@@ -106,6 +106,7 @@ export const BaseInputSelect = (props: InputProps) => {
                 }}
             >
                 <Select
+                    id="filter-help"
                     className={styleInputContainer}
                     value={valueSelect}
                     defaultValue={defaultValue}

@@ -122,6 +122,32 @@ export const ROUTE = {
   PROFILE_DESIGN1: "/profile_design1",
 };
 
+export const QUESTION_STATUS = {
+  ALL: "ALL",
+  MORE: "MORE",
+  PENDING: "PENDING",
+  COMPLETED: "COMPLETED",
+};
+
+export const QUESTION_STATUS_INFO = {
+  [QUESTION_STATUS.ALL]: {
+    text: "All Status",
+    color: "#2BB81F",
+  },
+  [QUESTION_STATUS.COMPLETED]: {
+    text: "Complete",
+    color: "#2BB81F",
+  },
+  [QUESTION_STATUS.PENDING]: {
+    text: "Waiting for reply",
+    color: "#0078FF",
+  },
+  [QUESTION_STATUS.MORE]: {
+    text: "Additional questions",
+    color: "#FF1400",
+  },
+};
+
 export const BOARD_ROUTE = {
   [BOARD.DISTANCE_ORDER_BOARD]: ROUTE.SHOP,
   [BOARD.DISTANCE_ORDER_BOARD_2]: ROUTE.SHOP,

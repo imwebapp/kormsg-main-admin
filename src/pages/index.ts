@@ -16,6 +16,7 @@ import SeoPage from "./seo";
 import ReportPage from "./report";
 import BlogPage from "./blog";
 import SettingPage from "./setting";
+import HelpCenter from "./helpCenter";
 
 export {
   Login,
@@ -36,4 +37,5 @@ export {
   ReportPage,
   BlogPage,
   SettingPage,
+  HelpCenter
 };
