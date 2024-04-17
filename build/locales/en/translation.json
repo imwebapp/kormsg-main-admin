@@ -350,10 +350,16 @@
   "Review writing type": "Review writing type",
   "View permission": "View permission",
   "Anyone can do it": "Anyone can do it",
+  "Send": "Send",
+  "Additional questions": "Additional questions",
+  "Waiting for reply": "Waiting for reply",
+  "All Status": "All Status",
+  "Write your feedback...": "Write your feedback...",
   "브랜드 소개": "Brand Introduction",
   "회사 정보": "Company Information",
   "자주 묻는 질문": "Frequently Asked Questions",
   "고객 서비스": "Customer service",
   "필터 지역 및 지하철 설정고객 서비스": "Filter region and subway settings",
-  "Update": "Update"
+  "Update": "Update",
+  "FAQ 만들기": "Create FAQ"
 }
