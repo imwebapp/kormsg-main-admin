@@ -27,3 +27,6 @@ export const TAG = "/tag";
 export const REPORT = "/report";
 export const QUESTION = "/question";
 export const ANSWER_QUESTION = "/answer_question";
+export const SETTING = "/setting";
+export const FAQ_CATEGORY = "/faq_category";
+export const FAQ = "/faq";

@@ -5,6 +5,9 @@ export const userApi = {
   getList: (params?: any) => {
     return axiosClient.get(`${USER}`, { params });
   },
+  getUser: (id: string, params?: any) => {
+    return axiosClient.get(`${USER}/${id}`, { params });
+  },
   getCount: (params?: string | number) => {
     return axiosClient.get(`${USER}/count?group_id=${params}`);
   },

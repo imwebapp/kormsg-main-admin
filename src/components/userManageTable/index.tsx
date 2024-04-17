@@ -18,6 +18,7 @@ type UserManageTableProps = {
   data: User[];
   className?: string; // for tailwindcss
   reload?: boolean;
+  pagination?: {};
   onOpenJumpUp: (id: number, jumpLimit: number) => void;
   onDeleteUser: (id: string) => void;
   onDeleteUsers: (ids: string[]) => void;
@@ -26,15 +27,26 @@ type UserManageTableProps = {
 };
 
 export default function UserManageTable(props: UserManageTableProps) {
-  const { className, data, reload, onOpenJumpUp, onDeleteUser, onDeleteUsers, onChangeTypeUser, onChangeGroupUser } = props;
+  const { className, data, reload, pagination, onOpenJumpUp, onDeleteUser, onDeleteUsers, onChangeTypeUser, onChangeGroupUser } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
   const [open, setOpen] = useState(false);
   const [idOpen, setIdOpen] = useState<string>("");
   const [listRowSelected, setListRowSelected] = useState<string[]>([]);
-
   console.log("ListRowSelected: ", listRowSelected);
+
+  // const _getCount = async () => {
+  //   userApi
+  //     .getCount(groupSelected.id === 1 ? "" : groupSelected.id)
+  //     .then((res: any) => {
+  //       console.log("res getCount User: ", res);
+  //       setCountTypeUser(res.results.object);
+  //     })
+  //     .catch((err) => {
+  //       console.log("err getCount User: ", err);
+  //     });
+  // }
   const handleOpenChange = (newOpen: boolean, id: string) => {
     setIdOpen(id);
     setOpen(newOpen);
@@ -127,9 +139,10 @@ export default function UserManageTable(props: UserManageTableProps) {
                 value={group_id === null ? 1 : group_id}
                 onChange={(value) => { handleChangeGroupUser(id, value) }}
                 placeholder="Select a group"
-                options={listUserGroup.map((item: any) => ({
+                options={[{ id: 1, name: 'All' }, ...listUserGroup].map((item: any) => ({
                   value: item.id,
                   label: item.name,
+                  disabled: item.id === 1,
                 }))}
                 allowClear={false}
               />
@@ -300,9 +313,9 @@ export default function UserManageTable(props: UserManageTableProps) {
       <BaseTable
         onSelectChange={onSelectChange}
         className={className}
-        pagination={{ pageSize: 10 }}
         columns={columns}
         data={data.map((item, index) => ({ ...item, key: item.id }))} // add key for each item
+        pagination={pagination || { pageSize: 10 }}
       />
     </div>
   );
