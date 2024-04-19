@@ -41,7 +41,6 @@ export const UserFilter = (props: IProps) => {
                 filter: JSON.stringify(convertFilter),
             })
             .then((res: any) => {
-                console.log("res getList User: ", res.results.objects.rows);
                 setListUser(res.results.objects.rows);
             })
             .catch((err) => {

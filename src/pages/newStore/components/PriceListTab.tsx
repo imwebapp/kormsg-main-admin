@@ -41,37 +41,31 @@ export const PriceListTab = (props: IProps) => {
     }
 
     const handleArchiveTick = (index: number) => {
-        console.log('Click Archive Tick')
         onArchiveTick && onArchiveTick(index)
         setShowOptionIndex(null)
     }
     const handleEdit = (item: any, index: number) => {
-        console.log('Click Edit')
         onEdit && onEdit(item, index)
         setShowOptionIndex(null)
     }
     const handleUp = (index: number) => {
         if (index > 0) {
-            console.log('Click Up')
             onUp && onUp(index)
         }
         setShowOptionIndex(null)
     }
     const handleDown = (index: number) => {
         if (index < dataPrice.length - 1) {
-            console.log('Click Down')
             onDown && onDown(index)
         }
         setShowOptionIndex(null)
     }
     const handleCopy = (item: any) => {
-        console.log('Click Copy')
         const newItem = { ...item, id: generateRandomID() };
         onCopy && onCopy(newItem)
         setShowOptionIndex(null)
     }
     const handleDelete = (index: number) => {
-        console.log('Click Delete')
         onDelete && onDelete(index)
         setShowOptionIndex(null)
     }

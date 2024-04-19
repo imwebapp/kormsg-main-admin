@@ -31,7 +31,6 @@ export const ModalSelectReservationFunc = (props: IProps) => {
     const [t] = useTranslation();
 
     const [reservationSelectedList, setReservationSelectedList] = useState<string[]>([]);
-    console.log('reservationSelectedList', reservationSelectedList);
 
     const [selectAll, setSelectAll] = useState<boolean>(false);
     const [deselectAll, setDeselectAll] = useState<boolean>(false);
@@ -82,7 +81,6 @@ export const ModalSelectReservationFunc = (props: IProps) => {
 
     useEffect(() => {
         if (data && data?.length > 0)
-            console.log('data setReservationSelectedList', data);
         setReservationSelectedList(data[0]?.time || []);
     }, [data]);
 

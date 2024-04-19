@@ -20,7 +20,7 @@ type UserManageTableProps = {
   reload?: boolean;
   pagination?: {};
   onOpenJumpUp: (id: number, jumpLimit: number) => void;
-  onDeleteUser: (id: string) => void;
+  onDeleteUser: (id: string, typeUser: string) => void;
   onDeleteUsers: (ids: string[]) => void;
   onChangeTypeUser: (id: string, type: string) => void;
   onChangeGroupUser: (id: string, groupId: string) => void;
@@ -52,9 +52,9 @@ export default function UserManageTable(props: UserManageTableProps) {
     setOpen(newOpen);
   };
 
-  const handleDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: string, type: string) => {
     setOpen(false);
-    onDeleteUser && onDeleteUser(id);
+    onDeleteUser && onDeleteUser(id, type);
   };
   const handleDeleteUsers = async () => {
     onDeleteUsers && onDeleteUsers(listRowSelected);
@@ -72,7 +72,6 @@ export default function UserManageTable(props: UserManageTableProps) {
   };
 
   const storeStatus = (title: string, item: any, value: number, account_type?: any) => {
-    console.log("storeStatus: ", item, "xx", title, "yy", value, 'zz', account_type);
     if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
@@ -274,7 +273,7 @@ export default function UserManageTable(props: UserManageTableProps) {
                     Edit information
                   </BaseText>
                 </div>
-                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => handleDeleteUser(item.id)}>
+                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => handleDeleteUser(item.id, item.account_type)}>
                   <img src={Images.trash} className="w-5 h-5 cursor-pointer" />
                   <BaseText locale size={16}>
                     Delete user
@@ -300,8 +299,6 @@ export default function UserManageTable(props: UserManageTableProps) {
     groupApi.getList({
       limit: 50, fields: '["$all"]'
     }).then((res: any) => {
-      console.log("res getList Group: ", res.results.objects);
-
       setListUserGroup(res.results?.objects?.rows);
     })
       .catch((err) => {
