@@ -33,18 +33,21 @@ export const ItemShop = (props: IItemShop) => {
     setChecked(isChecked); // Update the state of checkbox
     onShopSelected && onShopSelected({ id, checked: isChecked });
   };
+  const handleItemClick = () => {
+    setChecked(!checked);
+    onShopSelected && onShopSelected({ id, checked: !checked });
+  };
   useEffect(() => {
-    if(isUnCheck) setChecked(false);
+    if (isUnCheck) setChecked(false);
   }, [isUnCheck]);
 
   return (
-    <div className={classNames(className || 'flex flex-col cursor-pointer gap-2')} onClick={() => onClick(id)}>
-      <div className="relative">
+    <div className={classNames(className || 'flex flex-col cursor-pointer gap-2')}>
+      <div className="relative" onClick={handleItemClick}>
         <img src={avatar ? avatar : "https://via.placeholder.com/300"} alt="avatar" className="w-full mb-1 rounded-xl h-72" />
         {checked && (
           <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
             <div className="flex flex-col items-center px-4 py-3 rounded-lg backdrop-blur-md">
-
               <BaseText size={16} medium color='text-white'>
                 {`${moment(parseInt(item.start_date)).format(
                   "YYYY-MM-DD"
@@ -64,7 +67,7 @@ export const ItemShop = (props: IItemShop) => {
             navigate(Url.newStore, { state: { dataEdit: item } });
           }} />
         <Checkbox
-          className="absolute p-2 shadow-lg w-9 h-9 top-2 left-2"
+          className="absolute p-2 top-2 left-2"
           onChange={(e: CheckboxChangeEvent) => onChange(e, id)}
           checked={checked} // Set the checked state of the checkbox
           onClick={(event) => {

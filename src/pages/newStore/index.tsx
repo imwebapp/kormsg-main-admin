@@ -733,8 +733,9 @@ const NewStore = () => {
   }, [dataEditManager]);
 
   return (
-    <Spin spinning={loadingScreen} tip="Loading..." size="large" >
+    <>
       <Layout className="h-screen bg-white">
+        <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
         <Header className="bg-white border-b h-[71px] px-6">
           <div className="flex flex-row items-center justify-between h-full">
             <div className="flex flex-row items-center gap-3">
@@ -1259,7 +1260,7 @@ const NewStore = () => {
           data={dataEditManager}
         />
       </Layout>
-    </Spin>
+    </>
   );
 };
 

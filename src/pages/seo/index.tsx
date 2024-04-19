@@ -1,10 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BaseInput } from '../../components/input/BaseInput'
 import { BaseText, CustomButton } from '../../components'
 import Images from '../../assets/gen'
 import { PlusOutlined } from '@ant-design/icons';
+import { seoApi } from '../../apis/seoApi';
+import { classNames } from '../../utils/common';
+import { UploadApi } from '../../apis/uploadApi';
+import { App, Spin } from 'antd';
 
 const SeoPage = () => {
+  const { message } = App.useApp();
+  const [loadingScreen, setLoadingScreen] = useState(false);
   const [dataSeo, setDataSeo] = useState({
     siteName: '',
     siteDescription: '',
@@ -12,28 +18,129 @@ const SeoPage = () => {
     favicon: '',
     avatar: '',
     metaCode: '',
+    metaNaverCode: '',
   })
-  const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState<File | null>(null);
+  const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
+
+  console.log('selectedIcon', selectedIcon);
+  console.log('selectedAvatar', selectedAvatar);
+  console.log('dataSeo', dataSeo);
+
 
   const handleChange = (key: string, value: string) => {
     setDataSeo({ ...dataSeo, [key]: value })
   }
 
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const isFormDataValid = () => {
+    for (const key in dataSeo) {
+      if (key === 'favicon' && selectedIcon === null && !dataSeo[key as keyof typeof dataSeo]) {
+        return false;
+      }
+      if (key === 'avatar' && selectedAvatar === null && !dataSeo[key as keyof typeof dataSeo]) {
+        return false;
+      }
+      if (
+        key !== 'favicon' && key !== 'avatar' &&
+        !dataSeo[key as keyof typeof dataSeo]
+      ) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleIconChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleIconChange');
     if (event.target.files && event.target.files[0]) {
       const imageFile = event?.target?.files[0];
-      const imageUrl = URL.createObjectURL(imageFile);
-      setDataSeo({ ...dataSeo, avatar: imageUrl });
-      setSelectedAvatar(imageUrl);
+      setSelectedIcon(imageFile);
     }
   };
 
-  const handleSubmit = () => {
-    console.log('dataSeo', dataSeo)
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const imageFile = event?.target?.files[0];
+      setSelectedAvatar(imageFile);
+    }
   };
+
+  const handleSubmit = async () => {
+    console.log('dataSeo', dataSeo, selectedIcon, selectedAvatar)
+    try {
+      setLoadingScreen(true)
+      let iconUploaded = dataSeo?.favicon;
+      let imageUploaded = dataSeo?.avatar;
+      if (selectedIcon !== null) {
+        const ResUploadIcon = await UploadApi.uploadImage(selectedIcon);
+        console.log('ResUploadImgIcon', ResUploadIcon);
+        iconUploaded = ResUploadIcon.url;
+      }
+      if (selectedAvatar !== null) {
+        const ResUploadAvatar = await UploadApi.uploadImage(selectedAvatar);
+        console.log('ResUploadImgAvatar', ResUploadAvatar);
+        imageUploaded = ResUploadAvatar.url;
+      }
+      const dataConvert = {
+        title: dataSeo?.siteName,
+        description: dataSeo?.siteDescription,
+        icon: iconUploaded,
+        avatar: imageUploaded,
+        keywords: dataSeo?.metaKeyword,
+        meta: dataSeo?.metaCode,
+        meta_naver: dataSeo?.metaNaverCode,
+      };
+      console.log('dataConvertSEO', dataConvert);
+      const response: any = await seoApi.updateSEO(dataConvert);
+      console.log('response SEO', response);
+      if (response.code === 200) {
+        setSelectedIcon(null);
+        setSelectedAvatar(null);
+        setDataSeo({
+          siteName: response?.results?.object?.title,
+          siteDescription: response?.results?.object?.description,
+          metaKeyword: response?.results?.object?.keywords,
+          favicon: response?.results?.object?.icon,
+          avatar: response?.results?.object?.avatar,
+          metaCode: response?.results?.object?.meta,
+          metaNaverCode: response?.results?.object?.meta_naver,
+        })
+        setLoadingScreen(false)
+        message.success('Update SEO success');
+      }
+    }
+    catch (error: any) {
+      console.log('error', error);
+      setLoadingScreen(false)
+      message.error(error.data.response || 'Update SEO failed');
+    }
+  };
+
+  const _getDataSeo = async () => {
+    // Call API to get data
+    const response: any = await seoApi.getSEO();
+    if (response.code === 200) {
+      console.log('response SEO', response?.results?.object);
+      // setDataSeo(response?.results?.object);
+      setDataSeo({
+        siteName: response?.results?.object?.title,
+        siteDescription: response?.results?.object?.description,
+        metaKeyword: response?.results?.object?.keywords,
+        favicon: response?.results?.object?.icon,
+        avatar: response?.results?.object?.avatar,
+        metaCode: response?.results?.object?.meta,
+        metaNaverCode: response?.results?.object?.meta_naver,
+      })
+    }
+  }
+
+  useEffect(() => {
+    _getDataSeo()
+  }, [])
 
   return (
     <div className='flex flex-col gap-3 p-6'>
+      <Spin spinning={loadingScreen} tip="Loading..." size="large" className='flex' fullscreen />
       <div
         className='p-8 border rounded-lg flex flex-col gap-[20px]'
       >
@@ -68,22 +175,41 @@ const SeoPage = () => {
             Favicon
           </BaseText>
           <div className='flex items-center gap-6'>
-            <div className='h-[120px] w-[120px] flex justify-center items-center rounded-lg border-dashed border-2'>
-              <img src={Images.uploadCloudIcon} />
-            </div>
+            {
+              selectedIcon ? (
+                <img src={URL.createObjectURL(selectedIcon)} className='h-[120px] w-[120px] flex justify-center items-center rounded-lg' />
+              ) : (dataSeo?.favicon ? (
+                <img src={dataSeo.favicon} className='h-[120px] w-[120px] flex justify-center items-center rounded-lg' />
+              ) : (
+                <div className='h-[120px] w-[120px] flex justify-center items-center rounded-lg border-dashed border-2'>
+                  <img src={Images.uploadCloudIcon} />
+                </div>
+              ))
+            }
             <div className='flex flex-col gap-2'>
               <div className='flex gap-3'>
+                <input type="file" accept="image/*" onChange={handleIconChange} style={{ display: 'none' }} id="upload-icon" key='upload-icon' />
                 <CustomButton
                   primary
                   icon={<PlusOutlined />}
                   bold
                   locale
+                  onClick={() => {
+                    const uploadIconImgInput = document.getElementById('upload-icon');
+                    if (uploadIconImgInput) {
+                      uploadIconImgInput.click();
+                    }
+                  }}
                 >
                   Upload new picture
                 </CustomButton>
                 <CustomButton
                   bold
                   locale
+                  onClick={() => {
+                    setSelectedIcon(null);
+                    setDataSeo({ ...dataSeo, favicon: '' });
+                  }}
                 >
                   Remove
                 </CustomButton>
@@ -102,16 +228,18 @@ const SeoPage = () => {
           <div className='flex items-center gap-6'>
             {
               selectedAvatar ? (
-                <img src={selectedAvatar} className='h-[120px] w-[120px] items-center rounded-lg' />
+                <img src={URL.createObjectURL(selectedAvatar)} className='h-[120px] w-[120px] flex justify-center items-center rounded-lg' />
+              ) : (dataSeo?.avatar ? (
+                <img src={dataSeo.avatar} className='h-[120px] w-[120px] flex justify-center items-center rounded-lg' />
               ) : (
                 <div className='h-[120px] w-[120px] flex justify-center items-center rounded-lg border-dashed border-2'>
                   <img src={Images.uploadCloudIcon} />
                 </div>
-              )
+              ))
             }
             <div className='flex flex-col gap-2'>
               <div className='flex gap-3'>
-                <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} id="upload-avatar" />
+                <input type="file" accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} id="upload-avatar" key='upload-avatar' />
                 <CustomButton
                   primary
                   icon={<PlusOutlined />}
@@ -129,7 +257,10 @@ const SeoPage = () => {
                 <CustomButton
                   bold
                   locale
-                  onClick={() => setSelectedAvatar(null)}
+                  onClick={() => {
+                    setSelectedAvatar(null);
+                    setDataSeo({ ...dataSeo, avatar: '' });
+                  }}
                 >
                   Remove
                 </CustomButton>
@@ -157,6 +288,8 @@ const SeoPage = () => {
         locale
         primary
         onClick={handleSubmit}
+        bold
+        disabled={!isFormDataValid()}
       >
         Save
       </CustomButton>

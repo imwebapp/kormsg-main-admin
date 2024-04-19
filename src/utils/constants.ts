@@ -216,6 +216,7 @@ export const PLATFORM = {
   APPLE: "APPLE",
   ANDROID: "ANDROID",
   BROWSER: "BROWSER",
+  BROWSER_MOBILE: 'BROWSER_MOBILE',
 };
 export const LIST_REGION = [
   {
