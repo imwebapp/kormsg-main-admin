@@ -388,6 +388,7 @@ export default function QASetting() {
         title={t("Delete Category")}
         onSubmit={() => {
           handleDeleteCategory(idFAQCategory.current);
+          setOpenModalDeleteFAQCategory(false);
         }}
         onClose={() => {
           setOpenModalDeleteFAQCategory(false);
