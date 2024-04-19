@@ -13,14 +13,17 @@ export const settingApi = {
   createFaqCategory: (params: any) => {
     return axiosClient.post(`${FAQ_CATEGORY}`, params);
   },
-  editFaqCategory: (params: any, id: string) => {
-    return axiosClient.put(`${FAQ_CATEGORY}/${id}`, { params });
+  editFaqCategory: (params: any) => {
+    return axiosClient.put(`${FAQ_CATEGORY}/multiple/data`, params);
   },
   deleteFaqCategory: (id: any) => {
     return axiosClient.delete(`${FAQ_CATEGORY}/${id}`);
   },
   createFaq: (params: any) => {
     return axiosClient.post(`${FAQ}`, params);
+  },
+  editFaq: (params: any, id: string) => {
+    return axiosClient.put(`${FAQ}/${id}`, params);
   },
 
   deleteFaq: (id: any) => {

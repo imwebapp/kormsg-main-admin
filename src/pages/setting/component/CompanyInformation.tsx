@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BaseEditor } from "../../../components";
 import { useTranslation } from "react-i18next";
 import { settingApi } from "../../../apis/settingApi";
+import { showSuccess } from "../../../utils/showToast";
 
 export default function CompanyInformation() {
   const { t } = useTranslation();
@@ -27,8 +28,10 @@ export default function CompanyInformation() {
       const data = {
         value: content,
       };
-      let result = await settingApi.updateSetting(settingCompany.id, data);
-      console.log("result", result);
+      let result: any = await settingApi.updateSetting(settingCompany.id, data);
+      if (result.code === 200) {
+        showSuccess("Update Company Information Success");
+      }
     } catch (error) {}
   };
   useEffect(() => {

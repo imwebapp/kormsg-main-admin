@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   BaseEditor,
   BaseTable,
@@ -24,17 +24,22 @@ export default function QASetting() {
   const [openModalCreateCategory, setOpenModalCreateCategory] = useState(false);
   const [openModalCategoryList, setOpenModalCategoryList] = useState(false);
   const [openModalCreateFAQ, setOpenModalCreateFAQ] = useState(false);
+  const [openModalDeleteFAQCategory, setOpenModalDeleteFAQCategory] =
+    useState(false);
   const [nameFAQCategory, setNameFAQCategory] = useState("");
   const [contentFAQ, setContentFAQ] = useState("");
   const [titleFAQ, setTitleFAQ] = useState("");
   const [faqCategoryId, setFaqCategoryId] = useState("");
   const [defaultContent, setDefaultContent] = useState("");
-
+  const [isEditing, setIsEditing] = useState(false);
+  const idFAQ = useRef("");
+  const idFAQCategory = useRef("");
   const getListFaqCategory = async () => {
     try {
       const params = {
         fields: '["$all"]',
         limit: 50,
+        order: JSON.stringify([["created_at", "DESC"]]),
       };
       let result: any = await settingApi.getListFaqCategory(params);
       if (result.code === 200) {
@@ -104,18 +109,10 @@ export default function QASetting() {
       render: (text, record) => (
         <div className="flex flex-row items-center w-[50px] gap-2">
           <img
-            src={Images.eye}
-            className="w-6 h-6 cursor-pointer"
-            onClick={() => {
-              console.log("edit store", record);
-              // navigate(Url.newStore, { state: { dataEdit: record } });
-            }}
-          />
-          <img
             src={Images.edit2}
             className="w-6 h-6 cursor-pointer"
             onClick={() => {
-              // cloneStore(record.id);
+              handleViewFAQ(record);
             }}
           />
           <img
@@ -130,19 +127,7 @@ export default function QASetting() {
       width: "10%",
     },
   ];
-  function scrollRight() {
-    const faqContainer = document.getElementById("faqContainer");
-    if (faqContainer) {
-      faqContainer.scrollLeft += 50; // Đặt giá trị offset tùy ý
-    }
-  }
 
-  function scrollLeft() {
-    const faqContainer = document.getElementById("faqContainer");
-    if (faqContainer) {
-      faqContainer.scrollLeft -= 50; // Đặt giá trị offset tùy ý
-    }
-  }
   const handleSubmitNewCategory = async () => {
     try {
       const params = {
@@ -153,6 +138,28 @@ export default function QASetting() {
         showSuccess("Create FAQ Category Success");
         setNameFAQCategory("");
         getListFaqCategory();
+      }
+    } catch (error) {}
+  };
+  const resetModalCreateFAQ = () => {
+    setTitleFAQ("");
+    setContentFAQ("");
+    setFaqCategoryId("");
+    setDefaultContent("");
+  };
+  const handleEditFAQSubmit = async () => {
+    try {
+      const params = {
+        content: contentFAQ,
+        name: titleFAQ,
+      };
+      if (faqCategoryId !== "") {
+        let result: any = await settingApi.editFaq(params, idFAQ.current);
+        if (result.code === 200) {
+          showSuccess("Create FAQ Success");
+          getListFaq(faqCategoryId);
+          resetModalCreateFAQ();
+        }
       }
     } catch (error) {}
   };
@@ -179,6 +186,25 @@ export default function QASetting() {
       }
     } catch (error) {}
   };
+  const handleSubmitEditCategory = async (temp: any) => {
+    try {
+      const params = {
+        list_data: [],
+      };
+      const mappedData = temp.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+      }));
+      params.list_data = mappedData;
+      console.log("mappedData", params);
+
+      let result: any = await settingApi.editFaqCategory(params);
+      if (result.code === 200) {
+        getListFaqCategory();
+      }
+      console.log("result", result);
+    } catch (error) {}
+  };
   const handleDeleteCategory = async (id: string) => {
     try {
       let result: any = await settingApi.deleteFaqCategory(id);
@@ -202,6 +228,15 @@ export default function QASetting() {
     const updatedCategories = deepCopyArray(tempFAQCategories); // Sao chép mảng một cách sâu
     updatedCategories[index].name = value;
     setTempFAQCategories(updatedCategories);
+  };
+  const handleViewFAQ = (record: any) => {
+    setTitleFAQ(record.name);
+    setDefaultContent(record.content);
+    setContentFAQ(record.content);
+    setFaqCategoryId(record.faq_category_id);
+    setIsEditing(true);
+    idFAQ.current = record.id;
+    setOpenModalCreateFAQ(true);
   };
   const listButton = () => {
     const handleButtonClick = (id: any) => {
@@ -249,6 +284,9 @@ export default function QASetting() {
             icon={<PlusOutlined />}
             onClick={() => {
               // setOpenModalCategoryList(true);
+              setDefaultContent("Default Create");
+              setIsEditing(false);
+              resetModalCreateFAQ();
               setOpenModalCreateFAQ(true);
             }}
           >
@@ -272,19 +310,8 @@ export default function QASetting() {
       />
     );
   };
-
-  useEffect(() => {
-    getListFaqCategory();
-    return () => {};
-  }, []);
-
-  useEffect(() => {
-    if (selectedButton !== "") getListFaq(selectedButton);
-  }, [selectedButton]);
-  return (
-    <div className="p-4 py-0">
-      {headerTable()}
-      {bodyTable()}
+  const modalCategoryList = () => {
+    return (
       <BaseModal2
         isOpen={!!openModalCategoryList}
         onClose={() => {
@@ -292,9 +319,10 @@ export default function QASetting() {
           setTempFAQCategories(listFAQCategory);
         }}
         onSubmit={() => {
+          handleSubmitEditCategory(tempFAQCategories);
           setOpenModalCategoryList(false);
         }}
-        title="Category list"
+        title={t("List Category")}
       >
         {tempFAQCategories.map((category: any, index: any) => (
           <div
@@ -311,7 +339,8 @@ export default function QASetting() {
               alt="Notification icon"
               className="shrink-0 my-auto w-6 aspect-square cursor-pointer"
               onClick={() => {
-                handleDeleteCategory(category.id);
+                idFAQCategory.current = category.id;
+                setOpenModalDeleteFAQCategory(true);
               }}
             />
           </div>
@@ -323,9 +352,13 @@ export default function QASetting() {
           }}
         >
           <PlusOutlined />
-          <span>Create new category</span>
+          <span>{t("Create new category")}</span>
         </a>
       </BaseModal2>
+    );
+  };
+  const modalCreateCategory = () => {
+    return (
       <BaseModal2
         isOpen={!!openModalCreateCategory}
         onClose={() => {
@@ -335,31 +368,73 @@ export default function QASetting() {
           handleSubmitNewCategory();
           setOpenModalCreateCategory(false);
         }}
-        title="New category"
+        title={t("New Category")}
       >
         <BaseInput
           className="w-full"
-          title="Name"
+          title={t("Name")}
           placeholder="Create new FAQ category"
           value={nameFAQCategory}
           onChange={setNameFAQCategory}
         />
       </BaseModal2>
+    );
+  };
+  const modalDeleteFaqCategory = () => {
+    return (
+      <BaseModal2
+        isOpen={!!openModalDeleteFAQCategory}
+        styleButtonConfirm={"bg-rose-500"}
+        title={t("Delete Category")}
+        onSubmit={() => {
+          handleDeleteCategory(idFAQCategory.current);
+        }}
+        onClose={() => {
+          setOpenModalDeleteFAQCategory(false);
+        }}
+      >
+        <div>
+          {t("이 카테고리와 해당 카테고리에 속한 FAQ를 삭제하시겠습니까?")}
+        </div>
+      </BaseModal2>
+    );
+  };
+
+  useEffect(() => {
+    getListFaqCategory();
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    if (selectedButton !== "") getListFaq(selectedButton);
+  }, [selectedButton]);
+  return (
+    <div className="p-4 py-0">
+      {headerTable()}
+      {bodyTable()}
+      {modalCategoryList()}
+      {modalCreateCategory()}
+      {modalDeleteFaqCategory()}
       <BaseModal2
         isOpen={!!openModalCreateFAQ}
         onClose={() => {
           setOpenModalCreateFAQ(false);
         }}
         onSubmit={() => {
-          handleSubmitNewFAQ();
+          if (isEditing) {
+            handleEditFAQSubmit();
+          } else {
+            handleSubmitNewFAQ();
+          }
           setOpenModalCreateFAQ(false);
         }}
-        title="FAQ 세부사항"
+        title={isEditing ? t("Edit FAQ") : t("FAQ 만들기")}
       >
         <BaseInputSelect
-          title="그룹"
+          title={t("Group")}
           value={faqCategoryId}
           onChange={setFaqCategoryId}
+          defaultValue={faqCategoryId !== "" ? faqCategoryId : null}
           placeholder="Select a group"
           options={listFAQCategory.map((item: any) => ({
             value: item.id,
@@ -367,21 +442,19 @@ export default function QASetting() {
           }))}
         />
         <BaseInput
-          title="Title"
+          title={t("Title")}
           placeholder="제목을 입력하세요"
           value={titleFAQ}
           onChange={setTitleFAQ}
         />
-        <div className="pt-30">
-          <BaseText bold locale className="mt-30">
+        <div className="pt-2">
+          <BaseText bold locale className="mt-30 mb-5">
             Content
           </BaseText>
           <BaseEditor
             defaultValue={defaultContent}
             value={contentFAQ}
             onChange={(value: string) => {
-              console.log("value", value);
-
               setContentFAQ(value);
             }}
             height={"300px"}

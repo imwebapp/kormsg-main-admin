@@ -14,10 +14,8 @@ import BaseSegmented from "../segmented";
 import { useTranslation } from "react-i18next";
 import { classNames } from "../../utils/common";
 import { useLocalStorage } from "../../stores/localStorage";
-import moment from "moment";
 import { analyticsApi } from "../../apis/analyticsApi";
 import dayjs from "dayjs";
-import { notification } from "antd";
 
 export interface BarChartDataInterface {
   label: string;

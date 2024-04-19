@@ -6,6 +6,7 @@ import BranchIntroduction from "./component/BranchIntroduction";
 import CompanyInformation from "./component/CompanyInformation";
 import { useTranslation } from "react-i18next";
 import QASetting from "./component/QASetting";
+import CustomService from "./component/CustomService";
 const SettingPage = () => {
   const { t } = useTranslation();
 
@@ -58,7 +59,7 @@ const SettingPage = () => {
         }
         key="4"
       >
-        <div>고객 서비스</div>
+        <CustomService />
       </TabPane>
       <TabPane
         tab={
