@@ -227,9 +227,10 @@ export default function UserManageTable(props: UserManageTableProps) {
       render: ({ platform_create, created_at }) => (
         <div className="flex flex-col items-center gap-2 min-w-[90px]">
           {
-            platform_create === PLATFORM.ANDROID ? <img src={Images.android} className="w-6 h-6" /> :
-              platform_create === PLATFORM.APPLE ? <img src={Images.iphone} className="w-6 h-6" /> :
-                <img src={Images.web} className="w-6 h-6" />
+            platform_create === PLATFORM.ANDROID ? <img src={Images.androidIcon} className="w-6 h-6" /> :
+              platform_create === PLATFORM.APPLE ? <img src={Images.appleIcon} className="w-6 h-6" /> :
+              platform_create === PLATFORM.BROWSER_MOBILE ? <img src={Images.webMobile} className="w-6 h-6" /> :
+                <img src={Images.webPc} className="w-6 h-6" />
           }
           <BaseText medium size={16}>
             {convertDate(created_at)}

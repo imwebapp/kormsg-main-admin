@@ -21,7 +21,7 @@ import { useTranslation } from "react-i18next";
 import { getMethod } from "../../utils/request";
 import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
-import { ListTypeUser, TypeUser } from "../../utils/constants";
+import { ListTypeUser, PLATFORM, TypeUser } from "../../utils/constants";
 import { employeeApi } from "../../apis/employeeApi";
 import { Input, Select, App, Spin } from "antd";
 import { UploadApi } from "../../apis/uploadApi";
@@ -35,6 +35,10 @@ const listUserGroups = [
     index: 1,
   },
 ];
+
+const isMobile = () => {
+  return /Mobi|Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent);
+};
 
 type IGroups = {
   id: number | string;
@@ -193,6 +197,8 @@ const UserManage = () => {
     return true;
   };
 
+ 
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -216,6 +222,9 @@ const UserManage = () => {
     try {
       console.log("FormDataCREATE is valid. Submitting...", typeof formDataCreateUser.userGroup);
 
+      const deviceType = isMobile() ? PLATFORM.BROWSER_MOBILE : PLATFORM.BROWSER;
+      console.log('Creating user from:', deviceType);
+      
       //Upload Image
       let resUploadImg: string = "";
       setLoadingScreen(true);
@@ -245,6 +254,7 @@ const UserManage = () => {
         start_date: null,
         uniqueness: null,
         username: formDataCreateUser.userId,
+        platform_create: deviceType,
       }
       console.log('dataCreateConvert', dataCreateConvert);
 
@@ -589,11 +599,12 @@ const UserManage = () => {
   }, []);
 
   return (
-    <Spin spinning={loadingScreen} tip="Loading..." size="large" >
+    <>
       <div
         className={classNames("flex overflow-hidden")}
         style={{ height: "calc(100vh - 71px)" }}
       >
+        <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
         <div className={classNames("w-1/6 border-r border-darkNight100 p-6")}>
           <div className={classNames("flex items-center justify-between mb-4")}>
             <BaseText bold locale size={16} className="">
@@ -1036,7 +1047,7 @@ const UserManage = () => {
           />
         </div>
       </BaseModal>
-    </Spin>
+    </>
   );
 };
 

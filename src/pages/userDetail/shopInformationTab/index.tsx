@@ -126,7 +126,7 @@ export const ShopInformationTab = (props: IProps) => {
         start_time: startDate.valueOf(),
         end_time: endDate.valueOf(),
       })
-    }else{
+    } else {
       setRangeValue(null);
       setFormDataAddEvent({
         ...formDataAddEvent,
@@ -371,49 +371,48 @@ export const ShopInformationTab = (props: IProps) => {
 
   return (
     <>
-      <Spin spinning={loadingScreen} tip="Loading..." size="large" className="relative">
-        <div className="flex w-full">
-          {ListTabBar.map((item, index) => {
-            return (
-              <div
-                onClick={() => setTabSelected(item)}
-                key={index}
-                className={
-                  "flex w-1/4 items-center justify-center pt-6 cursor-pointer border-b"
-                }
-              >
-                <div className="flex flex-col gap-4 ">
-                  <div className="flex items-center justify-center gap-2 ">
-                    <BaseText
-                      locale
-                      size={16}
-                      bold
-                      color={classNames(
-                        tabSelected.value !== item.value
-                          ? "text-darkNight500"
-                          : ""
-                      )}
-                    >
-                      {t(item.title)}
-                    </BaseText>
-                    <BaseText
-                      bold
-                      className="px-1 text-white bg-darkNight900 rounded-[4px]"
-                    >
-                      {checkCount(item.value)}
-                    </BaseText>
-                  </div>
-                  {tabSelected?.value === item.value ? (
-                    <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" />
-                  ) : (
-                    <div className="w-full h-1" />
-                  )}
+      <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
+      <div className="flex w-full">
+        {ListTabBar.map((item, index) => {
+          return (
+            <div
+              onClick={() => setTabSelected(item)}
+              key={index}
+              className={
+                "flex w-1/4 items-center justify-center pt-6 cursor-pointer border-b"
+              }
+            >
+              <div className="flex flex-col gap-4 ">
+                <div className="flex items-center justify-center gap-2 ">
+                  <BaseText
+                    locale
+                    size={16}
+                    bold
+                    color={classNames(
+                      tabSelected.value !== item.value
+                        ? "text-darkNight500"
+                        : ""
+                    )}
+                  >
+                    {t(item.title)}
+                  </BaseText>
+                  <BaseText
+                    bold
+                    className="px-1 text-white bg-darkNight900 rounded-[4px]"
+                  >
+                    {checkCount(item.value)}
+                  </BaseText>
                 </div>
+                {tabSelected?.value === item.value ? (
+                  <div className="w-full h-1 bg-dayBreakBlue500 rounded-t-xl" />
+                ) : (
+                  <div className="w-full h-1" />
+                )}
               </div>
-            );
-          })}
-        </div>
-      </Spin>
+            </div>
+          );
+        })}
+      </div>
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6 ">
           {(tabSelected?.data || []).map((item: any, index) => {

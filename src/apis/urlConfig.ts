@@ -8,6 +8,7 @@ export const BOARD_LINK = "/link";
 export const BLOG = "/blog";
 export const EMPLOYEE = "/employee";
 export const SHOP = "/shop";
+export const SEO = "/seo_ssr";
 export const HISTORY = "/history";
 export const GROUP = "/group";
 export const CONVERSATION = "/conversation";
