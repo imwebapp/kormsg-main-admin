@@ -374,5 +374,10 @@
   "고객 서비스": "Customer service",
   "필터 지역 및 지하철 설정고객 서비스": "Filter region and subway settings",
   "Update": "Update",
-  "FAQ 만들기": "Create FAQ"
+  "FAQ 만들기": "Create FAQ",
+  "New Category": "New category",
+  "Create new category": "Create a new category",
+  "Create new FAQ category": "Create a new FAQ category",
+  "이 카테고리와 해당 카테고리에 속한 FAQ를 삭제하시겠습니까?": "Are you sure to delete this category and the FAQs that belong to the category?",
+  "Delete Category": "Delete Category"
 }

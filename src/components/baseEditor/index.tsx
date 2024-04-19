@@ -1,5 +1,5 @@
 import JoditEditor from "jodit-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BASE_URL } from "../../utils/constants";
 import "./index.css";
 type BaseEditorProps = {
@@ -47,7 +47,6 @@ export default function BaseEditor(props: BaseEditorProps) {
       error: function (e: any) {},
     },
   };
-
   return (
     <>
       {useMemo(
