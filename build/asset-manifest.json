@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.33624bbe.css",
-    "main.js": "/static/js/main.40f6a88d.js",
+    "main.js": "/static/js/main.317c35e2.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
@@ -40,6 +40,7 @@
     "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
+    "static/media/webPC.png": "/static/media/webPC.1765576ca8d10bb8f917.png",
     "static/media/KRWBlue.png": "/static/media/KRWBlue.ea87863c016151233b2e.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
     "static/media/Bulletin Board.png": "/static/media/Bulletin Board.fd31a367d66034d0b766.png",
@@ -50,11 +51,11 @@
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
     "main.33624bbe.css.map": "/static/css/main.33624bbe.css.map",
-    "main.40f6a88d.js.map": "/static/js/main.40f6a88d.js.map",
+    "main.317c35e2.js.map": "/static/js/main.317c35e2.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.33624bbe.css",
-    "static/js/main.40f6a88d.js"
+    "static/js/main.317c35e2.js"
   ]
 }
