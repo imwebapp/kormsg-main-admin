@@ -32,7 +32,6 @@ export const HistoryPaymentTab = (props: Iprops) => {
         limit: limit,
       })
       .then((res: any) => {
-        console.log("res getList PaymentHistory API", res.results?.objects?.rows);
         setDataHistory(res.results?.objects?.rows);
         setTotalCount(res.results?.objects?.count);
       })

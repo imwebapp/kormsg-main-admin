@@ -46,7 +46,6 @@ export const ModalSelectRegion = (props: IProps) => {
                 setRegionSelected(province);
                 province.children.find((item: any) => {
                     if (item.value === dataDistrict) {
-                        console.log('itemHEHE', item);
                         setRegionSelectedChild(item);
                     }
                 })

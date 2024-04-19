@@ -349,7 +349,6 @@ export const ShopInformationTab = (props: IProps) => {
       })
       .then((res: any) => {
         setLoadingScreen(false);
-        console.log("res getList SHOP API", res.results.objects.rows);
         const shopsNoEvent = res?.results?.objects?.rows.filter((item: any) => item.events.length === 0);
         setListShopNoEvent(shopsNoEvent);
       })
@@ -416,7 +415,6 @@ export const ShopInformationTab = (props: IProps) => {
       <div className="max-h-full overflow-y-auto">
         <div className="grid grid-cols-3 gap-4 p-6 ">
           {(tabSelected?.data || []).map((item: any, index) => {
-            console.log("itemXX", item.events);
             return (
               <ItemShop
                 key={index}

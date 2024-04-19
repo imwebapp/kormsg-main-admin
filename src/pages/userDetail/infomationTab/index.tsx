@@ -55,7 +55,6 @@ export const InformationTab = (props: IProps) => {
     username: dataUser?.username,
     post_limit: dataUser?.post_limit || 0,
   });
-  console.log("formDataEditInfo: ", formDataEditInfo);
   const [memoValue, setMemoValue] = useState("");
   const [changePasswordValue, setChangePasswordValue] = useState('');
   const handleInputChange = (name: string, value: any) => {
@@ -80,9 +79,7 @@ export const InformationTab = (props: IProps) => {
 
   const handleEditInfo = () => {
     if (isFormDataValid()) {
-      console.log("FormDataEDIT is valid. Submitting...", formDataEditInfo);
       userApi.updateUser(dataUser.id, formDataEditInfo).then((res: any) => {
-        console.log("res update user: ", res.results.object);
         setDataUser(res.results.object);
         message.success("Edit user successfully");
       }).catch((err) => {
@@ -112,15 +109,12 @@ export const InformationTab = (props: IProps) => {
   };
 
   const handleChangePassword = () => {
-    console.log("Change password value: ", changePasswordValue);
     if (changePasswordValue) {
       const trimPassword = changePasswordValue.trim();
       const passwordValueConverted = md5(trimPassword);
-      console.log("passwordValueConverted: ", passwordValueConverted);
       userApi.updateUser(dataUser.id, {
         password: passwordValueConverted,
       }).then((res: any) => {
-        console.log("res update password user: ", res.results.object);
         setDataUser(res.results.object);
         message.success("Update password successfully");
       }).catch((err) => {
@@ -134,7 +128,6 @@ export const InformationTab = (props: IProps) => {
 
   //update Memo
   const handleUpdateMemo = () => {
-    console.log("update memo");
     if (memoValue.trim() === "") {
       return;
     }
@@ -143,7 +136,6 @@ export const InformationTab = (props: IProps) => {
       content: memoValue.trim(),
     };
     userApi.updateUserPaymentHistory(dataUpdate).then((res: any) => {
-      console.log("res update memo: ", res.results.object);
       message.success("Update memo successfully");
     }
     ).catch((err) => {
@@ -169,7 +161,6 @@ export const InformationTab = (props: IProps) => {
     groupApi.getList({
       limit: 50, fields: '["$all"]'
     }).then((res: any) => {
-      console.log("res getList Group: ", res.results.objects);
       setListUserGroup(res.results?.objects?.rows);
     })
       .catch((err) => {
@@ -192,7 +183,6 @@ export const InformationTab = (props: IProps) => {
         page: 1,
       })
       .then((res: any) => {
-        console.log("res getList PaymentHistory API", res.results?.objects?.rows);
         setMemoValue(res.results?.objects?.rows[0]?.content || "");
       })
       .catch((err) => {

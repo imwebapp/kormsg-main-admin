@@ -23,11 +23,6 @@ const SeoPage = () => {
   const [selectedIcon, setSelectedIcon] = useState<File | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
 
-  console.log('selectedIcon', selectedIcon);
-  console.log('selectedAvatar', selectedAvatar);
-  console.log('dataSeo', dataSeo);
-
-
   const handleChange = (key: string, value: string) => {
     setDataSeo({ ...dataSeo, [key]: value })
   }
@@ -51,7 +46,6 @@ const SeoPage = () => {
   };
 
   const handleIconChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleIconChange');
     if (event.target.files && event.target.files[0]) {
       const imageFile = event?.target?.files[0];
       setSelectedIcon(imageFile);
@@ -66,19 +60,16 @@ const SeoPage = () => {
   };
 
   const handleSubmit = async () => {
-    console.log('dataSeo', dataSeo, selectedIcon, selectedAvatar)
     try {
       setLoadingScreen(true)
       let iconUploaded = dataSeo?.favicon;
       let imageUploaded = dataSeo?.avatar;
       if (selectedIcon !== null) {
         const ResUploadIcon = await UploadApi.uploadImage(selectedIcon);
-        console.log('ResUploadImgIcon', ResUploadIcon);
         iconUploaded = ResUploadIcon.url;
       }
       if (selectedAvatar !== null) {
         const ResUploadAvatar = await UploadApi.uploadImage(selectedAvatar);
-        console.log('ResUploadImgAvatar', ResUploadAvatar);
         imageUploaded = ResUploadAvatar.url;
       }
       const dataConvert = {
@@ -91,8 +82,8 @@ const SeoPage = () => {
         meta_naver: dataSeo?.metaNaverCode,
       };
       console.log('dataConvertSEO', dataConvert);
+      
       const response: any = await seoApi.updateSEO(dataConvert);
-      console.log('response SEO', response);
       if (response.code === 200) {
         setSelectedIcon(null);
         setSelectedAvatar(null);
@@ -120,8 +111,6 @@ const SeoPage = () => {
     // Call API to get data
     const response: any = await seoApi.getSEO();
     if (response.code === 200) {
-      console.log('response SEO', response?.results?.object);
-      // setDataSeo(response?.results?.object);
       setDataSeo({
         siteName: response?.results?.object?.title,
         siteDescription: response?.results?.object?.description,

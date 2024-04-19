@@ -124,8 +124,6 @@ export const ModalCreateNewPrice = (props: IProps) => {
     }
 
     useEffect(() => {
-        console.log('data EDIT', data);
-
         const dataEditConvert = {
             id: data?.id,
             name: data?.title,
@@ -281,7 +279,6 @@ export const ModalCreateNewPrice = (props: IProps) => {
                     defaultValue={dataNewPrice.unit}
                     value={dataNewPrice.unit}
                     onChange={(value) => {
-                        console.log('valueXX', value);
                         handleInputChangeNewPrice('unit', value)
                     }}
                 />

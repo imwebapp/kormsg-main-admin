@@ -120,7 +120,6 @@ const UserManage = () => {
       { name: newGroupName.trim() }
     );
     if (resEditGroup?.code === 200) {
-      console.log("resEditGroup: ", resEditGroup);
       const updatedGroups = listUserGroup.map((group) => {
         if (group.id === groupSelected.id) {
           setGroupSelected({ ...group, name: newGroupName.trim() });
@@ -144,7 +143,6 @@ const UserManage = () => {
   };
 
   const handleCreateGroup = async () => {
-    console.log("create group:", valueInputCreateGroup);
     if (valueInputCreateGroup.trim() === "") {
       setIsCreatingGroupName(false);
       return;
@@ -168,7 +166,6 @@ const UserManage = () => {
   };
 
   const handleClickTypeUser = (item: any) => {
-    console.log("item: ", item);
     setTypeUserSelected(item);
   };
 
@@ -189,6 +186,7 @@ const UserManage = () => {
     for (const key in formDataCreateUser) {
       if (
         key !== "avatar" &&
+        !(key === "userGroup" && formDataCreateUser["userType"] === TypeUser.ADMIN) &&
         !formDataCreateUser[key as keyof typeof formDataCreateUser]
       ) {
         return false;
@@ -196,8 +194,6 @@ const UserManage = () => {
     }
     return true;
   };
-
- 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -220,17 +216,13 @@ const UserManage = () => {
 
   const handleCreateUser = async () => {
     try {
-      console.log("FormDataCREATE is valid. Submitting...", typeof formDataCreateUser.userGroup);
-
       const deviceType = isMobile() ? PLATFORM.BROWSER_MOBILE : PLATFORM.BROWSER;
-      console.log('Creating user from:', deviceType);
-      
+
       //Upload Image
       let resUploadImg: string = "";
       setLoadingScreen(true);
       if (imageCreateUser !== undefined) {
         const ResUploadImg = await UploadApi.uploadImage(imageCreateUser);
-        console.log('ResUploadImg', ResUploadImg);
         resUploadImg = ResUploadImg?.url;
       }
 
@@ -258,10 +250,19 @@ const UserManage = () => {
       }
       console.log('dataCreateConvert', dataCreateConvert);
 
-
       //create Admin
       if (formDataCreateUser?.userType === TypeUser.ADMIN) {
-        console.log('CREATE ADMIN');
+        const dataCreateAdmin = {
+          fullname: formDataCreateUser?.userName,
+          avatar: resUploadImg || null,
+          phone: null,
+          // phone: '+84977142277',
+          email: formDataCreateUser?.userId,
+          username: formDataCreateUser?.userId,
+          password: formDataCreateUser?.password,
+          type: TypeUser.ADMIN,
+        }
+        const resCreateAdmin: any = await employeeApi.createAdmin(dataCreateAdmin);
         message.success("Create user successfully");
         setLoadingScreen(false);
         setFormDataCreateUser({
@@ -279,7 +280,6 @@ const UserManage = () => {
 
       //create user
       const resCreateUser: any = await userApi.createUser(dataCreateConvert);
-      console.log("resCreateUser: ", resCreateUser);
       if (resCreateUser.code === 200) {
         setListUser([resCreateUser?.results?.object, ...listUser]);
         message.success("Create user successfully");
@@ -311,7 +311,6 @@ const UserManage = () => {
     jumpLimit: 0,
   });
   const handleOpenModalJumpUp = (id: any, jumpLimit: number) => {
-    console.log("handleOpenModalJumpUp id: ", id, jumpLimit);
     setJumpUpValue({
       id: id,
       jumpLimit: jumpLimit,
@@ -331,7 +330,6 @@ const UserManage = () => {
       jump_limit: valueInputJumpUp + JumpUpValue.jumpLimit,
     };
     const res: any = await userApi.updateJumpLimit(JumpUpValue.id, dataUpdate);
-    console.log("res jump up: ", res);
     listUser.map((item) => {
       if (item.id === JumpUpValue.id) {
         item.jump_limit = valueInputJumpUp + JumpUpValue.jumpLimit;
@@ -345,12 +343,11 @@ const UserManage = () => {
     setOpenModalAddJumpUp(false);
   };
 
-  const handleDeleteUser = async (id: string) => {
+  const handleDeleteUser = async (id: string, typeUser: string) => {
     try {
       setLoadingScreen(true);
-      const res: any = await userApi.delete(id);
+      const res: any = typeUser === TypeUser.ADMIN ? await employeeApi.deleteAdmin(id) : await userApi.delete(id);
       if (res.code === 200) {
-        console.log("res delete user: ", res);
         const newListUser = listUser.filter((item) => item.id !== id);
         setListUser(newListUser);
         getListGroup();
@@ -365,12 +362,10 @@ const UserManage = () => {
   };
 
   const handleDeleteUsers = async (ids: string[]) => {
-    console.log("ids: ", ids);
     try {
       setLoadingScreen(true);
       const res: any = await userApi.deleteUsers(JSON.stringify(ids));
       if (res.code === 200) {
-        console.log("res delete users: ", res);
         const newListUser = listUser.filter((item) => !ids.includes(item.id));
         setListUser(newListUser);
         getListGroup();
@@ -385,10 +380,8 @@ const UserManage = () => {
   };
 
   const handleUpdateTypeUser = async (id: string, type: string) => {
-    console.log('handleUpdateTypeUser', id, type);
     try {
       const res: any = await userApi.updateUser(id, { account_type: type });
-      console.log("res update type user: ", res);
       if (res.code === 200) {
         searchUser()
         message.success("Update type user successfully");
@@ -400,10 +393,8 @@ const UserManage = () => {
   }
 
   const handleChangeGroupUser = async (id: string, group_id: string) => {
-    console.log('handleChangeGroupUser', id, group_id);
     try {
       const res: any = await userApi.updateUser(id, { group_id: group_id });
-      console.log("res update group user: ", res);
       if (res.code === 200) {
         await getListGroup();
         searchUser()
@@ -421,14 +412,11 @@ const UserManage = () => {
     id: string
   ) => {
     try {
-      console.log("prev_index_number: ", prev_index_number, "next_index_number: ", next_index_number, "id: ", id);
-
       if (prev_index_number === 1) {
         const resOrderGroup = await groupApi.orderGroup(id, {
           undefined,
           next_index_number,
         });
-        console.log("resOrderGroup: ", resOrderGroup);
       }
       else {
         const resOrderGroup = await groupApi.orderGroup(id, {
@@ -494,7 +482,6 @@ const UserManage = () => {
           fields: '["$all"]'
         })
         .then((res: any) => {
-          console.log("res getList EMPLOYEE: ", res.results.objects.rows);
           const listUserConvert = res.results.objects.rows.map((item: any) => {
             return {
               ...item,
@@ -517,7 +504,6 @@ const UserManage = () => {
           statistic: true
         })
         .then((res: any) => {
-          console.log("res getList User: ", res.results.objects.rows);
           setListUser(res.results.objects.rows);
         })
         .catch((err) => {
@@ -556,7 +542,6 @@ const UserManage = () => {
     userApi
       .getCount(groupSelected.id === 1 ? "" : groupSelected.id)
       .then((res: any) => {
-        console.log("res getCount User: ", res);
         setCountTypeUser(res.results.object);
         switch (typeUserSelected.id) {
           case TypeUser.ADMIN:
@@ -998,7 +983,7 @@ const UserManage = () => {
               label: t(item.name),
             }))}
           />
-          <BaseInputSelect
+          {formDataCreateUser?.userType !== TypeUser.ADMIN && <BaseInputSelect
             title="Group"
             required
             defaultValue={formDataCreateUser.userGroup || undefined}
@@ -1009,7 +994,7 @@ const UserManage = () => {
               value: item.id,
               label: item.name,
             }))}
-          />
+          />}
           {/* <div className={classNames('flex justify-between pb-4 border-b border-darkNight50')}>
             <BaseText bold locale size={14}>Management Team</BaseText>
             <div className={classNames('flex gap-4 items-center')}>

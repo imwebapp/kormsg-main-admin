@@ -156,7 +156,6 @@ const NewStore = () => {
   };
 
   const handleSubmitOpenHours = (value: string) => {
-    console.log('submit open hours', value);
     setFormDataPage1({ ...formDataPage1, storeOpeningHours: value });
     setOpenModalOpenHours(false);
   };
@@ -166,7 +165,6 @@ const NewStore = () => {
   };
 
   const handleSubmitModalReservationFunc = (value: any) => {
-    console.log('submit ModalReservationFunc', value);
     setFormDataPage1({ ...formDataPage1, reservationFuncValue: value });
     setOpenModalReservationFunc(false);
   };
@@ -176,7 +174,6 @@ const NewStore = () => {
   };
 
   const handleSubmitSubway = (value: any) => {
-    console.log('submit subway', value);
     setFormDataPage1({ ...formDataPage1, subwayLocation: value?.subwaySelected.name, subwayLine: value?.subwaySelectedChild.name, subwayStation: value?.subwaySelectedDetails });
     setOpenModalSubway(false);
   };
@@ -189,7 +186,6 @@ const NewStore = () => {
     province: string;
     district: string;
   }) => {
-    console.log('submit region', value);
     setFormDataPage1({ ...formDataPage1, regionProvince: value.province, regionDistrict: value.district });
     setOpenModalRegion(false);
   };
@@ -201,7 +197,6 @@ const NewStore = () => {
   const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
 
     if (dataEditPrice && indexEditPrice !== undefined) {
-      console.log('submit edit price: ', dataNewPrice);
       const EditData = formDataPage2?.priceList.map((item, index) => {
         if (index === indexEditPrice) {
           item = dataNewPrice;
@@ -214,7 +209,6 @@ const NewStore = () => {
       setOpenModalCreateNewPrice(false);
       return;
     }
-    console.log('submit create new price: ', dataNewPrice);
     handleInputChangePage2('priceList', [...formDataPage2?.priceList, dataNewPrice])
     setOpenModalCreateNewPrice(false);
   };
@@ -228,7 +222,6 @@ const NewStore = () => {
 
   const handleSubmitCreateNewManage = (dataNewManage: any) => {
     if (dataEditManager && indexEditManager !== undefined) {
-      console.log('submit edit Manager: ', dataNewManage);
       const EditData = formDataPage2?.manager.map((item, index) => {
         if (index === indexEditManager) {
           item = dataNewManage;
@@ -250,7 +243,6 @@ const NewStore = () => {
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] = useState<any>();
-  console.log('storeOwnerMembershipSettingXX', storeOwnerMembershipSetting);
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
     storeCopyFunc: '',
     storeOwnerMembershipSetting: '',
@@ -280,9 +272,6 @@ const NewStore = () => {
     manager: [],
   });
 
-  console.log('formDataPage1', formDataPage1.chatMessageFunc, formDataPage1.stampSetting, formDataPage1.reservationFuncSetting,);
-  console.log('formDataPage2', formDataPage2);
-
   const handleInputChange = (name: string, value: any) => {
     setFormDataPage1({ ...formDataPage1, [name]: value });
   };
@@ -297,7 +286,6 @@ const NewStore = () => {
   };
 
   const handleImagesChange = (images: File) => {
-    console.log('storeImages:::::::::', images);
     handleInputChange('storeImages', images);
   };
 
@@ -370,17 +358,12 @@ const NewStore = () => {
       let listImageUpdated: string[] = [];
       let listThumbnailUpdated: string[] = [];
       let filesArray: File[] = filterFiles(formDataPage1?.storeImages || [])
-      console.log('filesArray', filesArray);
 
       if (filesArray.length > 0) {
         const ResUploadImg = await UploadApi.uploadMultipleImages(filesArray);
-        console.log('ResUploadImg', ResUploadImg);
         listImageUpdated = ResUploadImg?.high_quality_images.map((item: any) => item.url);
         listThumbnailUpdated = ResUploadImg?.low_quality_images.map((item: any) => item.url);
       }
-
-      console.log('listImageUpdated', listImageUpdated);
-      console.log('listThumbnailUpdated', listThumbnailUpdated);
 
       if (
         listImageUpdated.length > 0 && listThumbnailUpdated.length > 0
@@ -392,9 +375,6 @@ const NewStore = () => {
         resultArrayImageConvert = transformArray(formDataPage1?.storeImages, ['']);
         resultArrayThumbConvert = transformArray(formDataPage1?.storeImages, ['']);
       }
-
-      console.log('resultArrayImageConvert', resultArrayImageConvert);
-      console.log('resultArrayThumbConvert', resultArrayThumbConvert);
 
       //dataCreate Shop
       const DataCreateNewShop = {
@@ -428,7 +408,6 @@ const NewStore = () => {
         //editShop
 
         const resUpdateShop: any = await shopApi.updateShop(idEditedShop, DataCreateNewShop);
-        console.log('resUpdateShop', resUpdateShop);
 
         if (resUpdateShop.code === 200) {
 
@@ -436,9 +415,7 @@ const NewStore = () => {
           const dataCourse = {
             courses: formDataPage2?.priceList
           }
-          console.log('dataCourse', dataCourse);
           const resCreateCourse = await courseApi.createCourse(idEditedShop, dataCourse);
-          console.log('resCreateCourse', resCreateCourse);
 
           //create list mentor
           const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
@@ -451,9 +428,7 @@ const NewStore = () => {
           const dataManager = {
             mentors: listManagerConverted
           }
-          console.log('DataManageXXX', dataManager);
           const resCreateMentors = await mentorApi.createMentors(idEditedShop, dataManager);
-          console.log('resCreateMentors', resCreateMentors);
 
           setLoadingScreen(false);
           message.success('Update shop successfully');
@@ -470,7 +445,6 @@ const NewStore = () => {
         if (resCreateShop.code === 200) {
           idNewShop = resCreateShop?.results?.object?.shop?.id
         }
-        console.log('resCreateShop', resCreateShop);
 
         if (idNewShop) {
 
@@ -478,9 +452,7 @@ const NewStore = () => {
           const dataCourse = {
             courses: formDataPage2?.priceList
           }
-          console.log('dataCourse', dataCourse);
           const resCreateCourse = await courseApi.createCourse(idNewShop, dataCourse);
-          console.log('resCreateCourse', resCreateCourse);
 
           //create list mentor
           const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
@@ -493,10 +465,7 @@ const NewStore = () => {
           const dataManager = {
             mentors: listManagerConverted
           }
-          console.log('DataManageXXX', dataManager);
           const resCreateMentors = await mentorApi.createMentors(idNewShop, dataManager);
-          console.log('resCreateMentors', resCreateMentors);
-
           setLoadingScreen(false);
           message.success('Create new shop successfully');
           navigate(-1);
@@ -516,7 +485,6 @@ const NewStore = () => {
   useEffect(() => {
     ThemaApi.getList().then((res) => {
       // set data
-      console.log('resX ThemaApi', res);
       const transformedDataListThema = res.map((item: any) => ({
         value: item.id,
         label: item.name,
@@ -540,7 +508,6 @@ const NewStore = () => {
   //get list category and hashtag by thema
   useEffect(() => {
     if (formDataPage1.thema) {
-      console.log('formDataPage1.thema', formDataPage1.thema);
       Promise.all([
         // call api
         CategoryApi.getList({
@@ -551,7 +518,6 @@ const NewStore = () => {
         }),
       ]).then((res) => {
         // set data
-        console.log('resX', res);
         const transformedDataListCategory = res[0].map((item: any) => ({
           value: item.id,
           label: item.name,
@@ -567,8 +533,7 @@ const NewStore = () => {
       })
         .catch((err) => {
           // handle error
-          console.log();
-
+          console.log('error', err);
         });
     }
 
@@ -577,7 +542,6 @@ const NewStore = () => {
   //update data when copy shop
   useEffect(() => {
     if (storeCopyFunc) {
-      console.log('storeCopyFuncXX', storeCopyFunc);
       setStoreOwnerMembershipSetting({
         id: storeCopyFunc?.user_id,
         nickname: storeCopyFunc?.user?.nickname,
@@ -615,7 +579,6 @@ const NewStore = () => {
   //update data when edit Shop
   useEffect(() => {
     if (dataEditShop) {
-      console.log('dataEditShopXX', dataEditShop);
 
       mentorApi.getList({
         fields: JSON.stringify(["$all"]),
@@ -664,13 +627,10 @@ const NewStore = () => {
     let isMounted = true;
 
     if (dataEditShop) {
-      console.log('dataEditShopXX', dataEditShop);
-
       mentorApi.getList({
         fields: JSON.stringify(["$all"]),
         filter: JSON.stringify({ "shop_id": { "$eq": dataEditShop?.id } }),
       }).then((res: any) => {
-        console.log('res listMentors', res);
         if (isMounted) {
           setIdEditedShop(dataEditShop?.id);
           setStoreOwnerMembershipSetting({
@@ -720,7 +680,6 @@ const NewStore = () => {
   //update data when edit Price
   useEffect(() => {
     if (dataEditPrice) {
-      console.log('dataEditPrice', dataEditPrice);
       setOpenModalCreateNewPrice(true);
     }
   }, [dataEditPrice]);
@@ -768,7 +727,6 @@ const NewStore = () => {
             <ShopFilter
               value={storeCopyFunc}
               onChange={(value) => {
-                console.log('value SHOP PARENT', value);
                 setStoreCopyFunc(value);
               }}
             />
@@ -983,8 +941,6 @@ const NewStore = () => {
                     handleInputChangePage2('manager', list);
                   }}
                   onCopy={(item) => {
-                    console.log('item', item);
-
                     handleInputChangePage2('manager', [...formDataPage2?.manager, item]);
                   }}
                   onDelete={(index) => {
@@ -1001,7 +957,6 @@ const NewStore = () => {
                     console.log('index', index);
                   }}
                   onEdit={(item, index) => {
-                    console.log('itemXtt', item);
                     setDataEditPrice({ ...item });
                     setIndexEditPrice(index);
                   }}
@@ -1020,8 +975,6 @@ const NewStore = () => {
                     handleInputChangePage2('priceList', list);
                   }}
                   onCopy={(item) => {
-                    console.log('item', item);
-
                     handleInputChangePage2('priceList', [...formDataPage2?.priceList, item]);
                   }}
                   onDelete={(index) => {
@@ -1117,7 +1070,6 @@ const NewStore = () => {
 
                       // Check if correspondingItem exists and retrieve the label
                       const label = correspondingItem ? correspondingItem.label : '';
-                      console.log('label', label);
                       return (
                         <div key={index} className="px-4 mr-1 rounded-lg bg-darkNight100">
                           <BaseText locale size={16} className="text-center">{label}</BaseText>
@@ -1159,7 +1111,6 @@ const NewStore = () => {
               <BaseText locale size={16} bold>가격표</BaseText>
               {
                 formDataPage2?.priceList.map((item: INewPrice, index) => {
-                  console.log('itemAA', item);
                   return (
                     <div className='flex flex-col gap-2 py-2 border-t'>
                       {(item?.title && item?.running_time) && <BaseText
