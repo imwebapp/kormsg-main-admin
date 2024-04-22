@@ -379,5 +379,10 @@
   "Create new category": "Create a new category",
   "Create new FAQ category": "Create a new FAQ category",
   "이 카테고리와 해당 카테고리에 속한 FAQ를 삭제하시겠습니까?": "Are you sure to delete this category and the FAQs that belong to the category?",
-  "Delete Category": "Delete Category"
+  "Delete Category": "Delete Category",
+  "고객센터 전화번호": "Customer Service Phone number",
+  "고객센터 채팅링크": "Customer Center Chat link",
+  "안드로이드 APP URL": "Android APP URL",
+  "IOS APP URL": "IOS APP URL",
+  "WEB URL": "WEB URL"
 }
