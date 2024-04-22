@@ -129,7 +129,6 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                 <div
                     className={classNames('flex flex-col flex-1 px-4 py-2 rounded-lg bg-gray8 border-2', !isSelected ? 'border-primary ' : 'border-gray5')}
                     onClick={() => {
-                        console.log('click Opening Hours')
                         setIsSelected(false)
                     }}
                 >
@@ -154,7 +153,6 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                     className={classNames('flex flex-col flex-1 px-4 py-2 rounded-lg  bg-gray8 border-2', isSelected ? 'border-primary ' : 'border-gray5')}
 
                     onClick={() => {
-                        console.log('click Closing Hours')
                         setIsSelected(true)
                     }}
                 >

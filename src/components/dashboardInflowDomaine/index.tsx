@@ -41,7 +41,14 @@ export default function DashboardInflowDomaineTable(
       dateRanges: [
         { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
       ],
+      dimensionFilter: {
+        filter: {
+          fieldName: "fullPageUrl",
+          stringFilter: { matchType: "BEGINS_WITH", value: "kormsg.com" },
+        },
+      },
     };
+
     let result = await analyticsApi.getInfo(params);
 
     const convertedData = result.data[0].rows.map((item: any) => ({

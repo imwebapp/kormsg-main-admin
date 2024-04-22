@@ -46,7 +46,6 @@ export const ModalCreateNewManage = (props: IProps) => {
             let imageUploaded = '';
             if (imageFile !== null) {
                 const ResUploadImg = await UploadApi.uploadImage(imageFile);
-                console.log('ResUploadImg1111', ResUploadImg);
                 imageUploaded = ResUploadImg.url;
             }
             setDataNewManage(
