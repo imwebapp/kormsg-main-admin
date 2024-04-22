@@ -15,7 +15,7 @@ export default function BulletinPreview() {
 
   const createBoardLink = (route: string, thema_id?: string) => {
     let href = BOARD_ROUTE[route] ? `${BOARD_ROUTE[route]}/${thema_id}` : "";
-    if (route === BOARD.EVENT_BOARD) href = "/event";
+    // if (route === BOARD.EVENT_BOARD) href = "/event";
     return href;
   };
 
