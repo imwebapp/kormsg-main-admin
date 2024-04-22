@@ -1,4 +1,4 @@
-export const LOGIN = "/auth/employee_login";
+export const AUTH = "/auth";
 export const LOGOUT = "";
 export const USER = "/user";
 export const SETTING_ADMIN = "/setting_admin";
