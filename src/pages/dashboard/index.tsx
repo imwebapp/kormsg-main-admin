@@ -31,10 +31,10 @@ const Dashboard = () => {
       </BaseCard>
       <div className="flex flex-row gap-4 mt-4">
         <BaseCard className="flex-1 w-1/2">
-          <DashboardInflowDomaineTable isViewAll={false} />
+          <DashboardReferralTable isViewAll={false} />
         </BaseCard>
         <BaseCard className="flex-1 w-1/2">
-          <DashboardReferralTable isViewAll={false} />
+          <DashboardInflowDomaineTable isViewAll={false} />
         </BaseCard>
       </div>
       <div className="flex flex-row gap-4 mt-4">
