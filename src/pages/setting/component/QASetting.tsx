@@ -458,7 +458,7 @@ export default function QASetting() {
             onChange={(value: string) => {
               setContentFAQ(value);
             }}
-            height={"300px"}
+            height={"1000px"}
           />
         </div>
       </BaseModal2>
