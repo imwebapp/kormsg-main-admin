@@ -13,6 +13,7 @@ import BaseText from "../text";
 import { TypeUser } from "../../utils/constants";
 import { groupApi } from "../../apis/groupApi";
 import { BaseInputSelect } from "../input/BaseInputSelect";
+import { BaseTableDnD } from "../table/BaseTableDnD";
 
 type UserManageTableProps = {
   data: User[];
@@ -139,7 +140,7 @@ export default function UserManageTable(props: UserManageTableProps) {
                 value={group_id === null ? undefined : group_id}
                 onChange={(value) => { handleChangeGroupUser(id, value) }}
                 placeholder="Select a group"
-                options={[ ...listUserGroup].map((item: any) => ({
+                options={[...listUserGroup].map((item: any) => ({
                   value: item.id,
                   label: item.name,
                 }))}
@@ -228,8 +229,8 @@ export default function UserManageTable(props: UserManageTableProps) {
           {
             platform_create === PLATFORM.ANDROID ? <img src={Images.androidIcon} className="w-6 h-6" /> :
               platform_create === PLATFORM.APPLE ? <img src={Images.appleIcon} className="w-6 h-6" /> :
-              platform_create === PLATFORM.BROWSER_MOBILE ? <img src={Images.webMobile} className="w-6 h-6" /> :
-                <img src={Images.webPc} className="w-6 h-6" />
+                platform_create === PLATFORM.BROWSER_MOBILE ? <img src={Images.webMobile} className="w-6 h-6" /> :
+                  <img src={Images.webPc} className="w-6 h-6" />
           }
           <BaseText medium size={16}>
             {convertDate(created_at)}
@@ -311,7 +312,7 @@ export default function UserManageTable(props: UserManageTableProps) {
       {listRowSelected.length > 0 ?
         <img src={Images.trash2} className="w-10 h-10 p-2 rounded-lg bg-darkNight50" onClick={handleDeleteUsers} />
         : <div className="h-10" />}
-      <BaseTable
+      <BaseTableDnD
         onSelectChange={onSelectChange}
         className={className}
         columns={columns}
