@@ -583,6 +583,19 @@ const UserManage = () => {
     getListGroup()
   }, []);
 
+  const onDragEnd = (result: any) => {
+    console.log("result onDragEnd", result);
+    if (!result.destination) {
+      return;
+    }
+    if(result.destination.droppableId === result.source.droppableId) return;
+
+    // if(result.destination.droppableId === "group-list"){
+    //   handleUpdateTypeUser(result.draggableId, "1");
+    // }
+    handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
+  };
+
   return (
     <>
       <div
@@ -807,69 +820,80 @@ const UserManage = () => {
               </CustomButton>
             </div>
           </div>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div className={classNames("flex flex-row gap-3 items-center")}>
+              {[{ id: 'ALL', name: 'All' }, ...ListTypeUser].map((item, index) => {
+                let count = 0;
+                switch (item.id) {
+                  case TypeUser.ADMIN:
+                    count = countTypeUser.countAdmin;
+                    break;
+                  case TypeUser.BIZ_USER:
+                    count = countTypeUser.countBizUser;
+                    break;
+                  case TypeUser.FREE_USER:
+                    count = countTypeUser.countFreeUser;
+                    break;
+                  case TypeUser.PAID_USER:
+                    count = countTypeUser.countPaidUser;
+                    break;
+                  case "ALL":
+                    if (groupSelected.id === 1)
+                      count = countTypeUser.totalUser;
+                    else {
+                      count = countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser;
+                    }
+                    break;
+                  default:
+                    break;
+                }
+                if (item.id === TypeUser.ADMIN && groupSelected.id !== 1) return null;
 
-          <div className={classNames("flex flex-row gap-3 items-center")}>
-            {[{ id: 'ALL', name: 'All' }, ...ListTypeUser].map((item) => {
-              let count = 0;
-              switch (item.id) {
-                case TypeUser.ADMIN:
-                  count = countTypeUser.countAdmin;
+                return (
+                  <Droppable droppableId={item?.id}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        <CustomButton
+                          className="text-base font-medium rounded-full"
+                          style={{
+                            backgroundColor:
+                              typeUserSelected.id === item.id ? "black" : "white",
+                            color: typeUserSelected.id === item.id ? "white" : "black",
+                          }}
+                          onClick={() => handleClickTypeUser(item)}
+                        >
+                          {t(item.name)}
+                          {" (" + count + ")"}
+                        </CustomButton>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                );
+              })}
+            </div>
 
-                  break;
-                case TypeUser.BIZ_USER:
-                  count = countTypeUser.countBizUser;
-                  break;
-                case TypeUser.FREE_USER:
-                  count = countTypeUser.countFreeUser;
-                  break;
-                case TypeUser.PAID_USER:
-                  count = countTypeUser.countPaidUser;
-                  break;
-                case "ALL":
-                  if (groupSelected.id === 1)
-                    count = countTypeUser.totalUser;
-                  else {
-                    count = countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser;
-                  }
-                  break;
-                default:
-                  break;
-              }
-              if (item.id === TypeUser.ADMIN && groupSelected.id !== 1) return;
-              return (
-                <CustomButton
-                  className="text-base font-medium rounded-full"
-                  style={{
-                    backgroundColor:
-                      typeUserSelected.id === item.id ? "black" : "white",
-                    color: typeUserSelected.id === item.id ? "white" : "black",
-                  }}
-                  onClick={() => handleClickTypeUser(item)}
-                >
-                  {t(item.name)}
-                  {" (" + count + ")"}
-                </CustomButton>
-              );
-            })}
-          </div>
-
-          <UserManageTable
-            data={listUser}
-            reload={reloading}
-            onOpenJumpUp={handleOpenModalJumpUp}
-            onDeleteUser={handleDeleteUser}
-            onDeleteUsers={handleDeleteUsers}
-            onChangeTypeUser={handleUpdateTypeUser}
-            onChangeGroupUser={handleChangeGroupUser}
-            pagination={{
-              current: page,
-              pageSize: limit,
-              total: totalCountUser,
-              onChange: (page: number, pageSize: number) => {
-                setPage(page);
-              },
-            }}
-          />
+            <UserManageTable
+              data={listUser}
+              reload={reloading}
+              onOpenJumpUp={handleOpenModalJumpUp}
+              onDeleteUser={handleDeleteUser}
+              onDeleteUsers={handleDeleteUsers}
+              onChangeTypeUser={handleUpdateTypeUser}
+              onChangeGroupUser={handleChangeGroupUser}
+              pagination={{
+                current: page,
+                pageSize: limit,
+                total: totalCountUser,
+                onChange: (page: number, pageSize: number) => {
+                  setPage(page);
+                },
+              }}
+            />
+          </DragDropContext>
         </div>
       </div>
       {/* <BaseModal
@@ -894,7 +918,8 @@ const UserManage = () => {
         onClose={handleCloseModalJumpUp}
         onSubmit={handleJumpUp}
         title="Add"
-        disableSubmitBtn={!valueInputJumpUp}
+        disableSubmitBtn={!valueInputJumpUp
+        }
       >
         <BaseText bold locale size={14}>
           Jump- up limit
@@ -931,10 +956,10 @@ const UserManage = () => {
             className="w-6 h-6 cursor-pointer"
           />
         </div>
-      </BaseModal>
+      </BaseModal >
 
       {/* create user */}
-      <BaseModal
+      < BaseModal
         isOpen={openModalCreateUser}
         onClose={handleCloseModalCreateUser}
         onSubmit={handleCreateUser}
@@ -1031,7 +1056,7 @@ const UserManage = () => {
             className="mb-4"
           />
         </div>
-      </BaseModal>
+      </BaseModal >
     </>
   );
 };
