@@ -251,11 +251,11 @@ const Login = () => {
                 Continue
               </BaseText>
             </BaseButton>
-            {/* <BaseButton onClick={handleLoginTest} className="w-full mt-6">
+            <BaseButton onClick={handleLoginTest} className="w-full mt-6">
               <BaseText bold size={16} className="text-white">
                 TEST
               </BaseText>
-            </BaseButton> */}
+            </BaseButton>
           </div>)}
       </div>
     </div>
