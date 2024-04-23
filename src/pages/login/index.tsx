@@ -26,6 +26,16 @@ const getRandomBg = () => {
   return BgList[randomIndex];
 }
 
+const formatPhoneNumber = (phone: string) => {
+  let cleanedPhoneNumber = phone.replace(/\s|-/g, '');
+  const isValidNumber = /^\d/.test(cleanedPhoneNumber);
+
+  if (isValidNumber) {
+    cleanedPhoneNumber = cleanedPhoneNumber.replace(/^0+/, '');
+  }
+  return cleanedPhoneNumber;
+}
+
 const Login = () => {
   const navigate = useNavigate();
   const { message } = App.useApp();
@@ -59,9 +69,10 @@ const Login = () => {
 
   const sendOtp = async () => {
     try {
+      const cleanedPhoneNumber = formatPhoneNumber(phone);
       setLoadingScreen(true);
       const data = {
-        phone: dialCode + phone,
+        phone: dialCode + cleanedPhoneNumber,
       }
       console.log('data: ', data);
       const resSendOtp: any = await authApi.sendOtp(data)
@@ -99,9 +110,10 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
+      const cleanedPhoneNumber = formatPhoneNumber(phone);
       setLoadingScreen(true);
       const data = {
-        phone: dialCode + phone,
+        phone: dialCode + cleanedPhoneNumber,
         otp
       }
       const resVerify: any = await authApi.verifyOtp(data);
@@ -163,7 +175,7 @@ const Login = () => {
                 Please enter the 6-digit code we texted to your phone number
               </BaseText>
               <BaseText bold size={16}>
-                {dialCode} {phone}
+                {dialCode} {formatPhoneNumber(phone)}
               </BaseText>
             </div>
             <OtpInput
@@ -181,8 +193,8 @@ const Login = () => {
                   {timer}
                 </BaseText>
               ) : (
-                <div className="cursoi" onClick={handleResendOtp}>
-                  <BaseText bold size={16} className="flex flex-row-reverse">
+                <div className="cursor-pointer" onClick={handleResendOtp}>
+                  <BaseText bold size={16} className="flex flex-row-reverse cursor-pointer" color="text-primary">
                     Resend code
                   </BaseText>
                 </div>

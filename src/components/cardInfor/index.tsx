@@ -11,7 +11,7 @@ const CardInfor = () => {
     setAccessToken("");
     setRefreshToken("");
     setExpiresIn(0);
-    navigate(Url.login);
+    window.location.reload();
   };
   return (
     <div onClick={handleLogout} className="cursor-pointer">
