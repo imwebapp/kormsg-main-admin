@@ -184,6 +184,10 @@ export default function DashboardReservation(props: DashboardReservationProps) {
       dataIndex: ["user", "email"],
     },
     {
+      title: t("Shop information"),
+      dataIndex: ["shop", "title"],
+    },
+    {
       title: t("User contact information"),
       dataIndex: "contact",
     },
