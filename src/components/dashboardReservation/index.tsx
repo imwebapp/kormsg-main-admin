@@ -138,6 +138,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
         styles.color = "#FA541C";
         text = "대기중";
         break;
+      case "PENDING":
       case "CANCELLED":
         styles.backgroundColor = "#FFF1F0";
         styles.color = "#F5222D";
