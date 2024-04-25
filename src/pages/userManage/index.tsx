@@ -458,6 +458,19 @@ const UserManage = () => {
     );
   };
 
+  const onDragEnd = (result: any) => {
+    console.log("result onDragEnd", result);
+    if (!result.destination) {
+      return;
+    }
+    if(result.destination.droppableId === result.source.droppableId) return;
+    if(result.destination.droppableId === 'ALL') return;
+    if(result.destination.droppableId === TypeUser.ADMIN) return;
+
+    handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
+  };
+
+
   const searchUser = () => {
     const convertFilter: any = {};
     if (typeUserSelected.id !== 'ALL') {
@@ -582,19 +595,6 @@ const UserManage = () => {
   useEffect(() => {
     getListGroup()
   }, []);
-
-  const onDragEnd = (result: any) => {
-    console.log("result onDragEnd", result);
-    if (!result.destination) {
-      return;
-    }
-    if(result.destination.droppableId === result.source.droppableId) return;
-
-    // if(result.destination.droppableId === "group-list"){
-    //   handleUpdateTypeUser(result.draggableId, "1");
-    // }
-    handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
-  };
 
   return (
     <>
