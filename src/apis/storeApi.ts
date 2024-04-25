@@ -42,4 +42,7 @@ export const storeApi = {
     });
     return res;
   },
+  updateStore: (params?: any, id?: string) => {
+    return axiosClient.put(`${STORE}/${id}`, params);
+  },
 };
