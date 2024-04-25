@@ -6,7 +6,7 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { reservationApi } from "../../apis/reservationApi";
-import { RESERVATION_STATUS } from "../../utils/constants";
+import { BASE_URL_LINK_SHOP, RESERVATION_STATUS } from "../../utils/constants";
 import moment from "moment";
 import { formatDateTime } from "../../utils/common";
 type DashboardReservationProps = {
@@ -36,6 +36,10 @@ export default function DashboardReservation(props: DashboardReservationProps) {
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
+  };
+  const handleClick = (id: string) => {
+    const url = `${BASE_URL_LINK_SHOP}/${id}`;
+    window.open(url, "_blank");
   };
   useEffect(() => {
     // field all selected
@@ -186,6 +190,14 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     {
       title: t("Shop information"),
       dataIndex: ["shop", "title"],
+      render: (text, record) => (
+        <div
+          className="min-w-[30px] cursor-pointer"
+          onClick={() => handleClick(record.shop.id)}
+        >
+          {text}
+        </div>
+      ),
     },
     {
       title: t("User contact information"),
