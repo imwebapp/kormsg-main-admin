@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { BaseInput } from "../input/BaseInput";
 import { userApi } from "../../apis/userApi";
 import NaverMapComponent from "./components/NaverMap";
+import { BaseTableDnD } from "../table/BaseTableDnD";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -46,7 +47,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [listStore, setListStore] = useState([]);
+  const [listStore, setListStore] = useState<any>();
   const [currentPage, setCurrentPage] = useState(1);
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
@@ -548,7 +549,7 @@ export default function StoreListTable(props: StoreListTableProps) {
 
   return (
     <>
-      <BaseTable
+      {/* <BaseTable
         // onSelectChange={() => {}}
         className={className}
         pagination={{
@@ -559,6 +560,19 @@ export default function StoreListTable(props: StoreListTableProps) {
         }}
         columns={dynamicColumns}
         data={listStore}
+      /> */}
+      <BaseTableDnD
+        onSelectChange={onSelectChange}
+        className={className}
+        columns={dynamicColumns}
+        // data={listStore} // add key for each item
+        data={listStore?.map((item: any) => ({ ...item, key: item.id }))}
+        pagination={{
+          current: currentPage,
+          pageSize: limit,
+          total: getCountTotal(),
+          onChange: handlePageChange,
+        }}
       />
       <BaseModal2
         width={1000}

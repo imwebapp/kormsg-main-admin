@@ -20,6 +20,7 @@ import { ThemaInterface } from "../../entities";
 import { ThemaApi } from "../../apis/themaApi";
 import Images from "../../assets/gen";
 import { showError } from "../../utils/showToast";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 const { RangePicker } = DatePicker;
 const StorePage = () => {
   // format date
@@ -143,6 +144,47 @@ const StorePage = () => {
       window.open(result.results?.object?.url, "_blank");
     } catch (error) {}
   };
+  const onDragEnd = (result: any) => {
+    console.log("result onDragEnd", result);
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.droppableId === result.source.droppableId) return;
+    handleUpdateStore(result.draggableId, result.destination.droppableId);
+  };
+  const handleUpdateStore = async (id: string, type: string) => {
+    try {
+      const params: any = {}; // Giá trị mặc định
+
+      switch (type) {
+        case STORE_STATUS.exposure:
+          params.state = { $notIn: ["REJECTED", "EXPIRED"] };
+          break;
+        case STORE_STATUS.underReview:
+          params.state = "PENDING";
+          break;
+        case STORE_STATUS.reviewRejected:
+          params.state = "REJECTED";
+          break;
+        case STORE_STATUS.adExpired:
+          params.state = { $in: ["EXPIRED"] };
+          break;
+        case STORE_STATUS.eventOngoing:
+          // Không cần thay đổi params
+          break;
+        default:
+          break;
+      }
+
+      const res: any = await storeApi.updateStore(params, id);
+      if (res.code === 200) {
+        refreshTable();
+      }
+    } catch (error: any) {
+      showError(error);
+    }
+  };
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -228,18 +270,27 @@ const StorePage = () => {
 
     return (
       <div className="flex flex-row gap-4 mt-1 mb-5">
-        {buttonData.map(({ status, label, count }) => (
-          <CustomButton
-            key={status}
-            className="text-base h-11 font-medium rounded-full px-4 py-2.5"
-            style={getButtonStyle(status)}
-            onClick={() => handleButtonClick(status)}
-          >
-            <BaseText color={getTextColor(status)} size={16}>
-              {label} ({count})
-            </BaseText>
-          </CustomButton>
-        ))}
+        {buttonData.map(({ status, label, count }) => {
+          return (
+            <Droppable droppableId={status}>
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  <CustomButton
+                    key={status}
+                    className="text-base h-11 font-medium rounded-full px-4 py-2.5"
+                    style={getButtonStyle(status)}
+                    onClick={() => handleButtonClick(status)}
+                  >
+                    <BaseText color={getTextColor(status)} size={16}>
+                      {label} ({count})
+                    </BaseText>
+                  </CustomButton>
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          );
+        })}
       </div>
     );
   };
@@ -297,75 +348,76 @@ const StorePage = () => {
             </CustomButton>
           </div>
         </div>
-        <div className="flex justify-between">
-          {listButton()}
-
-          <div className="flex gap-3 text-base font-medium h-11 align-middle leading-6 text-neutral-900 align-center">
-            <div
-              className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
-              onClick={() => {
-                downloadExcel();
-              }}
-            >
-              <img
-                src={Images.download}
-                alt="Excel download"
-                className="shrink-0 w-6 h-6 aspect-square"
-              />
-              <span>Download Excel</span>
-            </div>
-            <div
-              className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
-              onClick={() => {
-                fileExcelRef?.current?.click();
-              }}
-            >
-              <img
-                src={Images.uploadExcel}
-                alt="Excel upload"
-                className="shrink-0 w-6 h-6 aspect-square"
-              />
-              <span>Upload Excel</span>
-              <input
-                ref={fileExcelRef}
-                onChange={handleFileChange}
-                id="fileExcel"
-                type="file"
-                className="hidden"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              />
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="flex justify-between">
+            {listButton()}
+            <div className="flex gap-3 text-base font-medium h-11 align-middle leading-6 text-neutral-900 align-center">
+              <div
+                className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+                onClick={() => {
+                  downloadExcel();
+                }}
+              >
+                <img
+                  src={Images.download}
+                  alt="Excel download"
+                  className="shrink-0 w-6 h-6 aspect-square"
+                />
+                <span>Download Excel</span>
+              </div>
+              <div
+                className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+                onClick={() => {
+                  fileExcelRef?.current?.click();
+                }}
+              >
+                <img
+                  src={Images.uploadExcel}
+                  alt="Excel upload"
+                  className="shrink-0 w-6 h-6 aspect-square"
+                />
+                <span>Upload Excel</span>
+                <input
+                  ref={fileExcelRef}
+                  onChange={handleFileChange}
+                  id="fileExcel"
+                  type="file"
+                  className="hidden"
+                  accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <StoreListTable
-          thema={selectedThema}
-          typeStore={selectedButton}
-          typeSorting={selectedSorting}
-          valueSearch={valueKeywordFilter}
-          onItemStoreClick={(item) => {
-            if (
-              item.events &&
-              item.events.length > 0 &&
-              item.events[0].state !== "PENDING"
-            ) {
-              setIsEdit(true);
-              const startDate = dayjs(new Date(+item.events[0].start_time));
-              const endDate = dayjs(new Date(+item.events[0].end_time));
-              setRangeValue([startDate, endDate]);
-              setDescriptionEvent(item.events[0].description);
-            } else {
-              setIsEdit(false);
-            }
-            setItemSelectShop(item);
-            setOpenModalCreateEvent(true);
-          }}
-          isUpdate={isUpdateSuccess}
-          onRefresh={() => {
-            refreshTable();
-          }}
-          countStore={countStore}
-        />
+          <StoreListTable
+            thema={selectedThema}
+            typeStore={selectedButton}
+            typeSorting={selectedSorting}
+            valueSearch={valueKeywordFilter}
+            onItemStoreClick={(item) => {
+              if (
+                item.events &&
+                item.events.length > 0 &&
+                item.events[0].state !== "PENDING"
+              ) {
+                setIsEdit(true);
+                const startDate = dayjs(new Date(+item.events[0].start_time));
+                const endDate = dayjs(new Date(+item.events[0].end_time));
+                setRangeValue([startDate, endDate]);
+                setDescriptionEvent(item.events[0].description);
+              } else {
+                setIsEdit(false);
+              }
+              setItemSelectShop(item);
+              setOpenModalCreateEvent(true);
+            }}
+            isUpdate={isUpdateSuccess}
+            onRefresh={() => {
+              refreshTable();
+            }}
+            countStore={countStore}
+          />
+        </DragDropContext>
       </div>
       <BaseModal2
         isOpen={openModalCreateEvent}
