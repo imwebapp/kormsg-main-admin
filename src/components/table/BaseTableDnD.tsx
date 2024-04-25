@@ -3,7 +3,8 @@ import { Table, TableColumnsType, TablePaginationConfig, Tooltip } from "antd";
 import "./styles.css";
 import { Draggable, Droppable } from "react-beautiful-dnd";
 import { classNames } from "../../utils/common";
-
+import { UpOutlined } from "@ant-design/icons";
+import BaseText from "../text";
 
 interface DraggableBodyProps {
   [key: string]: any;
@@ -42,10 +43,10 @@ const DraggableRow: React.FC<DraggableRowProps> = (props) => {
   const draggableRef = draggableProps?.innerRef || (() => { }); // Kiểm tra innerRef có tồn tại không
 
   return (
-    <Draggable 
-    draggableId={props['data-row-key']} 
-    index={props['data-row-index']}
-    disableInteractiveElementBlocking={true} // Tắt chặn các phần tử tương tác
+    <Draggable
+      draggableId={props['data-row-key']}
+      index={props['data-row-index']}
+      disableInteractiveElementBlocking={true} // Tắt chặn các phần tử tương tác
     >
       {(provided, snapshot) => {
         return (
@@ -60,7 +61,14 @@ const DraggableRow: React.FC<DraggableRowProps> = (props) => {
               ...provided.draggableProps.style,
             }}
           >
-            {props.children}
+            {snapshot.isDragging ? (
+              <div className="flex flex-col items-center justify-center w-4 drop-shadow-lg">
+                <UpOutlined />
+                <BaseText>
+                  MoveTo
+                </BaseText>
+              </div>
+            ) : props.children}
           </tr>
         )
       }
