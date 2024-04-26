@@ -215,6 +215,16 @@ export const formatDateTime = (timestampString: string, type: string) => {
   return type === "day" ? `${year}/${month}/${day}` : `${hours}:${minutes}`;
 };
 
+export const formatPhoneNumber = (phone: string) => {
+  let cleanedPhoneNumber = phone.replace(/\s|-/g, '');
+  const isValidNumber = /^\d/.test(cleanedPhoneNumber);
+
+  if (isValidNumber) {
+    cleanedPhoneNumber = cleanedPhoneNumber.replace(/^0+/, '');
+  }
+  return cleanedPhoneNumber;
+}
+
 export const convertParams = (obj: any) => {
   const result: any = {};
   for (const key in obj) {

@@ -3,7 +3,7 @@ import Images from "../../assets/gen";
 import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
 import { BaseInputSelect } from "../../components/input/BaseInputSelect";
-
+import ReactFlagsSelect from "react-flags-select";
 import {
   CheckOutlined,
   PlusCircleOutlined,
@@ -13,7 +13,7 @@ import {
   CaretDownOutlined,
 } from "@ant-design/icons";
 import { BaseModal } from "../../components/modal/BaseModal";
-import { User, classNames } from "../../utils/common";
+import { User, classNames, formatPhoneNumber } from "../../utils/common";
 import UserManageTable from "../../components/userManageTable";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
@@ -21,9 +21,9 @@ import { useTranslation } from "react-i18next";
 import { getMethod } from "../../utils/request";
 import { userApi } from "../../apis/userApi";
 import { groupApi } from "../../apis/groupApi";
-import { ListTypeUser, PLATFORM, TypeUser } from "../../utils/constants";
+import { ListCountries, ListTypeUser, PLATFORM, TypeUser } from "../../utils/constants";
 import { employeeApi } from "../../apis/employeeApi";
-import { Input, Select, App, Spin } from "antd";
+import { Input, Select, App, Spin, Switch } from "antd";
 import { UploadApi } from "../../apis/uploadApi";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
@@ -39,6 +39,14 @@ const listUserGroups = [
 const isMobile = () => {
   return /Mobi|Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent);
 };
+
+const customLabels = ListCountries.reduce((acc: any, item) => {
+  acc[item.code] = {
+    primary: item.name,
+    secondary: item.dial_code
+  };
+  return acc;
+}, {});
 
 type IGroups = {
   id: number | string;
@@ -65,6 +73,9 @@ const UserManage = () => {
   );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
+  const [dialCode, setDialCode] = useState('+82');
+  const [selected, setSelected] = useState("KR");
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const [valueInputCreateGroup, setValueInputCreateGroup] = useState("");
   const [formDataCreateUser, setFormDataCreateUser] = useState({
     userType: "",
@@ -73,6 +84,8 @@ const UserManage = () => {
     password: "",
     userName: "",
     avatar: "",
+    checkedUser: false,
+    phoneNumber: "",
   });
   const [imageCreateUser, setImageCreateUser] = useState<File>();
   const [countTypeUser, setCountTypeUser] = useState({
@@ -185,7 +198,7 @@ const UserManage = () => {
   const isFormDataValid = () => {
     for (const key in formDataCreateUser) {
       if (
-        key !== "avatar" &&
+        key !== "avatar" && key !== "checkedUser" &&
         !(key === "userGroup" && formDataCreateUser["userType"] === TypeUser.ADMIN) &&
         !formDataCreateUser[key as keyof typeof formDataCreateUser]
       ) {
@@ -226,6 +239,8 @@ const UserManage = () => {
         resUploadImg = ResUploadImg?.url;
       }
 
+      const cleanedPhoneNumber = formatPhoneNumber(formDataCreateUser?.phoneNumber);
+
       const dataCreateConvert = {
         account_type: formDataCreateUser?.userType,
         approve: false,
@@ -241,7 +256,7 @@ const UserManage = () => {
         memo: null,
         nickname: formDataCreateUser?.userName,
         password: formDataCreateUser?.password,
-        phone: null,
+        phone: dialCode + cleanedPhoneNumber,
         post_limit: 1,
         start_date: null,
         uniqueness: null,
@@ -255,8 +270,7 @@ const UserManage = () => {
         const dataCreateAdmin = {
           fullname: formDataCreateUser?.userName,
           avatar: resUploadImg || null,
-          phone: null,
-          // phone: '+84977142277',
+          phone: dialCode + cleanedPhoneNumber,
           email: formDataCreateUser?.userId,
           username: formDataCreateUser?.userId,
           password: formDataCreateUser?.password,
@@ -272,7 +286,10 @@ const UserManage = () => {
           password: "",
           userName: "",
           avatar: "",
+          checkedUser: false,
+          phoneNumber: "",
         });
+        await getListGroup();
         setImageCreateUser(undefined);
         setOpenModalCreateUser(false);
         return;
@@ -291,7 +308,10 @@ const UserManage = () => {
           password: "",
           userName: "",
           avatar: "",
+          checkedUser: false,
+          phoneNumber: "",
         });
+        await getListGroup();
         setImageCreateUser(undefined);
         setOpenModalCreateUser(false);
       }
@@ -364,6 +384,7 @@ const UserManage = () => {
   const handleDeleteUsers = async (ids: string[]) => {
     try {
       setLoadingScreen(true);
+      // const res: any = typeUser === TypeUser.ADMIN ? await employeeApi.deleteAdmin(id) : await userApi.deleteUsers(JSON.stringify(ids));;
       const res: any = await userApi.deleteUsers(JSON.stringify(ids));
       if (res.code === 200) {
         const newListUser = listUser.filter((item) => !ids.includes(item.id));
@@ -463,9 +484,9 @@ const UserManage = () => {
     if (!result.destination) {
       return;
     }
-    if(result.destination.droppableId === result.source.droppableId) return;
-    if(result.destination.droppableId === 'ALL') return;
-    if(result.destination.droppableId === TypeUser.ADMIN) return;
+    if (result.destination.droppableId === result.source.droppableId) return;
+    if (result.destination.droppableId === 'ALL') return;
+    if (result.destination.droppableId === TypeUser.ADMIN) return;
 
     handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
   };
@@ -1007,6 +1028,7 @@ const UserManage = () => {
               value: item.id,
               label: t(item.name),
             }))}
+            customizeStyleSelect={{ singleItemHeightLG: 50 }}
           />
           {formDataCreateUser?.userType !== TypeUser.ADMIN && <BaseInputSelect
             title="Group"
@@ -1019,8 +1041,9 @@ const UserManage = () => {
               value: item.id,
               label: item.name,
             }))}
+            customizeStyleSelect={{ singleItemHeightLG: 50 }}
           />}
-          {/* <div className={classNames('flex justify-between pb-4 border-b border-darkNight50')}>
+          {formDataCreateUser?.userType === TypeUser.ADMIN && <div className={classNames('flex justify-between')}>
             <BaseText bold locale size={14}>Management Team</BaseText>
             <div className={classNames('flex gap-4 items-center')}>
               <Switch
@@ -1031,7 +1054,45 @@ const UserManage = () => {
               />
               <BaseText bold locale size={14}>Operate</BaseText>
             </div>
-          </div> */}
+          </div>}
+
+          <div>
+            <div className='flex gap-1'>
+              <BaseText locale bold size={14} className='mb-2'>
+                Phone number
+              </BaseText>
+              <span className="text-red-500">*</span>
+            </div>
+
+            <div className="flex gap-3">
+              <ReactFlagsSelect
+                selected={selected}
+                onSelect={(code) => {
+                  setSelected(code);
+                  const selectedCountry = ListCountries.find(country => country.code === code);
+                  if (selectedCountry) {
+                    setDialCode(selectedCountry.dial_code);
+                  }
+                }}
+                customLabels={{
+                  ...customLabels
+                }}
+                // showSelectedLabel={false}
+                showSecondarySelectedLabel={true}
+                searchPlaceholder="Search..."
+                searchable={true}
+                className="w-full h-11 bg-darkNight50"
+              />
+              <BaseInput
+                placeholder="Phone number"
+                className="w-full border border-gray-300 rounded-md"
+                styleInputContainer="w-full h-11"
+                onChange={(value) => handleInputChange('phoneNumber', value)}
+                value={formDataCreateUser.phoneNumber}
+                type="number"
+              />
+            </div>
+          </div>
           <BaseInput
             title="ID account"
             required
@@ -1045,7 +1106,14 @@ const UserManage = () => {
             value={formDataCreateUser.password}
             onChange={(value) => handleInputChange("password", value)}
             placeholder="Password"
-            type="password"
+            type={isShowPassword ? "text" : "password"}
+            iconRight={
+              <img
+                src={isShowPassword ? Images.eyeCross : Images.eye}
+                className={classNames("w-6 h-6 cursor-pointer")}
+                onClick={() => setIsShowPassword(!isShowPassword)}
+              />
+            }
           />
           <BaseInput
             title="User name"

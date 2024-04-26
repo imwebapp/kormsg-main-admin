@@ -12,7 +12,7 @@ import BaseButton from "../../components/baseButton";
 import OtpInput from 'react-otp-input';
 import { BaseInput } from "../../components/input/BaseInput";
 import { App, Layout, Space, Spin } from "antd";
-import { classNames } from "../../utils/common";
+import { classNames, formatPhoneNumber } from "../../utils/common";
 
 const BgList = [
   Images.bgLogin1,
@@ -24,16 +24,6 @@ const BgList = [
 const getRandomBg = () => {
   const randomIndex = Math.floor(Math.random() * BgList.length);
   return BgList[randomIndex];
-}
-
-const formatPhoneNumber = (phone: string) => {
-  let cleanedPhoneNumber = phone.replace(/\s|-/g, '');
-  const isValidNumber = /^\d/.test(cleanedPhoneNumber);
-
-  if (isValidNumber) {
-    cleanedPhoneNumber = cleanedPhoneNumber.replace(/^0+/, '');
-  }
-  return cleanedPhoneNumber;
 }
 
 const Login = () => {
