@@ -17,6 +17,7 @@ import ReportPage from "./report";
 import BlogPage from "./blog";
 import SettingPage from "./setting";
 import HelpCenter from "./helpCenter";
+import PointHistoryPage from "./pointHistory";
 
 export {
   Login,
@@ -37,5 +38,6 @@ export {
   ReportPage,
   BlogPage,
   SettingPage,
-  HelpCenter
+  HelpCenter,
+  PointHistoryPage,
 };
