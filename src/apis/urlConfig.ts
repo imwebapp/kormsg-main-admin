@@ -31,3 +31,4 @@ export const ANSWER_QUESTION = "/answer_question";
 export const SETTING = "/setting";
 export const FAQ_CATEGORY = "/faq_category";
 export const FAQ = "/faq";
+export const POINT_PRODUCT = "/point_product";

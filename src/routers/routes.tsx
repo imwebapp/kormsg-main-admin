@@ -18,6 +18,7 @@ import {
   BlogPage,
   SettingPage,
   HelpCenter,
+  PointHistoryPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -111,7 +112,7 @@ const routes = [
   },
   {
     path: Url.pointHistory,
-    element: <div className="p-4">coming soon</div>,
+    element: <PointHistoryPage />,
   },
   {
     path: Url.blogs,
