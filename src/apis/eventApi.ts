@@ -6,4 +6,7 @@ export const eventApi = {
   editEvent: (params?: any, id?: string) => {
     return axiosClient.put(`event/${id}`, params);
   },
+  deleteEvent: (id?: string) => {
+    return axiosClient.delete(`event/${id}`);
+  },
 };

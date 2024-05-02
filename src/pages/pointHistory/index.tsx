@@ -7,8 +7,8 @@ import { classNames } from "../../utils/common";
 import TabBarItem from "./component/TabBarItem";
 import TabPane from "antd/es/tabs/TabPane";
 import PointProduct from "./component/PointProduct";
-// import CommunityReport from "./component/CommunityReport";
-// import CommentReport from "./component/CommentReport";
+import ReceivePoint from "./component/ReceivePoint";
+import OrderHistory from "./component/OrderHistory";
 
 export default function PointHistoryPage() {
   const [activeKey, setActiveKey] = useState("1");
@@ -43,7 +43,7 @@ export default function PointHistoryPage() {
         }
         key="2"
       >
-        <PointProduct />
+        <ReceivePoint />
       </TabPane>
       <TabPane
         tab={
@@ -56,7 +56,7 @@ export default function PointHistoryPage() {
         }
         key="3"
       >
-        <PointProduct />
+        <OrderHistory />
       </TabPane>
     </Tabs>
   );

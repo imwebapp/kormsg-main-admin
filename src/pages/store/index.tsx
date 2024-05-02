@@ -9,7 +9,14 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import { DatePicker, GetProps, Input, Select, notification } from "antd";
+import {
+  DatePicker,
+  GetProps,
+  Input,
+  Select,
+  message,
+  notification,
+} from "antd";
 
 import { storeApi } from "../../apis/storeApi";
 import { BaseInput } from "../../components/input/BaseInput";
@@ -21,6 +28,7 @@ import { ThemaApi } from "../../apis/themaApi";
 import Images from "../../assets/gen";
 import { showError } from "../../utils/showToast";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import BaseButton from "../../components/baseButton";
 const { RangePicker } = DatePicker;
 const StorePage = () => {
   // format date
@@ -93,6 +101,19 @@ const StorePage = () => {
       let result: any = await eventApi.createEvent(params);
       if (result.code === 200) {
         resetModal();
+      }
+      refreshTable();
+    } catch (error) {
+      refreshTable();
+    }
+  };
+  const deleteEvent = async () => {
+    try {
+      let result: any = await eventApi.deleteEvent(itemSelectShop.events[0].id);
+      if (result.code === 200) {
+        resetModal();
+        message.success("Delete Event Success");
+        setOpenModalCreateEvent(!openModalCreateEvent);
       }
       refreshTable();
     } catch (error) {
@@ -420,21 +441,14 @@ const StorePage = () => {
         </DragDropContext>
       </div>
       <BaseModal2
-        isOpen={openModalCreateEvent}
-        onSubmit={() => {
-          setOpenModalCreateEvent(false);
-          if (isEdit) {
-            _editEvent();
-          } else {
-            _createEvent();
-          }
-        }}
+        isOpen={!!openModalCreateEvent}
         title="이벤트+"
         onClose={() => {
           setDescriptionEvent("");
           setRangeValue(null);
           setOpenModalCreateEvent(!openModalCreateEvent);
         }}
+        isHideAction
       >
         <BaseInput
           title="Store"
@@ -456,6 +470,7 @@ const StorePage = () => {
             value={rangeValue}
           />
         </div>
+
         <BaseInput
           title="행사 설명"
           placeholder="예시) 오후 할인 1만원"
@@ -466,6 +481,38 @@ const StorePage = () => {
           required
           styleInputContainer="border border-black border-solid "
         />
+        <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
+          <BaseButton
+            type="default"
+            onClick={() => {
+              setOpenModalCreateEvent(!openModalCreateEvent);
+            }}
+          >
+            {"Cancel"}
+          </BaseButton>
+          {isEdit && (
+            <BaseButton
+              onClick={() => {
+                deleteEvent();
+              }}
+              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            >
+              {"Delete"}
+            </BaseButton>
+          )}
+          <BaseButton
+            onClick={() => {
+              setOpenModalCreateEvent(false);
+              if (isEdit) {
+                _editEvent();
+              } else {
+                _createEvent();
+              }
+            }}
+          >
+            {"Confirm"}
+          </BaseButton>
+        </div>
       </BaseModal2>
     </>
   );

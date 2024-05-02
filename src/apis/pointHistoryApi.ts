@@ -1,5 +1,5 @@
 import axiosClient from "./axiosClient";
-import { POINT_PRODUCT } from "./urlConfig";
+import { POINT, POINT_PRODUCT, POINT_PRODUCT_HISTORY } from "./urlConfig";
 
 export const pointHistoryApi = {
   getListProduct: (params?: any) => {
@@ -16,5 +16,11 @@ export const pointHistoryApi = {
   },
   deleteProduct: (params?: any) => {
     return axiosClient.delete(`${POINT_PRODUCT}/?items=["${params}"]`);
+  },
+  getListReceivePoint: (params?: any) => {
+    return axiosClient.get(`${POINT}`, { params });
+  },
+  getListOrderHistory: (params?: any) => {
+    return axiosClient.get(`${POINT_PRODUCT_HISTORY}`, { params });
   },
 };

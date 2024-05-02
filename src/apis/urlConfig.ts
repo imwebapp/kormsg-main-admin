@@ -32,3 +32,5 @@ export const SETTING = "/setting";
 export const FAQ_CATEGORY = "/faq_category";
 export const FAQ = "/faq";
 export const POINT_PRODUCT = "/point_product";
+export const POINT = "/point";
+export const POINT_PRODUCT_HISTORY = "/point_product_history";
