@@ -367,6 +367,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           <BaseText>{title}</BaseText>
         </div>
       ),
+      width: "25%",
     },
     {
       title: t("Thema"),
