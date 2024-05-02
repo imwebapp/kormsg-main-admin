@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TableColumnsType, notification } from "antd";
+import { TableColumnsType, message, notification } from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
 import BaseTable from "../table";
@@ -53,7 +53,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowImages, setIsShowImages] = useState(false);
   const [isShowInfo, setIsShowInfo] = useState(false);
   const [isShowReasonDenied, setIsShowReasonDenied] = useState(false);
-  // const [listImageShop, setListImageShop] = useState([]);
+  const [memoValue, setMemoValue] = useState("");
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const [positionStore, setPositionStore] = useState({
     lat: 0,
@@ -62,6 +62,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowDataHistory, setIsShowDataHistory] = useState(false);
   const nameGroup = useRef("");
   const idStore = useRef("");
+  const userId = useRef("");
   const limit = 50;
   const [dataHistory, setDataHistory] = useState<any[]>([]);
   const [deniedMessagse, setDeniedMessagse] = useState("");
@@ -311,11 +312,32 @@ export default function StoreListTable(props: StoreListTableProps) {
         })
         .then((res: any) => {
           setDataHistory(res.results?.objects?.rows);
+          setMemoValue(res.results?.objects?.rows[0]?.content || "");
         })
         .catch((err) => {
           console.log("err getList PaymentHistory API", err);
         });
     } catch (error) {}
+  };
+  //update Memo
+  const handleUpdateMemo = () => {
+    if (memoValue.trim() === "") {
+      return;
+    }
+
+    const dataUpdate = {
+      user_id: userId.current,
+      content: memoValue.trim(),
+    };
+    userApi
+      .updateUserPaymentHistory(dataUpdate)
+      .then((res: any) => {
+        message.success("Update memo successfully");
+      })
+      .catch((err) => {
+        console.log("err update memo: ", err);
+        message.error("Update memo failed");
+      });
   };
 
   useEffect(() => {
@@ -504,6 +526,7 @@ export default function StoreListTable(props: StoreListTableProps) {
               onClick={() => {
                 setIsShowInfo(!isShowInfo);
                 nameGroup.current = record?.user?.new_group?.name;
+                userId.current = record?.user_id;
                 getInfoPaymentHistory(record.user.id);
               }}
             />
@@ -609,6 +632,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         onClose={() => {
           setIsShowInfo(false);
         }}
+        onSubmit={handleUpdateMemo}
         title="More"
       >
         <BaseInput
@@ -628,8 +652,8 @@ export default function StoreListTable(props: StoreListTableProps) {
         </div>
         <div className="flex gap-2 text-base leading-6  max-md:flex-wrap">
           <BaseInput
-            value={dataHistory[0]?.content}
-            disabled
+            value={memoValue}
+            onChange={(value) => setMemoValue(value)}
             className="w-full"
           />
           <button
