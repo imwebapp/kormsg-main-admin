@@ -251,10 +251,21 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Post/comment/ review/requests"),
-      render: ({ totalPost, totalReview }) => (
-        <BaseText size={16} medium>
-          {totalPost || 0}/0/{totalReview || 0}/0
-        </BaseText>
+      render: ({ totalPost, totalReview, totalReservation, point }) => (
+        <div className="flex flex-row items-center">
+          <Tooltip title={t('Post')} className="text-base font-medium cursor-pointer">
+            {totalPost || 0}/
+          </Tooltip>
+          <Tooltip title={t('Comments')} className="text-base font-medium cursor-pointer">
+            {totalReview || 0}/
+          </Tooltip>
+          <Tooltip title={t('Review')} className="text-base font-medium cursor-pointer">
+            {totalReservation || 0}/
+          </Tooltip>
+          <Tooltip title={t('Requests')} className="text-base font-medium cursor-pointer">
+            {point || 0}
+          </Tooltip>
+        </div>
       ),
     },
     {
