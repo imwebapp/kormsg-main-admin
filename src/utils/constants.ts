@@ -3337,3 +3337,22 @@ export const POINT_PRODUCT_TYPE = {
   "FOREIGN/FUSION_FOOD/OTHER": "FOREIGN/FUSION_FOOD/OTHER",
   "HEALTH/LIVING/FOOT_HALL": "HEALTH/LIVING/FOOT_HALL",
 };
+export const POINT_ACTION = {
+  ALL: "ALL",
+  ATTENDANCE: "ATTENDANCE",
+  LOTTERY: "LOTTERY",
+  BUY: "BUY",
+  RESERVATION: "RESERVATION",
+  REVIEW: "REVIEW",
+  INVITE: "INVITE",
+};
+
+export const POINT_ACTION_KR = {
+  ALL: "전체",
+  ATTENDANCE: "출석체크",
+  LOTTERY: "뽑기게임",
+  BUY: "구입",
+  RESERVATION: "예약기능사용",
+  REVIEW: "리뷰작성",
+  INVITE: "친구초대",
+};
