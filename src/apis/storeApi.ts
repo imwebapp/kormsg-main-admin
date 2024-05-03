@@ -19,12 +19,8 @@ export const storeApi = {
   getListThema: (params?: any) => {
     return axiosClient.get(`${CATEGORY}`, { params });
   },
-  approveStore: (params?: any, ids?: any) => {
-    const encodedIds = encodeURIComponent(JSON.stringify(ids));
-    return axiosClient.put(
-      `${STORE}/update_expiration_date_multiple?items=${encodedIds}`,
-      params
-    );
+  approveStore: (params?: any, id?: any) => {
+    return axiosClient.put(`${STORE}/${id}`, params);
   },
   rejectStore: (params?: any, id?: string) => {
     return axiosClient.put(`${STORE}/${id}`, params);

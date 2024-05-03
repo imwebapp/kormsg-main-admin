@@ -149,9 +149,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const approvePendingShop = async (id: string) => {
     try {
       const params = {
-        expired_date: dayjs().add(1, "month").valueOf(),
         state: "APPROVED",
-        geolocation_api_type: "NAVER",
       };
       let result: any = await storeApi.approveStore(params, [id]);
       if (result.code === 200) {
@@ -384,7 +382,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         <div className="flex flex-col items-center">
           <BaseText size={16} medium>
             {`${moment(parseInt(record.start_date)).format(
-              "YYYY-MM-DD"
+              "llYYYY-MM-DD"
             )} ~ ${moment(parseInt(record.expired_date)).format("YYYY-MM-DD")}`}
           </BaseText>
           <BaseText size={16} medium className="text-violet2 ">
