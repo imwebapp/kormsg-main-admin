@@ -28,6 +28,7 @@ import { CategoryApi } from "../../../apis/categoryApi";
 import { TagApi } from "../../../apis/tagApi";
 import { NEW_ID } from "../viewleft";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Popconfirm } from "antd";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
@@ -471,15 +472,20 @@ export default function BulletinSetting() {
       {_buildTags()}
 
       {boardSelected.id && boardSelected.id !== NEW_ID && (
-        <CustomButton
-          onClick={deleteBoardLink}
-          className="mt-5 bg-dustRed50 border-none"
-          classNameTitle="text-dustRed500"
-          medium
-          locale
+        <Popconfirm
+          onConfirm={deleteBoardLink}
+          title={t("Delete")}
+          description={t("Are you sure to delete")}
         >
-          Delete Main
-        </CustomButton>
+          <CustomButton
+            className="mt-5 bg-dustRed50 border-none"
+            classNameTitle="text-dustRed500"
+            medium
+            locale
+          >
+            Delete Main
+          </CustomButton>
+        </Popconfirm>
       )}
 
       <BaseModal2
