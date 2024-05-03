@@ -1,12 +1,18 @@
 import { useTranslation } from "react-i18next";
-import { BaseTable, BaseText } from "../../../components";
+import { BaseTable, BaseText, CustomButton } from "../../../components";
 import { ArrowUpOutlined } from "@ant-design/icons";
 import { Input, TableColumnsType } from "antd";
 import { useEffect, useState } from "react";
 import { pointHistoryApi } from "../../../apis/pointHistoryApi";
-import { POINT_ACTION, POINT_ACTION_KR } from "../../../utils/constants";
+import {
+  POINT_ACTION,
+  POINT_ACTION_KR,
+  POINT_PRODUCT,
+  REPORT,
+} from "../../../utils/constants";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import dayjs from "dayjs";
+import Images from "../../../assets/gen";
 type SortingType = keyof typeof POINT_ACTION_KR;
 export default function OrderHistory() {
   const { t } = useTranslation();
@@ -14,6 +20,7 @@ export default function OrderHistory() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSorting, setSelectedSorting] = useState<SortingType>("ALL");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [selectedButton, setSelectedButton] = useState(POINT_PRODUCT.ALL);
 
   const handleChangeTypeReceive = (value: SortingType) => {
     setSelectedSorting(value);
@@ -74,31 +81,25 @@ export default function OrderHistory() {
       width: "20%",
     },
     {
-      title: t("연락처"),
+      title: t("보유포인트"),
       dataIndex: ["user", "phone"],
     },
     {
-      title: t("포인트 종류"),
+      title: t("차감포인트"),
       dataIndex: ["action"],
       render: (text: SortingType) => <div>{POINT_ACTION_KR[text]}</div>,
     },
     {
-      title: t("차감포인트"),
-      dataIndex: ["point"],
-      render: (text) => (
-        <BaseText bold>
-          {parseFloat(text).toLocaleString("en-US") + "P"}
-        </BaseText>
-      ),
+      title: t("신청상품"),
+      dataIndex: ["user", "phone"],
     },
     {
-      title: t("차감포인트"),
-      dataIndex: ["user", "point"],
-      render: (text) => (
-        <BaseText bold>
-          {parseFloat(text).toLocaleString("en-US") + "P"}
-        </BaseText>
-      ),
+      title: t("전화번호"),
+      dataIndex: ["user", "phone"],
+    },
+    {
+      title: t("승인버튼"),
+      dataIndex: ["user", "phone"],
     },
   ];
   const bodyTable = () => {
@@ -115,11 +116,55 @@ export default function OrderHistory() {
       />
     );
   };
+  const getTextColor = (buttonStatus: any) => {
+    return buttonStatus === selectedButton ? "white" : "black";
+  };
+  const listButton = () => {
+    const buttonData = [
+      {
+        status: POINT_PRODUCT.ALL,
+        label: t("ALL"),
+        count: 0,
+      },
+      {
+        status: POINT_PRODUCT.NOT_APPROVE,
+        label: t("미승인"),
+        count: 0,
+      },
+    ];
+    const handleButtonClick = (buttonName: POINT_PRODUCT) => {
+      setSelectedButton(buttonName);
+    };
+    const getButtonStyle = (buttonKey: any) => {
+      const isSelected = buttonKey === selectedButton;
+      return {
+        backgroundColor: isSelected ? "black" : "white",
+        color: isSelected ? "white" : "black",
+      };
+    };
+    return (
+      <div className="flex flex-row gap-4 ">
+        {buttonData.map(({ status, label, count }) => (
+          <CustomButton
+            key={status}
+            className="px-4 text-base font-medium rounded-full h-11"
+            style={getButtonStyle(status)}
+            onClick={() => handleButtonClick(status)}
+          >
+            <BaseText color={getTextColor(status)} size={16}>
+              {label} ({count})
+            </BaseText>
+          </CustomButton>
+        ))}
+      </div>
+    );
+  };
   useEffect(() => {
-    getListOrderHistory();
+    // getListOrderHistory();
   }, [valueKeywordFilter, selectedSorting]);
   return (
     <div className="p-4 py-0">
+      {listButton()}
       <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium max-md:flex-wrap items-center">
         <div className="flex gap-4 text-base font-medium max-w-[651px] max-md:flex-wrap w-full my-4">
           <Input
@@ -144,6 +189,17 @@ export default function OrderHistory() {
             defaultValue={selectedSorting}
             customizeStyleSelect={{ singleItemHeightLG: 50 }}
           />
+        </div>
+        <div
+          className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+          onClick={() => {}}
+        >
+          <img
+            src={Images.download}
+            alt="Excel download"
+            className="shrink-0 w-6 h-6 aspect-square"
+          />
+          <span>Download Excel</span>
         </div>
       </div>
       {bodyTable()}

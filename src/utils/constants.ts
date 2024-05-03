@@ -3356,3 +3356,7 @@ export const POINT_ACTION_KR = {
   REVIEW: "리뷰작성",
   INVITE: "친구초대",
 };
+export enum POINT_PRODUCT {
+  ALL,
+  NOT_APPROVE,
+}
