@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Table, TableColumnsType, TablePaginationConfig } from "antd";
-import "./styles.css";
+import React, { useState } from 'react';
+import { Table, TableColumnsType, TablePaginationConfig } from 'antd';
+import './styles.css';
 
 type TableProps = {
   onSelectChange?: (newSelectedRowKeys: any) => void;
@@ -9,6 +9,7 @@ type TableProps = {
   data: Array<object>;
   sticky?: any;
   maxContent?: boolean;
+  scroll?: any;
   onRowClick?: (record: any, index: any) => void;
   className?: string; // for tailwindcss
 };
@@ -21,6 +22,7 @@ export default function BaseTable(props: TableProps) {
     onSelectChange,
     pagination,
     sticky,
+    scroll = {},
     maxContent,
     onRowClick,
   } = props;
@@ -38,16 +40,16 @@ export default function BaseTable(props: TableProps) {
   };
 
   const getRowClassName = (record: any, index: any) => {
-    let classCustom = onRowClick ? "row-click" : "";
-    return rowClickKey === `${(pagination as any)?.current || ""}-${index}`
-      ? classCustom + " selected-row"
+    let classCustom = onRowClick ? 'row-click' : '';
+    return rowClickKey === `${(pagination as any)?.current || ''}-${index}`
+      ? classCustom + ' selected-row'
       : classCustom;
   };
 
   return (
     <>
       <Table
-        scroll={maxContent ? { x: "max-content" } : {}}
+        scroll={maxContent ? { x: 'max-content' } : scroll}
         sticky={sticky}
         className={className}
         rowClassName={getRowClassName}
@@ -59,7 +61,7 @@ export default function BaseTable(props: TableProps) {
           onClick: () => {
             if (onRowClick) {
               onRowClick(record, index);
-              setRowClickKey(`${(pagination as any)?.current || ""}-${index}`);
+              setRowClickKey(`${(pagination as any)?.current || ''}-${index}`);
             }
           },
         })}
