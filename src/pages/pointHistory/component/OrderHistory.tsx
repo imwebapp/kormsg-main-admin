@@ -1,15 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { BaseTable, BaseText, CustomButton } from "../../../components";
 import { ArrowUpOutlined } from "@ant-design/icons";
-import { Input, TableColumnsType } from "antd";
+import { Input, TableColumnsType, notification } from "antd";
 import { useEffect, useState } from "react";
 import { pointHistoryApi } from "../../../apis/pointHistoryApi";
-import {
-  POINT_ACTION,
-  POINT_ACTION_KR,
-  POINT_PRODUCT,
-  REPORT,
-} from "../../../utils/constants";
+import { POINT_ACTION_KR, POINT_PRODUCT } from "../../../utils/constants";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import dayjs from "dayjs";
 import Images from "../../../assets/gen";
@@ -22,6 +17,26 @@ export default function OrderHistory() {
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
   const [selectedButton, setSelectedButton] = useState(POINT_PRODUCT.ALL);
 
+  const approveOrderHistory = async (id: string) => {
+    try {
+      let result: any = await pointHistoryApi.approveOrderHistory(id);
+      if (result.code === 200) {
+        notification.success({
+          message: "Approve Order Success",
+        });
+      }
+    } catch (error) {}
+  };
+  const rejectOrderHistory = async (id: string) => {
+    try {
+      let result: any = await pointHistoryApi.rejectOrderHistory(id);
+      if (result.code === 200) {
+        notification.success({
+          message: "Reject Order Success",
+        });
+      }
+    } catch (error) {}
+  };
   const handleChangeTypeReceive = (value: SortingType) => {
     setSelectedSorting(value);
   };
@@ -31,29 +46,16 @@ export default function OrderHistory() {
   const getListOrderHistory = async () => {
     try {
       const params = {
-        fields: JSON.stringify(["$all", { user: ["$all"] }]),
+        fields: JSON.stringify(["$all"]),
         filter: JSON.stringify({
-          $and: [
-            {
-              $or: {
-                "$user.username$": { $iLike: `%${valueKeywordFilter}%` },
-                "$user.phone$": { $iLike: `%${valueKeywordFilter}%` },
-              },
-            },
+          $or: [
+            { user_name: { $iLike: `%${valueKeywordFilter}%` } },
+            { user_phone: { $iLike: `%${valueKeywordFilter}%` } },
+            { product: { name: { $iLike: `%${valueKeywordFilter}%` } } },
           ],
         }),
       };
-      if (
-        selectedSorting !== POINT_ACTION["ALL"] &&
-        selectedSorting !== POINT_ACTION_KR["ALL"]
-      ) {
-        params.filter = JSON.stringify({
-          ...JSON.parse(params.filter),
-          action: selectedSorting,
-        });
-      }
-
-      let result: any = await pointHistoryApi.getListReceivePoint(params);
+      let result: any = await pointHistoryApi.getListOrderHistory(params);
       if (result.code === 200) {
         setData(result.results.objects.rows);
       }
@@ -77,29 +79,72 @@ export default function OrderHistory() {
     },
     {
       title: t("아이디"),
-      dataIndex: ["user", "username"],
-      width: "20%",
+      dataIndex: ["user_name"],
+      width: "10%",
     },
     {
       title: t("보유포인트"),
-      dataIndex: ["user", "phone"],
+      dataIndex: ["user_point"],
+      render: (text) => (
+        <BaseText bold>
+          {parseFloat(text).toLocaleString("en-US") + "P"}
+        </BaseText>
+      ),
     },
     {
       title: t("차감포인트"),
-      dataIndex: ["action"],
-      render: (text: SortingType) => <div>{POINT_ACTION_KR[text]}</div>,
+      dataIndex: ["product", "point"],
+      render: (text) => (
+        <BaseText bold>
+          {"-" + parseFloat(text).toLocaleString("en-US") + "P"}
+        </BaseText>
+      ),
     },
     {
       title: t("신청상품"),
-      dataIndex: ["user", "phone"],
+      dataIndex: ["product", "name"],
     },
     {
       title: t("전화번호"),
-      dataIndex: ["user", "phone"],
+      dataIndex: ["user_phone"],
     },
     {
       title: t("승인버튼"),
-      dataIndex: ["user", "phone"],
+      render: (text, record) => (
+        <div className="flex gap-2 justify-center px-3 py-2.5 text-xs font-bold leading-5 text-center text-white whitespace-nowrap">
+          {!record.pending && (
+            <button
+              className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg"
+              onClick={() => {
+                approveOrderHistory(record.id);
+              }}
+            >
+              Approve
+            </button>
+          )}
+
+          {!!record.pending && (
+            <button className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg">
+              보냈음
+            </button>
+          )}
+          {!record.sent && (
+            <button
+              className="justify-center px-2 py-1.5 bg-red-600 rounded-lg"
+              onClick={() => {
+                rejectOrderHistory(record.id);
+              }}
+            >
+              Reject
+            </button>
+          )}
+          {!!record.sent && (
+            <button className="justify-center px-2 py-1.5 bg-red-600 rounded-lg">
+              대기
+            </button>
+          )}
+        </div>
+      ),
     },
   ];
   const bodyTable = () => {
@@ -115,6 +160,24 @@ export default function OrderHistory() {
         data={data}
       />
     );
+  };
+  const downloadExcel = async () => {
+    try {
+      const params = {
+        fields: JSON.stringify(["$all"]),
+        filter: JSON.stringify({
+          $or: [
+            { user_name: { $iLike: `%${valueKeywordFilter}%` } },
+            { user_phone: { $iLike: `%${valueKeywordFilter}%` } },
+            { product: { name: { $iLike: `%${valueKeywordFilter}%` } } },
+          ],
+        }),
+        limit: 99999,
+        order: JSON.stringify([["created_at", "DESC"]]),
+      };
+      let result: any = await pointHistoryApi.downloadExcel(params);
+      window.open(result.results?.object?.url, "_blank");
+    } catch (error) {}
   };
   const getTextColor = (buttonStatus: any) => {
     return buttonStatus === selectedButton ? "white" : "black";
@@ -160,7 +223,7 @@ export default function OrderHistory() {
     );
   };
   useEffect(() => {
-    // getListOrderHistory();
+    getListOrderHistory();
   }, [valueKeywordFilter, selectedSorting]);
   return (
     <div className="p-4 py-0">
@@ -192,7 +255,9 @@ export default function OrderHistory() {
         </div>
         <div
           className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
-          onClick={() => {}}
+          onClick={() => {
+            downloadExcel();
+          }}
         >
           <img
             src={Images.download}

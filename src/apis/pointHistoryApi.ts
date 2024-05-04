@@ -23,4 +23,15 @@ export const pointHistoryApi = {
   getListOrderHistory: (params?: any) => {
     return axiosClient.get(`${POINT_PRODUCT_HISTORY}`, { params });
   },
+  downloadExcel: (params?: any) => {
+    return axiosClient.get(`${POINT_PRODUCT_HISTORY}/download_excel`, {
+      params,
+    });
+  },
+  rejectOrderHistory: (id?: string) => {
+    return axiosClient.put(`${POINT_PRODUCT_HISTORY}/send/${id}`);
+  },
+  approveOrderHistory: (id?: string) => {
+    return axiosClient.put(`${POINT_PRODUCT_HISTORY}/confirm/${id}`);
+  },
 };
