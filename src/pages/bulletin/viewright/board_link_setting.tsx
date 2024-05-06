@@ -92,7 +92,7 @@ export default function BulletinSetting() {
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
         const data = await BoardLinkApi.update(boardLink.id, boardLink);
-        setBoardSelected(data);
+        // setBoardSelected(data);
       } else {
         const { id, ...linkData } = boardLink;
         const data = await BoardLinkApi.create(linkData);
@@ -490,7 +490,7 @@ export default function BulletinSetting() {
 
       <BaseModal2
         width="80vw"
-        bodyStyle='h-[80vh]'
+        bodyStyle="h-[80vh]"
         noScroll
         isOpen={openModalThema}
         onClose={() => {
