@@ -69,6 +69,10 @@ const HeaderComponent = () => {
         setTitle("User Detail");
         setIsDetail(true);
         break;
+        case Url.userActivity:
+        setTitle("User Activity");
+        setIsDetail(true);
+        break;
       case Url.bulletinBoard:
         setTitle("Bulletin Board");
         break;

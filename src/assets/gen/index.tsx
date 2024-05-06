@@ -17,6 +17,7 @@ export default class Images {
     static readonly download = require("../../../src/assets/images/Download.png");
     static readonly empty = require("../../../src/assets/images/Empty.png");
     static readonly filter = require("../../../src/assets/images/Filter.png");
+    static readonly forward = require("../../../src/assets/images/Forward.png");
     static readonly helpCenter = require("../../../src/assets/images/Help Center.png");
     static readonly helpCenter2 = require("../../../src/assets/images/Help Center2.png");
     static readonly home = require("../../../src/assets/images/Home.png");
