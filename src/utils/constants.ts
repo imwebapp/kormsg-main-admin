@@ -52,6 +52,37 @@ export const listOptionUserDetail = [
   },
 ];
 
+export const ListTypeUserActivity = [
+  {
+    id: "COMMUNITY_POST",
+    name: "Community posts",
+  },
+  {
+    id: "COMMENT",
+    name: "Comments",
+  },
+  {
+    id: "RESERVATION",
+    name: "Reservation",
+  },
+  {
+    id: "POINT_DETAIL",
+    name: "Points details",
+  },
+  {
+    id: "CHAT",
+    name: "Chat",
+  },
+];
+
+export const TypeUserActivity = {
+  COMMUNITY_POST: "COMMUNITY_POST",
+  COMMENT: "COMMENT",
+  RESERVATION: "RESERVATION",
+  POINT_DETAIL: "POINT_DETAIL",
+  CHAT: "CHAT",
+};
+
 // export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
 export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
 export const BASE_URL_ANALYTICS = "https://ga.bamgama.com"; // analytics

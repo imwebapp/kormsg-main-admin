@@ -6,7 +6,7 @@ import BaseText from '../text';
 import { useTranslation } from 'react-i18next';
 import Images from '../../assets/gen';
 
-interface Iprops {
+interface IProps {
     type?: string;
     onImageChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     src?: string;
@@ -15,7 +15,7 @@ interface Iprops {
     description?: boolean;
 }
 
-export const BaseInputImage = (props: Iprops) => {
+export const BaseInputImage = (props: IProps) => {
     const { src, onImageChange, onDelImage, className, description, ...restProps } = props;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<string>('');

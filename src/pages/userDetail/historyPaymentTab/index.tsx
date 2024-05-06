@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { historyApi } from "../../../apis/historyApi";
 import { userApi } from "../../../apis/userApi";
 
-interface Iprops {
+interface IProps {
   dataUser: User;
 }
 
-export const HistoryPaymentTab = (props: Iprops) => {
+export const HistoryPaymentTab = (props: IProps) => {
   const { dataUser } = props;
   const navigate = useNavigate();
   const [dataHistory, setDataHistory] = useState<any[]>([]);
