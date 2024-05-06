@@ -46,12 +46,12 @@ export default function BulletinSetting() {
 
   const getListThema = async (boardTypeSelected: string) => {
     if (boardTypeSelected === "") return [];
-    const filter = VISIBLE_BOARDS.includes(boardTypeSelected)
-      ? `{"visible_boards": {"$contains": ["${boardTypeSelected}"]}}`
-      : "";
+    // const filter = VISIBLE_BOARDS.includes(boardTypeSelected)
+    //   ? `{"visible_boards": {"$contains": ["${boardTypeSelected}"]}}`
+    //   : "";
     try {
       const data: Array<ThemaInterface> = await ThemaApi.getList({
-        filter,
+        // filter,
       });
       setThemas(data);
       return data;
@@ -85,7 +85,7 @@ export default function BulletinSetting() {
 
   useEffect(() => {
     getListThema(boardTypeSelected);
-  }, []);
+  }, [boardTypeSelected]);
 
   const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
     setBoardSelected(boardLink);
