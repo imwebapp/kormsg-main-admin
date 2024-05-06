@@ -10,6 +10,7 @@ import {
   NewStore,
   UserManage,
   UserDetail,
+  UserActivity,
   ReservationDetails,
   AppVersion,
   BulletinPage,
@@ -66,6 +67,11 @@ const routes = [
   {
     path: Url.userDetail,
     element: <UserDetail />,
+    detail: true,
+  },
+  {
+    path: Url.userActivity,
+    element: <UserActivity />,
     detail: true,
   },
   {

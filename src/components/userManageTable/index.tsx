@@ -251,19 +251,25 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Post/comment/ review/requests"),
-      render: ({ totalPost, totalReview, totalReservation, point }) => (
-        <div className="flex flex-row items-center">
-          <Tooltip title={t('Post')} className="text-base font-medium cursor-pointer">
-            {totalPost || 0}/
-          </Tooltip>
-          <Tooltip title={t('Comments')} className="text-base font-medium cursor-pointer">
-            {totalReview || 0}/
-          </Tooltip>
-          <Tooltip title={t('Review')} className="text-base font-medium cursor-pointer">
-            {totalReservation || 0}/
-          </Tooltip>
-          <Tooltip title={t('Requests')} className="text-base font-medium cursor-pointer">
-            {point || 0}
+      // render: ({ totalPost, totalReview, totalReservation, point }) => (
+      render: (item: any) => (
+        <div
+          className="flex flex-row items-center justify-center cursor-pointer"
+          onClick={() => navigate(Url.userActivity, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}
+        >
+          <Tooltip title={t('Activity')} placement="top">
+            <BaseText medium>
+              {item?.totalPost || 0}/
+            </BaseText>
+            <BaseText medium>
+              {item?.totalReview || 0}/
+            </BaseText>
+            <BaseText medium>
+              {item?.totalReservation || 0}/
+            </BaseText>
+            <BaseText medium>
+              {item?.point || 0}
+            </BaseText>
           </Tooltip>
         </div>
       ),

@@ -9,7 +9,7 @@ import { ShopInformationTab } from "./shopInformationTab";
 import { INIT_TAB_USER_DETAIL, listOptionUserDetail } from "../../utils/constants";
 
 
-interface Iprops {
+interface IProps {
   route?: any;
   navigation?: any;
 }
