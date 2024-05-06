@@ -85,7 +85,7 @@ export default function BulletinSetting() {
 
   useEffect(() => {
     getListThema(boardTypeSelected);
-  }, [boardTypeSelected]);
+  }, []);
 
   const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
     setBoardSelected(boardLink);
