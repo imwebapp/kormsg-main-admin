@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { BaseTable, BaseText } from "../../../components";
+import { BaseTable, BaseText, CustomButton } from "../../../components";
 import { ArrowUpOutlined } from "@ant-design/icons";
-import { Input, TableColumnsType } from "antd";
+import { Input, TableColumnsType, notification } from "antd";
 import { useEffect, useState } from "react";
 import { pointHistoryApi } from "../../../apis/pointHistoryApi";
-import { POINT_ACTION, POINT_ACTION_KR } from "../../../utils/constants";
+import { POINT_ACTION_KR, POINT_PRODUCT } from "../../../utils/constants";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import dayjs from "dayjs";
+import Images from "../../../assets/gen";
 type SortingType = keyof typeof POINT_ACTION_KR;
 export default function OrderHistory() {
   const { t } = useTranslation();
@@ -14,7 +15,28 @@ export default function OrderHistory() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSorting, setSelectedSorting] = useState<SortingType>("ALL");
   const [valueKeywordFilter, setValueKeywordFilter] = useState("");
+  const [selectedButton, setSelectedButton] = useState(POINT_PRODUCT.ALL);
 
+  const approveOrderHistory = async (id: string) => {
+    try {
+      let result: any = await pointHistoryApi.approveOrderHistory(id);
+      if (result.code === 200) {
+        notification.success({
+          message: "Approve Order Success",
+        });
+      }
+    } catch (error) {}
+  };
+  const rejectOrderHistory = async (id: string) => {
+    try {
+      let result: any = await pointHistoryApi.rejectOrderHistory(id);
+      if (result.code === 200) {
+        notification.success({
+          message: "Reject Order Success",
+        });
+      }
+    } catch (error) {}
+  };
   const handleChangeTypeReceive = (value: SortingType) => {
     setSelectedSorting(value);
   };
@@ -24,29 +46,16 @@ export default function OrderHistory() {
   const getListOrderHistory = async () => {
     try {
       const params = {
-        fields: JSON.stringify(["$all", { user: ["$all"] }]),
+        fields: JSON.stringify(["$all"]),
         filter: JSON.stringify({
-          $and: [
-            {
-              $or: {
-                "$user.username$": { $iLike: `%${valueKeywordFilter}%` },
-                "$user.phone$": { $iLike: `%${valueKeywordFilter}%` },
-              },
-            },
+          $or: [
+            { user_name: { $iLike: `%${valueKeywordFilter}%` } },
+            { user_phone: { $iLike: `%${valueKeywordFilter}%` } },
+            { product: { name: { $iLike: `%${valueKeywordFilter}%` } } },
           ],
         }),
       };
-      if (
-        selectedSorting !== POINT_ACTION["ALL"] &&
-        selectedSorting !== POINT_ACTION_KR["ALL"]
-      ) {
-        params.filter = JSON.stringify({
-          ...JSON.parse(params.filter),
-          action: selectedSorting,
-        });
-      }
-
-      let result: any = await pointHistoryApi.getListReceivePoint(params);
+      let result: any = await pointHistoryApi.getListOrderHistory(params);
       if (result.code === 200) {
         setData(result.results.objects.rows);
       }
@@ -70,21 +79,12 @@ export default function OrderHistory() {
     },
     {
       title: t("아이디"),
-      dataIndex: ["user", "username"],
-      width: "20%",
+      dataIndex: ["user_name"],
+      width: "10%",
     },
     {
-      title: t("연락처"),
-      dataIndex: ["user", "phone"],
-    },
-    {
-      title: t("포인트 종류"),
-      dataIndex: ["action"],
-      render: (text: SortingType) => <div>{POINT_ACTION_KR[text]}</div>,
-    },
-    {
-      title: t("차감포인트"),
-      dataIndex: ["point"],
+      title: t("보유포인트"),
+      dataIndex: ["user_point"],
       render: (text) => (
         <BaseText bold>
           {parseFloat(text).toLocaleString("en-US") + "P"}
@@ -93,11 +93,57 @@ export default function OrderHistory() {
     },
     {
       title: t("차감포인트"),
-      dataIndex: ["user", "point"],
+      dataIndex: ["product", "point"],
       render: (text) => (
         <BaseText bold>
-          {parseFloat(text).toLocaleString("en-US") + "P"}
+          {"-" + parseFloat(text).toLocaleString("en-US") + "P"}
         </BaseText>
+      ),
+    },
+    {
+      title: t("신청상품"),
+      dataIndex: ["product", "name"],
+    },
+    {
+      title: t("전화번호"),
+      dataIndex: ["user_phone"],
+    },
+    {
+      title: t("승인버튼"),
+      render: (text, record) => (
+        <div className="flex gap-2 justify-center px-3 py-2.5 text-xs font-bold leading-5 text-center text-white whitespace-nowrap">
+          {!record.pending && (
+            <button
+              className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg"
+              onClick={() => {
+                approveOrderHistory(record.id);
+              }}
+            >
+              Approve
+            </button>
+          )}
+
+          {!!record.pending && (
+            <button className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg">
+              보냈음
+            </button>
+          )}
+          {!record.sent && (
+            <button
+              className="justify-center px-2 py-1.5 bg-red-600 rounded-lg"
+              onClick={() => {
+                rejectOrderHistory(record.id);
+              }}
+            >
+              Reject
+            </button>
+          )}
+          {!!record.sent && (
+            <button className="justify-center px-2 py-1.5 bg-red-600 rounded-lg">
+              대기
+            </button>
+          )}
+        </div>
       ),
     },
   ];
@@ -115,11 +161,73 @@ export default function OrderHistory() {
       />
     );
   };
+  const downloadExcel = async () => {
+    try {
+      const params = {
+        fields: JSON.stringify(["$all"]),
+        filter: JSON.stringify({
+          $or: [
+            { user_name: { $iLike: `%${valueKeywordFilter}%` } },
+            { user_phone: { $iLike: `%${valueKeywordFilter}%` } },
+            { product: { name: { $iLike: `%${valueKeywordFilter}%` } } },
+          ],
+        }),
+        limit: 99999,
+        order: JSON.stringify([["created_at", "DESC"]]),
+      };
+      let result: any = await pointHistoryApi.downloadExcel(params);
+      window.open(result.results?.object?.url, "_blank");
+    } catch (error) {}
+  };
+  const getTextColor = (buttonStatus: any) => {
+    return buttonStatus === selectedButton ? "white" : "black";
+  };
+  const listButton = () => {
+    const buttonData = [
+      {
+        status: POINT_PRODUCT.ALL,
+        label: t("ALL"),
+        count: 0,
+      },
+      {
+        status: POINT_PRODUCT.NOT_APPROVE,
+        label: t("미승인"),
+        count: 0,
+      },
+    ];
+    const handleButtonClick = (buttonName: POINT_PRODUCT) => {
+      setSelectedButton(buttonName);
+    };
+    const getButtonStyle = (buttonKey: any) => {
+      const isSelected = buttonKey === selectedButton;
+      return {
+        backgroundColor: isSelected ? "black" : "white",
+        color: isSelected ? "white" : "black",
+      };
+    };
+    return (
+      <div className="flex flex-row gap-4 ">
+        {buttonData.map(({ status, label, count }) => (
+          <CustomButton
+            key={status}
+            className="px-4 text-base font-medium rounded-full h-11"
+            style={getButtonStyle(status)}
+            onClick={() => handleButtonClick(status)}
+          >
+            <BaseText color={getTextColor(status)} size={16}>
+              {label} ({count})
+            </BaseText>
+          </CustomButton>
+        ))}
+      </div>
+    );
+  };
   useEffect(() => {
     getListOrderHistory();
   }, [valueKeywordFilter, selectedSorting]);
   return (
     <div className="p-4 py-0">
+      {listButton()}
       <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium max-md:flex-wrap items-center">
         <div className="flex gap-4 text-base font-medium max-w-[651px] max-md:flex-wrap w-full my-4">
           <Input
@@ -144,6 +252,19 @@ export default function OrderHistory() {
             defaultValue={selectedSorting}
             customizeStyleSelect={{ singleItemHeightLG: 50 }}
           />
+        </div>
+        <div
+          className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
+          onClick={() => {
+            downloadExcel();
+          }}
+        >
+          <img
+            src={Images.download}
+            alt="Excel download"
+            className="shrink-0 w-6 h-6 aspect-square"
+          />
+          <span>Download Excel</span>
         </div>
       </div>
       {bodyTable()}

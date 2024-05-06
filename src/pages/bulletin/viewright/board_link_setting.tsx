@@ -490,6 +490,8 @@ export default function BulletinSetting() {
 
       <BaseModal2
         width="80vw"
+        bodyStyle='h-[80vh]'
+        noScroll
         isOpen={openModalThema}
         onClose={() => {
           setOpenModalThema(false);

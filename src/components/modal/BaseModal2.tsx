@@ -1,10 +1,10 @@
-import { CloseOutlined } from "@ant-design/icons";
-import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
-import { classNames } from "../../utils/common";
-import CustomButton from "../button";
-import BaseText from "../text";
-import { Modal } from "antd";
-import BaseButton from "../baseButton";
+import { CloseOutlined } from '@ant-design/icons';
+import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
+import { classNames } from '../../utils/common';
+import CustomButton from '../button';
+import BaseText from '../text';
+import { Modal } from 'antd';
+import BaseButton from '../baseButton';
 
 interface BaseModalProps {
   isOpen: boolean;
@@ -20,8 +20,9 @@ interface BaseModalProps {
   nameConfirm?: string;
   styleButtonCancel?: string;
   styleButtonConfirm?: string;
-  typeButtonConfirm?: "primary" | "default" | "danger";
+  typeButtonConfirm?: 'primary' | 'default' | 'danger';
   isHideAction?: boolean;
+  noScroll?: boolean;
   afterOpenChange?: any;
 }
 
@@ -34,6 +35,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
     isHideAction,
     title,
     children,
+    noScroll,
     bodyStyle,
     disableSubmitBtn,
     nameCancel,
@@ -72,13 +74,13 @@ export const BaseModal2 = (props: BaseModalProps) => {
       closable={false}
       footer={null}
     >
-      <div className="flex items-center justify-between px-6 py-4 bg-white rounded-lg">
+      <div className='flex items-center justify-between px-6 py-4 bg-white rounded-lg'>
         <BaseText
           bold
           locale
           size={20}
           className={classNames(
-            "font-bold text-left text-darkNight900",
+            'font-bold text-left text-darkNight900',
             styleTitle
           )}
         >
@@ -86,25 +88,26 @@ export const BaseModal2 = (props: BaseModalProps) => {
         </BaseText>
         <CloseOutlined
           onClick={closeModal}
-          className="text-2xl text-gray-500 cursor-pointer"
+          className='text-2xl text-gray-500 cursor-pointer'
         />
       </div>
       <div
         className={classNames(
-          "max-h-[80vh] px-6 py-4 overflow-auto",
+          'max-h-[80vh] px-6 py-4 ',
+          noScroll ? '' : 'overflow-auto',
           bodyStyle
         )}
       >
         {children}
       </div>
       {!isHideAction && (
-        <div className="flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6">
+        <div className='flex gap-4 px-6 py-4 border-t border-darkNight100 sm:px-6'>
           <BaseButton
             onClick={closeModal}
-            type="default"
+            type='default'
             className={styleButtonCancel}
           >
-            {nameCancel || "Cancel"}
+            {nameCancel || 'Cancel'}
           </BaseButton>
           <BaseButton
             onClick={submitModal}
@@ -112,7 +115,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
             type={typeButtonConfirm}
             disabled={disableSubmitBtn}
           >
-            {nameConfirm || "Confirm"}
+            {nameConfirm || 'Confirm'}
           </BaseButton>
         </div>
       )}
