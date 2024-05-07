@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { TableColumnsType, message, notification } from "antd";
+import { Popover, TableColumnsType, message, notification } from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
-import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
@@ -12,16 +11,16 @@ import {
   SORTING,
   STORE_STATUS,
 } from "../../utils/constants";
-import dayjs from "dayjs";
+import { PlusOutlined, MinusOutlined, CloseOutlined } from "@ant-design/icons";
 import { BaseModal2 } from "../modal/BaseModal2";
-import { Slide } from "react-slideshow-image";
-import "react-slideshow-image/dist/styles.css";
 import { Url } from "../../routers/paths";
 import { useNavigate } from "react-router-dom";
 import { BaseInput } from "../input/BaseInput";
 import { userApi } from "../../apis/userApi";
 import NaverMapComponent from "./components/NaverMap";
 import { BaseTableDnD } from "../table/BaseTableDnD";
+import CustomButton from "../button";
+import { shopApi } from "../../apis/shopApi";
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -54,7 +53,11 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [isShowInfo, setIsShowInfo] = useState(false);
   const [isShowReasonDenied, setIsShowReasonDenied] = useState(false);
   const [memoValue, setMemoValue] = useState("");
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
+  const [listRowSelected, setListRowSelected] = useState<string[]>([]);
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setListRowSelected(newSelectedRowKeys as string[]);
+  };
+
   const [positionStore, setPositionStore] = useState({
     lat: 0,
     long: 0,
@@ -66,6 +69,8 @@ export default function StoreListTable(props: StoreListTableProps) {
   const limit = 50;
   const [dataHistory, setDataHistory] = useState<any[]>([]);
   const [deniedMessagse, setDeniedMessagse] = useState("");
+  const [valueAddDay, setValueAddDay] = useState<number>();
+  const [valueMinusDay, setValueMinusDay] = useState<number>();
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -230,7 +235,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     return `{${filterString}}`;
   }
   const generateFields = () => {
-    if (typeStore == STORE_STATUS.eventOngoing) {
+    if (typeStore === STORE_STATUS.eventOngoing) {
       // default event on going
       return '["$all",{"events":["$all",{"$filter":{}}]}]';
     }
@@ -337,12 +342,60 @@ export default function StoreListTable(props: StoreListTableProps) {
         message.error("Update memo failed");
       });
   };
+  const handleMinusDay = async () => {
+    if (valueMinusDay && valueMinusDay > 0) {
+      try {
+        const listIdUpdate = JSON.stringify(listRowSelected);
+        const dataUpdate = {
+          days: valueMinusDay,
+        };
+        const resUpdateDate: any = await shopApi.updateForceExpiredMultiple(
+          listIdUpdate,
+          dataUpdate
+        );
+        if (resUpdateDate.code === 200) {
+          getListStore();
+          setValueMinusDay(undefined);
+          setListRowSelected([]);
+          message.success("Update success");
+        }
+      } catch (error) {
+        console.log("error update minus time", error);
+        message.error("Update failed");
+      }
+    }
+  };
+  const handleAddDay = async () => {
+    if (valueAddDay && valueAddDay > 0) {
+      try {
+        const listIdUpdate = JSON.stringify(listRowSelected);
+        const dataUpdate = {
+          days: valueAddDay,
+        };
+        const resUpdateDate: any = await shopApi.updateExpirationDateMultiple(
+          listIdUpdate,
+          dataUpdate
+        );
+        if (resUpdateDate.code === 200) {
+          getListStore();
+          setValueAddDay(undefined);
+          setListRowSelected([]);
+          message.success("Update success");
+        }
+      } catch (error) {
+        console.log("error update add time", error);
+        message.error("Update failed");
+      }
+    }
+  };
 
   useEffect(() => {
     getListStore();
+    setListRowSelected([]);
   }, [typeStore, typeSorting, thema, isUpdate, valueSearch, currentPage]);
   useEffect(() => {
     setCurrentPage(1);
+    setListRowSelected([]);
   }, [typeStore]);
   let dynamicColumns: TableColumnsType<any> = [
     {
@@ -382,7 +435,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         <div className="flex flex-col items-center">
           <BaseText size={16} medium>
             {`${moment(parseInt(record.start_date)).format(
-              "llYYYY-MM-DD"
+              "YYYY-MM-DD"
             )} ~ ${moment(parseInt(record.expired_date)).format("YYYY-MM-DD")}`}
           </BaseText>
           <BaseText size={16} medium className="text-violet2 ">
@@ -404,7 +457,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           className="min-w-[30px] cursor-pointer"
           onClick={() => handleClick(record.id)}
         >
-          <img src={Images.eye} className="w-6 h-6" />
+          <img src={Images.eye} className="w-6 h-6" alt="icon-eye" />
         </div>
       ),
     },
@@ -571,23 +624,11 @@ export default function StoreListTable(props: StoreListTableProps) {
 
   return (
     <>
-      {/* <BaseTable
-        // onSelectChange={() => {}}
-        className={className}
-        pagination={{
-          current: currentPage,
-          pageSize: limit,
-          total: getCountTotal(),
-          onChange: handlePageChange,
-        }}
-        columns={dynamicColumns}
-        data={listStore}
-      /> */}
       <BaseTableDnD
         onSelectChange={onSelectChange}
+        selectedKeys={listRowSelected}
         className={className}
         columns={dynamicColumns}
-        // data={listStore} // add key for each item
         data={listStore?.map((item: any) => ({ ...item, key: item.id }))}
         pagination={{
           current: currentPage,
@@ -596,6 +637,91 @@ export default function StoreListTable(props: StoreListTableProps) {
           onChange: handlePageChange,
         }}
       />
+      {listRowSelected.length > 0 && (
+        <div className="fixed bottom-6 right-1/4 left-1/4">
+          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
+            <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
+              <CloseOutlined className="text-xl text-black cursor-pointer" />
+              <BaseText bold size={16}>
+                {t("선택됨")}{" "}
+                <span className="text-primary">{listRowSelected.length}</span>
+              </BaseText>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <div className="flex justify-center border rounded-full border-darkNight100">
+                <Popover
+                  placement="topRight"
+                  trigger="click"
+                  content={
+                    <div>
+                      <BaseInput
+                        placeholder="00"
+                        iconRight={
+                          <BaseText locale bold>
+                            일
+                          </BaseText>
+                        }
+                        type="number"
+                        value={valueMinusDay}
+                        onChange={(value) => {
+                          setValueMinusDay(value);
+                        }}
+                      />
+                      <CustomButton
+                        className="flex justify-center w-full mt-4"
+                        primary
+                        onClick={handleMinusDay}
+                        disabled={!valueMinusDay}
+                        locale
+                      >
+                        적용
+                      </CustomButton>
+                    </div>
+                  }
+                >
+                  <MinusOutlined className="px-4 py-3 text-2xl border-r cursor-pointer text-primary border-darkNight100" />
+                </Popover>
+
+                <Popover
+                  placement="topLeft"
+                  trigger="click"
+                  content={
+                    <div>
+                      <BaseInput
+                        placeholder="00"
+                        iconRight={
+                          <BaseText locale bold>
+                            일
+                          </BaseText>
+                        }
+                        type="number"
+                        value={valueAddDay}
+                        onChange={(value) => {
+                          setValueAddDay(value);
+                        }}
+                      />
+                      <CustomButton
+                        className="flex justify-center w-full mt-4"
+                        primary
+                        locale
+                        onClick={handleAddDay}
+                        disabled={!valueAddDay}
+                      >
+                        적용
+                      </CustomButton>
+                    </div>
+                  }
+                >
+                  <PlusOutlined className="px-4 text-2xl cursor-pointer text-primary" />
+                </Popover>
+              </div>
+              <BaseText locale size={16} bold className="text-center">
+                기간을 입력해주세요
+              </BaseText>
+            </div>
+          </div>
+        </div>
+      )}
       <BaseModal2
         width={1000}
         isOpen={isShowModalMap}

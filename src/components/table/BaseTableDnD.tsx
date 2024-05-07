@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Table, TableColumnsType, TablePaginationConfig, Tooltip } from "antd";
+import { Table, TableColumnsType, TablePaginationConfig } from "antd";
 import "./styles.css";
 import { Draggable, Droppable } from "react-beautiful-dnd";
-import { classNames } from "../../utils/common";
 import { UpOutlined } from "@ant-design/icons";
 import BaseText from "../text";
 
 interface DraggableBodyProps {
   [key: string]: any;
 }
-const DraggableBody: React.FC<DraggableBodyProps> = (props) => <tbody {...props} />;
-
+const DraggableBody: React.FC<DraggableBodyProps> = (props) => (
+  <tbody {...props} />
+);
 
 interface DraggableRowProps {
   draggableProps: {
@@ -20,8 +20,8 @@ interface DraggableRowProps {
   dragHandleProps: any;
   innerRef: React.Ref<any>;
   style: React.CSSProperties;
-  'data-row-key': string;
-  'data-row-index': number;
+  "data-row-key": string;
+  "data-row-index": number;
   children?: React.ReactNode;
 }
 
@@ -29,7 +29,7 @@ interface DraggableRowProps {
 const mergeRefs = (...refs: (React.Ref<any> | undefined)[]) => {
   return (value: any) => {
     refs.forEach((ref) => {
-      if (typeof ref === 'function') {
+      if (typeof ref === "function") {
         ref(value);
       } else if (ref != null) {
         (ref as React.MutableRefObject<any>).current = value;
@@ -40,12 +40,12 @@ const mergeRefs = (...refs: (React.Ref<any> | undefined)[]) => {
 
 const DraggableRow: React.FC<DraggableRowProps> = (props) => {
   const { draggableProps, dragHandleProps, innerRef: rowRef, style } = props;
-  const draggableRef = draggableProps?.innerRef || (() => { }); // Kiểm tra innerRef có tồn tại không
+  const draggableRef = draggableProps?.innerRef || (() => {}); // Kiểm tra innerRef có tồn tại không
 
   return (
     <Draggable
-      draggableId={props['data-row-key']}
-      index={props['data-row-index']}
+      draggableId={props["data-row-key"]}
+      index={props["data-row-index"]}
       disableInteractiveElementBlocking={true} // Tắt chặn các phần tử tương tác
     >
       {(provided, snapshot) => {
@@ -64,19 +64,17 @@ const DraggableRow: React.FC<DraggableRowProps> = (props) => {
             {snapshot.isDragging ? (
               <div className="flex flex-col items-center justify-center w-4 drop-shadow-lg">
                 <UpOutlined />
-                <BaseText>
-                  MoveTo
-                </BaseText>
+                <BaseText>MoveTo</BaseText>
               </div>
-            ) : props.children}
+            ) : (
+              props.children
+            )}
           </tr>
-        )
-      }
-      }
-    </Draggable >
+        );
+      }}
+    </Draggable>
   );
 };
-
 
 type TableProps = {
   onSelectChange?: (newSelectedRowKeys: any) => void;
@@ -87,6 +85,7 @@ type TableProps = {
   maxContent?: boolean;
   onRowClick?: (record: any, index: any) => void;
   className?: string; // for tailwindcss
+  selectedKeys?: any;
 };
 
 export const BaseTableDnD = (props: TableProps) => {
@@ -99,8 +98,11 @@ export const BaseTableDnD = (props: TableProps) => {
     sticky,
     maxContent,
     onRowClick,
+    selectedKeys,
   } = props;
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
+    selectedKeys || []
+  );
   const [rowClickKey, setRowClickKey] = useState<any>();
 
   const _onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -119,6 +121,9 @@ export const BaseTableDnD = (props: TableProps) => {
       ? classCustom + " selected-row"
       : classCustom;
   };
+  useEffect(() => {
+    setSelectedRowKeys(selectedKeys);
+  }, [selectedKeys]);
 
   return (
     <Droppable droppableId="tableDnD">
@@ -138,7 +143,9 @@ export const BaseTableDnD = (props: TableProps) => {
               onClick: () => {
                 if (onRowClick) {
                   onRowClick(record, index);
-                  setRowClickKey(`${(pagination as any)?.current || ""}-${index}`);
+                  setRowClickKey(
+                    `${(pagination as any)?.current || ""}-${index}`
+                  );
                 }
               },
             })}
@@ -154,4 +161,4 @@ export const BaseTableDnD = (props: TableProps) => {
       )}
     </Droppable>
   );
-}
+};

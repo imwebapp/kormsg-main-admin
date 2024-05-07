@@ -9,14 +9,7 @@ import {
   ArrowUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import {
-  DatePicker,
-  GetProps,
-  Input,
-  Select,
-  message,
-  notification,
-} from "antd";
+import { DatePicker, Input, Select, message, notification } from "antd";
 
 import { storeApi } from "../../apis/storeApi";
 import { BaseInput } from "../../components/input/BaseInput";
