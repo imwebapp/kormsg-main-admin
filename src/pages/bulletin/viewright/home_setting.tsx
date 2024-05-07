@@ -1,29 +1,29 @@
-import { DatePicker, Switch, TimePicker, message } from 'antd';
-import { BaseText, CustomButton } from '../../../components';
-import Images from '../../../assets/gen';
-import { BaseInput } from '../../../components/input/BaseInput';
-import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
-import { useEffect, useMemo, useState } from 'react';
-import { BannerInterface } from '../../../entities/banner.entity';
-import { NAVBAR, SELECT_ALL } from '../../../utils/constants';
-import { AdminSettingInterface } from '../../../entities/adminsetting.entity';
-import { useBulletinState } from '../store';
-import { UploadApi } from '../../../apis/uploadApi';
-import { HomeSettingApi } from '../../../apis/homeSettingApi';
-import { NavBarApi } from '../../../apis/navbarApi';
-import { NavBarInterface } from '../../../entities/navbar.entity';
-import { showError } from '../../../utils/showToast';
-import { useTranslation } from 'react-i18next';
-import { BoardLinkApi } from '../../../apis/boardLinkApi';
-import { BoardLinkInterface } from '../../../entities';
-import moment from 'moment';
-import { useLocalStorage } from '../../../stores/localStorage';
-import dayjs from 'dayjs';
-import { ThemaApi } from '../../../apis/themaApi';
+import { DatePicker, Switch, TimePicker, message } from "antd";
+import { BaseText, CustomButton } from "../../../components";
+import Images from "../../../assets/gen";
+import { BaseInput } from "../../../components/input/BaseInput";
+import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
+import { useEffect, useMemo, useState } from "react";
+import { BannerInterface } from "../../../entities/banner.entity";
+import { NAVBAR, SELECT_ALL } from "../../../utils/constants";
+import { AdminSettingInterface } from "../../../entities/adminsetting.entity";
+import { useBulletinState } from "../store";
+import { UploadApi } from "../../../apis/uploadApi";
+import { HomeSettingApi } from "../../../apis/homeSettingApi";
+import { NavBarApi } from "../../../apis/navbarApi";
+import { NavBarInterface } from "../../../entities/navbar.entity";
+import { showError } from "../../../utils/showToast";
+import { useTranslation } from "react-i18next";
+import { BoardLinkApi } from "../../../apis/boardLinkApi";
+import { BoardLinkInterface, ThemaInterface } from "../../../entities";
+import moment from "moment";
+import { useLocalStorage } from "../../../stores/localStorage";
+import dayjs from "dayjs";
+import { ThemaApi } from "../../../apis/themaApi";
 
 export default function HomeSetting() {
   return (
-    <div className='flex flex-col'>
+    <div className="flex flex-col">
       <AdminSetting />
       <Banner />
       <NavigationBar />
@@ -37,26 +37,27 @@ const AdminSetting = () => {
     boolean | undefined
   >(false);
   const { setLastRefresh, lastRefresh } = useBulletinState((state) => state);
-  const [startTime, setStartTime] = useState<any>('00:00');
-  const [endTime, setEndTime] = useState<any>('00:00');
+  const [startTime, setStartTime] = useState<any>("00:00");
+  const [endTime, setEndTime] = useState<any>("00:00");
   const { locale } = useLocalStorage((state) => state);
-  const [links, setLinks] = useState<BoardLinkInterface[]>([]);
+  const [themas, setThemas] = useState<ThemaInterface[]>([]);
   const { t } = useTranslation();
   const [themaAdults, setthemaAdults] = useState<string[]>([]);
   const [isFirstLoad, setFirstLoad] = useState(true);
   const _getBoardLinks = async () => {
     try {
-      const respon = await BoardLinkApi.getList();
-      console.log('respon', respon);
+      const respon: ThemaInterface[] = await ThemaApi.getList();
       const themaAdults = respon
-        .filter((item: BoardLinkInterface) => !!item.thema?.is_for_adults)
-        .map((item: BoardLinkInterface) => item.thema_id);
+        .filter((item: ThemaInterface) => !!item.is_for_adults)
+        .map((item: ThemaInterface) => item.id!);
+
       if (respon[0]) {
-        setStartTime(respon[0].thema.start_time.slice(0, 5));
-        setEndTime(respon[0].thema.end_time.slice(0, 5));
+        setStartTime(respon[0].start_time?.slice(0, 5));
+        setEndTime(respon[0].end_time?.slice(0, 5));
       }
+
       setthemaAdults(themaAdults);
-      setLinks(respon);
+      setThemas(respon);
     } catch (error) {}
   };
 
@@ -91,16 +92,18 @@ const AdminSetting = () => {
     _getBoardLinks();
   }, [lastRefresh]);
 
-  const setThemaAdults = async (value: any) => {
+  const _setThemaAdults = async (value: any) => {
     try {
       await Promise.all(
-        links.map(async (item: BoardLinkInterface) => {
-          if (value.includes(item.thema_id || '')) {
-            await ThemaApi.updateThema(item.thema_id ?? '', {
+        themas.map(async (item: ThemaInterface) => {
+          console.log("item", item.id);
+
+          if (value.includes(item.id || "")) {
+            await ThemaApi.updateThema(item.id ?? "", {
               is_for_adults: true,
             });
           } else {
-            await ThemaApi.updateThema(item.thema_id ?? '', {
+            await ThemaApi.updateThema(item.id ?? "", {
               is_for_adults: false,
             });
           }
@@ -114,8 +117,8 @@ const AdminSetting = () => {
   const setThemaAdultsTime = async () => {
     try {
       await Promise.all(
-        links.map(async (item: BoardLinkInterface) => {
-          await ThemaApi.updateThema(item.thema_id ?? '', {
+        themas.map(async (item: ThemaInterface) => {
+          await ThemaApi.updateThema(item.id!, {
             start_time: startTime,
             end_time: endTime,
           });
@@ -136,14 +139,14 @@ const AdminSetting = () => {
 
   return (
     <>
-      <BaseText locale bold size={16} className='mb-4'>
+      <BaseText locale bold size={16} className="mb-4">
         Things
       </BaseText>
-      <BaseText locale medium className='mb-4'>
+      <BaseText locale medium className="mb-4">
         Adult certification
       </BaseText>
-      <div className='flex flex-row justify-between'>
-        <BaseText locale medium className='mb-4'>
+      <div className="flex flex-row justify-between">
+        <BaseText locale medium className="mb-4">
           Adult verification status
         </BaseText>
         <Switch
@@ -154,37 +157,37 @@ const AdminSetting = () => {
           }}
         />
       </div>
-      <div className='w-full h-11 gap-x-2 border rounded-lg flex flex-row justify-center items-center'>
-        <label htmlFor='select-start-time' className='cursor-pointer relative'>
+      <div className="w-full h-11 gap-x-2 border rounded-lg flex flex-row justify-center items-center">
+        <label htmlFor="select-start-time" className="cursor-pointer relative">
           <BaseText bold size={16}>
             {startTime}
           </BaseText>
           <TimePicker
-            id='select-start-time'
-            className='absolute opacity-0 top-0 right-0'
-            defaultValue={dayjs(startTime, 'HH:mm')}
-            format={'HH:mm'}
+            id="select-start-time"
+            className="absolute opacity-0 top-0 right-0"
+            defaultValue={dayjs(startTime, "HH:mm")}
+            format={"HH:mm"}
             onChange={(time: any, timeString: any) => {
-              if (typeof timeString == 'string' && timeString.length > 0)
+              if (typeof timeString == "string" && timeString.length > 0)
                 setStartTime(timeString);
             }}
           />
         </label>
-        <BaseText bold size={16} className='text-darkNight200'>
+        <BaseText bold size={16} className="text-darkNight200">
           ~
         </BaseText>
-        <label htmlFor='select-end-time' className='cursor-pointer relative'>
+        <label htmlFor="select-end-time" className="cursor-pointer relative">
           <BaseText bold size={16}>
             {endTime}
           </BaseText>
           <TimePicker
-            id='select-end-time'
-            className='absolute opacity-0 top-0 left-0'
-            defaultValue={dayjs(endTime, 'HH:mm')}
-            format={'HH:mm'}
+            id="select-end-time"
+            className="absolute opacity-0 top-0 left-0"
+            defaultValue={dayjs(endTime, "HH:mm")}
+            format={"HH:mm"}
             onChange={(time: any, timeString: any) => {
-              console.log('timeString', timeString);
-              if (typeof timeString == 'string' && timeString.length > 0)
+              console.log("timeString", timeString);
+              if (typeof timeString == "string" && timeString.length > 0)
                 setEndTime(timeString);
             }}
           />
@@ -192,27 +195,27 @@ const AdminSetting = () => {
       </div>
       <BaseInputSelect
         multiple
-        className='mt-4'
-        onChange={setThemaAdults}
+        className="mt-4"
+        onChange={_setThemaAdults}
         defaultValue={themaAdults}
         required={true}
         allowClear={false}
-        size='large'
+        size="large"
         textInputSize={12}
-        placeholder='Select'
+        placeholder="Select"
         options={[
-          { label: t('All Page'), value: SELECT_ALL },
-          ...links.map((item: BoardLinkInterface, index) => {
+          { label: t("All"), value: SELECT_ALL },
+          ...themas.map((item: ThemaInterface, index) => {
             return {
               label: item.name,
-              value: item.thema_id || '',
+              value: item.id || "",
             };
           }),
         ]}
       />
-      <div className='h-[1px] bg-darkNight100 mt-4'></div>
-      <div className='flex flex-row justify-between mt-4'>
-        <BaseText locale medium className='mb-4'>
+      <div className="h-[1px] bg-darkNight100 mt-4"></div>
+      <div className="flex flex-row justify-between mt-4">
+        <BaseText locale medium className="mb-4">
           Whether profile features are exposed?
         </BaseText>
         <Switch
@@ -244,7 +247,7 @@ const Banner = () => {
 
   const updateBanner = async (item: BannerInterface) => {
     try {
-      await HomeSettingApi.updateBanner(item.id || '', item);
+      await HomeSettingApi.updateBanner(item.id || "", item);
       getListBanner();
       setLastRefresh(Date.now());
     } catch (error) {}
@@ -268,8 +271,8 @@ const Banner = () => {
   const createBanner = async () => {
     try {
       await HomeSettingApi.createBanner({
-        thumbnail: '',
-        url: '',
+        thumbnail: "",
+        url: "",
       });
       setLastRefresh(Date.now());
       getListBanner();
@@ -293,31 +296,31 @@ const Banner = () => {
       {useMemo(
         () => (
           <>
-            <div className='h-[1px] bg-darkNight100'></div>
-            <div className='flex flex-row justify-between mt-4'>
-              <BaseText locale bold className='mb-4'>
+            <div className="h-[1px] bg-darkNight100"></div>
+            <div className="flex flex-row justify-between mt-4">
+              <BaseText locale bold className="mb-4">
                 Banner
               </BaseText>
               <img
                 onClick={createBanner}
                 src={Images.plus}
-                className='w-6 h-6 cursor-pointer'
+                className="w-6 h-6 cursor-pointer"
               />
             </div>
-            <div className='flex flex-col'>
+            <div className="flex flex-col">
               {banners.map((item, index) => {
                 return (
                   <div key={index}>
-                    <div className='flex flex-row items-center justify-between'>
+                    <div className="flex flex-row items-center justify-between">
                       <BaseText medium>
                         <BaseText locale>Banner</BaseText> {index + 1}
                       </BaseText>
                       <div>
                         <input
-                          type='file'
-                          accept='image/*'
-                          id={'bannerInput' + index}
-                          style={{ display: 'none' }}
+                          type="file"
+                          accept="image/*"
+                          id={"bannerInput" + index}
+                          style={{ display: "none" }}
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -325,14 +328,14 @@ const Banner = () => {
                           }}
                         />
                         <label
-                          htmlFor={'bannerInput' + index}
-                          className='flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer'
+                          htmlFor={"bannerInput" + index}
+                          className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
                         >
-                          <img src={Images.upload} className='w-5 h-5 mr-2' />
+                          <img src={Images.upload} className="w-5 h-5 mr-2" />
                           <BaseText
                             locale
                             bold
-                            className='text-dayBreakBlue500'
+                            className="text-dayBreakBlue500"
                           >
                             Upload
                           </BaseText>
@@ -341,15 +344,15 @@ const Banner = () => {
                     </div>
                     <img
                       src={item.thumbnail}
-                      className='w-full h-[128px] mt-4 object-cover rounded-xl'
+                      className="w-full h-[128px] mt-4 object-cover rounded-xl"
                     />
-                    <div className='flex flex-row justify-between items-center mt-4'>
+                    <div className="flex flex-row justify-between items-center mt-4">
                       <BaseText locale medium>
                         Link to
                       </BaseText>
                       <BaseInput
                         key={Date.now() + index}
-                        styleInputContainer='h-9'
+                        styleInputContainer="h-9"
                         onSave={(value) => {
                           updateBanner({
                             ...item,
@@ -363,14 +366,14 @@ const Banner = () => {
                           });
                         }}
                         defaultValue={item.url}
-                        placeholder='Enter Link'
-                        className='w-[170px]'
+                        placeholder="Enter Link"
+                        className="w-[170px]"
                       />
                     </div>
                     <CustomButton
-                      onClick={() => deleteBanner(item.id || '')}
-                      className='my-4 bg-dustRed50 border-none w-full'
-                      classNameTitle='text-dustRed500'
+                      onClick={() => deleteBanner(item.id || "")}
+                      className="my-4 bg-dustRed50 border-none w-full"
+                      classNameTitle="text-dustRed500"
                       medium
                       locale
                     >
@@ -445,7 +448,7 @@ const NavigationBar = () => {
 
   const updateNav = async (item: NavBarInterface) => {
     try {
-      await NavBarApi.updateNavbar(item.id || '', item);
+      await NavBarApi.updateNavbar(item.id || "", item);
       getNavBars();
       setLastRefresh(Date.now());
     } catch (error) {}
@@ -485,7 +488,7 @@ const NavigationBar = () => {
     if (navbarType[0]) {
       const index = navbarType
         .map((item) => JSON.stringify(item))
-        .indexOf(item.type || '');
+        .indexOf(item.type || "");
       return index >= 0 ? index : null;
     }
     return;
@@ -496,27 +499,27 @@ const NavigationBar = () => {
       {useMemo(
         () => (
           <div>
-            <div className='flex flex-row justify-between mt-4'>
-              <BaseText locale bold className='mb-4'>
+            <div className="flex flex-row justify-between mt-4">
+              <BaseText locale bold className="mb-4">
                 NAVIGATION BAR
               </BaseText>
               <img
                 onClick={createNavBar}
                 src={Images.plus}
-                className='w-6 h-6 cursor-pointer'
+                className="w-6 h-6 cursor-pointer"
               />
             </div>
             <div>
               {navbars.map((item, index) => {
                 return (
-                  <div key={index} className='flex flex-col'>
-                    <div className='flex flex-row items-center'>
-                      <BaseText medium className='w-[92px]'>
+                  <div key={index} className="flex flex-col">
+                    <div className="flex flex-row items-center">
+                      <BaseText medium className="w-[92px]">
                         <BaseText locale>Label</BaseText> {index + 1}
                       </BaseText>
                       <BaseInput
                         key={Date.now() + index}
-                        styleInputContainer='h-9'
+                        styleInputContainer="h-9"
                         onSave={(value) => {
                           updateNav({
                             ...item,
@@ -530,14 +533,14 @@ const NavigationBar = () => {
                           });
                         }}
                         defaultValue={item.name}
-                        placeholder='Enter Label'
-                        className='flex-1 '
+                        placeholder="Enter Label"
+                        className="flex-1 "
                       />
                     </div>
-                    <div className='flex flex-row mt-2'>
-                      <div className='w-[92px]'></div>
+                    <div className="flex flex-row mt-2">
+                      <div className="w-[92px]"></div>
                       <BaseInputSelect
-                        className='flex-1'
+                        className="flex-1"
                         onChange={(value) => {
                           updateNav({
                             ...item,
@@ -547,9 +550,9 @@ const NavigationBar = () => {
                         defaultValue={getValue(item)}
                         required={true}
                         allowClear={false}
-                        size='middle'
+                        size="middle"
                         textInputSize={12}
-                        placeholder='Select'
+                        placeholder="Select"
                         options={(navbarType || []).map(
                           (item: NavBarType, index: number) => {
                             return {
@@ -560,14 +563,14 @@ const NavigationBar = () => {
                         )}
                       />
                     </div>
-                    <div className='flex flex-row mt-2'>
-                      <div className='w-[92px]'></div>
-                      <div className='flex flex-row flex-1'>
+                    <div className="flex flex-row mt-2">
+                      <div className="w-[92px]"></div>
+                      <div className="flex flex-row flex-1">
                         <input
-                          type='file'
-                          accept='image/*'
-                          id={'Inactive icon' + index}
-                          style={{ display: 'none' }}
+                          type="file"
+                          accept="image/*"
+                          id={"Inactive icon" + index}
+                          style={{ display: "none" }}
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -575,30 +578,30 @@ const NavigationBar = () => {
                           }}
                         />
                         <label
-                          htmlFor={'Inactive icon' + index}
-                          className='w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer'
+                          htmlFor={"Inactive icon" + index}
+                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
                         >
                           {item.image_inactive ? (
                             <img
                               src={item.image_inactive}
-                              className='object-contain w-[86px] h-[86px]'
+                              className="object-contain w-[86px] h-[86px]"
                             />
                           ) : (
                             <>
-                              <img src={Images.upload} className='w-5 h-5' />
+                              <img src={Images.upload} className="w-5 h-5" />
                               <BaseText size={12}>
-                                {t('Inactive icon')}
+                                {t("Inactive icon")}
                               </BaseText>
                             </>
                           )}
                         </label>
                       </div>
-                      <div className='flex flex-row flex-1 ml-2'>
+                      <div className="flex flex-row flex-1 ml-2">
                         <input
-                          type='file'
-                          accept='image/*'
-                          id={'active icon' + index}
-                          style={{ display: 'none' }}
+                          type="file"
+                          accept="image/*"
+                          id={"active icon" + index}
+                          style={{ display: "none" }}
                           onChange={(
                             e: React.ChangeEvent<HTMLInputElement>
                           ) => {
@@ -606,27 +609,27 @@ const NavigationBar = () => {
                           }}
                         />
                         <label
-                          htmlFor={'active icon' + index}
-                          className='w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer'
+                          htmlFor={"active icon" + index}
+                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
                         >
                           {item.image_active ? (
                             <img
                               src={item.image_active}
-                              className='object-contain w-[86px] h-[86px]'
+                              className="object-contain w-[86px] h-[86px]"
                             />
                           ) : (
                             <>
-                              <img src={Images.upload} className='w-5 h-5' />
-                              <BaseText size={12}>{t('Active icon')}</BaseText>
+                              <img src={Images.upload} className="w-5 h-5" />
+                              <BaseText size={12}>{t("Active icon")}</BaseText>
                             </>
                           )}
                         </label>
                       </div>
                     </div>
                     <CustomButton
-                      onClick={() => deleteNav(item.id || '')}
-                      className='my-4 bg-dustRed50 border-none w-full'
-                      classNameTitle='text-dustRed500'
+                      onClick={() => deleteNav(item.id || "")}
+                      className="my-4 bg-dustRed50 border-none w-full"
+                      classNameTitle="text-dustRed500"
                       medium
                       locale
                     >

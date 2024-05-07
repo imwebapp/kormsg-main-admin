@@ -16,6 +16,7 @@ export interface BoardLinkInterface {
     thema_id?: string;
     keywords?: object;
     thema?: ThemaInterface;
+    themas?: Array<any>;
     categories?: Array<any>;
     category_ids?: Array<string>;
 }

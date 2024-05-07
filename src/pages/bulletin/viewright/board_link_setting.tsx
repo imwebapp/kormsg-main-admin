@@ -6,6 +6,7 @@ import {
   BOARD,
   BOARD_TEXT,
   MAP_TYPE,
+  SELECT_ALL,
   VISIBLE_BOARDS,
 } from "../../../utils/constants";
 import { classNames } from "../../../utils/common";
@@ -41,6 +42,31 @@ export default function BulletinSetting() {
   const [boardTypeSelected, setBoardTypeSelected] = useState<string>(
     boardSelected.route || ""
   );
+  const [themaMultiSelect, selectThemaMultiSelect] = useState<boolean>(false);
+  const [themaIds, setThemaIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setThemaIds([]);
+    if (boardSelected.route === BOARD.EVENT_BOARD) {
+      selectThemaMultiSelect(true);
+      if (boardSelected.themas && boardSelected.themas[0]) {
+        if (typeof boardSelected.themas[0] === "string") {
+          setThemaIds(boardSelected.themas);
+        } else {
+          const newThemas = (boardSelected.themas || []).map((item) => {
+            return item.id;
+          });
+          setThemaIds(newThemas);
+          setBoardSelected({
+            ...boardSelected,
+            themas: newThemas,
+          });
+        }
+      }
+    } else {
+      selectThemaMultiSelect(false);
+    }
+  }, [boardSelected]);
 
   const { t } = useTranslation();
 
@@ -64,6 +90,16 @@ export default function BulletinSetting() {
     try {
       const data: Array<ThemaInterface> = await getListThema(boardTypeSelected);
       if (data[0]) {
+        if (boardTypeSelected == BOARD.EVENT_BOARD) {
+          updateOrCreateBoardLink({
+            ...boardSelected,
+            route: boardTypeSelected,
+            themas: [],
+            thema_id: undefined,
+            category_ids: undefined,
+          });
+          return;
+        }
         const dataCategories = await CategoryApi.getList({
           filter: `{"thema_id":"${data[0].id}"}`,
         });
@@ -105,12 +141,14 @@ export default function BulletinSetting() {
   };
 
   const getTagsWithThema = async () => {
-    try {
-      const data = await TagApi.getList({
-        filter: `{"thema_id":"${boardSelected.thema_id}"}`,
-      });
-      setTags(data);
-    } catch (error) {}
+    if (boardTypeSelected != BOARD.EVENT_BOARD) {
+      try {
+        const data = await TagApi.getList({
+          filter: `{"thema_id":"${boardSelected.thema_id}"}`,
+        });
+        setTags(data);
+      } catch (error) {}
+    }
   };
 
   useEffect(() => {
@@ -291,25 +329,62 @@ export default function BulletinSetting() {
           <BaseText locale medium className="flex-1 mr-3">
             Thema
           </BaseText>
-          <BaseInputSelect
-            key={Date.now()}
-            className="!min-w-[100px]"
-            onChange={(value: any) => {
-              getCategories(value);
-            }}
-            defaultValue={boardSelected.thema_id}
-            required={true}
-            allowClear={false}
-            size="middle"
-            textInputSize={12}
-            placeholder="Select"
-            options={themas.map((item, index) => {
-              return {
-                label: t(item.name || ""),
-                value: item.id || "",
-              };
-            })}
-          />
+          {!!themaMultiSelect ? (
+            <BaseInputSelect
+              multiple
+              onChange={(value: any) => {
+                setThemaIds(value);
+                if (boardSelected.route === BOARD.EVENT_BOARD) {
+                  updateOrCreateBoardLink({
+                    ...boardSelected,
+                    themas: value,
+                    thema_id: undefined,
+                    category_ids: undefined,
+                  });
+                }
+              }}
+              className="!min-w-[100px]"
+              defaultValue={themaIds}
+              required={true}
+              allowClear={false}
+              size="middle"
+              textInputSize={12}
+              placeholder="Select"
+              options={[
+                {
+                  label: "All",
+                  value: SELECT_ALL,
+                },
+                ...themas.map((item, index) => {
+                  return {
+                    label: t(item.name || ""),
+                    value: item.id || "",
+                  };
+                }),
+              ]}
+            />
+          ) : (
+            <BaseInputSelect
+              key={Date.now()}
+              className="!min-w-[100px]"
+              onChange={(value: any) => {
+                getCategories(value);
+              }}
+              defaultValue={boardSelected.thema_id}
+              required={true}
+              allowClear={false}
+              size="middle"
+              textInputSize={12}
+              placeholder="Select"
+              options={themas.map((item, index) => {
+                return {
+                  label: t(item.name || ""),
+                  value: item.id || "",
+                };
+              })}
+            />
+          )}
+
           <img
             onClick={() => setOpenModalThema(true)}
             src={Images.setting3}
@@ -400,15 +475,16 @@ export default function BulletinSetting() {
   };
 
   const _buildTags = () => {
-    return (
-      <>
-        <div className="flex flex-row justify-between items-center mt-4">
-          <BaseText locale medium>
-            Tags
-          </BaseText>
-        </div>
+    if (boardTypeSelected != BOARD.EVENT_BOARD)
+      return (
+        <>
+          <div className="flex flex-row justify-between items-center mt-4">
+            <BaseText locale medium>
+              Tags
+            </BaseText>
+          </div>
 
-        {/* {tags.map((item, index) => {
+          {/* {tags.map((item, index) => {
             return (
               <div
                 key={index}
@@ -421,43 +497,43 @@ export default function BulletinSetting() {
             );
           })} */}
 
-        <DragDropContext onDragEnd={onDragEndTag}>
-          <Droppable droppableId="droppableTags">
-            {(provided) => (
-              <div
-                className="flex flex-wrap gap-3 mt-4"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                {tags.map((item, index: number) => {
-                  return (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id || NEW_ID}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                        >
-                          <div className="px-3 py-2 bg-darkNight50 rounded-full">
-                            <BaseText size={12} medium>
-                              {item.name}
-                            </BaseText>
+          <DragDropContext onDragEnd={onDragEndTag}>
+            <Droppable droppableId="droppableTags">
+              {(provided) => (
+                <div
+                  className="flex flex-wrap gap-3 mt-4"
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {tags.map((item, index: number) => {
+                    return (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id || NEW_ID}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <div className="px-3 py-2 bg-darkNight50 rounded-full">
+                              <BaseText size={12} medium>
+                                {item.name}
+                              </BaseText>
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </>
-    );
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </>
+      );
   };
 
   return (
