@@ -9,6 +9,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { CategoryApi } from "../../../apis/categoryApi";
 import { showError } from "../../../utils/showToast";
 import { BaseInput } from "../../../components/input/BaseInput";
+import { BOARD } from "../../../utils/constants";
 
 export const NEW_ID = "NEW_ID";
 export default function BulletinLeft() {
@@ -104,39 +105,68 @@ export default function BulletinLeft() {
     }
   };
 
+  const updateEventThemas = async (data: BoardLinkInterface) => {
+    try {
+      await BoardLinkApi.update(data.id || "", data);
+      _getBoardLinks();
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+      _getBoardLinks();
+      setLastRefresh(Date.now());
+    }
+  };
+
   const onDragEndCategory = (result: any, linkIndex: number) => {
     try {
       setLinkCateDragging(undefined);
       if (!result.destination) {
         return;
       }
-      if (result.source.index < result.destination.index) {
-        orderLinkCategory(
-          boardLinks[linkIndex].categories?.[result.destination.index]?.index,
-          boardLinks[linkIndex].categories?.[result.destination.index + 1]
-            ?.index,
-          boardLinks[linkIndex].categories?.[result.source.index].id
-        );
-      } else {
-        orderLinkCategory(
-          boardLinks[linkIndex].categories?.[result.destination.index - 1]
-            ?.index,
-          boardLinks[linkIndex].categories?.[result.destination.index]?.index,
-          boardLinks[linkIndex].categories?.[result.source.index].id
-        );
-      }
 
-      const newItems = [...boardLinks];
-      const [reorderedItem]: any = newItems[linkIndex].categories?.splice(
-        result.source.index,
-        1
-      );
-      newItems[linkIndex].categories?.splice(
-        result.destination.index,
-        0,
-        reorderedItem
-      );
-      setBoardLinks(newItems);
+      //////////////////////////////////
+      //////////////////////////////////
+      if (boardLinks[linkIndex].route === BOARD.EVENT_BOARD) {
+        const newItems = [...(boardLinks[linkIndex].themas || [])];
+        const [reorderedItem]: any = newItems.splice(result.source.index, 1);
+        newItems.splice(result.destination.index, 0, reorderedItem);
+        updateEventThemas({
+          ...boardLinks[linkIndex],
+          themas: newItems.map((item: ThemaInterface) => item.id),
+        });
+        boardLinks[linkIndex].themas = newItems;
+        setBoardLinks(boardLinks);
+      } else {
+        //////////////////////////////////
+        //////////////////////////////////
+        if (result.source.index < result.destination.index) {
+          orderLinkCategory(
+            boardLinks[linkIndex].categories?.[result.destination.index]?.index,
+            boardLinks[linkIndex].categories?.[result.destination.index + 1]
+              ?.index,
+            boardLinks[linkIndex].categories?.[result.source.index].id
+          );
+        } else {
+          orderLinkCategory(
+            boardLinks[linkIndex].categories?.[result.destination.index - 1]
+              ?.index,
+            boardLinks[linkIndex].categories?.[result.destination.index]?.index,
+            boardLinks[linkIndex].categories?.[result.source.index].id
+          );
+        }
+
+        const newItems = [...boardLinks];
+        const [reorderedItem]: any = newItems[linkIndex].categories?.splice(
+          result.source.index,
+          1
+        );
+        newItems[linkIndex].categories?.splice(
+          result.destination.index,
+          0,
+          reorderedItem
+        );
+        setBoardLinks(newItems);
+      }
     } catch (error) {
       console.log("error", error);
     }
@@ -231,30 +261,55 @@ export default function BulletinLeft() {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {(item.categories || []).map((elem, i) => (
-                  <Draggable
-                    key={elem.category?.id}
-                    draggableId={elem.category?.id}
-                    index={i}
-                  >
-                    {(provided) => (
-                      <div
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        ref={provided.innerRef}
+                {item.route === BOARD.EVENT_BOARD
+                  ? (item.themas || []).map((elem: ThemaInterface, i) => (
+                      <Draggable
+                        key={elem?.id}
+                        draggableId={elem?.id || ""}
+                        index={i}
                       >
-                        <BaseText
-                          key={`category${i}`}
-                          medium
-                          size={16}
-                          className="text-darkNight700"
-                        >
-                          {elem.category?.name}
-                        </BaseText>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <BaseText
+                              key={`thema${i}`}
+                              medium
+                              size={16}
+                              className="text-darkNight700"
+                            >
+                              {elem?.name || ""}
+                            </BaseText>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))
+                  : (item.categories || []).map((elem, i) => (
+                      <Draggable
+                        key={elem.category?.id}
+                        draggableId={elem.category?.id}
+                        index={i}
+                      >
+                        {(provided) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                          >
+                            <BaseText
+                              key={`category${i}`}
+                              medium
+                              size={16}
+                              className="text-darkNight700"
+                            >
+                              {elem.category?.name}
+                            </BaseText>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
               </div>
             )}
           </Droppable>
