@@ -20,6 +20,7 @@ import moment from "moment";
 import { useLocalStorage } from "../../../stores/localStorage";
 import dayjs from "dayjs";
 import { ThemaApi } from "../../../apis/themaApi";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export default function HomeSetting() {
   return (
@@ -494,6 +495,52 @@ const NavigationBar = () => {
     return;
   };
 
+  const orderNavBar = async (
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    linkIndex: number
+  ) => {
+    try {
+      await NavBarApi.orderNav(navbars[linkIndex].id, {
+        prev_index_number,
+        next_index_number,
+      });
+      getNavBars();
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
+      getNavBars();
+      setLastRefresh(Date.now());
+    }
+  };
+
+  const onDragEnd = (result: any) => {
+    try {
+      if (!result.destination) {
+        return;
+      }
+
+      if (result.source.index < result.destination.index) {
+        orderNavBar(
+          navbars[result.destination.index]?.index,
+          navbars[result.destination.index + 1]?.index,
+          result.source.index
+        );
+      } else {
+        orderNavBar(
+          navbars[result.destination.index - 1]?.index,
+          navbars[result.destination.index]?.index,
+          result.source.index
+        );
+      }
+
+      const newItems = [...navbars];
+      const [reorderedItem] = newItems.splice(result.source.index, 1);
+      newItems.splice(result.destination.index, 0, reorderedItem);
+      setNavbar(newItems);
+    } catch (error) {}
+  };
+
   return (
     <>
       {useMemo(
@@ -509,136 +556,166 @@ const NavigationBar = () => {
                 className="w-6 h-6 cursor-pointer"
               />
             </div>
-            <div>
-              {navbars.map((item, index) => {
-                return (
-                  <div key={index} className="flex flex-col">
-                    <div className="flex flex-row items-center">
-                      <BaseText medium className="w-[92px]">
-                        <BaseText locale>Label</BaseText> {index + 1}
-                      </BaseText>
-                      <BaseInput
-                        key={Date.now() + index}
-                        styleInputContainer="h-9"
-                        onSave={(value) => {
-                          updateNav({
-                            ...item,
-                            name: value,
-                          });
-                        }}
-                        onBlur={(value) => {
-                          updateNav({
-                            ...item,
-                            name: value,
-                          });
-                        }}
-                        defaultValue={item.name}
-                        placeholder="Enter Label"
-                        className="flex-1 "
-                      />
-                    </div>
-                    <div className="flex flex-row mt-2">
-                      <div className="w-[92px]"></div>
-                      <BaseInputSelect
-                        className="flex-1"
-                        onChange={(value) => {
-                          updateNav({
-                            ...item,
-                            type: JSON.stringify(navbarType[value]),
-                          });
-                        }}
-                        defaultValue={getValue(item)}
-                        required={true}
-                        allowClear={false}
-                        size="middle"
-                        textInputSize={12}
-                        placeholder="Select"
-                        options={(navbarType || []).map(
-                          (item: NavBarType, index: number) => {
-                            return {
-                              label: t(item.name),
-                              value: index,
-                            };
-                          }
-                        )}
-                      />
-                    </div>
-                    <div className="flex flex-row mt-2">
-                      <div className="w-[92px]"></div>
-                      <div className="flex flex-row flex-1">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          id={"Inactive icon" + index}
-                          style={{ display: "none" }}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            handleImageChange(false, e, item);
-                          }}
-                        />
-                        <label
-                          htmlFor={"Inactive icon" + index}
-                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
+
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppableNavbar">
+                {(provided) => (
+                  <div ref={provided.innerRef} {...provided.droppableProps}>
+                    {navbars.map((item: NavBarInterface, index: number) => {
+                      return (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id || ""}
+                          index={index}
                         >
-                          {item.image_inactive ? (
-                            <img
-                              src={item.image_inactive}
-                              className="object-contain w-[86px] h-[86px]"
-                            />
-                          ) : (
-                            <>
-                              <img src={Images.upload} className="w-5 h-5" />
-                              <BaseText size={12}>
-                                {t("Inactive icon")}
-                              </BaseText>
-                            </>
+                          {(provided) => (
+                            <div
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
+                            >
+                              <div key={index} className="flex flex-col">
+                                <div className="flex flex-row items-center">
+                                  <BaseText medium className="w-[92px]">
+                                    <BaseText locale>Label</BaseText>{" "}
+                                    {index + 1}
+                                  </BaseText>
+                                  <BaseInput
+                                    key={Date.now() + index}
+                                    styleInputContainer="h-9"
+                                    onSave={(value) => {
+                                      updateNav({
+                                        ...item,
+                                        name: value,
+                                      });
+                                    }}
+                                    onBlur={(value) => {
+                                      updateNav({
+                                        ...item,
+                                        name: value,
+                                      });
+                                    }}
+                                    defaultValue={item.name}
+                                    placeholder="Enter Label"
+                                    className="flex-1 "
+                                  />
+                                </div>
+                                <div className="flex flex-row mt-2">
+                                  <div className="w-[92px]"></div>
+                                  <BaseInputSelect
+                                    className="flex-1"
+                                    onChange={(value) => {
+                                      updateNav({
+                                        ...item,
+                                        type: JSON.stringify(navbarType[value]),
+                                      });
+                                    }}
+                                    defaultValue={getValue(item)}
+                                    required={true}
+                                    allowClear={false}
+                                    size="middle"
+                                    textInputSize={12}
+                                    placeholder="Select"
+                                    options={(navbarType || []).map(
+                                      (item: NavBarType, index: number) => {
+                                        return {
+                                          label: t(item.name),
+                                          value: index,
+                                        };
+                                      }
+                                    )}
+                                  />
+                                </div>
+                                <div className="flex flex-row mt-2">
+                                  <div className="w-[92px]"></div>
+                                  <div className="flex flex-row flex-1">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      id={"Inactive icon" + index}
+                                      style={{ display: "none" }}
+                                      onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                      ) => {
+                                        handleImageChange(false, e, item);
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor={"Inactive icon" + index}
+                                      className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
+                                    >
+                                      {item.image_inactive ? (
+                                        <img
+                                          src={item.image_inactive}
+                                          className="object-contain w-[86px] h-[86px]"
+                                        />
+                                      ) : (
+                                        <>
+                                          <img
+                                            src={Images.upload}
+                                            className="w-5 h-5"
+                                          />
+                                          <BaseText size={12}>
+                                            {t("Inactive icon")}
+                                          </BaseText>
+                                        </>
+                                      )}
+                                    </label>
+                                  </div>
+                                  <div className="flex flex-row flex-1 ml-2">
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      id={"active icon" + index}
+                                      style={{ display: "none" }}
+                                      onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                      ) => {
+                                        handleImageChange(true, e, item);
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor={"active icon" + index}
+                                      className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
+                                    >
+                                      {item.image_active ? (
+                                        <img
+                                          src={item.image_active}
+                                          className="object-contain w-[86px] h-[86px]"
+                                        />
+                                      ) : (
+                                        <>
+                                          <img
+                                            src={Images.upload}
+                                            className="w-5 h-5"
+                                          />
+                                          <BaseText size={12}>
+                                            {t("Active icon")}
+                                          </BaseText>
+                                        </>
+                                      )}
+                                    </label>
+                                  </div>
+                                </div>
+                                <CustomButton
+                                  onClick={() => deleteNav(item.id || "")}
+                                  className="my-4 bg-dustRed50 border-none w-full"
+                                  classNameTitle="text-dustRed500"
+                                  medium
+                                  locale
+                                >
+                                  Delete
+                                </CustomButton>
+                              </div>
+                            </div>
                           )}
-                        </label>
-                      </div>
-                      <div className="flex flex-row flex-1 ml-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          id={"active icon" + index}
-                          style={{ display: "none" }}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            handleImageChange(true, e, item);
-                          }}
-                        />
-                        <label
-                          htmlFor={"active icon" + index}
-                          className="w-[86px] h-[86px] bg-darkNight50 rounded-xl flex flex-col justify-center items-center gap-1 cursor-pointer"
-                        >
-                          {item.image_active ? (
-                            <img
-                              src={item.image_active}
-                              className="object-contain w-[86px] h-[86px]"
-                            />
-                          ) : (
-                            <>
-                              <img src={Images.upload} className="w-5 h-5" />
-                              <BaseText size={12}>{t("Active icon")}</BaseText>
-                            </>
-                          )}
-                        </label>
-                      </div>
-                    </div>
-                    <CustomButton
-                      onClick={() => deleteNav(item.id || "")}
-                      className="my-4 bg-dustRed50 border-none w-full"
-                      classNameTitle="text-dustRed500"
-                      medium
-                      locale
-                    >
-                      Delete
-                    </CustomButton>
+                        </Draggable>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                )}
+              </Droppable>
+            </DragDropContext>
           </div>
         ),
         [navbars, t, navbarType]

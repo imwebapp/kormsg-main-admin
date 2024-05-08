@@ -6,6 +6,7 @@ export interface NavBarInterface {
     updated_at?: Date;
     name?: string;
     images?: string;
+    index?: number;
     type?: string;
     image_active?: string;
     image_inactive?: string;
