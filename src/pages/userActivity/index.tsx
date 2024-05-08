@@ -3,14 +3,19 @@ import { checkAccountType, classNames } from "../../utils/common";
 import Images from "../../assets/gen";
 import { BaseText, CustomButton } from "../../components";
 import { useState } from "react";
-import { INIT_TAB_USER_DETAIL, ListTypeUserActivity, TypeUserActivity, listOptionUserDetail } from "../../utils/constants";
+import {
+  INIT_TAB_USER_DETAIL,
+  ListTypeUserActivity,
+  TypeUserActivity,
+  listOptionUserDetail,
+} from "../../utils/constants";
 import { BaseInput } from "../../components/input/BaseInput";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { CommunityPost } from "./communityPost";
 import { PointDetail } from "./pointDetail";
 import { Comment } from "./comment";
-
+import UserChat from "./userChat";
 
 interface IProps {
   route?: any;
@@ -35,7 +40,9 @@ const UserActivity = () => {
 
   console.log("formDataCreateUserXX", showModalEdit);
 
-  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(ListTypeUserActivity[0]);
+  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
+    ListTypeUserActivity[0]
+  );
   const handleClickTypeUser = (item: any) => {
     setTypeUserSelected(item);
   };
@@ -51,12 +58,10 @@ const UserActivity = () => {
   const handleClickOption = (item: { title: string; value: string }) => {
     if (item.value === optionSelected) {
       return;
-    }
-    else {
+    } else {
       setShowModalEdit(false);
       setOptionSelected(item.value);
     }
-
   };
   return (
     <>
@@ -111,23 +116,19 @@ const UserActivity = () => {
               );
             })}
           </div>
-          {
-            typeUserSelected.id === TypeUserActivity.COMMUNITY_POST ? (
-              <CommunityPost dataUser={formDataCreateUser} />
-            ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
-              <Comment dataUser={formDataCreateUser} />
-            ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
-              <BaseText size={20} bold>
-                RESERVATION
-              </BaseText>
-            ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
-              <PointDetail dataUser={formDataCreateUser} />
-            ) : (
-              <BaseText size={20} bold>
-                CHAT
-              </BaseText>
-            )
-          }
+          {typeUserSelected.id === TypeUserActivity.COMMUNITY_POST ? (
+            <CommunityPost dataUser={formDataCreateUser} />
+          ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
+            <Comment dataUser={formDataCreateUser} />
+          ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
+            <BaseText size={20} bold>
+              RESERVATION
+            </BaseText>
+          ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
+            <PointDetail dataUser={formDataCreateUser} />
+          ) : (
+            <UserChat />
+          )}
         </div>
       </div>
     </>
