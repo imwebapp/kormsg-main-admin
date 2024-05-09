@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { CommunityPost } from "./communityPost";
 import { PointDetail } from "./pointDetail";
 import { Comment } from "./comment";
+import { Reservation } from "./reservation";
 
 
 interface IProps {
@@ -117,9 +118,7 @@ const UserActivity = () => {
             ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
               <Comment dataUser={formDataCreateUser} />
             ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
-              <BaseText size={20} bold>
-                RESERVATION
-              </BaseText>
+              <Reservation dataUser={formDataCreateUser} />
             ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
               <PointDetail dataUser={formDataCreateUser} />
             ) : (

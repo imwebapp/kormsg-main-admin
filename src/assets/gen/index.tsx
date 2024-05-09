@@ -26,8 +26,10 @@ export default class Images {
     static readonly krw = require("../../../src/assets/images/KRW.png");
     static readonly krwBlue = require("../../../src/assets/images/KRWBlue.png");
     static readonly mapPoint = require("../../../src/assets/images/Map Point.png");
+    static readonly messageIconBlue = require("../../../src/assets/images/MessageIconBlue.png");
     static readonly penInactive = require("../../../src/assets/images/Pen-inactive.png");
     static readonly pen = require("../../../src/assets/images/Pen.png");
+    static readonly phoneIconBlue = require("../../../src/assets/images/PhoneIconBlue.png");
     static readonly pinMap = require("../../../src/assets/images/Pin Map.png");
     static readonly pointHistory = require("../../../src/assets/images/Point History.png");
     static readonly pointHistory2 = require("../../../src/assets/images/Point History2.png");
@@ -78,6 +80,9 @@ export default class Images {
     static readonly board2 = require("../../../src/assets/images/board2.png");
     static readonly calendar = require("../../../src/assets/images/calendar.png");
     static readonly cancel = require("../../../src/assets/images/cancel.png");
+    static readonly cancelCircleActive = require("../../../src/assets/images/cancelCircleActive.png");
+    static readonly checkedCircleActive = require("../../../src/assets/images/checkedCircleActive.png");
+    static readonly checkedCircleInactive = require("../../../src/assets/images/checkedCircleInactive.png");
     static readonly chevronDownTiny = require("../../../src/assets/images/chevron-down-tiny.png");
     static readonly chevronRightTiny = require("../../../src/assets/images/chevron-right-tiny.png");
     static readonly chevronUpTiny = require("../../../src/assets/images/chevron-up-tiny.png");
@@ -96,12 +101,14 @@ export default class Images {
     static readonly edit2 = require("../../../src/assets/images/edit2.png");
     static readonly editIcon2 = require("../../../src/assets/images/editIcon2.png");
     static readonly editPencil = require("../../../src/assets/images/editPencil.png");
+    static readonly ellipsis = require("../../../src/assets/images/ellipsis.png");
     static readonly emailIconActive = require("../../../src/assets/images/email-icon-active.png");
     static readonly exportIcon = require("../../../src/assets/images/exportIcon.png");
     static readonly eyeCross = require("../../../src/assets/images/eye-cross.png");
     static readonly eye = require("../../../src/assets/images/eye.png");
     static readonly gridActive = require("../../../src/assets/images/grid-active.png");
     static readonly gridInactive = require("../../../src/assets/images/grid-inactive.png");
+    static readonly hourglassIcon = require("../../../src/assets/images/hourglassIcon.png");
     static readonly icEnglish = require("../../../src/assets/images/ic-english.png");
     static readonly icImage = require("../../../src/assets/images/icImage.png");
     static readonly icon18 = require("../../../src/assets/images/icon18+.png");
@@ -127,6 +134,8 @@ export default class Images {
     static readonly plus = require("../../../src/assets/images/plus.png");
     static readonly plus2 = require("../../../src/assets/images/plus2.png");
     static readonly plusCircle = require("../../../src/assets/images/plusCircle.png");
+    static readonly reservationConfirmedActive = require("../../../src/assets/images/reservationConfirmedActive.png");
+    static readonly reservationConfirmedInactive = require("../../../src/assets/images/reservationConfirmedInactive.png");
     static readonly search = require("../../../src/assets/images/search.png");
     static readonly setting3 = require("../../../src/assets/images/setting3.png");
     static readonly statistic1 = require("../../../src/assets/images/statistic1.png");
