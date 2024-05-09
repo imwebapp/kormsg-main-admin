@@ -127,7 +127,7 @@ const UserActivity = () => {
           ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
             <PointDetail dataUser={formDataCreateUser} />
           ) : (
-            <UserChat />
+            <UserChat dataUser={formDataCreateUser} />
           )}
         </div>
       </div>

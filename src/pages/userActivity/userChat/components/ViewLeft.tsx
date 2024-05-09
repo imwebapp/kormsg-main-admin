@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Pagination } from "antd";
 import { BaseText } from "../../../../components";
-import { classNames, formatTime } from "../../../../utils/common";
+import { User, classNames, formatTime } from "../../../../utils/common";
 import Images from "../../../../assets/gen";
 import { conversationApi } from "../../../../apis/conversationApi";
 import { useUserChatState } from "../store";
 import { ConversationInterface } from "../../../../entities";
+interface IProps {
+  dataUser?: User;
+}
+export const ViewLeft = (props: IProps) => {
+  const { dataUser } = props;
 
-export const ViewLeft = () => {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 20;
@@ -20,35 +24,15 @@ export const ViewLeft = () => {
   const getConversation = async () => {
     try {
       setConversationSelected(undefined);
+      console.log("data", dataUser);
 
-      const { rows, count } = await conversationApi.getList();
-      console.log("rows", rows);
-
+      const params = {
+        field: JSON.stringify(["$all"]),
+        // filter: JSON.stringify({ user_id: dataUser?.id }),
+      };
+      const { rows, count } = await conversationApi.getList(params);
+      setTotal(count);
       setConversations(rows);
-      // const { rows, count } = await QuestionApi.getQuestions(
-      //   convertParams({
-      //     limit: limit,
-      //     page,
-      //     order: [["created_at", "DESC"]],
-      //     fields: ["$all", { user: ["$all"] }],
-      //     filter: {
-      //       ...(QUESTION_STATUS.ALL !== filterSelected &&
-      //         filterSelected && { status: filterSelected }),
-      //       ...(search.length > 0 && {
-      //         $and: [
-      //           {
-      //             $or: {
-      //               content: { $iLike: `%${search}%` },
-      //               "$user.nickname$": { $iLike: `%${search}%` },
-      //             },
-      //           },
-      //         ],
-      //       }),
-      //     },
-      //   })
-      // );
-      // setQuestions(rows);
-      // setTotal(count);
     } catch (error) {
       console.log("errr", error);
     }

@@ -14,13 +14,21 @@ export const ViewRight = () => {
   );
   const { locale } = useLocalStorage((state) => state);
   const [displayImg, setDisplayImg] = useState<string>("");
+  const [messages, setMessages] = useState<any[]>([]);
 
   const getConversation = async () => {
     try {
+      const params = {
+        fields: JSON.stringify(["$all", { conversation: ["$all"] }]),
+      };
+      console.log("params", params);
+
       const { rows, count } = await conversationApi.getDetailConversation(
-        conversationSelected?.id
+        conversationSelected?.id,
+        params
       );
-      console.log(rows);
+      setMessages(rows);
+      console.log("row", rows);
     } catch (error) {
       console.log("errr", error);
     }
@@ -114,7 +122,7 @@ export const ViewRight = () => {
     );
   };
 
-  const buildCustomerMessage = (item: AnswerInterface) => {
+  const buildCustomerMessage = (item: any) => {
     return (
       <div className="flex flex-row justify-start mt-4">
         <div className="flex flex-col buildStatus w-2/3 items-start">
@@ -156,13 +164,12 @@ export const ViewRight = () => {
 
   const buildList = () => {
     return (
-      // <div className="overflow-auto h-full p-6 flex flex-col-reverse">
-      //   {answers.map((item, index) => {
-      //     if (item.user_id) return buildCustomerMessage(item);
-      //     return buildAdminMessage(item);
-      //   })}
-      // </div>
-      <div>list {conversationSelected?.last_message?.content}</div>
+      <div className="overflow-auto h-full p-6 flex flex-col-reverse">
+        {messages.map((item, index) => {
+          if (item.user_id) return buildCustomerMessage(item);
+          return buildAdminMessage(item);
+        })}
+      </div>
     );
   };
 

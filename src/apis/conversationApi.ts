@@ -6,10 +6,12 @@ export const conversationApi = {
     const res: any = await axiosClient.get(`${CONVERSATION}`, { params });
     return res?.results?.objects;
   },
-  getDetailConversation: async (conversationId?: string) => {
+  getDetailConversation: async (conversationId?: string, params?: any) => {
     const res: any = await axiosClient.get(
-      `message/${CONVERSATION}/${conversationId}`
+      `message${CONVERSATION}/${conversationId}`,
+      { params }
     );
+
     return res?.results?.objects;
   },
 };
