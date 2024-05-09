@@ -535,7 +535,7 @@ const UserManage = () => {
           page,
           fields: '["$all"]',
           filter: JSON.stringify(convertFilter),
-          statistic: true
+          // statistic: true
         })
         .then((res: any) => {
           setListUser(res.results.objects.rows);
