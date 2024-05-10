@@ -5,12 +5,32 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { convertDateTime } from "../../utils/common";
+import { convertDate, convertDateTime } from "../../utils/common";
+import { POINT_ACTION } from "../../utils/constants";
 
 type PointDetailProps = {
   data: any[];
   className?: string; // for tailwindcss
   pagination?: {};
+};
+
+const checkPointType = (pointType: string) => {
+  switch (pointType) {
+    case POINT_ACTION.ATTENDANCE:
+      return <BaseText medium className="" locale>Attendance</BaseText>;
+    case POINT_ACTION.BUY:
+      return <BaseText medium className="" locale>Buy</BaseText>;
+    case POINT_ACTION.INVITE:
+      return <BaseText medium className="" locale>Invite</BaseText>;
+    case POINT_ACTION.LOTTERY:
+      return <BaseText medium className="" locale>Lottery</BaseText>;
+    case POINT_ACTION.RESERVATION:
+      return <BaseText medium className="" locale>Reservation</BaseText>;
+    case POINT_ACTION.REVIEW:
+      return <BaseText medium className="" locale>Review</BaseText>;
+    default:
+      return <BaseText medium className="" locale>{pointType}</BaseText>;
+  }
 };
 
 export default function PointDetailTable(props: PointDetailProps) {
@@ -39,42 +59,40 @@ export default function PointDetailTable(props: PointDetailProps) {
     {
       title: t("Date"),
       render: (record) => (
-        <BaseText medium className="">{record?.date || 0}</BaseText>
+        <BaseText medium className="">{convertDate(record?.created_at || 0)}</BaseText>
       ),
     },
     {
       title: t("ID"),
       render: (record) => (
-        <BaseText medium className="">{record?.username}</BaseText>
+        <BaseText medium className="">{record?.user?.username}</BaseText>
       ),
     },
     {
       title: t("Contact"),
       render: (record) => (
-        <BaseText medium className="">{record?.contact}</BaseText>
+        <BaseText medium className="">{record?.user?.contact || 'null'}</BaseText>
       ),
     },
     {
       title: t("Transaction type"),
       render: (record) => (
-        <BaseText medium className="">{record?.transactionType}</BaseText>
+        <BaseText medium className={record?.point > 0 ? 'text-polaGreen500' : 'text-red-500'} locale>{record?.point > 0 ? 'Plus' : 'Minus'}</BaseText>
       ),
     },
     {
       title: t("Point type"),
-      render: (record) => (
-        <BaseText medium className="text-polaGreen500">{record?.pointType}</BaseText>
-      ),
+      render: (record) => checkPointType(record?.action),
     },
     {
       title: t("Acquired points"),
       render: (record) => (
-        <BaseText bold>{(record?.acquiredPoint || 0) + "P"}</BaseText>
+        <BaseText bold>{(record?.point || 0) + "P"}</BaseText>
       ),
     },
     {
       title: t("Total holding port"),
-      render: (record) => <BaseText bold>{(record?.totalHoldingPort || 0) + "P"}</BaseText>,
+      render: (record) => <BaseText bold>{(record?.current_user_point || 0) + "P"}</BaseText>,
     },
   ];
 
