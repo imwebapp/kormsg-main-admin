@@ -28,6 +28,9 @@ export const Reservation = (props: IProps) => {
         reservationApi.getList({
             fields: JSON.stringify([
                 "$all",
+                {
+                    user: ["$all"],
+                },
             ]),
             filter: JSON.stringify({
                 user_id: `${dataUser.id}`,
