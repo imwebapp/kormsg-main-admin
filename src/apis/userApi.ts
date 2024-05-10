@@ -32,4 +32,8 @@ export const userApi = {
   deleteUsers: (data: any) => {
     return axiosClient.delete(`${USER}/?items=${data}`);
   },
+  getCountUserActivity: async (id?: string) => {
+    const res: any = await axiosClient.get(`${USER}/count_activity/${id}`);
+    return res?.results?.object;
+  },
 };
