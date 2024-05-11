@@ -351,11 +351,14 @@ export default function BulletinLeft() {
                     draggableId={item.id || NEW_ID}
                     index={index}
                   >
-                    {(provided) => (
+                    {(provided, snapshot) => (
                       <div
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                         ref={provided.innerRef}
+                        className={classNames(
+                          snapshot.isDragging ? 'bg-dayBreakBlue50 rounded-lg' : ''
+                        )}
                       >
                         {boardLinkItem(item, index)}
                       </div>
