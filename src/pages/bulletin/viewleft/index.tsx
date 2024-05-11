@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
-import { BaseText } from "../../../components";
-import { classNames } from "../../../utils/common";
-import { PlusOutlined } from "@ant-design/icons";
-import { BoardLinkInterface, ThemaInterface } from "../../../entities";
-import { BoardLinkApi } from "../../../apis/boardLinkApi";
-import { useBulletinState } from "../store";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { CategoryApi } from "../../../apis/categoryApi";
-import { showError } from "../../../utils/showToast";
-import { BaseInput } from "../../../components/input/BaseInput";
-import { BOARD } from "../../../utils/constants";
+import { useEffect, useState } from 'react';
+import { BaseText } from '../../../components';
+import { classNames } from '../../../utils/common';
+import { PlusOutlined } from '@ant-design/icons';
+import { BoardLinkInterface, ThemaInterface } from '../../../entities';
+import { BoardLinkApi } from '../../../apis/boardLinkApi';
+import { useBulletinState } from '../store';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { CategoryApi } from '../../../apis/categoryApi';
+import { showError } from '../../../utils/showToast';
+import { BaseInput } from '../../../components/input/BaseInput';
+import { BOARD } from '../../../utils/constants';
 
-export const NEW_ID = "NEW_ID";
+export const NEW_ID = 'NEW_ID';
 export default function BulletinLeft() {
   const { boardSelected, setBoardSelected, setLastRefresh, lastRefresh } =
     useBulletinState((state) => state);
@@ -30,8 +30,8 @@ export default function BulletinLeft() {
     try {
       const data = boardLinks.map((item) => item.id === NEW_ID);
       if (data[0]) return;
-      setBoardLinks([{ id: NEW_ID, name: "New Link" }, ...boardLinks]);
-      setBoardSelected({ id: NEW_ID, name: "New Link" });
+      setBoardLinks([{ id: NEW_ID, name: 'New Link' }, ...boardLinks]);
+      setBoardSelected({ id: NEW_ID, name: 'New Link' });
     } catch (error) {}
   };
 
@@ -101,13 +101,13 @@ export default function BulletinLeft() {
       showError(error);
       _getBoardLinks();
       setLastRefresh(Date.now());
-      console.log("err", error);
+      console.log('err', error);
     }
   };
 
   const updateEventThemas = async (data: BoardLinkInterface) => {
     try {
-      await BoardLinkApi.update(data.id || "", data);
+      await BoardLinkApi.update(data.id || '', data);
       _getBoardLinks();
       setLastRefresh(Date.now());
     } catch (error) {
@@ -168,7 +168,7 @@ export default function BulletinLeft() {
         setBoardLinks(newItems);
       }
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error);
     }
   };
 
@@ -181,11 +181,11 @@ export default function BulletinLeft() {
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
         const data = await BoardLinkApi.update(boardLink.id, boardLink);
-        setBoardSelected(data);
+        // setBoardSelected(data);
       } else {
         const { id, ...linkData } = boardLink;
         const data = await BoardLinkApi.create(linkData);
-        console.log("data", data);
+        console.log('data', data);
         setBoardSelected(data);
       }
       setLastRefresh(Date.now());
@@ -197,29 +197,28 @@ export default function BulletinLeft() {
 
   const boardLinkItem = (item: BoardLinkInterface, index: any) => {
     return (
-      <div key={index} className={classNames("flex flex-col")}>
+      <div key={index} className={classNames('flex flex-col')}>
         <div
           className={classNames(
-            "px-3 py-2 mb-1 rounded flex items-center cursor-pointer",
-            boardSelected?.id === item.id ? "bg-dayBreakBlue50" : ""
+            'px-3 py-2 mb-1 rounded flex items-center cursor-pointer hover:bg-dayBreakBlue50',
+            boardSelected?.id === item.id ? 'bg-dayBreakBlue50' : ''
           )}
           onDoubleClick={() => {
-            if (item.id !== "HOME" && item.id !== NEW_ID)
+            if (item.id !== 'HOME')
               setTimeout(() => {
                 setBoardNameIndex(index);
               }, 0);
           }}
           onClick={() => {
             setBoardSelected(item);
-            setLastRefresh(Date.now());
+            // setLastRefresh(Date.now());
           }}
         >
-          {editBoardNameIndex === index &&
-          item.id !== "HOME" &&
-          item.id !== NEW_ID ? (
+          {editBoardNameIndex === index && item.id !== 'HOME' ? (
+            // && item.id !== NEW_ID
             <BaseInput
               // key={Date.now()}
-              styleInputContainer="h-9"
+              styleInputContainer='h-9'
               onSave={(value) => {
                 updateOrCreateBoardLink({
                   ...boardSelected,
@@ -233,15 +232,15 @@ export default function BulletinLeft() {
                 });
               }}
               defaultValue={item.name}
-              placeholder="Typing...."
-              className="w-[170px]"
+              placeholder='Typing....'
+              className='w-[170px]'
             />
           ) : (
             <BaseText
               bold
               size={16}
               className={classNames(
-                boardSelected?.id === item.id ? "text-dayBreakBlue500" : ""
+                boardSelected?.id === item.id ? 'text-dayBreakBlue500' : ''
               )}
             >
               {item.name}
@@ -257,7 +256,7 @@ export default function BulletinLeft() {
           <Droppable droppableId={`droppableCate-${item.id}`}>
             {(provided) => (
               <div
-                className="flex flex-col pl-8"
+                className='flex flex-col pl-8'
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
@@ -265,22 +264,26 @@ export default function BulletinLeft() {
                   ? (item.themas || []).map((elem: ThemaInterface, i) => (
                       <Draggable
                         key={elem?.id}
-                        draggableId={elem?.id || ""}
+                        draggableId={elem?.id || ''}
                         index={i}
                       >
-                        {(provided) => (
+                        {(provided, snapshot) => (
                           <div
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
+                            className={classNames(
+                              'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                              snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                            )}
                           >
                             <BaseText
                               key={`thema${i}`}
                               medium
                               size={16}
-                              className="text-darkNight700"
+                              className='text-darkNight700'
                             >
-                              {elem?.name || ""}
+                              {elem?.name || ''}
                             </BaseText>
                           </div>
                         )}
@@ -292,17 +295,21 @@ export default function BulletinLeft() {
                         draggableId={elem.category?.id}
                         index={i}
                       >
-                        {(provided) => (
+                        {(provided, snapshot) => (
                           <div
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
+                            className={classNames(
+                              'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                              snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                            )}
                           >
                             <BaseText
                               key={`category${i}`}
                               medium
                               size={16}
-                              className="text-darkNight700"
+                              className='text-darkNight700'
                             >
                               {elem.category?.name}
                             </BaseText>
@@ -315,26 +322,26 @@ export default function BulletinLeft() {
           </Droppable>
         </DragDropContext>
         <div
-          className={classNames(linkCateDragging === index ? "h-[24px]" : "")}
+          className={classNames(linkCateDragging === index ? 'h-[24px]' : '')}
         ></div>
       </div>
     );
   };
 
   return (
-    <div className="w-[300px] border-r p-6 max-h-full overflow-auto no-scrollbar">
-      <div className={classNames("flex pb-4 items-center justify-between")}>
-        <BaseText bold locale size={16} className="">
+    <div className='w-[300px] border-r p-6 max-h-full overflow-auto no-scrollbar'>
+      <div className={classNames('flex pb-4 items-center justify-between')}>
+        <BaseText bold locale size={16} className=''>
           Main
         </BaseText>
         <PlusOutlined
-          className={classNames("text-xl cursor-pointer")}
+          className={classNames('text-xl cursor-pointer')}
           onClick={createBoardLink}
         />
       </div>
-      {boardLinkItem({ id: "HOME", name: "Home" }, "HOME")}
+      {boardLinkItem({ id: 'HOME', name: 'Home' }, 'HOME')}
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppableThema">
+        <Droppable droppableId='droppableThema'>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {boardLinks.map((item: BoardLinkInterface, index: number) => {
