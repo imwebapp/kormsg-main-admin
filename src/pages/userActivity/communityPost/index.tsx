@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { historyApi } from "../../../apis/historyApi";
 import { userApi } from "../../../apis/userApi";
 import CommunityPostTable from "../../../components/communityPostTable";
+import { postApi } from "../../../apis/postApi";
+import { Spin } from "antd";
 
 
 const dataMock = [
@@ -38,35 +40,37 @@ export const CommunityPost = (props: IProps) => {
     const { dataUser } = props;
     const navigate = useNavigate();
     const [dataListCommunityPost, setDataListCommunityPost] = useState<any[]>([]);
-
+    console.log("dataListCommunityPost", dataListCommunityPost);
+    const [loadingScreen, setLoadingScreen] = useState(false);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const limit = 10;
 
     const _getDataListCommunityPost = async () => {
-        //call API
+        setLoadingScreen(true);
+        postApi.getList({
+            fields: JSON.stringify([
+                "$all",
+                {
+                    user: ["$all"],
+                },
+            ]),
+            filter: JSON.stringify({
+                user_id: `${dataUser?.id}`,
+            }),
+            page: page,
+            limit: limit,
+        })
+            .then((res: any) => {
+                setLoadingScreen(false);
+                setDataListCommunityPost(res?.results?.objects?.rows);
+                setTotalCount(res?.results?.objects?.count);
+            })
+            .catch((err: any) => {
+                setLoadingScreen(false);
 
-        // userApi
-        //   .getListPaymentHistory({
-        //     fields: JSON.stringify([
-        //       "$all",
-        //     ]),
-        //     filter: JSON.stringify({
-        //       user_id: `${dataUser.id}`,
-        //     }),
-        //     page: page,
-        //     limit: limit,
-        //   })
-        //   .then((res: any) => {
-        //     setDataHistory(res.results?.objects?.rows);
-        //     setTotalCount(res.results?.objects?.count);
-        //   })
-        //   .catch((err) => {
-        //     console.log("err getList PaymentHistory API", err);
-        //   });
-
-        setDataListCommunityPost(dataMock);
-        setTotalCount(dataMock.length);
+                console.log("err _getDataListCommunityPost API", err);
+            });
     };
 
     useEffect(() => {
@@ -75,6 +79,7 @@ export const CommunityPost = (props: IProps) => {
 
     return (
         <div className="">
+            <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
             <CommunityPostTable
                 data={dataListCommunityPost}
                 pagination={{

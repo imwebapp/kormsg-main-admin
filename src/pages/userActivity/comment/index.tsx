@@ -7,30 +7,8 @@ import { historyApi } from "../../../apis/historyApi";
 import { userApi } from "../../../apis/userApi";
 import CommunityPostTable from "../../../components/communityPostTable";
 import CommentTable from "../../../components/commentTable";
-
-
-const dataMock = [
-    {
-        id: 1,
-        type: "reply",
-        replyUser:{
-            avatar: "",
-            name: "Nguyen Van A",
-        },
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam euismod, purus nec scelerisque.",
-        creationTime: "2021-09-09",
-        suggestion: 2345,
-        theOpposite: 12,
-    },
-    {
-        id: 2,
-        type: "Post comments",
-        content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam euismod, purus nec scelerisque.",
-        creationTime: "2022-09-09",
-        suggestion: 1123,
-        theOpposite: 80,
-    },
-]
+import { reviewApi } from "../../../apis/reviewApi";
+import { Spin } from "antd";
 interface IProps {
     dataUser: User;
 }
@@ -39,35 +17,42 @@ export const Comment = (props: IProps) => {
     const { dataUser } = props;
     const navigate = useNavigate();
     const [dataListComment, setDataListComment] = useState<any[]>([]);
+    const [loadingScreen, setLoadingScreen] = useState(false);
+    console.log("dataListComment", dataListComment);
 
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     const limit = 10;
 
     const _getDataListComment = async () => {
-        //call API
-
-        // userApi
-        //   .getListPaymentHistory({
-        //     fields: JSON.stringify([
-        //       "$all",
-        //     ]),
-        //     filter: JSON.stringify({
-        //       user_id: `${dataUser.id}`,
-        //     }),
-        //     page: page,
-        //     limit: limit,
-        //   })
-        //   .then((res: any) => {
-        //     setDataHistory(res.results?.objects?.rows);
-        //     setTotalCount(res.results?.objects?.count);
-        //   })
-        //   .catch((err) => {
-        //     console.log("err getList PaymentHistory API", err);
-        //   });
-
-        setDataListComment(dataMock);
-        setTotalCount(dataMock.length);
+        setLoadingScreen(true);
+        reviewApi.getList({
+            fields: JSON.stringify([
+                "$all",
+                {
+                    user: ["$all"],
+                    parent: ["$all",
+                        {
+                            user: ["$all"],
+                        },
+                    ],
+                },
+            ]),
+            filter: JSON.stringify({
+                user_id: `${dataUser?.id}`,
+            }),
+            page: page,
+            limit: limit,
+        })
+            .then((res: any) => {
+                setLoadingScreen(false);
+                setDataListComment(res.results?.objects?.rows);
+                setTotalCount(res.results?.objects?.count);
+            })
+            .catch((err: any) => {
+                setLoadingScreen(false);
+                console.log("err _getDataListComment", err);
+            });
     };
 
     useEffect(() => {
@@ -76,6 +61,7 @@ export const Comment = (props: IProps) => {
 
     return (
         <div className="">
+             <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
             <CommentTable
                 data={dataListComment}
                 pagination={{
