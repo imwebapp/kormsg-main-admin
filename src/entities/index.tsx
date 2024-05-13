@@ -4,6 +4,7 @@ import { EmployeeInterface } from "./employee.entity";
 import { TagThemaInterface } from "./tagthema.entity";
 import { ThemaInterface } from "./thema.entity";
 import { UserInterface } from "./user.entity";
+import { ConversationInterface } from "./conversation.entity";
 
 export type {
   BoardLinkInterface,
@@ -12,4 +13,5 @@ export type {
   CategoryInterface,
   TagThemaInterface,
   ThemaInterface,
+  ConversationInterface,
 };

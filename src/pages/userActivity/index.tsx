@@ -1,17 +1,21 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { checkAccountType, classNames } from "../../utils/common";
-import Images from "../../assets/gen";
+import { classNames } from "../../utils/common";
 import { BaseText, CustomButton } from "../../components";
-import { useState } from "react";
-import { INIT_TAB_USER_DETAIL, ListTypeUserActivity, TypeUserActivity, listOptionUserDetail } from "../../utils/constants";
+import { useEffect, useState } from "react";
+import {
+  INIT_TAB_USER_DETAIL,
+  ListTypeUserActivity,
+  TypeUserActivity,
+} from "../../utils/constants";
 import { BaseInput } from "../../components/input/BaseInput";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { CommunityPost } from "./communityPost";
 import { PointDetail } from "./pointDetail";
 import { Comment } from "./comment";
+import UserChat from "./userChat";
+import { userApi } from "../../apis/userApi";
 import { Reservation } from "./reservation";
-
 
 interface IProps {
   route?: any;
@@ -33,32 +37,32 @@ const UserActivity = () => {
   const isShowModalEdit = location?.state?.showModalEdit || false;
   const [optionSelected, setOptionSelected] = useState(initTab);
   const [showModalEdit, setShowModalEdit] = useState(isShowModalEdit);
-
+  const [countUserActivity, setCountUserActivity] = useState<any>({
+    countChat: 0,
+    countPointHistory: 0,
+    countPost: 0,
+    countReservation: 0,
+    countReview: 0,
+  });
   console.log("formDataCreateUserXX", showModalEdit);
 
-  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(ListTypeUserActivity[0]);
+  const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
+    ListTypeUserActivity[0]
+  );
   const handleClickTypeUser = (item: any) => {
     setTypeUserSelected(item);
   };
-
-  const checkGroup = (group: string) => {
-    if (group === null || group === undefined || group === "") {
-      return "All";
-    } else {
-      return group;
-    }
+  const getCountUserActivity = async () => {
+    try {
+      let result: any = await userApi.getCountUserActivity(
+        formDataCreateUser?.id
+      );
+      setCountUserActivity(result);
+    } catch (error) {}
   };
-
-  const handleClickOption = (item: { title: string; value: string }) => {
-    if (item.value === optionSelected) {
-      return;
-    }
-    else {
-      setShowModalEdit(false);
-      setOptionSelected(item.value);
-    }
-
-  };
+  useEffect(() => {
+    getCountUserActivity();
+  }, []);
   return (
     <>
       <div
@@ -71,30 +75,25 @@ const UserActivity = () => {
           <div className={classNames("flex flex-row gap-3 items-center")}>
             {ListTypeUserActivity.map((item, index) => {
               let count = 0;
-              // switch (item.id) {
-              //   case TypeUser.ADMIN:
-              //     count = countTypeUser.countAdmin;
-              //     break;
-              //   case TypeUser.BIZ_USER:
-              //     count = countTypeUser.countBizUser;
-              //     break;
-              //   case TypeUser.FREE_USER:
-              //     count = countTypeUser.countFreeUser;
-              //     break;
-              //   case TypeUser.PAID_USER:
-              //     count = countTypeUser.countPaidUser;
-              //     break;
-              //   case "ALL":
-              //     if (groupSelected.id === 1)
-              //       count = countTypeUser.totalUser;
-              //     else {
-              //       count = countTypeUser.countBizUser + countTypeUser.countFreeUser + countTypeUser.countPaidUser;
-              //     }
-              //     break;
-              //   default:
-              //     break;
-              // }
-              // if (item.id === TypeUser.ADMIN && groupSelected.id !== 1) return null;
+              switch (item.id) {
+                case TypeUserActivity.COMMUNITY_POST:
+                  count = countUserActivity.countPost;
+                  break;
+                case TypeUserActivity.COMMENT:
+                  count = countUserActivity.countReview;
+                  break;
+                case TypeUserActivity.RESERVATION:
+                  count = countUserActivity.countReservation;
+                  break;
+                case TypeUserActivity.POINT_DETAIL:
+                  count = countUserActivity.countPointHistory;
+                  break;
+                case TypeUserActivity.CHAT:
+                  count = countUserActivity.countChat;
+                  break;
+                default:
+                  break;
+              }
 
               return (
                 <CustomButton
@@ -112,21 +111,17 @@ const UserActivity = () => {
               );
             })}
           </div>
-          {
-            typeUserSelected.id === TypeUserActivity.COMMUNITY_POST ? (
-              <CommunityPost dataUser={formDataCreateUser} />
-            ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
-              <Comment dataUser={formDataCreateUser} />
-            ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
-              <Reservation dataUser={formDataCreateUser} />
-            ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
-              <PointDetail dataUser={formDataCreateUser} />
-            ) : (
-              <BaseText size={20} bold>
-                CHAT
-              </BaseText>
-            )
-          }
+          {typeUserSelected.id === TypeUserActivity.COMMUNITY_POST ? (
+            <CommunityPost dataUser={formDataCreateUser} />
+          ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
+            <Comment dataUser={formDataCreateUser} />
+          ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
+            <Reservation dataUser={formDataCreateUser} />
+          ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
+            <PointDetail dataUser={formDataCreateUser} />
+          ) : (
+            <UserChat dataUser={formDataCreateUser} />
+          )}
         </div>
       </div>
     </>
