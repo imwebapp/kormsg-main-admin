@@ -15,6 +15,7 @@ import { PointDetail } from "./pointDetail";
 import { Comment } from "./comment";
 import UserChat from "./userChat";
 import { userApi } from "../../apis/userApi";
+import { Reservation } from "./reservation";
 
 interface IProps {
   route?: any;

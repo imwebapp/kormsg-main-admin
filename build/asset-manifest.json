@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.2140dc62.css",
-    "main.js": "/static/js/main.dd652439.js",
+    "main.css": "/static/css/main.7e504271.css",
+    "main.js": "/static/js/main.733aaf6e.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/bgLogin5.jpg": "/static/media/bgLogin5.c4972382bdeffdf0a382.jpg",
     "static/media/bgLogin4.jpg": "/static/media/bgLogin4.bb766e078e2bffaf29a4.jpg",
@@ -17,8 +17,12 @@
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
     "static/media/plusCircle.png": "/static/media/plusCircle.d2ef13685a665d11044b.png",
     "static/media/minusCircle.png": "/static/media/minusCircle.0174959b44bdf3a1e853.png",
+    "static/media/checkedCircleActive.png": "/static/media/checkedCircleActive.ec536ed774407d65fb4d.png",
     "static/media/Trashred.png": "/static/media/Trashred.41ba139a380c90aa75fb.png",
+    "static/media/PhoneIconBlue.png": "/static/media/PhoneIconBlue.2900dcfa62f8db407734.png",
     "static/media/iconGPS.png": "/static/media/iconGPS.916db9387568f068c446.png",
+    "static/media/checkedCircleInactive.png": "/static/media/checkedCircleInactive.76b5243a3eba0df7ac9d.png",
+    "static/media/cancelCircleActive.png": "/static/media/cancelCircleActive.e6d7a08f0ecf5d94b373.png",
     "static/media/noPost.png": "/static/media/noPost.082a217ec86981d12619.png",
     "static/media/Empty.png": "/static/media/Empty.3d49631542d57807847d.png",
     "static/media/Dashboard2.png": "/static/media/Dashboard2.f55d404bbe1fd74de53d.png",
@@ -43,12 +47,16 @@
     "static/media/Shopping2.png": "/static/media/Shopping2.9d7d934c034ac9631590.png",
     "static/media/iconPhone.png": "/static/media/iconPhone.1a1bef6334d83d8a0560.png",
     "static/media/Shopping.png": "/static/media/Shopping.5cb0d67556c9beb4964f.png",
+    "static/media/MessageIconBlue.png": "/static/media/MessageIconBlue.757879ad7e54885c671d.png",
     "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
+    "static/media/reservationConfirmedActive.png": "/static/media/reservationConfirmedActive.85b4e0580328430834e5.png",
     "static/media/webPC.png": "/static/media/webPC.1765576ca8d10bb8f917.png",
     "static/media/KRWBlue.png": "/static/media/KRWBlue.ea87863c016151233b2e.png",
+    "static/media/hourglassIcon.png": "/static/media/hourglassIcon.7c2dd96d7f172c27c62c.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
+    "static/media/reservationConfirmedInactive.png": "/static/media/reservationConfirmedInactive.1b74e9b73318b7a8ce0f.png",
     "static/media/Bulletin Board.png": "/static/media/Bulletin Board.fd31a367d66034d0b766.png",
     "static/media/twoDot.png": "/static/media/twoDot.5dab7f8f3e4091a1dbdc.png",
     "static/media/Setting2.png": "/static/media/Setting2.09c489b2d3f1ad737ff5.png",
@@ -57,12 +65,12 @@
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.2140dc62.css.map": "/static/css/main.2140dc62.css.map",
-    "main.dd652439.js.map": "/static/js/main.dd652439.js.map",
+    "main.7e504271.css.map": "/static/css/main.7e504271.css.map",
+    "main.733aaf6e.js.map": "/static/js/main.733aaf6e.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.2140dc62.css",
-    "static/js/main.dd652439.js"
+    "static/css/main.7e504271.css",
+    "static/js/main.733aaf6e.js"
   ]
 }
