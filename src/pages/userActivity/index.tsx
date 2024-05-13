@@ -116,13 +116,13 @@ const UserActivity = () => {
           ) : typeUserSelected.id === TypeUserActivity.COMMENT ? (
             <Comment dataUser={formDataCreateUser} />
           ) : typeUserSelected.id === TypeUserActivity.RESERVATION ? (
-            <BaseText size={20} bold>
-              RESERVATION
-            </BaseText>
+            <Reservation dataUser={formDataCreateUser} />
           ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
             <PointDetail dataUser={formDataCreateUser} />
           ) : (
-            <UserChat dataUser={formDataCreateUser} />
+            <BaseText size={20} bold>
+              CHAT
+            </BaseText>
           )}
         </div>
       </div>
