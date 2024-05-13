@@ -87,6 +87,7 @@ export const TypeUserActivity = {
 export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
 export const BASE_URL_ANALYTICS = "https://ga.bamgama.com"; // analytics
 export const BASE_URL_LINK_SHOP = "https://dev.kormsg.com/detail"; // link shop
+export const BASE_URL_LINK_POST = "https://pc.kormsg.com/post/detail"; // link post
 export const URL_SEARCH_SITE = "https://kormsg.com";
 
 export const RESERVATION_STATUS = {
