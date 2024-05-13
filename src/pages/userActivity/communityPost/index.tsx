@@ -9,30 +9,6 @@ import CommunityPostTable from "../../../components/communityPostTable";
 import { postApi } from "../../../apis/postApi";
 import { Spin } from "antd";
 
-const dataMock = [
-  {
-    id: 1,
-    image: "https://via.placeholder.com/150",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam euismod, purus nec scelerisque.",
-    nameWriter: "Nguyen Van A",
-    creationTime: "2021-09-09",
-    view: 100,
-    suggestion: 2345,
-    theOpposite: 12,
-  },
-  {
-    id: 2,
-    image: "https://via.placeholder.com/150",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam euismod, purus nec scelerisque.",
-    nameWriter: "Nguyen Van B",
-    creationTime: "2022-09-09",
-    view: 1000,
-    suggestion: 1123,
-    theOpposite: 80,
-  },
-];
 interface IProps {
   dataUser: User;
   count?: number;

@@ -117,6 +117,21 @@ const UserManage = () => {
     }
   };
 
+  const handleDeleteGroup = async (id: number) => {
+    console.log("handleDeleteGroup: ", id);
+    // try {
+    //   const resDeleteGroup: any = await groupApi.delete(id.toString());
+    //   if (resDeleteGroup?.code === 200) {
+    //     const newListUserGroup = listUserGroup.filter((group) => group.id !== id);
+    //     setListUserGroup(newListUserGroup);
+    //     setGroupSelected(listUserGroup[0]);
+    //     message.success("Delete group successfully");
+    //   }
+    // } catch (error) {
+    //   message.error("Delete group failed");
+    // }
+  }
+
   const handleEditGroupName = () => {
     setIsEditingGroupName(true);
     setNewGroupName(groupSelected.name);
@@ -740,34 +755,41 @@ const UserManage = () => {
                                 />
                               </>
                             ) : (
-                              <>
+                              <div className="flex justify-between w-full">
+                                <div className="flex gap-1">
+                                  {!isCreatingGroupName && checkSelected && (
+                                    <CheckOutlined
+                                      className={classNames("text-dayBreakBlue500 text-xl")}
+                                    />
+                                  )}
+                                  <BaseText
+                                    medium
+                                    size={14}
+                                    className={classNames(
+                                      checkSelected && !isCreatingGroupName
+                                        ? "text-dayBreakBlue500"
+                                        : "pl-6"
+                                    )}
+                                  >
+                                    {item.name}
+                                  </BaseText>
+                                  <span
+                                    className={classNames(
+                                      "",
+                                      checkSelected && !isCreatingGroupName
+                                        ? "text-dayBreakBlue500 font-medium"
+                                        : "font-medium"
+                                    )}
+                                  >
+                                    ({item?.numberUser || 0})
+                                  </span>
+                                </div>
                                 {!isCreatingGroupName && checkSelected && (
-                                  <CheckOutlined
-                                    className={classNames("text-dayBreakBlue500 text-xl")}
-                                  />
+                                  <div onClick={() => handleDeleteGroup(item?.id)}>
+                                    <img src={Images.trashred} className="w-5 h-5 cursor-pointer" />
+                                  </div>
                                 )}
-                                <BaseText
-                                  medium
-                                  size={14}
-                                  className={classNames(
-                                    checkSelected && !isCreatingGroupName
-                                      ? "text-dayBreakBlue500"
-                                      : "pl-6"
-                                  )}
-                                >
-                                  {item.name}
-                                </BaseText>
-                                <span
-                                  className={classNames(
-                                    "",
-                                    checkSelected && !isCreatingGroupName
-                                      ? "text-dayBreakBlue500 font-medium"
-                                      : "font-medium"
-                                  )}
-                                >
-                                  ({item?.numberUser || 0})
-                                </span>
-                              </>
+                              </div>
                             )}
                           </div>)}
                       </Draggable>
