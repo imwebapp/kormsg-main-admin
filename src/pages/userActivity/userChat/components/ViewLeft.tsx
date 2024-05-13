@@ -28,7 +28,7 @@ export const ViewLeft = (props: IProps) => {
 
       const params = {
         field: JSON.stringify(["$all"]),
-        // filter: JSON.stringify({ user_id: dataUser?.id }),
+        filter: JSON.stringify({ user_id: dataUser?.id }),
       };
       const { rows, count } = await conversationApi.getList(params);
       setTotal(count);
@@ -148,16 +148,18 @@ export const ViewLeft = (props: IProps) => {
             </div>
           );
         })}
-        <div className="flex flex-row justify-end p-6">
-          <Pagination
-            current={page}
-            onChange={(page: number, pageSize: number) => {
-              setPage(page);
-            }}
-            total={total}
-            pageSize={limit}
-          />
-        </div>
+        {conversations.length > 0 && (
+          <div className="flex flex-row justify-end p-6">
+            <Pagination
+              current={page}
+              onChange={(page: number, pageSize: number) => {
+                setPage(page);
+              }}
+              total={total}
+              pageSize={limit}
+            />
+          </div>
+        )}
       </div>
     );
   };
@@ -166,7 +168,7 @@ export const ViewLeft = (props: IProps) => {
     getConversation();
   }, []);
   return (
-    <div className="w-2/5 min-w-[458px] h-[calc(100vh-72px)] flex flex-col">
+    <div className="w-2/5 min-w-[458px] h-full flex flex-col">
       {buildList()}
     </div>
   );
