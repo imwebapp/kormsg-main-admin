@@ -120,9 +120,7 @@ const UserActivity = () => {
           ) : typeUserSelected.id === TypeUserActivity.POINT_DETAIL ? (
             <PointDetail dataUser={formDataCreateUser} />
           ) : (
-            <BaseText size={20} bold>
-              CHAT
-            </BaseText>
+            <UserChat dataUser={formDataCreateUser} />
           )}
         </div>
       </div>
