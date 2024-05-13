@@ -5,7 +5,7 @@ import { AnswerInterface } from "../../../../entities/answer.entity";
 import { useLocalStorage } from "../../../../stores/localStorage";
 import { BaseText } from "../../../../components";
 import Images from "../../../../assets/gen";
-import { formatTimeFull } from "../../../../utils/common";
+import { classNames, formatTimeFull } from "../../../../utils/common";
 import { useUserChatState } from "../store";
 import { conversationApi } from "../../../../apis/conversationApi";
 export const ViewRight = () => {
@@ -174,7 +174,12 @@ export const ViewRight = () => {
   };
 
   return (
-    <div className="w-3/5 border-l min-w-[458px] h-[calc(100vh-72px)] flex flex-col">
+    <div
+      className={classNames(
+        "w-3/5  min-w-[458px] h-full  flex flex-col",
+        conversationSelected && "border-l"
+      )}
+    >
       {conversationSelected && <>{buildList()}</>}
       <Modal
         centered

@@ -173,7 +173,7 @@ const StorePage = () => {
 
       switch (type) {
         case STORE_STATUS.exposure:
-          params.state = { $notIn: ["REJECTED", "EXPIRED"] };
+          params.state = "APPROVED";
           break;
         case STORE_STATUS.underReview:
           params.state = "PENDING";

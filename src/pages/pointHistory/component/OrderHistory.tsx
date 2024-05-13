@@ -24,6 +24,7 @@ export default function OrderHistory() {
         notification.success({
           message: "Approve Order Success",
         });
+        getListOrderHistory();
       }
     } catch (error) {}
   };
@@ -34,6 +35,7 @@ export default function OrderHistory() {
         notification.success({
           message: "Reject Order Success",
         });
+        getListOrderHistory();
       }
     } catch (error) {}
   };
