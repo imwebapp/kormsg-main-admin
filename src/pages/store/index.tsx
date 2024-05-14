@@ -283,7 +283,7 @@ const StorePage = () => {
     ];
 
     return (
-      <div className="flex flex-row gap-4 mt-1 mb-5">
+      <div className="flex flex-row gap-4 mt-1 mb-5 items-center">
         {buttonData.map(({ status, label, count }) => {
           return (
             <Droppable droppableId={status}>
