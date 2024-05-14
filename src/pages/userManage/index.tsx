@@ -72,6 +72,7 @@ const UserManage = () => {
     },
   );
   const [openModalCreateGroup, setOpenModalCreateGroup] = useState(false);
+  const [openModalDeleteGroup, setOpenModalDeleteGroup] = useState(false);
   const [openModalCreateUser, setOpenModalCreateUser] = useState(false);
   const [dialCode, setDialCode] = useState('+82');
   const [selected, setSelected] = useState("KR");
@@ -101,6 +102,7 @@ const UserManage = () => {
   const [isEditingGroupName, setIsEditingGroupName] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [isCreatingGroupName, setIsCreatingGroupName] = useState(false);
+  const [idGroupDelete, setIdGroupDelete] = useState("");
 
   const [reloading, setReloading] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
@@ -117,19 +119,46 @@ const UserManage = () => {
     }
   };
 
-  const handleDeleteGroup = async (id: number) => {
-    console.log("handleDeleteGroup: ", id);
-    // try {
-    //   const resDeleteGroup: any = await groupApi.delete(id.toString());
-    //   if (resDeleteGroup?.code === 200) {
-    //     const newListUserGroup = listUserGroup.filter((group) => group.id !== id);
-    //     setListUserGroup(newListUserGroup);
-    //     setGroupSelected(listUserGroup[0]);
-    //     message.success("Delete group successfully");
-    //   }
-    // } catch (error) {
-    //   message.error("Delete group failed");
-    // }
+  const handleDeleteGroup = async (item: any) => {
+    if (item?.numberUser === 0) {
+      try {
+        const resDeleteGroup: any = await groupApi.delete(item?.id.toString());
+        if (resDeleteGroup?.code === 200) {
+          const newListUserGroup = listUserGroup.filter((group) => group.id !== item?.id);
+          setListUserGroup(newListUserGroup);
+          setGroupSelected(listUserGroup[0]);
+          message.success("Delete group successfully");
+        }
+      } catch (error) {
+        message.error("Delete group failed");
+      }
+    } else {
+      setOpenModalDeleteGroup(true);
+      setIdGroupDelete(item?.id);
+    }
+  }
+
+  const handleCloseModalDeleteGroup = () => {
+    setOpenModalDeleteGroup(false);
+    setIdGroupDelete('')
+  }
+
+  const handleDeleteGroupHasNumber = async (id: string) => {
+    try {
+      const resDeleteGroup: any = await groupApi.delete(id.toString());
+      if (resDeleteGroup?.code === 200) {
+        setIdGroupDelete('');
+        setOpenModalDeleteGroup(false);
+        const newListUserGroup = listUserGroup.filter((group) => group.id.toString() !== id);
+        setListUserGroup(newListUserGroup);
+        setGroupSelected(listUserGroup[0]);
+        message.success("Delete group successfully");
+      }
+    } catch (error) {
+      setIdGroupDelete('');
+      setOpenModalDeleteGroup(false);
+      message.error("Delete group failed");
+    }
   }
 
   const handleEditGroupName = () => {
@@ -785,7 +814,7 @@ const UserManage = () => {
                                   </span>
                                 </div>
                                 {!isCreatingGroupName && checkSelected && (
-                                  <div onClick={() => handleDeleteGroup(item?.id)}>
+                                  <div onClick={() => handleDeleteGroup(item)}>
                                     <img src={Images.trashred} className="w-5 h-5 cursor-pointer" />
                                   </div>
                                 )}
@@ -957,6 +986,17 @@ const UserManage = () => {
       </BaseModal> */}
 
       <BaseModal
+        isOpen={openModalDeleteGroup}
+        onClose={handleCloseModalDeleteGroup}
+        onSubmit={() => handleDeleteGroupHasNumber(idGroupDelete)}
+        title="Delete group"
+      >
+        <BaseText locale medium size={14}>
+          When you press the delete button, where would you like to move the members inside?
+        </BaseText>
+      </BaseModal>
+
+      <BaseModal
         isOpen={openModalAddJumpUp}
         onClose={handleCloseModalJumpUp}
         onSubmit={handleJumpUp}
@@ -1002,7 +1042,7 @@ const UserManage = () => {
       </BaseModal >
 
       {/* create user */}
-      < BaseModal
+      <BaseModal
         isOpen={openModalCreateUser}
         onClose={handleCloseModalCreateUser}
         onSubmit={handleCreateUser}
