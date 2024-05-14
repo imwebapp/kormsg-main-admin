@@ -19,7 +19,18 @@ export const ViewRight = () => {
   const getConversation = async () => {
     try {
       const params = {
-        fields: JSON.stringify(["$all", { conversation: ["$all"] }]),
+        fields: JSON.stringify([
+          "$all",
+          {
+            conversation: [
+              "$all",
+              { user: ["$all"] },
+              { shop: ["$all", { user: ["$all"] }] },
+            ],
+          },
+          { user: ["$all"] },
+          { shop: ["$all", { user: ["$all"] }] },
+        ]),
       };
       console.log("params", params);
 
@@ -85,7 +96,7 @@ export const ViewRight = () => {
   //   );
   // };
 
-  const buildAdminMessage = (item: AnswerInterface) => {
+  const buildAdminMessage = (item: any) => {
     return (
       <div className="flex flex-row justify-end mt-4 ">
         <div className="flex flex-col buildStatus w-2/3 items-end">
@@ -97,7 +108,10 @@ export const ViewRight = () => {
                 </BaseText>
               </div>
             )}
-            <img src={Images.logo} className="w-11 h-11 rounded-full" />
+            <img
+              src={item?.shop?.user?.avatar || Images.logo}
+              className="w-11 h-11 rounded-full"
+            />
           </div>
           {item?.images && item?.images[0] && (
             <div className="mt-2 flex flex-wrap flex-row gap-2">
@@ -128,7 +142,7 @@ export const ViewRight = () => {
         <div className="flex flex-col buildStatus w-2/3 items-start">
           <div className="flex flex-row gap-x-2">
             <img
-              src={item.user?.avatar || Images.userDefault}
+              src={item.conversation?.shop?.thumbnails || Images.userDefault}
               className="w-11 h-11 rounded-full"
             />
             {item?.content && item?.content?.length > 0 && (
