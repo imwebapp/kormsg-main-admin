@@ -99,6 +99,33 @@ export const RESERVATION_STATUS = {
   ALL: "ALL",
 };
 
+export const ListTypeUserActivityReservation = [
+  {
+    id: "ALL",
+    name: "All",
+  },
+  {
+    id: "PENDING",
+    name: "Checking",
+  },
+  {
+    id: "APPROVED",
+    name: "Reservation confirmation",
+  },
+  {
+    id: "COMPLETED",
+    name: "Used",
+  },
+  {
+    id: "CANCELLED",
+    name: "Cancellation/Cancellation",
+  },
+  // {
+  //   id: "REJECTED",
+  //   name: "REJECTED",
+  // },
+];
+
 export const INIT_TAB_USER_DETAIL = {
   INFORMATION: "information",
   SHOP_INFORMATION: "shopInformation",
