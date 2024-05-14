@@ -24,10 +24,8 @@ export const ViewLeft = (props: IProps) => {
   const getConversation = async () => {
     try {
       setConversationSelected(undefined);
-      console.log("data", dataUser);
-
       const params = {
-        field: JSON.stringify(["$all"]),
+        field: JSON.stringify(["$all", "$user"]),
         filter: JSON.stringify({ user_id: dataUser?.id }),
       };
       const { rows, count } = await conversationApi.getList(params);
@@ -69,42 +67,6 @@ export const ViewLeft = (props: IProps) => {
       <div className="overflow-auto h-full">
         {conversations.map((item, index) => {
           return (
-            // <div
-            //   onClick={() => setConversationSelected(item)}
-            //   key={index}
-            //   className={classNames(
-            //     "px-4 py-3 flex-row flex border-b cursor-pointer",
-            //     conversationSelected?.id === item?.id ? "bg-bgItemActive" : ""
-            //   )}
-            // >
-            //   <img
-            //     className="w-11 h-11 rounded-full object-cover"
-            //     src={item.user?.avatar || Images.userDefault}
-            //   />
-            //   <div className="flex flex-1 flex-col ml-4">
-            //     <div className="flex flex-row items-center">
-            //       <BaseText size={16} bold>
-            //         {item.user?.nickname || ""}
-            //       </BaseText>
-            //       <div className="mx-4 w-1.5 h-1.5 rounded-full bg-black"></div>
-            //       <BaseText size={14} medium>
-            //         {formatTime(item.created_at)}
-            //       </BaseText>
-            //     </div>
-            //     <div className="flex flex-row items-center">
-            //       <BaseText size={14} medium>
-            //         ({item.user?.username || ""})
-            //       </BaseText>
-            //       <BaseText size={14} medium className="ml-1">
-            //         {item.user?.phone || ""}
-            //       </BaseText>
-            //     </div>
-            //     <BaseText size={16} className="mt-2 line-clamp-2">
-            //       {item.last_message?.content}
-            //     </BaseText>
-            //   </div>
-            //   {buildStatus(item)}
-            // </div>
             <div
               onClick={() => setConversationSelected(item)}
               key={index}
@@ -114,9 +76,9 @@ export const ViewLeft = (props: IProps) => {
               )}
             >
               <img
-                src={item.user?.avatar || Images.userDefault}
+                src={item.shop?.thumbnails || Images.userDefault}
                 alt="Profile picture "
-                className="shrink-0 w-14 aspect-square"
+                className="shrink-0 w-14 h-14 rounded-full"
               />
               <div className="flex flex-col flex-1 my-auto">
                 <div className="flex gap-1 justify-between w-full whitespace-nowrap leading-[150%]">
