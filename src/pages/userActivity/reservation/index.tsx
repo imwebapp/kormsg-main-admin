@@ -1,17 +1,12 @@
-import { useNavigate } from "react-router-dom";
-import { User, classNames } from "../../../utils/common";
-import HistoryPaymentTable from "../../../components/historyPaymentTable";
-import { BaseCard, CustomButton } from "../../../components";
-import { useEffect, useState } from "react";
-import { historyApi } from "../../../apis/historyApi";
-import { userApi } from "../../../apis/userApi";
-import CommunityPostTable from "../../../components/communityPostTable";
-import PointDetailTable from "../../../components/pointDetailTable";
-import { reservationApi } from "../../../apis/reservationApi";
-import { ReservationItem } from "./reservationItem";
 import { Spin } from "antd";
-import { ListTypeUserActivity, ListTypeUserActivityReservation, TypeUserActivity } from "../../../utils/constants";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { reservationApi } from "../../../apis/reservationApi";
+import { CustomButton } from "../../../components";
+import { User, classNames } from "../../../utils/common";
+import { ListTypeUserActivityReservation, RESERVATION_STATUS } from "../../../utils/constants";
+import { ReservationItem } from "./reservationItem";
 
 interface IProps {
     dataUser: User;
@@ -21,23 +16,46 @@ export const Reservation = (props: IProps) => {
     const { dataUser } = props;
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [page, setPage] = useState(1);
-    const [dataReservation, setDataReservation] = useState<any[]>([]);
-    const [totalCount, setTotalCount] = useState(0);
-    console.log("dataReservation", dataReservation);
     const [loadingScreen, setLoadingScreen] = useState(false);
 
-    const [typeUserSelected, setTypeUserSelected] = useState<any>(
+    // const limit = 10;
+    const [page, setPage] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
+
+    const [dataReservation, setDataReservation] = useState<any[]>([]);
+    console.log("dataReservation: ", dataReservation);
+
+    const [typeUserReservationSelected, setTypeUserReservationSelected] = useState<any>(
         ListTypeUserActivityReservation[0]
     );
-    // const limit = 10;
+    const [countUserActivityReservation, setCountUserActivityReservation] = useState<any>({
+        total: 0,
+        pending: 0,
+        approve: 0,
+        unsuccess: 0,
+        complete: 0,
+        reject: 0,
+        cancel: 0,
+    });
 
-    const handleClickTypeUser = (item: any) => {
-        setTypeUserSelected(item);
+    const handleClickTypeUserReservation = (item: any) => {
+        setTypeUserReservationSelected(item);
     };
 
-    const _getDataListPointDetail = async () => {
+    const _getDataListPointDetail = () => {
         setLoadingScreen(true)
+        const convertFilter: any = {
+            user_id: `${dataUser.id}`,
+        };
+        if (typeUserReservationSelected.id === RESERVATION_STATUS.CANCELLED) {
+            convertFilter["state"] = { "$in": ["CANCELLED", "REJECTED"] };
+        }
+        else if (typeUserReservationSelected.id === RESERVATION_STATUS.ALL) {
+        }
+        else {
+            convertFilter["state"] = typeUserReservationSelected.id;
+        }
+
         reservationApi.getList({
             fields: JSON.stringify([
                 "$all",
@@ -45,9 +63,7 @@ export const Reservation = (props: IProps) => {
                     user: ["$all"],
                 },
             ]),
-            filter: JSON.stringify({
-                user_id: `${dataUser.id}`,
-            }),
+            filter: JSON.stringify(convertFilter),
             // page: page,
             // limit: limit,
         })
@@ -62,8 +78,28 @@ export const Reservation = (props: IProps) => {
             });
     };
 
+    const _getCountReservation = () => {
+        const convertFilter: any = {
+            user_id: `${dataUser.id}`,
+        };
+
+        reservationApi.getCountReservation({
+            filter: JSON.stringify(convertFilter),
+        })
+            .then((res: any) => {
+                setCountUserActivityReservation(res?.results?.object)
+            })
+            .catch((err) => {
+                console.log("err getCount dataReservation API", err);
+            });
+    };
+
     useEffect(() => {
         _getDataListPointDetail();
+    }, [typeUserReservationSelected]);
+
+    useEffect(() => {
+        _getCountReservation();
     }, []);
 
     return (
@@ -71,35 +107,35 @@ export const Reservation = (props: IProps) => {
             <div className={classNames("flex flex-row gap-3 items-center")}>
                 {ListTypeUserActivityReservation.map((item, index) => {
                     let count = 0;
-                    // switch (item.id) {
-                    //     case TypeUserActivity.COMMUNITY_POST:
-                    //         count = countUserActivity.countPost;
-                    //         break;
-                    //     case TypeUserActivity.COMMENT:
-                    //         count = countUserActivity.countReview;
-                    //         break;
-                    //     case TypeUserActivity.RESERVATION:
-                    //         count = countUserActivity.countReservation;
-                    //         break;
-                    //     case TypeUserActivity.POINT_DETAIL:
-                    //         count = countUserActivity.countPointHistory;
-                    //         break;
-                    //     case TypeUserActivity.CHAT:
-                    //         count = countUserActivity.countChat;
-                    //         break;
-                    //     default:
-                    //         break;
-                    // }
+                    switch (item.id) {
+                        case RESERVATION_STATUS.ALL:
+                            count = countUserActivityReservation.total;
+                            break;
+                        case RESERVATION_STATUS.PENDING:
+                            count = countUserActivityReservation.pending;
+                            break;
+                        case RESERVATION_STATUS.APPROVED:
+                            count = countUserActivityReservation.approve;
+                            break;
+                        case RESERVATION_STATUS.COMPLETED:
+                            count = countUserActivityReservation.complete;
+                            break;
+                        case RESERVATION_STATUS.CANCELLED:
+                            count = countUserActivityReservation.reject + countUserActivityReservation.cancel;
+                            break;
+                        default:
+                            break;
+                    }
 
                     return (
                         <CustomButton
                             className="text-base font-medium"
                             style={{
                                 backgroundColor:
-                                    typeUserSelected.id === item.id ? "blue" : "white",
-                                color: typeUserSelected.id === item.id ? "white" : "gray",
+                                    typeUserReservationSelected.id === item.id ? "blue" : "white",
+                                color: typeUserReservationSelected.id === item.id ? "white" : "gray",
                             }}
-                            onClick={() => handleClickTypeUser(item)}
+                            onClick={() => handleClickTypeUserReservation(item)}
                         >
                             {t(item.name)}
                             {" (" + count + ")"}

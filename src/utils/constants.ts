@@ -117,13 +117,13 @@ export const ListTypeUserActivityReservation = [
     name: "Used",
   },
   {
-    id: "REJECTED",
-    name: "REJECTED",
-  },
-  {
     id: "CANCELLED",
     name: "Cancellation/Cancellation",
   },
+  // {
+  //   id: "REJECTED",
+  //   name: "REJECTED",
+  // },
 ];
 
 export const INIT_TAB_USER_DETAIL = {
