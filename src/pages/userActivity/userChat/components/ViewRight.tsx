@@ -142,7 +142,7 @@ export const ViewRight = () => {
         <div className="flex flex-col buildStatus w-2/3 items-start">
           <div className="flex flex-row gap-x-2">
             <img
-              src={item.conversation?.shop?.thumbnails || Images.userDefault}
+              src={item.conversation?.shop?.thumbnails[0] || Images.userDefault}
               className="w-11 h-11 rounded-full"
             />
             {item?.content && item?.content?.length > 0 && (

@@ -76,7 +76,7 @@ export const ViewLeft = (props: IProps) => {
               )}
             >
               <img
-                src={item.shop?.thumbnails || Images.userDefault}
+                src={item.shop?.thumbnails[0] || Images.userDefault}
                 alt="Profile picture "
                 className="shrink-0 w-14 h-14 rounded-full"
               />
