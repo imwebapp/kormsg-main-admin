@@ -114,7 +114,7 @@ export default function OrderHistory() {
       title: t("승인버튼"),
       render: (text, record) => (
         <div className="flex gap-2 justify-center px-3 py-2.5 text-xs font-bold leading-5 text-center text-white whitespace-nowrap">
-          {!record.pending && (
+          {!record.pending && record.sent === false && (
             <button
               className="justify-center px-2 py-1.5 bg-blue-600 rounded-lg"
               onClick={() => {
@@ -130,7 +130,7 @@ export default function OrderHistory() {
               보냈음
             </button>
           )}
-          {!record.sent && (
+          {!record.sent && record.pending === false && (
             <button
               className="justify-center px-2 py-1.5 bg-red-600 rounded-lg"
               onClick={() => {
