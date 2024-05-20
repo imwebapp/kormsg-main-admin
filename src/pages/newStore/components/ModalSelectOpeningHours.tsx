@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { BaseModal } from '../../../components/modal/BaseModal'
-import { BaseText } from '../../../components'
+import { BaseText, CustomButton } from '../../../components'
 import { classNames, generateRandomID } from '../../../utils/common'
 import Images from '../../../assets/gen';
 import { BaseInput } from '../../../components/input/BaseInput';
@@ -9,16 +9,24 @@ import { ChatMessageFuncPart1 } from './ChatMessageFuncPart1';
 import { useTranslation } from 'react-i18next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { TimePicker, TimePickerProps } from 'antd';
+import { Checkbox, Tag, TimePicker, TimePickerProps } from 'antd';
 import dayjs from 'dayjs';
 
-const dataHour: any = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
-const dataMinutes: any = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
-    '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
-    '21', '22', '23', '24', '25', '26', '27', '28', '29', '30',
-    '31', '32', '33', '34', '35', '36', '37', '38', '39', '40',
-    '41', '42', '43', '44', '45', '46', '47', '48', '49', '50',
-    '51', '52', '53', '54', '55', '56', '57', '58', '59'];
+const Weekdays = [
+    { id: 'monday', name: 'Monday' },
+    { id: 'tuesday', name: 'Tuesday' },
+    { id: 'wednesday', name: 'Wednesday' },
+    { id: 'thursday', name: 'Thursday' },
+    { id: 'friday', name: 'Friday' },
+    { id: 'saturday', name: 'Saturday' },
+    { id: 'sunday', name: 'Sunday' },
+]
+
+const holidays = [
+    "새해 첫날", "연휴", "설날", "연휴", "삼일절", "어린이날",
+    "부처님 오신", "현충일", "광복절", "연휴", "설날", "연휴",
+    "개천절", "한글날", "성탄절"
+];
 interface IProps {
     isOpen: boolean;
     onClose?: () => void;
@@ -31,53 +39,22 @@ export const ModalSelectOpeningHours = (props: IProps) => {
     const [dataOpening, setDataOpening] = useState('00:00')
     const [dataClosing, setDataClosing] = useState('00:00')
     const [isSelected, setIsSelected] = useState(false)
+    const [typePickTime, setTypePickTime] = useState(false)
 
     console.log('dataOpening', dataOpening);
-    
+
 
     const handleCloseModalOpeningHours = () => {
         setIsSelected(false)
+        setTypePickTime(false)
         onClose && onClose();
     }
     const handleSubmitModalOpeningHours = () => {
         setIsSelected(false)
+        setTypePickTime(false)
         const dataConvert = dataOpening + '~' + dataClosing;
         onSubmit && onSubmit(dataConvert);
     }
-    const [valueHours, setValueHours] = React.useState(0);
-    const [valueMinutes, setValueMinutes] = React.useState(0);
-
-    const handleChangeHours = (event: React.SyntheticEvent, newValue: number) => {
-        setValueHours(newValue);
-        if (isSelected) {
-            newValue < 10 ?
-                setDataClosing('0' + newValue + ':' + dataClosing.split(':')[1])
-                :
-                setDataClosing(newValue + ':' + dataClosing.split(':')[1])
-        }
-        else {
-            newValue < 10 ?
-                setDataOpening('0' + newValue + ':' + dataOpening.split(':')[1])
-                :
-                setDataOpening(newValue + ':' + dataOpening.split(':')[1])
-        }
-    };
-
-    const handleChangeMinutes = (event: React.SyntheticEvent, newValue: number) => {
-        setValueMinutes(newValue);
-        if (isSelected) {
-            newValue < 10 ?
-                setDataClosing(dataClosing.split(':')[0] + ':' + '0' + newValue)
-                :
-                setDataClosing(dataClosing.split(':')[0] + ':' + newValue)
-        }
-        else {
-            newValue < 10 ?
-                setDataOpening(dataOpening.split(':')[0] + ':' + '0' + newValue)
-                :
-                setDataOpening(dataOpening.split(':')[0] + ':' + newValue)
-        }
-    };
 
     const onChangeTime: TimePickerProps['onChange'] = (time, timeString) => {
         if (typeof timeString === 'string') {
@@ -95,27 +72,8 @@ export const ModalSelectOpeningHours = (props: IProps) => {
             const dataEditConvert = data && data.split('~');
             dataEditConvert && setDataOpening(dataEditConvert[0]);
             dataEditConvert && setDataClosing(dataEditConvert[1]);
-            setValueHours(dataHour.indexOf(dataEditConvert[0].split(':')[0]));
-            setValueMinutes(dataMinutes.indexOf(dataEditConvert[0].split(':')[1]));
         }
     }, [data]);
-
-    useEffect(() => {
-        if (isSelected) {
-            const dataClosingConvert = dataClosing.split(':');
-            const dataClosingHoursIndex = dataHour.indexOf(dataClosingConvert[0]);
-            const dataClosingMinutesIndex = dataMinutes.indexOf(dataClosingConvert[1]);
-            setValueHours(dataClosingHoursIndex);
-            setValueMinutes(dataClosingMinutesIndex);
-        }
-        else {
-            const dataOpeningConvert = dataOpening.split(':');
-            const dataOpeningHoursIndex = dataHour.indexOf(dataOpeningConvert[0]);
-            const dataOpeningMinutesIndex = dataMinutes.indexOf(dataOpeningConvert[1]);
-            setValueHours(dataOpeningHoursIndex);
-            setValueMinutes(dataOpeningMinutesIndex);
-        }
-    }, [isSelected]);
 
     return (
         <BaseModal
@@ -127,99 +85,116 @@ export const ModalSelectOpeningHours = (props: IProps) => {
         >
             <div className='flex items-center gap-6 mb-4'>
                 <div
-                    className={classNames('flex flex-col flex-1 px-4 py-2 rounded-lg bg-gray8 border-2', !isSelected ? 'border-primary ' : 'border-gray5')}
                     onClick={() => {
-                        setIsSelected(false)
+                        if (isSelected) setIsSelected(!isSelected)
                     }}
+                    className={classNames(
+                        'flex items-center justify-center flex-1 py-2 border rounded-lg',
+                        !isSelected ? 'bg-dayBreakBlue50 border-primary' : ''
+                    )}
                 >
-                    <BaseText locale className='mb-2'>
-                        오픈시간
-                    </BaseText>
-                    {/* <BaseText bold>
-                        {dataOpening}
-                    </BaseText> */}
-                    <TimePicker
-                        defaultValue={dayjs('00:00', 'HH:mm')}
-                        value={dayjs(dataOpening, 'HH:mm')}
-                        changeOnScroll
-                        needConfirm={false}
-                        format={'HH:mm'} onChange={onChangeTime}
-                    />
+                    <BaseText locale bold className={classNames(!isSelected ? 'text-primary' : '')}>휴무일이 있어요</BaseText>
                 </div>
-                <BaseText>
-                    ~
-                </BaseText>
                 <div
-                    className={classNames('flex flex-col flex-1 px-4 py-2 rounded-lg  bg-gray8 border-2', isSelected ? 'border-primary ' : 'border-gray5')}
-
                     onClick={() => {
-                        setIsSelected(true)
+                        if (!isSelected) setIsSelected(!isSelected)
                     }}
+                    className={classNames(
+                        'flex items-center justify-center flex-1 py-2 border rounded-lg',
+                        isSelected ? 'bg-dayBreakBlue50 border-primary' : ''
+                    )}
                 >
-                    <BaseText locale className='mb-2'>
-                        마감시간
-                    </BaseText>
-                    {/* <BaseText bold>
-                        {dataClosing}
-                    </BaseText> */}
-                    <TimePicker
-                        defaultValue={dayjs('00:00', 'HH:mm')}
-                        value={dayjs(dataClosing, 'HH:mm')}
-                        changeOnScroll
-                        needConfirm={false}
-                        format={'HH:mm'}
-                        onChange={onChangeTimeClosing}
-                    />
-
+                    <BaseText locale bold className={classNames(isSelected ? 'text-primary' : '')}>휴무일이 있어요</BaseText>
                 </div>
             </div>
-            {/* <div
-                className='flex gap-6 mb-4 border-[1.5px] h-[200px] rounded-lg border-gray5 '
-            >
-                <div className='flex justify-center flex-grow'>
-                    <Tabs
-                        orientation="vertical"
-                        variant="scrollable"
-                        value={valueHours}
-                        onChange={handleChangeHours}
-                        aria-label="Vertical tabs example"
-                        classes={{ indicator: 'bg-primary' }}
-                    >
-                        {dataHour.map((item: any, index: any) => {
-                            return (
-                                <Tab
-                                    key={generateRandomID()}
-                                    label={item}
+            {
+                !isSelected ? (
+                    <>
+                        <div className='flex flex-col gap-1 mb-4'>
+                            <BaseText bold locale>정기 휴무일이 있나요?</BaseText>
+                            <div className='flex gap-4'>
+                                <div className='px-4 py-2 rounded-lg bg-darkNight50'>
+                                    <BaseText medium locale>매주</BaseText>
+                                </div>
+                                <div className='flex gap-2'>
+                                    {Weekdays.map((item, index) => {
+                                        return (
+                                            <div key={index} className='px-4 py-2 rounded-lg bg-darkNight50'>
+                                                <BaseText medium locale>{item.name}</BaseText>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        </div>
 
-                                />
+                        <div className='flex flex-col gap-1 mb-4'>
+                            <BaseText bold locale>공휴일 중 휴무일이 있나요?</BaseText>
+                            <div className='flex gap-4'>
+                                <div className='flex gap-2'>
+                                    <Checkbox >
+                                        <BaseText medium locale>설,추석 당일만 휴무</BaseText>
+                                    </Checkbox>
+                                    <Checkbox >
+                                        <BaseText medium locale>전체 휴무</BaseText>
+                                    </Checkbox>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                                {holidays.map((holiday, index) => (
+                                    <Tag key={index} className="p-2 text-center border-none bg-darkNight50">
+                                        {holiday}
+                                    </Tag>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className='flex flex-col gap-1 mb-4'>
+                            <BaseText bold locale>영업 시간을 알려주세요.</BaseText>
+                            <div className='flex gap-4'>
+                                <div
+                                    onClick={() => {
+                                        if (typePickTime) setTypePickTime(!typePickTime)
+                                    }}
+                                    className={classNames(
+                                        'flex items-center justify-center flex-1 py-2 border rounded-lg',
+                                        !typePickTime ? 'bg-dayBreakBlue50 border-primary' : ''
+                                    )}
+                                >
+                                    <BaseText locale bold className={classNames(!typePickTime ? 'text-primary' : '')}>모든 영업일이 같아요</BaseText>
+                                </div>
+                                <div
+                                    onClick={() => {
+                                        if (!typePickTime) setTypePickTime(!typePickTime)
+                                    }}
+                                    className={classNames(
+                                        'flex items-center justify-center flex-1 py-2 border rounded-lg',
+                                        typePickTime ? 'bg-dayBreakBlue50 border-primary' : ''
+                                    )}
+                                >
+                                    <BaseText locale bold className={classNames(typePickTime ? 'text-primary' : '')}>평일/주말 달라요</BaseText>
+                                </div>
+                            </div>
+                            {!typePickTime ? (
+                                <>
+                                    <div>
+                                        <BaseText bold locale>영업시간</BaseText>
+                                        <TimePicker.RangePicker
+                                            format='HH:mm'
+                                        />
+                                    </div>
+                                </>
+                            ) : (
+                                <>b</>
                             )
-                        })}
-                    </Tabs>
-                </div>
 
-                <BaseText className='my-auto'>
-                    ~
-                </BaseText>
-
-                <div className='flex justify-center flex-grow '>
-                    <Tabs
-                        orientation="vertical"
-                        variant="scrollable"
-                        value={valueMinutes}
-                        onChange={handleChangeMinutes}
-                        sx={{}}
-                    >
-                        {dataMinutes.map((item: any, index: any) => {
-                            return (
-                                <Tab
-                                    key={generateRandomID()}
-                                    label={item}
-                                />
-                            )
-                        })}
-                    </Tabs>
-                </div>
-            </div> */}
+                            }
+                        </div>
+                    </>
+                ) : (
+                    <></>
+                )
+            }
         </BaseModal >
     )
 }
