@@ -11,6 +11,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Checkbox, Tag, TimePicker, TimePickerProps } from 'antd';
 import dayjs from 'dayjs';
+import BaseButton from '../../../components/baseButton';
+import { CheckOutlined, PlusOutlined } from '@ant-design/icons';
 
 const Weekdays = [
     { id: 'monday', name: 'Monday' },
@@ -40,6 +42,9 @@ export const ModalSelectOpeningHours = (props: IProps) => {
     const [dataClosing, setDataClosing] = useState('00:00')
     const [isSelected, setIsSelected] = useState(false)
     const [typePickTime, setTypePickTime] = useState(false)
+    const [isAlwaysOpen, setIsAlwaysOpen] = useState(false)
+
+    const [listBreakTime, setListBreakTime] = useState([])
 
     console.log('dataOpening', dataOpening);
 
@@ -151,7 +156,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
 
                         <div className='flex flex-col gap-1 mb-4'>
                             <BaseText bold locale>영업 시간을 알려주세요.</BaseText>
-                            <div className='flex gap-4'>
+                            <div className='flex gap-4 mb-4'>
                                 <div
                                     onClick={() => {
                                         if (typePickTime) setTypePickTime(!typePickTime)
@@ -177,19 +182,159 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                             </div>
                             {!typePickTime ? (
                                 <>
-                                    <div>
-                                        <BaseText bold locale>영업시간</BaseText>
-                                        <TimePicker.RangePicker
-                                            format='HH:mm'
-                                        />
+                                    <div className='flex gap-2 mb-2'>
+                                        <div className='flex items-center flex-1 gap-2'>
+                                            <BaseText bold locale>영업시간</BaseText>
+                                            <TimePicker.RangePicker
+                                                format='HH:mm'
+                                                className='flex-1'
+                                            />
+                                        </div>
+                                        <div
+                                            onClick={() => {
+                                                setIsAlwaysOpen(!isAlwaysOpen)
+                                            }}
+                                            className={classNames(
+                                                'flex items-center justify-center p-2 flex-1 border rounded-lg cursor-pointer',
+                                                !isAlwaysOpen ? 'bg-dayBreakBlue50 border-primary' : ''
+                                            )}
+                                        >
+                                            <BaseText locale bold className={classNames(!isAlwaysOpen ? 'text-primary' : '')}>
+                                                24시간 운영해요.
+                                            </BaseText>
+                                            <CheckOutlined
+                                                className={classNames(
+                                                    'w-6 h-6',
+                                                    !isAlwaysOpen ? 'text-primary' : ''
+                                                )}
+                                            />
+                                        </div>
+
+                                    </div>
+                                    <div className='flex items-center gap-1'>
+                                        {/* {true ? ( */}
+                                        {listBreakTime.length > 0 ? (
+                                            <div className='flex flex-1 gap-2 mb-2'>
+                                                <div className='flex items-center flex-1 gap-2 '>
+                                                    <BaseText bold locale>영업시간</BaseText>
+                                                    <TimePicker.RangePicker
+                                                        format='HH:mm'
+                                                        className='flex-1'
+                                                    />
+                                                </div>
+                                                <div
+                                                    onClick={() => {
+                                                        setIsAlwaysOpen(!isAlwaysOpen)
+                                                    }}
+                                                    className='flex items-center justify-center flex-1 p-2 border rounded-lg cursor-pointer border-primary'
+                                                >
+                                                    <PlusOutlined
+                                                        className='w-6 h-6 text-primary'
+                                                    />
+                                                    <BaseText locale bold className='text-primary'>
+                                                        24시간 운영해요.
+                                                    </BaseText>
+                                                </div>
+                                            </div>) : (
+                                            <>
+                                                <BaseText bold locale>공휴일 중 휴무일이 있나요?</BaseText>
+                                                <div
+                                                    onClick={() => {
+                                                        setIsAlwaysOpen(!isAlwaysOpen)
+                                                    }}
+                                                    className='flex items-center justify-center gap-2 p-2 border rounded-lg cursor-pointer border-primary'
+                                                >
+                                                    <BaseText locale bold className='text-primary'>
+                                                        설정하기
+                                                    </BaseText>
+                                                    <CheckOutlined
+                                                        className='w-6 h-6 text-primary'
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </>
                             ) : (
-                                <>b</>
-                            )
+                                <>
+                                    <div className='flex gap-2 mb-2'>
+                                        <div className='flex items-center flex-1 gap-2'>
+                                            <BaseText bold locale>영업시간</BaseText>
+                                            <TimePicker.RangePicker
+                                                format='HH:mm'
+                                                className='flex-1'
+                                            />
+                                        </div>
+                                        <div
+                                            onClick={() => {
+                                                setIsAlwaysOpen(!isAlwaysOpen)
+                                            }}
+                                            className={classNames(
+                                                'flex items-center justify-center p-2 flex-1 border rounded-lg cursor-pointer',
+                                                !isAlwaysOpen ? 'bg-dayBreakBlue50 border-primary' : ''
+                                            )}
+                                        >
+                                            <BaseText locale bold className={classNames(!isAlwaysOpen ? 'text-primary' : '')}>
+                                                24시간 운영해요.
+                                            </BaseText>
+                                            <CheckOutlined
+                                                className={classNames(
+                                                    'w-6 h-6',
+                                                    !isAlwaysOpen ? 'text-primary' : ''
+                                                )}
+                                            />
+                                        </div>
 
+                                    </div>
+                                    <div className='flex items-center gap-1'>
+                                        {/* {listBreakTime.length > 0 ? ( */}
+                                        {true ? (
+                                            <div className='flex flex-1 gap-2 mb-2'>
+                                                <div className='flex items-center flex-1 gap-2 '>
+                                                    <BaseText bold locale>영업시간</BaseText>
+                                                    <TimePicker.RangePicker
+                                                        format='HH:mm'
+                                                        className='flex-1'
+                                                    />
+                                                </div>
+                                                <div
+                                                    onClick={() => {
+                                                        setIsAlwaysOpen(!isAlwaysOpen)
+                                                    }}
+                                                    className='flex items-center justify-center flex-1 p-2 border rounded-lg cursor-pointer border-primary'
+                                                >
+                                                    <PlusOutlined
+                                                        className='w-6 h-6 text-primary'
+                                                    />
+                                                    <BaseText locale bold className='text-primary'>
+                                                        24시간 운영해요.
+                                                    </BaseText>
+                                                </div>
+                                            </div>) : (
+                                            <>
+                                                <BaseText bold locale>공휴일 중 휴무일이 있나요?</BaseText>
+                                                <div
+                                                    onClick={() => {
+                                                        setIsAlwaysOpen(!isAlwaysOpen)
+                                                    }}
+                                                    className='flex items-center justify-center gap-2 p-2 border rounded-lg cursor-pointer border-primary'
+                                                >
+                                                    <BaseText locale bold className='text-primary'>
+                                                        설정하기
+                                                    </BaseText>
+                                                    <CheckOutlined
+                                                        className='w-6 h-6 text-primary'
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                </>
+                            )
                             }
                         </div>
+
+
                     </>
                 ) : (
                     <></>
