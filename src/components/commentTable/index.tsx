@@ -1,5 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Spin, Table, TableColumnsType, TablePaginationConfig } from "antd";
+import {
+  Popover,
+  Spin,
+  Table,
+  TableColumnsType,
+  TablePaginationConfig,
+} from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
 import BaseTable from "../table";
@@ -10,6 +16,7 @@ import { BASE_URL_LINK_POST } from "../../utils/constants";
 import { BaseModal2 } from "../modal/BaseModal2";
 import { reviewApi } from "../../apis/reviewApi";
 import { showError, showSuccess } from "../../utils/showToast";
+import { CloseOutlined } from "@ant-design/icons";
 
 type CommentProps = {
   data: any[];
@@ -23,7 +30,10 @@ export default function CommentTable(props: CommentProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [listRowSelected, setListRowSelected] = useState<string[]>([]);
-  const [openModalDeleteComment, setOpenModalDeleteComment] = useState(false);
+  const [openModalDeleteSingleComment, setOpenModalDeleteSingleComment] =
+    useState(false);
+  const [openModalDeleteMultiComment, setOpenModalDeleteMultiComment] =
+    useState(false);
   const [loadingScreen, setLoadingScreen] = useState(false);
 
   const idComment = useRef("");
@@ -35,14 +45,26 @@ export default function CommentTable(props: CommentProps) {
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);
   };
-  const handleDeleteComment = async () => {
+  const handleDeleteComment = async (type: string) => {
     try {
       setLoadingScreen(true);
-      let result: any = await reviewApi.deleteComment(idComment.current);
-      if (result.code === 200) {
-        setLoadingScreen(false);
-        showSuccess("Delete Comment Success");
-        if (onRefresh) onRefresh(true);
+      if (type === "single") {
+        let result: any = await reviewApi.deleteSingleComment(
+          idComment.current
+        );
+        if (result.code === 200) {
+          setLoadingScreen(false);
+          showSuccess("Delete Comment Success");
+          if (onRefresh) onRefresh(true);
+        }
+      } else {
+        let result: any = await reviewApi.deleteMultiComment(listRowSelected);
+        if (result.code === 200) {
+          setListRowSelected([]);
+          setLoadingScreen(false);
+          showSuccess("Delete Comment Success");
+          if (onRefresh) onRefresh(true);
+        }
       }
     } catch (error) {
       setLoadingScreen(false);
@@ -195,7 +217,7 @@ export default function CommentTable(props: CommentProps) {
             src={Images.trash}
             className="w-6 h-6 cursor-pointer"
             onClick={() => {
-              setOpenModalDeleteComment(true);
+              setOpenModalDeleteSingleComment(true);
               idComment.current = record.id;
             }}
           />
@@ -216,16 +238,57 @@ export default function CommentTable(props: CommentProps) {
         columns={columns}
         data={data?.map((item: any) => ({ ...item, key: item.id }))}
       />
+      {listRowSelected.length > 0 && (
+        <div className="fixed bottom-6 right-1/4 left-1/4">
+          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl justify-between">
+            <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
+              <CloseOutlined className="text-xl text-black cursor-pointer" />
+              <BaseText bold size={16}>
+                {t("선택됨")}{" "}
+                <span className="text-primary">{listRowSelected.length}</span>
+              </BaseText>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                className="justify-center px-6 py-3 text-lg font-bold leading-7 text-white whitespace-nowrap bg-red-600 rounded-[100px] max-md:px-5"
+                onClick={() => {
+                  setOpenModalDeleteMultiComment(true);
+                }}
+              >
+                {t("Delete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <BaseModal2
-        isOpen={!!openModalDeleteComment}
+        isOpen={!!openModalDeleteSingleComment}
         onClose={() => {
-          setOpenModalDeleteComment(false);
+          setOpenModalDeleteSingleComment(false);
         }}
         title="Delete Comment"
         styleButtonConfirm={"bg-rose-500"}
         onSubmit={() => {
-          handleDeleteComment();
-          setOpenModalDeleteComment(false);
+          handleDeleteComment("single");
+          setOpenModalDeleteSingleComment(false);
+        }}
+      >
+        <div className="pt-2">
+          <BaseText bold locale className="mt-30 mb-5">
+            Are you sure you want to delete this Comment?
+          </BaseText>
+        </div>
+      </BaseModal2>
+      <BaseModal2
+        isOpen={!!openModalDeleteMultiComment}
+        onClose={() => {
+          setOpenModalDeleteMultiComment(false);
+        }}
+        title="Delete Comment"
+        styleButtonConfirm={"bg-rose-500"}
+        onSubmit={() => {
+          handleDeleteComment("multi");
+          setOpenModalDeleteMultiComment(false);
         }}
       >
         <div className="pt-2">

@@ -5,8 +5,13 @@ export const reviewApi = {
   getList: (params?: any) => {
     return axiosClient.get(`${REVIEW}`, { params });
   },
-  //https://server-dev.kormsg.com/api/v1/review/{id}
-  deleteComment: (id?: any) => {
+  deleteSingleComment: (id?: any) => {
     return axiosClient.delete(`${REVIEW}/${id}`);
+  },
+  deleteMultiComment: (ids?: any) => {
+    const itemsParam = JSON.stringify(ids);
+    console.log(itemsParam);
+
+    return axiosClient.delete(`${REVIEW}?items=${itemsParam}`);
   },
 };
