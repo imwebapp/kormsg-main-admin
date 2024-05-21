@@ -10,69 +10,76 @@ import CommentTable from "../../../components/commentTable";
 import { reviewApi } from "../../../apis/reviewApi";
 import { Spin } from "antd";
 interface IProps {
-    dataUser: User;
+  dataUser: User;
 }
 
 export const Comment = (props: IProps) => {
-    const { dataUser } = props;
-    const navigate = useNavigate();
-    const [dataListComment, setDataListComment] = useState<any[]>([]);
-    const [loadingScreen, setLoadingScreen] = useState(false);
-    console.log("dataListComment", dataListComment);
+  const { dataUser } = props;
+  const navigate = useNavigate();
+  const [dataListComment, setDataListComment] = useState<any[]>([]);
+  const [loadingScreen, setLoadingScreen] = useState(false);
+  console.log("dataListComment", dataListComment);
 
-    const [page, setPage] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
-    const limit = 10;
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const limit = 10;
 
-    const _getDataListComment = async () => {
-        setLoadingScreen(true);
-        reviewApi.getList({
-            fields: JSON.stringify([
-                "$all",
-                {
-                    user: ["$all"],
-                    parent: ["$all",
-                        {
-                            user: ["$all"],
-                        },
-                    ],
-                },
-            ]),
-            filter: JSON.stringify({
-                user_id: `${dataUser?.id}`,
-            }),
-            page: page,
-            limit: limit,
-        })
-            .then((res: any) => {
-                setLoadingScreen(false);
-                setDataListComment(res.results?.objects?.rows);
-                setTotalCount(res.results?.objects?.count);
-            })
-            .catch((err: any) => {
-                setLoadingScreen(false);
-                console.log("err _getDataListComment", err);
-            });
-    };
+  const _getDataListComment = async () => {
+    setLoadingScreen(true);
+    reviewApi
+      .getList({
+        fields: JSON.stringify([
+          "$all",
+          {
+            user: ["$all"],
+            parent: [
+              "$all",
+              {
+                user: ["$all"],
+              },
+            ],
+          },
+        ]),
+        filter: JSON.stringify({
+          user_id: `${dataUser?.id}`,
+        }),
+        page: page,
+        limit: limit,
+      })
+      .then((res: any) => {
+        setLoadingScreen(false);
+        setDataListComment(res.results?.objects?.rows);
+        setTotalCount(res.results?.objects?.count);
+      })
+      .catch((err: any) => {
+        setLoadingScreen(false);
+        console.log("err _getDataListComment", err);
+      });
+  };
 
-    useEffect(() => {
-        _getDataListComment();
-    }, [page]);
+  useEffect(() => {
+    _getDataListComment();
+  }, [page]);
 
-    return (
-        <div className="">
-             <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
-            <CommentTable
-                data={dataListComment}
-                pagination={{
-                    current: page,
-                    pageSize: limit,
-                    total: totalCount,
-                    onChange: (page: number, pageSize: number) => {
-                        setPage(page);
-                    },
-                }}
-            />
-        </div>
-    );
+  return (
+    <div className="">
+      <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
+      <CommentTable
+        onRefresh={(value) => {
+          if (value === true) {
+            _getDataListComment();
+          }
+        }}
+        data={dataListComment}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: totalCount,
+          onChange: (page: number, pageSize: number) => {
+            setPage(page);
+          },
+        }}
+      />
+    </div>
+  );
 };
