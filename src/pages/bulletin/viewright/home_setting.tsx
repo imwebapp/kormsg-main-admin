@@ -21,6 +21,7 @@ import { useLocalStorage } from "../../../stores/localStorage";
 import dayjs from "dayjs";
 import { ThemaApi } from "../../../apis/themaApi";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import SwitchComponent from "../../../components/switch";
 
 export default function HomeSetting() {
   return (
@@ -150,7 +151,7 @@ const AdminSetting = () => {
         <BaseText locale medium className="mb-4">
           Adult verification status
         </BaseText>
-        <Switch
+        <SwitchComponent
           value={adultVerificationStatus}
           onChange={(value) => {
             setAdultVerificationStatus(value);
@@ -219,7 +220,7 @@ const AdminSetting = () => {
         <BaseText locale medium className="mb-4">
           Whether profile features are exposed?
         </BaseText>
-        <Switch
+        <SwitchComponent
           value={mentorStatus}
           onChange={(value) => {
             setMentorStatus(value);
