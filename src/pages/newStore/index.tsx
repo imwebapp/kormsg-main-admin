@@ -32,6 +32,8 @@ import { ShopFilter } from "./components/ShopFilter";
 import { UserFilter } from "./components/UserFilter";
 import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
 import { BoardLinkApi } from "../../apis/boardLinkApi";
+import { ReservationPart } from "./components/ReservationPart";
+import { LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -53,6 +55,13 @@ interface IFormDataPage1 {
   stampSetting: boolean | string;
   reservationFuncSetting: boolean | string;
   reservationFuncValue: string[];
+  reservationPaymentMethod: string[];
+  reservationBankInfo?: {
+    bankId: string;
+    bankName: string;
+    bankImage: string;
+    bankNumber: string;
+  };
 }
 
 interface INewPrice {
@@ -264,7 +273,16 @@ const NewStore = () => {
     stampSetting: '',
     reservationFuncSetting: '',
     reservationFuncValue: [],
+    reservationPaymentMethod: [PAYMENT_METHODS.MEET_AND_CASH],
+    reservationBankInfo: {
+      bankId: '',
+      bankName: '',
+      bankImage: '',
+      bankNumber: '',
+    }
   });
+
+  console.log('formDataPage1', formDataPage1?.reservationPaymentMethod, 'Bank', formDataPage1?.reservationBankInfo);
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
     storeIntroduction: '',
@@ -386,8 +404,9 @@ const NewStore = () => {
         images: resultArrayImageConvert,
         latitude: 37.3957122,
         longitude: 127.1105181,
-        opening_hours: formDataPage1?.storeOpeningHours,
-        reservation_times: formDataPage1?.reservationFuncValue,
+        // opening_hours: formDataPage1?.storeOpeningHours,
+        opening_hours: '00:00~00:00',
+        // reservation_times: formDataPage1?.reservationFuncValue,
         messenger_status: formDataPage1?.chatMessageFunc === undefined ? false : formDataPage1?.chatMessageFunc,
         loyalty_status: formDataPage1?.stampSetting === undefined ? false : formDataPage1?.stampSetting,
         reservation_status: formDataPage1?.reservationFuncSetting === undefined ? false : formDataPage1?.reservationFuncSetting,
@@ -401,6 +420,11 @@ const NewStore = () => {
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
         verified: true,
+        payment_methods: formDataPage1?.reservationPaymentMethod,
+        bank_information: {
+          bank_name: formDataPage1?.reservationBankInfo?.bankName,
+          bank_number: formDataPage1?.reservationBankInfo?.bankNumber,
+        },
       }
       console.log('DataCreateNewShop', DataCreateNewShop);
 
@@ -479,6 +503,30 @@ const NewStore = () => {
       setLoadingScreen(false);
     }
   };
+
+  const handlePaymentMethodChange = (method: string, value: boolean) => {
+    const paymentMethods = formDataPage1?.reservationPaymentMethod || [];
+    const updatedPaymentMethods = value
+      ? [...paymentMethods, method]
+      : paymentMethods.filter(item => item !== method);
+
+    setFormDataPage1({
+      ...formDataPage1,
+      reservationPaymentMethod: updatedPaymentMethods,
+    });
+  };
+
+  const handleSubmitBank = (dataBank: {
+    bankId: string;
+    bankName: string;
+    bankImage: string;
+    bankNumber: string;
+  }) => {
+    setFormDataPage1({
+      ...formDataPage1,
+      reservationBankInfo: { ...dataBank },
+    });
+  }
 
 
   //get list thema
@@ -567,6 +615,13 @@ const NewStore = () => {
         stampSetting: storeCopyFunc?.loyalty_status || false,
         reservationFuncSetting: storeCopyFunc?.reservation_status || false,
         reservationFuncValue: storeCopyFunc?.reservation_times || [],
+        reservationPaymentMethod: storeCopyFunc?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
+        reservationBankInfo: {
+          bankId: storeCopyFunc?.bank_information?.bank_name || '',
+          bankName: storeCopyFunc?.bank_information?.bank_name || '',
+          bankImage: LIST_BANKING.find((item) => item.nameBank === storeCopyFunc?.bank_information?.bank_name)?.imageBank || '',
+          bankNumber: storeCopyFunc?.bank_information?.bank_number || '',
+        }
       });
       setFormDataPage2({
         storeIntroduction: storeCopyFunc?.description_content || storeCopyFunc?.description || '',
@@ -614,6 +669,13 @@ const NewStore = () => {
         stampSetting: dataEditShop?.loyalty_status || false,
         reservationFuncSetting: dataEditShop?.reservation_status || false,
         reservationFuncValue: dataEditShop?.reservation_times || [],
+        reservationPaymentMethod: dataEditShop?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
+        reservationBankInfo: {
+          bankId: dataEditShop?.bank_information?.bank_name || '',
+          bankName: dataEditShop?.bank_information?.bank_name || '',
+          bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
+          bankNumber: dataEditShop?.bank_information?.bank_number || '',
+        }
       });
       setFormDataPage2({
         storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
@@ -658,6 +720,13 @@ const NewStore = () => {
             stampSetting: dataEditShop?.loyalty_status || false,
             reservationFuncSetting: dataEditShop?.reservation_status || false,
             reservationFuncValue: dataEditShop?.reservation_times || [],
+            reservationPaymentMethod: dataEditShop?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
+            reservationBankInfo: {
+              bankId: dataEditShop?.bank_information?.bank_name || '',
+              bankName: dataEditShop?.bank_information?.bank_name || '',
+              bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
+              bankNumber: dataEditShop?.bank_information?.bank_number || '',
+            }
           });
           setFormDataPage2({
             storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
@@ -843,7 +912,14 @@ const NewStore = () => {
                 setFormDataPage1({
                   ...formDataPage1,
                   reservationFuncSetting: isActivated,
-                  reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : []
+                  reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : [],
+                  reservationPaymentMethod: isActivated ? formDataPage1.reservationPaymentMethod : [PAYMENT_METHODS.MEET_AND_CASH],
+                  reservationBankInfo: isActivated ? formDataPage1.reservationBankInfo : {
+                    bankId: '',
+                    bankName: '',
+                    bankImage: '',
+                    bankNumber: '',
+                  }
                 });
               }}
               options={[
@@ -851,13 +927,25 @@ const NewStore = () => {
                 { value: '2', label: '비활성화' }
               ]} />
             {formDataPage1?.reservationFuncSetting &&
+              <ReservationPart
+                dataMeetAndCash={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_CASH)}
+                dataMeetAndTransfer={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_TRANSFER)}
+                dataMeetAndCard={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_CARD)}
+                dataBanking={formDataPage1?.reservationBankInfo}
+                onChangeMeetAndCash={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_CASH, value)}
+                onChangeMeetAndTransfer={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_TRANSFER, value)}
+                onChangeMeetAndCard={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_CARD, value)}
+                onSubmitBank={handleSubmitBank}
+              />
+            }
+            {/* {formDataPage1?.reservationFuncSetting &&
               <ListCategoryPart1
                 value={formDataPage1?.reservationFuncValue.length > 0 ? '설정완료' : ""}
                 placeholder="예약가능 날짜와 시간을 설정해주..."
                 onClick={() => { setOpenModalReservationFunc(true) }}
                 isLocale
               />
-            }
+            } */}
           </div>
 
 

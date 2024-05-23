@@ -10,7 +10,7 @@ interface BaseModalProps {
   isOpen: boolean;
   onClose?: () => void;
   onSubmit?: () => void;
-  title?: string;
+  title?: string | ReactNode;
   width?: any;
   children: ReactNode;
   bodyStyle?: any;
@@ -75,7 +75,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
       footer={null}
     >
       <div className='flex items-center justify-between px-6 py-4 bg-white rounded-lg'>
-        <BaseText
+        {typeof title === 'string' ? <BaseText
           bold
           locale
           size={20}
@@ -85,7 +85,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
           )}
         >
           {title}
-        </BaseText>
+        </BaseText> : title}
         <CloseOutlined
           onClick={closeModal}
           className='text-2xl text-gray-500 cursor-pointer'
