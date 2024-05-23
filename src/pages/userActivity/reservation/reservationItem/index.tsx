@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BaseText } from "../../../../components";
 import Images from "../../../../assets/gen";
 import moment from 'moment';
-import { RESERVATION_STATUS } from "../../../../utils/constants";
+import { PAYMENT_METHODS, RESERVATION_STATUS } from "../../../../utils/constants";
 import { convertDateTime } from "../../../../utils/common";
 interface IProps {
     dataItem?: any;
@@ -30,10 +30,14 @@ export const ReservationItem = (props: IProps) => {
 
     const checkPaymentMethod = (method?: string) => {
         switch (method) {
-            case "MEET_AND_TRANSFER":
+            case PAYMENT_METHODS.MEET_AND_TRANSFER:
                 return "만남과 이동";
-            case "MEET_AND_CASH":
+            case PAYMENT_METHODS.MEET_AND_CASH:
                 return "만나서 결제";
+            case PAYMENT_METHODS.MEET_AND_CARD:
+                return "만나서 카드";
+            case PAYMENT_METHODS.IN_APP_PAYMENT:
+                return "앱 결제";
             default:
                 return '';
         }
