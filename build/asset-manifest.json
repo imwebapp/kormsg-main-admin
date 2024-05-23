@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.e8ed2b02.css",
-    "main.js": "/static/js/main.569cd9f9.js",
+    "main.css": "/static/css/main.f60e37c2.css",
+    "main.js": "/static/js/main.5a080b85.js",
     "static/js/453.ebf4ced6.chunk.js": "/static/js/453.ebf4ced6.chunk.js",
     "static/media/bgLogin5.jpg": "/static/media/bgLogin5.c4972382bdeffdf0a382.jpg",
     "static/media/bgLogin4.jpg": "/static/media/bgLogin4.bb766e078e2bffaf29a4.jpg",
@@ -11,8 +11,13 @@
     "static/media/user_default.png": "/static/media/user_default.33bb5b7d7228939c7cba.png",
     "static/media/logoKormsg.png": "/static/media/logoKormsg.f89f51c0bb40b8fb03e4.png",
     "static/media/Pin Map.png": "/static/media/Pin Map.4a5e9aeeb2399b16a0c2.png",
+    "static/media/bank7.png": "/static/media/bank7.9b1d3f8e7b09523021f1.png",
     "static/media/dataEmpty.png": "/static/media/dataEmpty.0193eaf15c38bbd88927.png",
+    "static/media/bank3.png": "/static/media/bank3.1d2135a03a6f5b121542.png",
     "static/media/discount 1.png": "/static/media/discount 1.98aab730dbe5a5cf446e.png",
+    "static/media/bank9.png": "/static/media/bank9.e71e1ca5440362227418.png",
+    "static/media/bank6.png": "/static/media/bank6.2bd9b3a52fa4fd438d3f.png",
+    "static/media/bank10.png": "/static/media/bank10.669a92daf1bb985badbf.png",
     "static/media/success.png": "/static/media/success.b12095a36832b71df63c.png",
     "static/media/KR Flags.png": "/static/media/KR Flags.82eeaca40def1c765bc2.png",
     "static/media/plusCircle.png": "/static/media/plusCircle.d2ef13685a665d11044b.png",
@@ -46,15 +51,18 @@
     "static/media/Reports2.png": "/static/media/Reports2.ba1f308e11cca84cdcbb.png",
     "static/media/Shopping2.png": "/static/media/Shopping2.9d7d934c034ac9631590.png",
     "static/media/iconPhone.png": "/static/media/iconPhone.1a1bef6334d83d8a0560.png",
+    "static/media/bank4.png": "/static/media/bank4.64743e1c1f2143d443d4.png",
     "static/media/Shopping.png": "/static/media/Shopping.5cb0d67556c9beb4964f.png",
     "static/media/MessageIconBlue.png": "/static/media/MessageIconBlue.757879ad7e54885c671d.png",
     "static/media/clockBlue.png": "/static/media/clockBlue.12b74ad33abb2943ad7d.png",
     "static/media/Store2.png": "/static/media/Store2.c4679bdf270f66b61f3b.png",
     "static/media/Store.png": "/static/media/Store.97dee78d64042af4d61a.png",
+    "static/media/bank5.png": "/static/media/bank5.f5a39fb59060c26e3c96.png",
     "static/media/reservationConfirmedActive.png": "/static/media/reservationConfirmedActive.85b4e0580328430834e5.png",
     "static/media/webPC.png": "/static/media/webPC.1765576ca8d10bb8f917.png",
     "static/media/KRWBlue.png": "/static/media/KRWBlue.ea87863c016151233b2e.png",
     "static/media/hourglassIcon.png": "/static/media/hourglassIcon.7c2dd96d7f172c27c62c.png",
+    "static/media/bank8.png": "/static/media/bank8.88ceb30ea643ae75d6a0.png",
     "static/media/Bulletin Board2.png": "/static/media/Bulletin Board2.1d9ecb2326f841dbe515.png",
     "static/media/reservationConfirmedInactive.png": "/static/media/reservationConfirmedInactive.1b74e9b73318b7a8ce0f.png",
     "static/media/Bulletin Board.png": "/static/media/Bulletin Board.fd31a367d66034d0b766.png",
@@ -62,15 +70,16 @@
     "static/media/Setting2.png": "/static/media/Setting2.09c489b2d3f1ad737ff5.png",
     "static/media/Setting.png": "/static/media/Setting.da43066134bc02086103.png",
     "static/media/infoIcon.png": "/static/media/infoIcon.bd676dad65a0ff50a171.png",
+    "static/media/bank1.png": "/static/media/bank1.2e5020b155a3a1131401.png",
     "static/media/Map Point.png": "/static/media/Map Point.52e489e6f76d38f76252.png",
     "index.html": "/index.html",
     "static/media/getFetch.cjs": "/static/media/getFetch.40f37ddea2378391108f.cjs",
-    "main.e8ed2b02.css.map": "/static/css/main.e8ed2b02.css.map",
-    "main.569cd9f9.js.map": "/static/js/main.569cd9f9.js.map",
+    "main.f60e37c2.css.map": "/static/css/main.f60e37c2.css.map",
+    "main.5a080b85.js.map": "/static/js/main.5a080b85.js.map",
     "453.ebf4ced6.chunk.js.map": "/static/js/453.ebf4ced6.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.e8ed2b02.css",
-    "static/js/main.569cd9f9.js"
+    "static/css/main.f60e37c2.css",
+    "static/js/main.5a080b85.js"
   ]
 }
