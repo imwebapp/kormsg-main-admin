@@ -60,6 +60,11 @@ export const CommunityPost = (props: IProps) => {
     <div className="">
       <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
       <CommunityPostTable
+        onRefresh={(value) => {
+          if (value === true) {
+            _getDataListCommunityPost();
+          }
+        }}
         data={dataListCommunityPost}
         pagination={{
           current: page,

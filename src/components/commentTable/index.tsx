@@ -293,7 +293,7 @@ export default function CommentTable(props: CommentProps) {
       >
         <div className="pt-2">
           <BaseText bold locale className="mt-30 mb-5">
-            Are you sure you want to delete this Comment?
+            {`Are you sure you want to delete these ${listRowSelected.length} comments?`}
           </BaseText>
         </div>
       </BaseModal2>

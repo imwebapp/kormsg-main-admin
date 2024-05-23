@@ -5,7 +5,11 @@ import { useNavigate } from "react-router-dom";
 import Images from "../../assets/gen";
 import { Url } from "../../routers/paths";
 import { User, checkAccountType, convertDate } from "../../utils/common";
-import { INIT_TAB_USER_DETAIL, ListTypeUser, PLATFORM } from "../../utils/constants";
+import {
+  INIT_TAB_USER_DETAIL,
+  ListTypeUser,
+  PLATFORM,
+} from "../../utils/constants";
 import CustomButton from "../button";
 import { BaseInput } from "../input/BaseInput";
 import BaseTable from "../table";
@@ -14,6 +18,7 @@ import { TypeUser } from "../../utils/constants";
 import { groupApi } from "../../apis/groupApi";
 import { BaseInputSelect } from "../input/BaseInputSelect";
 import { BaseTableDnD } from "../table/BaseTableDnD";
+import { showSuccess } from "../../utils/showToast";
 
 type UserManageTableProps = {
   data: User[];
@@ -28,7 +33,17 @@ type UserManageTableProps = {
 };
 
 export default function UserManageTable(props: UserManageTableProps) {
-  const { className, data, reload, pagination, onOpenJumpUp, onDeleteUser, onDeleteUsers, onChangeTypeUser, onChangeGroupUser } = props;
+  const {
+    className,
+    data,
+    reload,
+    pagination,
+    onOpenJumpUp,
+    onDeleteUser,
+    onDeleteUsers,
+    onChangeTypeUser,
+    onChangeGroupUser,
+  } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [listUserGroup, setListUserGroup] = useState<any>([]);
@@ -63,21 +78,47 @@ export default function UserManageTable(props: UserManageTableProps) {
   };
   const handleChangeTypeUser = async (id: string, type: string) => {
     onChangeTypeUser(id, type);
-  }
+  };
   const handleChangeGroupUser = async (id: string, groupId: string) => {
     onChangeGroupUser(id, groupId);
-  }
+  };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);
   };
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log("Copied to clipboard:", text);
+        showSuccess("Copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
+  };
 
-  const storeStatus = (title: string, item: any, value: number, account_type?: any) => {
+  const storeStatus = (
+    title: string,
+    item: any,
+    value: number,
+    account_type?: any
+  ) => {
     if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
     return (
-      <div className="flex flex-row cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}>
+      <div
+        className="flex flex-row cursor-pointer"
+        onClick={() =>
+          navigate(Url.userDetail, {
+            state: {
+              data: item,
+              initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION,
+            },
+          })
+        }
+      >
         <BaseText locale medium size={16}>
           {title}
         </BaseText>
@@ -112,78 +153,100 @@ export default function UserManageTable(props: UserManageTableProps) {
     }
     return (
       <div className="flex flex-col gap-1">
-        {
-          account_type !== TypeUser.ADMIN ? (
-            <div className="flex flex-col gap-1">
-              <BaseInputSelect
-                required
-                defaultValue={account_type}
-                value={account_type}
-                onChange={(value) => { handleChangeTypeUser(id, value) }}
-                placeholder="Select type user"
-                options={(ListTypeUser || []).slice(0, 3).map((item) => ({
-                  value: item.id,
-                  label: t(item.name),
-                }))}
-                className="min-w-[150px]"
-                customizeStyleSelect={
-                  {
-                    selectorBg: bgColor,
-                    colorBorder: bgColor,
-                  }
-                }
-                allowClear={false}
-              />
-              <BaseInputSelect
-                required
-                defaultValue={group_id === null ? undefined : group_id}
-                value={group_id === null ? undefined : group_id}
-                onChange={(value) => { handleChangeGroupUser(id, value) }}
-                placeholder="Select a group"
-                options={[...listUserGroup].map((item: any) => ({
-                  value: item.id,
-                  label: item.name,
-                }))}
-                allowClear={false}
-              />
-            </div>
-
-          ) : (
-            <div className="flex flex-col gap-1">
-              <BaseText
-                className={checkAccountType(account_type).CustomStyle}
-                bold
-                locale
-              >
-                {checkAccountType(account_type).type}
-              </BaseText>
-              <BaseText
-                medium
-                className={"text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"}
-              >
-                {groupName === '' ? 'All' : groupName}
-              </BaseText>
-            </div>
-          )
-        }
+        {account_type !== TypeUser.ADMIN ? (
+          <div className="flex flex-col gap-1">
+            <BaseInputSelect
+              required
+              defaultValue={account_type}
+              value={account_type}
+              onChange={(value) => {
+                handleChangeTypeUser(id, value);
+              }}
+              placeholder="Select type user"
+              options={(ListTypeUser || []).slice(0, 3).map((item) => ({
+                value: item.id,
+                label: t(item.name),
+              }))}
+              className="min-w-[150px]"
+              customizeStyleSelect={{
+                selectorBg: bgColor,
+                colorBorder: bgColor,
+              }}
+              allowClear={false}
+            />
+            <BaseInputSelect
+              required
+              defaultValue={group_id === null ? undefined : group_id}
+              value={group_id === null ? undefined : group_id}
+              onChange={(value) => {
+                handleChangeGroupUser(id, value);
+              }}
+              placeholder="Select a group"
+              options={[...listUserGroup].map((item: any) => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              allowClear={false}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1">
+            <BaseText
+              className={checkAccountType(account_type).CustomStyle}
+              bold
+              locale
+            >
+              {checkAccountType(account_type).type}
+            </BaseText>
+            <BaseText
+              medium
+              className={
+                "text-darkNight900 flex px-4 py-2 items-center bg-darkNight50 rounded-md"
+              }
+            >
+              {groupName === "" ? "All" : groupName}
+            </BaseText>
+          </div>
+        )}
       </div>
-    )
-  }
-  const renderJumpLimit = (item: any, jump_limit: number, account_type?: any,) => {
+    );
+  };
+  const renderJumpLimit = (
+    item: any,
+    jump_limit: number,
+    account_type?: any
+  ) => {
     if (account_type !== TypeUser.BIZ_USER) {
       return;
     }
     return (
       <div className="flex flex-col items-center gap-1">
-        <CustomButton className="w-10" primary onClick={() => { onOpenJumpUp(item.id, jump_limit) }}>
+        <CustomButton
+          className="w-10"
+          primary
+          onClick={() => {
+            onOpenJumpUp(item.id, jump_limit);
+          }}
+        >
           {jump_limit}
         </CustomButton>
-        <CustomButton locale primary onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.HISTORY_PAYMENT } })}>
+        <CustomButton
+          locale
+          primary
+          onClick={() =>
+            navigate(Url.userDetail, {
+              state: {
+                data: item,
+                initTab: INIT_TAB_USER_DETAIL.HISTORY_PAYMENT,
+              },
+            })
+          }
+        >
           View history
         </CustomButton>
       </div>
-    )
-  }
+    );
+  };
   const columns: TableColumnsType<any> = [
     {
       title: t("Name"),
@@ -196,29 +259,60 @@ export default function UserManageTable(props: UserManageTableProps) {
     },
     {
       title: t("Id/Phone number"),
-      render: ({ username, phone }) => (
+      render: ({ username, phone }, record) => (
         <div className="flex flex-col justify-center">
-          <BaseText >{username}</BaseText>
-          <BaseText >{phone || t('not added by user')}</BaseText>
+          <div className="flex items-center gap-1">
+            <BaseText>{username}</BaseText>
+            <img
+              src={Images.copy}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() => {
+                copyToClipboard(record.id);
+              }}
+            />
+          </div>
+          <BaseText>{phone || t("not added by user")}</BaseText>
         </div>
       ),
     },
     {
       title: t("Type/Group"),
-      render: ({ account_type, group_id, id }) => renderTypeAndGroup(account_type, group_id, id),
+      render: ({ account_type, group_id, id }) =>
+        renderTypeAndGroup(account_type, group_id, id),
     },
     {
       title: t("Jump up limit"),
-      render: (item: any) => renderJumpLimit(item, item?.jump_limit, item?.account_type),
+      render: (item: any) =>
+        renderJumpLimit(item, item?.jump_limit, item?.account_type),
     },
     {
       title: t("Store status"),
       render: (item: any) => (
         <div className="flex flex-col gap-1 min-w-[180px]">
-          {storeStatus("Announcement", item, item.current_active_post, item.account_type)}
-          {storeStatus("Expiration", item, item.current_expired_post, item.account_type)}
-          {storeStatus("Recommended store", item, item.current_recommendation_post, item.account_type)}
-          {storeStatus("During the event", item, item.current_on_event_shop, item.account_type)}
+          {storeStatus(
+            "Announcement",
+            item,
+            item.current_active_post,
+            item.account_type
+          )}
+          {storeStatus(
+            "Expiration",
+            item,
+            item.current_expired_post,
+            item.account_type
+          )}
+          {storeStatus(
+            "Recommended store",
+            item,
+            item.current_recommendation_post,
+            item.account_type
+          )}
+          {storeStatus(
+            "During the event",
+            item,
+            item.current_on_event_shop,
+            item.account_type
+          )}
         </div>
       ),
     },
@@ -226,12 +320,15 @@ export default function UserManageTable(props: UserManageTableProps) {
       title: t("Date create/ By"),
       render: ({ platform_create, created_at }) => (
         <div className="flex flex-col items-center gap-2 min-w-[90px]">
-          {
-            platform_create === PLATFORM.ANDROID ? <img src={Images.androidIcon} className="w-6 h-6" /> :
-              platform_create === PLATFORM.APPLE ? <img src={Images.appleIcon} className="w-6 h-6" /> :
-                platform_create === PLATFORM.BROWSER_MOBILE ? <img src={Images.webMobile} className="w-6 h-6" /> :
-                  <img src={Images.webPc} className="w-6 h-6" />
-          }
+          {platform_create === PLATFORM.ANDROID ? (
+            <img src={Images.androidIcon} className="w-6 h-6" />
+          ) : platform_create === PLATFORM.APPLE ? (
+            <img src={Images.appleIcon} className="w-6 h-6" />
+          ) : platform_create === PLATFORM.BROWSER_MOBILE ? (
+            <img src={Images.webMobile} className="w-6 h-6" />
+          ) : (
+            <img src={Images.webPc} className="w-6 h-6" />
+          )}
           <BaseText medium size={16}>
             {convertDate(created_at)}
           </BaseText>
@@ -241,9 +338,19 @@ export default function UserManageTable(props: UserManageTableProps) {
     {
       title: t("Store"),
       render: (item: any) => (
-        <div className="min-w-[30px] cursor-pointer " onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}>
+        <div
+          className="min-w-[30px] cursor-pointer "
+          onClick={() =>
+            navigate(Url.userDetail, {
+              state: {
+                data: item,
+                initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION,
+              },
+            })
+          }
+        >
           {/* <div className="min-w-[30px] cursor-pointer" onClick={() => console.log(item)}> */}
-          <Tooltip title={t('Detail')}>
+          <Tooltip title={t("Detail")}>
             <img src={Images.eye} className="w-6 h-6" />
           </Tooltip>
         </div>
@@ -255,21 +362,20 @@ export default function UserManageTable(props: UserManageTableProps) {
       render: (item: any) => (
         <div
           className="flex flex-row items-center justify-center cursor-pointer"
-          onClick={() => navigate(Url.userActivity, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION } })}
+          onClick={() =>
+            navigate(Url.userActivity, {
+              state: {
+                data: item,
+                initTab: INIT_TAB_USER_DETAIL.SHOP_INFORMATION,
+              },
+            })
+          }
         >
-          <Tooltip title={t('Activity')} placement="top">
-            <BaseText medium>
-              {item?.totalPost || 0}/
-            </BaseText>
-            <BaseText medium>
-              {item?.totalReview || 0}/
-            </BaseText>
-            <BaseText medium>
-              {item?.totalReservation || 0}/
-            </BaseText>
-            <BaseText medium>
-              {item?.point || 0}
-            </BaseText>
+          <Tooltip title={t("Activity")} placement="top">
+            <BaseText medium>{item?.totalPost || 0}/</BaseText>
+            <BaseText medium>{item?.totalReview || 0}/</BaseText>
+            <BaseText medium>{item?.totalReservation || 0}/</BaseText>
+            <BaseText medium>{item?.point || 0}</BaseText>
           </Tooltip>
         </div>
       ),
@@ -278,35 +384,58 @@ export default function UserManageTable(props: UserManageTableProps) {
       title: "",
       render: (item: any) => (
         <div className="flex flex-row items-center w-[50px]">
-          <Tooltip title={t('Edit')}>
-            <img src={Images.edit} className="w-6 h-6 cursor-pointer" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION, showModalEdit: true } })} />
+          <Tooltip title={t("Edit")}>
+            <img
+              src={Images.edit}
+              className="w-6 h-6 cursor-pointer"
+              onClick={() =>
+                navigate(Url.userDetail, {
+                  state: {
+                    data: item,
+                    initTab: INIT_TAB_USER_DETAIL.INFORMATION,
+                    showModalEdit: true,
+                  },
+                })
+              }
+            />
           </Tooltip>
           <Popover
             placement="bottomRight"
-            content={(
+            content={
               <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => navigate(Url.userDetail, { state: { data: item, initTab: INIT_TAB_USER_DETAIL.INFORMATION, showModalEdit: true } })}>
+                <div
+                  className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100"
+                  onClick={() =>
+                    navigate(Url.userDetail, {
+                      state: {
+                        data: item,
+                        initTab: INIT_TAB_USER_DETAIL.INFORMATION,
+                        showModalEdit: true,
+                      },
+                    })
+                  }
+                >
                   <img src={Images.edit2} className="w-5 h-5 cursor-pointer" />
                   <BaseText locale size={16}>
                     Edit information
                   </BaseText>
                 </div>
-                <div className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100" onClick={() => handleDeleteUser(item.id, item.account_type)}>
+                <div
+                  className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100"
+                  onClick={() => handleDeleteUser(item.id, item.account_type)}
+                >
                   <img src={Images.trash} className="w-5 h-5 cursor-pointer" />
                   <BaseText locale size={16}>
                     Delete user
                   </BaseText>
                 </div>
               </div>
-            )}
+            }
             trigger="click"
             open={idOpen === item.id ? open : false}
             onOpenChange={(newOpen) => handleOpenChange(newOpen, item.id)}
           >
-            <img
-              src={Images.dot}
-              className="w-6 h-6 cursor-pointer"
-            />
+            <img src={Images.dot} className="w-6 h-6 cursor-pointer" />
           </Popover>
         </div>
       ),
@@ -314,11 +443,14 @@ export default function UserManageTable(props: UserManageTableProps) {
   ];
 
   useEffect(() => {
-    groupApi.getList({
-      limit: 50, fields: '["$all"]'
-    }).then((res: any) => {
-      setListUserGroup(res.results?.objects?.rows);
-    })
+    groupApi
+      .getList({
+        limit: 50,
+        fields: '["$all"]',
+      })
+      .then((res: any) => {
+        setListUserGroup(res.results?.objects?.rows);
+      })
       .catch((err) => {
         console.log("err getList Group: ", err);
       });
@@ -326,9 +458,15 @@ export default function UserManageTable(props: UserManageTableProps) {
 
   return (
     <div>
-      {listRowSelected.length > 0 ?
-        <img src={Images.trash2} className="w-10 h-10 p-2 rounded-lg bg-darkNight50" onClick={handleDeleteUsers} />
-        : <div className="h-10" />}
+      {listRowSelected.length > 0 ? (
+        <img
+          src={Images.trash2}
+          className="w-10 h-10 p-2 rounded-lg bg-darkNight50"
+          onClick={handleDeleteUsers}
+        />
+      ) : (
+        <div className="h-10" />
+      )}
       <BaseTableDnD
         onSelectChange={onSelectChange}
         className={className}
