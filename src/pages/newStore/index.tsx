@@ -420,10 +420,10 @@ const NewStore = () => {
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
         verified: true,
-        payment_methods: formDataPage1?.reservationPaymentMethod,
+        payment_methods: formDataPage1?.reservationFuncSetting ? (formDataPage1?.reservationPaymentMethod.length > 0 ? formDataPage1?.reservationPaymentMethod : [PAYMENT_METHODS.MEET_AND_CASH]) : [],
         bank_information: {
-          bank_name: formDataPage1?.reservationBankInfo?.bankName,
-          bank_number: formDataPage1?.reservationBankInfo?.bankNumber,
+          bank_name: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankName : '',
+          bank_number: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankNumber : '',
         },
       }
       console.log('DataCreateNewShop', DataCreateNewShop);
