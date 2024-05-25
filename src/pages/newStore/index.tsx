@@ -3,7 +3,7 @@ import { BaseText, CustomButton } from "../../components";
 
 import { CheckOutlined } from "@ant-design/icons";
 import { App, Layout, Spin } from "antd";
-import { useDaumPostcodePopup } from 'react-daum-postcode';
+import { useDaumPostcodePopup } from "react-daum-postcode";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CategoryApi } from "../../apis/categoryApi";
@@ -85,8 +85,7 @@ interface INewPrice {
   order?: number;
   recommended?: boolean;
   status?: boolean;
-  prices:
-  {
+  prices: {
     id: string;
     name: string;
     discount: string;
@@ -139,27 +138,30 @@ const NewStore = () => {
   const [openModalOpenHours, setOpenModalOpenHours] = useState<boolean>(false);
   const [openModalRegion, setOpenModalRegion] = useState<boolean>(false);
   const [openModalSubway, setOpenModalSubway] = useState<boolean>(false);
-  const [openModalReservationFunc, setOpenModalReservationFunc] = useState<boolean>(false);
+  const [openModalReservationFunc, setOpenModalReservationFunc] =
+    useState<boolean>(false);
 
-  const [openModalCreateNewPrice, setOpenModalCreateNewPrice] = useState<boolean>(false);
+  const [openModalCreateNewPrice, setOpenModalCreateNewPrice] =
+    useState<boolean>(false);
   const [dataNewPrice, setDataNewPrice] = useState<INewPrice>({} as INewPrice);
   const [dataEditPrice, setDataEditPrice] = useState();
   const [indexEditPrice, setIndexEditPrice] = useState<number>();
 
-  const [openModalCreateNewManage, setOpenModalCreateNewManage] = useState<boolean>(false);
+  const [openModalCreateNewManage, setOpenModalCreateNewManage] =
+    useState<boolean>(false);
   const [dataNewManage, setDataNewManage] = useState<INewManger>({
-    id: '',
-    name: '',
-    description: '',
+    id: "",
+    name: "",
+    description: "",
     images: [],
   });
   const [dataEditManager, setDataEditManager] = useState();
   const [indexEditManager, setIndexEditManager] = useState<number>();
 
-  console.log('dataEditManager: ', indexEditManager, dataEditManager);
+  console.log("dataEditManager: ", indexEditManager, dataEditManager);
 
-
-  const [optionPart2Selected, setOptionPart2Selected] = useState<string>('가격표');
+  const [optionPart2Selected, setOptionPart2Selected] =
+    useState<string>("가격표");
 
   const handleCloseModalOpenHours = () => {
     setOpenModalOpenHours(false);
@@ -184,7 +186,12 @@ const NewStore = () => {
   };
 
   const handleSubmitSubway = (value: any) => {
-    setFormDataPage1({ ...formDataPage1, subwayLocation: value?.subwaySelected.name, subwayLine: value?.subwaySelectedChild.name, subwayStation: value?.subwaySelectedDetails });
+    setFormDataPage1({
+      ...formDataPage1,
+      subwayLocation: value?.subwaySelected.name,
+      subwayLine: value?.subwaySelectedChild.name,
+      subwayStation: value?.subwaySelectedDetails,
+    });
     setOpenModalSubway(false);
   };
 
@@ -196,7 +203,11 @@ const NewStore = () => {
     province: string;
     district: string;
   }) => {
-    setFormDataPage1({ ...formDataPage1, regionProvince: value.province, regionDistrict: value.district });
+    setFormDataPage1({
+      ...formDataPage1,
+      regionProvince: value.province,
+      regionDistrict: value.district,
+    });
     setOpenModalRegion(false);
   };
 
@@ -205,28 +216,32 @@ const NewStore = () => {
   };
 
   const handleSubmitCreateNewPrice = (dataNewPrice: any) => {
-
     if (dataEditPrice && indexEditPrice !== undefined) {
       const EditData = formDataPage2?.priceList.map((item, index) => {
         if (index === indexEditPrice) {
           item = dataNewPrice;
         }
         return item;
-      })
+      });
       setDataEditPrice(undefined);
       setIndexEditPrice(undefined);
       setFormDataPage2({ ...formDataPage2, priceList: EditData });
       setOpenModalCreateNewPrice(false);
       return;
     }
-    handleInputChangePage2('priceList', [...formDataPage2?.priceList, dataNewPrice])
+    handleInputChangePage2("priceList", [
+      ...formDataPage2?.priceList,
+      dataNewPrice,
+    ]);
     setOpenModalCreateNewPrice(false);
   };
 
   const handleCloseModalCreateNewManage = () => {
     setOpenModalCreateNewManage(false);
   };
-  const handleImageCreateNewManager = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageCreateNewManager = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     // Image Create New Manage (File)
   };
 
@@ -237,58 +252,66 @@ const NewStore = () => {
           item = dataNewManage;
         }
         return item;
-      })
+      });
       setDataEditManager(undefined);
       setIndexEditManager(undefined);
       setFormDataPage2({ ...formDataPage2, manager: EditData });
       setOpenModalCreateNewManage(false);
       return;
     }
-    console.log('submit create new manage: ', dataNewManage);
+    console.log("submit create new manage: ", dataNewManage);
 
-    handleInputChangePage2('manager', [...formDataPage2?.manager, dataNewManage])
+    handleInputChangePage2("manager", [
+      ...formDataPage2?.manager,
+      dataNewManage,
+    ]);
     setOpenModalCreateNewManage(false);
   };
 
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
-  const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] = useState<any>();
+  const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
+    useState<any>();
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
-    storeCopyFunc: '',
-    storeOwnerMembershipSetting: '',
-    storeName: '',
-    storeNumber: '',
-    storeAddress: '',
-    storeAddressDetails: '',
+    storeCopyFunc: "",
+    storeOwnerMembershipSetting: "",
+    storeName: "",
+    storeNumber: "",
+    storeAddress: "",
+    storeAddressDetails: "",
     storeImages: [],
-    storeOpeningHours: '',
-    thema: '',
-    category: '',
-    regionProvince: '',
-    regionDistrict: '',
+    storeOpeningHours: "",
+    thema: "",
+    category: "",
+    regionProvince: "",
+    regionDistrict: "",
     hashtag: [],
-    subwayLocation: '',
-    subwayLine: '',
-    subwayStation: '',
-    chatMessageFunc: '',
-    stampSetting: '',
-    reservationFuncSetting: '',
+    subwayLocation: "",
+    subwayLine: "",
+    subwayStation: "",
+    chatMessageFunc: "",
+    stampSetting: "",
+    reservationFuncSetting: "",
     reservationFuncValue: [],
     reservationPaymentMethod: [PAYMENT_METHODS.MEET_AND_CASH],
     reservationBankInfo: {
-      bankId: '',
-      bankName: '',
-      bankImage: '',
-      bankNumber: '',
-      bankUserName: '',
-      
-    }
+      bankId: "",
+      bankName: "",
+      bankImage: "",
+      bankNumber: "",
+      bankUserName: "",
+    },
   });
 
-  console.log('formDataPage1', formDataPage1?.reservationPaymentMethod, 'Bank', formDataPage1?.reservationBankInfo);
+  console.log(
+    "formDataPage1",
+    formDataPage1?.reservationPaymentMethod,
+    "Bank",
+    formDataPage1?.reservationBankInfo
+  );
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
-    storeIntroduction: '',
+    storeIntroduction: "",
     priceList: [],
     manager: [],
   });
@@ -307,33 +330,34 @@ const NewStore = () => {
   };
 
   const handleImagesChange = (images: File) => {
-    handleInputChange('storeImages', images);
+    handleInputChange("storeImages", images);
   };
 
   //popup address
-  const scriptUrl = 'URL_TO_DAUM_POSTCODE_SCRIPT';
+  const scriptUrl = "URL_TO_DAUM_POSTCODE_SCRIPT";
   const open = useDaumPostcodePopup();
 
   const handleComplete = (data: any) => {
     let fullAddress = data.address;
     let extractedPostalCode = data.zonecode;
-    let extraAddress = '';
+    let extraAddress = "";
 
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
         extraAddress += data.bname;
       }
-      if (data.buildingName !== '') {
-        extraAddress += extraAddress !== '' ? `, ${data.buildingName}` : data.buildingName;
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
       }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+      fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
 
     console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
 
     console.log(extractedPostalCode); // e.g. '04794'
 
-    handleInputChange('storeAddress', fullAddress);
+    handleInputChange("storeAddress", fullAddress);
   };
 
   const handleClickPostalCode = () => {
@@ -341,13 +365,21 @@ const NewStore = () => {
   };
   //end
 
-  const handlePercentageDecrease = (amountBeforeDiscount: number, amountAfterDiscount: number) => {
-    return ((amountBeforeDiscount - amountAfterDiscount) / amountBeforeDiscount * 100).toFixed(0) + '%';
+  const handlePercentageDecrease = (
+    amountBeforeDiscount: number,
+    amountAfterDiscount: number
+  ) => {
+    return (
+      (
+        ((amountBeforeDiscount - amountAfterDiscount) / amountBeforeDiscount) *
+        100
+      ).toFixed(0) + "%"
+    );
   };
 
   const filterFiles = (arr: any) => {
     return arr.filter((item: any) => item instanceof File);
-  }
+  };
   const transformArray = (arr: any, processedStringsArray: string[]) => {
     const resultArray: string[] = [];
 
@@ -367,9 +399,9 @@ const NewStore = () => {
     });
 
     return resultArray;
-  }
+  };
 
-  //Handle Create New Shop 
+  //Handle Create New Shop
   const handleCreateShop = async () => {
     try {
       //Upload Image
@@ -378,23 +410,34 @@ const NewStore = () => {
       let resultArrayThumbConvert: string[] = [];
       let listImageUpdated: string[] = [];
       let listThumbnailUpdated: string[] = [];
-      let filesArray: File[] = filterFiles(formDataPage1?.storeImages || [])
+      let filesArray: File[] = filterFiles(formDataPage1?.storeImages || []);
 
       if (filesArray.length > 0) {
         const ResUploadImg = await UploadApi.uploadMultipleImages(filesArray);
-        listImageUpdated = ResUploadImg?.high_quality_images.map((item: any) => item.url);
-        listThumbnailUpdated = ResUploadImg?.low_quality_images.map((item: any) => item.url);
+        listImageUpdated = ResUploadImg?.high_quality_images.map(
+          (item: any) => item.url
+        );
+        listThumbnailUpdated = ResUploadImg?.low_quality_images.map(
+          (item: any) => item.url
+        );
       }
 
-      if (
-        listImageUpdated.length > 0 && listThumbnailUpdated.length > 0
-      ) {
-        resultArrayImageConvert = transformArray(formDataPage1?.storeImages, listImageUpdated);
-        resultArrayThumbConvert = transformArray(formDataPage1?.storeImages, listThumbnailUpdated);
-      }
-      else {
-        resultArrayImageConvert = transformArray(formDataPage1?.storeImages, ['']);
-        resultArrayThumbConvert = transformArray(formDataPage1?.storeImages, ['']);
+      if (listImageUpdated.length > 0 && listThumbnailUpdated.length > 0) {
+        resultArrayImageConvert = transformArray(
+          formDataPage1?.storeImages,
+          listImageUpdated
+        );
+        resultArrayThumbConvert = transformArray(
+          formDataPage1?.storeImages,
+          listThumbnailUpdated
+        );
+      } else {
+        resultArrayImageConvert = transformArray(formDataPage1?.storeImages, [
+          "",
+        ]);
+        resultArrayThumbConvert = transformArray(formDataPage1?.storeImages, [
+          "",
+        ]);
       }
 
       //dataCreate Shop
@@ -407,12 +450,21 @@ const NewStore = () => {
         images: resultArrayImageConvert,
         latitude: 37.3957122,
         longitude: 127.1105181,
-        // opening_hours: formDataPage1?.storeOpeningHours,
-        opening_hours: '00:00~00:00',
+        opening_hours: formDataPage1?.storeOpeningHours,
+        // working_day : listDaySelected,
         // reservation_times: formDataPage1?.reservationFuncValue,
-        messenger_status: formDataPage1?.chatMessageFunc === undefined ? false : formDataPage1?.chatMessageFunc,
-        loyalty_status: formDataPage1?.stampSetting === undefined ? false : formDataPage1?.stampSetting,
-        reservation_status: formDataPage1?.reservationFuncSetting === undefined ? false : formDataPage1?.reservationFuncSetting,
+        messenger_status:
+          formDataPage1?.chatMessageFunc === undefined
+            ? false
+            : formDataPage1?.chatMessageFunc,
+        loyalty_status:
+          formDataPage1?.stampSetting === undefined
+            ? false
+            : formDataPage1?.stampSetting,
+        reservation_status:
+          formDataPage1?.reservationFuncSetting === undefined
+            ? false
+            : formDataPage1?.reservationFuncSetting,
         shop_district: formDataPage1?.regionDistrict,
         shop_province: formDataPage1?.regionProvince,
         subway_line: formDataPage1?.subwayLine,
@@ -423,87 +475,112 @@ const NewStore = () => {
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
         verified: true,
-        payment_methods: formDataPage1?.reservationFuncSetting ? (formDataPage1?.reservationPaymentMethod.length > 0 ? formDataPage1?.reservationPaymentMethod : [PAYMENT_METHODS.MEET_AND_CASH]) : [],
+        payment_methods: formDataPage1?.reservationFuncSetting
+          ? formDataPage1?.reservationPaymentMethod.length > 0
+            ? formDataPage1?.reservationPaymentMethod
+            : [PAYMENT_METHODS.MEET_AND_CASH]
+          : [],
         bank_information: {
-          bank_name: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankName : '',
-          bank_number: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankNumber : '',
-          bank_user_name: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankUserName : '',
+          bank_name: formDataPage1?.reservationFuncSetting
+            ? formDataPage1?.reservationBankInfo?.bankName
+            : "",
+          bank_number: formDataPage1?.reservationFuncSetting
+            ? formDataPage1?.reservationBankInfo?.bankNumber
+            : "",
+          bank_user_name: formDataPage1?.reservationFuncSetting
+            ? formDataPage1?.reservationBankInfo?.bankUserName
+            : "",
         },
-      }
-      console.log('DataCreateNewShop', DataCreateNewShop);
+      };
+      console.log("DataCreateNewShop", DataCreateNewShop);
 
       if (idEditedShop) {
         //editShop
 
-        const resUpdateShop: any = await shopApi.updateShop(idEditedShop, DataCreateNewShop);
+        const resUpdateShop: any = await shopApi.updateShop(
+          idEditedShop,
+          DataCreateNewShop
+        );
 
         if (resUpdateShop.code === 200) {
-
           //create list price
           const dataCourse = {
-            courses: formDataPage2?.priceList
-          }
-          const resCreateCourse = await courseApi.createCourse(idEditedShop, dataCourse);
+            courses: formDataPage2?.priceList,
+          };
+          const resCreateCourse = await courseApi.createCourse(
+            idEditedShop,
+            dataCourse
+          );
 
           //create list mentor
-          const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
-            const dataConvert = {
-              ...item,
-              shop_id: idEditedShop
+          const listManagerConverted = (formDataPage2?.manager || []).map(
+            (item, index) => {
+              const dataConvert = {
+                ...item,
+                shop_id: idEditedShop,
+              };
+              return dataConvert;
             }
-            return dataConvert;
-          })
+          );
           const dataManager = {
-            mentors: listManagerConverted
-          }
-          const resCreateMentors = await mentorApi.createMentors(idEditedShop, dataManager);
+            mentors: listManagerConverted,
+          };
+          const resCreateMentors = await mentorApi.createMentors(
+            idEditedShop,
+            dataManager
+          );
 
           setLoadingScreen(false);
-          message.success('Update shop successfully');
+          message.success("Update shop successfully");
           navigate(-1);
         }
         return;
-      }
-      else {
+      } else {
         //create new shop
 
-        let idNewShop: string = '';
+        let idNewShop: string = "";
         const resCreateShop: any = await shopApi.createShop(DataCreateNewShop);
 
         if (resCreateShop.code === 200) {
-          idNewShop = resCreateShop?.results?.object?.shop?.id
+          idNewShop = resCreateShop?.results?.object?.shop?.id;
         }
 
         if (idNewShop) {
-
           //create list price
           const dataCourse = {
-            courses: formDataPage2?.priceList
-          }
-          const resCreateCourse = await courseApi.createCourse(idNewShop, dataCourse);
+            courses: formDataPage2?.priceList,
+          };
+          const resCreateCourse = await courseApi.createCourse(
+            idNewShop,
+            dataCourse
+          );
 
           //create list mentor
-          const listManagerConverted = (formDataPage2?.manager || []).map((item, index) => {
-            const dataConvert = {
-              ...item,
-              shop_id: idNewShop
+          const listManagerConverted = (formDataPage2?.manager || []).map(
+            (item, index) => {
+              const dataConvert = {
+                ...item,
+                shop_id: idNewShop,
+              };
+              return dataConvert;
             }
-            return dataConvert;
-          })
+          );
           const dataManager = {
-            mentors: listManagerConverted
-          }
-          const resCreateMentors = await mentorApi.createMentors(idNewShop, dataManager);
+            mentors: listManagerConverted,
+          };
+          const resCreateMentors = await mentorApi.createMentors(
+            idNewShop,
+            dataManager
+          );
           setLoadingScreen(false);
-          message.success('Create new shop successfully');
+          message.success("Create new shop successfully");
           navigate(-1);
           return;
         }
       }
-
     } catch (error: any) {
-      console.log('error CREATE NEW SHOP', error);
-      message.error(error?.response?.data?.message || 'Error create new shop');
+      console.log("error CREATE NEW SHOP", error);
+      message.error(error?.response?.data?.message || "Error create new shop");
       setLoadingScreen(false);
     }
   };
@@ -512,7 +589,7 @@ const NewStore = () => {
     const paymentMethods = formDataPage1?.reservationPaymentMethod || [];
     const updatedPaymentMethods = value
       ? [...paymentMethods, method]
-      : paymentMethods.filter(item => item !== method);
+      : paymentMethods.filter((item) => item !== method);
 
     setFormDataPage1({
       ...formDataPage1,
@@ -531,19 +608,19 @@ const NewStore = () => {
       ...formDataPage1,
       reservationBankInfo: { ...dataBank },
     });
-  }
-
+  };
 
   //get list thema
   useEffect(() => {
-    ThemaApi.getList().then((res) => {
-      // set data
-      const transformedDataListThema = res.map((item: any) => ({
-        value: item.id,
-        label: item.name,
-      }));
-      setListThema(transformedDataListThema)
-    })
+    ThemaApi.getList()
+      .then((res) => {
+        // set data
+        const transformedDataListThema = res.map((item: any) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setListThema(transformedDataListThema);
+      })
       .catch((err) => {
         // handle error
       });
@@ -569,27 +646,27 @@ const NewStore = () => {
         TagApi.getList({
           filter: `{"thema_id":"${formDataPage1.thema}"}`,
         }),
-      ]).then((res) => {
-        // set data
-        const transformedDataListCategory = res[0].map((item: any) => ({
-          value: item.id,
-          label: item.name,
-        }));
-        setListCategory(transformedDataListCategory)
-        const transformedDataListHashtag = res[1].map((item: any) => ({
-          value: item.id,
-          label: item.name,
-        }));
-        setListHashtag(transformedDataListHashtag)
+      ])
+        .then((res) => {
+          // set data
+          const transformedDataListCategory = res[0].map((item: any) => ({
+            value: item.id,
+            label: item.name,
+          }));
+          setListCategory(transformedDataListCategory);
+          const transformedDataListHashtag = res[1].map((item: any) => ({
+            value: item.id,
+            label: item.name,
+          }));
+          setListHashtag(transformedDataListHashtag);
 
-        setFormDataPage1({ ...formDataPage1 });
-      })
+          setFormDataPage1({ ...formDataPage1 });
+        })
         .catch((err) => {
           // handle error
-          console.log('error', err);
+          console.log("error", err);
         });
     }
-
   }, [formDataPage1.thema]);
 
   //update data when copy shop
@@ -599,158 +676,189 @@ const NewStore = () => {
         id: storeCopyFunc?.user_id,
         nickname: storeCopyFunc?.user?.nickname,
       });
-      console.log('storeCopyFunc',storeCopyFunc);
-      
+      console.log("storeCopyFunc", storeCopyFunc);
+
       setFormDataPage1({
         storeCopyFunc: storeCopyFunc?.id,
-        storeOwnerMembershipSetting: storeCopyFunc?.user?.nickname || '',
-        storeName: storeCopyFunc?.title || '',
-        storeNumber: storeCopyFunc?.contact_phone || '',
-        storeAddress: storeCopyFunc?.address || '',
-        storeAddressDetails: storeCopyFunc?.address_2 || '',
+        storeOwnerMembershipSetting: storeCopyFunc?.user?.nickname || "",
+        storeName: storeCopyFunc?.title || "",
+        storeNumber: storeCopyFunc?.contact_phone || "",
+        storeAddress: storeCopyFunc?.address || "",
+        storeAddressDetails: storeCopyFunc?.address_2 || "",
         storeImages: storeCopyFunc?.images || [],
-        storeOpeningHours: storeCopyFunc?.opening_hours || '',
-        thema: storeCopyFunc?.category?.thema_id || '',
-        category: storeCopyFunc?.category_id || '',
-        regionProvince: storeCopyFunc?.shop_province || '',
-        regionDistrict: storeCopyFunc?.shop_district || '',
+        storeOpeningHours: storeCopyFunc?.opening_hours || "",
+        thema: storeCopyFunc?.category?.thema_id || "",
+        category: storeCopyFunc?.category_id || "",
+        regionProvince: storeCopyFunc?.shop_province || "",
+        regionDistrict: storeCopyFunc?.shop_district || "",
         hashtag: storeCopyFunc?.tag_ids,
-        subwayLocation: storeCopyFunc?.subway_location || '',
-        subwayLine: storeCopyFunc?.subway_line || '',
-        subwayStation: storeCopyFunc?.subway_station || '',
+        subwayLocation: storeCopyFunc?.subway_location || "",
+        subwayLine: storeCopyFunc?.subway_line || "",
+        subwayStation: storeCopyFunc?.subway_station || "",
         chatMessageFunc: storeCopyFunc?.messenger_status || false,
         stampSetting: storeCopyFunc?.loyalty_status || false,
         reservationFuncSetting: storeCopyFunc?.reservation_status || false,
         reservationFuncValue: storeCopyFunc?.reservation_times || [],
-        reservationPaymentMethod: storeCopyFunc?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
+        reservationPaymentMethod: storeCopyFunc?.payment_methods || [
+          PAYMENT_METHODS.MEET_AND_CASH,
+        ],
         reservationBankInfo: {
-          bankId: storeCopyFunc?.bank_information?.bank_name || '',
-          bankName: storeCopyFunc?.bank_information?.bank_name || '',
-          bankImage: LIST_BANKING.find((item) => item.nameBank === storeCopyFunc?.bank_information?.bank_name)?.imageBank || '',
-          bankNumber: storeCopyFunc?.bank_information?.bank_number || '',
-          bankUserName: storeCopyFunc?.bank_information?.bank_user_name || '',
-        }
+          bankId: storeCopyFunc?.bank_information?.bank_name || "",
+          bankName: storeCopyFunc?.bank_information?.bank_name || "",
+          bankImage:
+            LIST_BANKING.find(
+              (item) =>
+                item.nameBank === storeCopyFunc?.bank_information?.bank_name
+            )?.imageBank || "",
+          bankNumber: storeCopyFunc?.bank_information?.bank_number || "",
+          bankUserName: storeCopyFunc?.bank_information?.bank_user_name || "",
+        },
       });
       setFormDataPage2({
-        storeIntroduction: storeCopyFunc?.description_content || storeCopyFunc?.description || '',
+        storeIntroduction:
+          storeCopyFunc?.description_content ||
+          storeCopyFunc?.description ||
+          "",
         priceList: storeCopyFunc?.courses || [],
         manager: storeCopyFunc?.mentors || [],
-      })
+      });
     }
   }, [storeCopyFunc]);
 
   //update data when edit Shop
   useEffect(() => {
     if (dataEditShop) {
-      console.log('dataEditShop',dataEditShop);
-      
+      console.log("dataEditShop", dataEditShop);
 
-      mentorApi.getList({
-        fields: JSON.stringify(["$all"]),
-        filter: JSON.stringify({ "shop_id": { "$eq": dataEditShop?.id } }),
-      }).then((res) => {
-        console.log('res listMentors', res);
-
-      }).catch((err) => {
-        console.log('err listMentors', err);
-      });
+      mentorApi
+        .getList({
+          fields: JSON.stringify(["$all"]),
+          filter: JSON.stringify({ shop_id: { $eq: dataEditShop?.id } }),
+        })
+        .then((res) => {
+          console.log("res listMentors", res);
+        })
+        .catch((err) => {
+          console.log("err listMentors", err);
+        });
       setStoreOwnerMembershipSetting({
         id: dataEditShop?.user_id,
         nickname: dataEditShop?.user?.nickname,
       });
       setFormDataPage1({
-        storeCopyFunc: '',
-        storeOwnerMembershipSetting: dataEditShop?.user?.nickname || '',
-        storeName: dataEditShop?.title || '',
-        storeNumber: dataEditShop?.contact_phone || '',
-        storeAddress: dataEditShop?.address || '',
-        storeAddressDetails: dataEditShop?.address_2 || '',
+        storeCopyFunc: "",
+        storeOwnerMembershipSetting: dataEditShop?.user?.nickname || "",
+        storeName: dataEditShop?.title || "",
+        storeNumber: dataEditShop?.contact_phone || "",
+        storeAddress: dataEditShop?.address || "",
+        storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
-        storeOpeningHours: dataEditShop?.opening_hours || '',
-        thema: dataEditShop?.category?.thema_id || '',
-        category: dataEditShop?.category_id || '',
-        regionProvince: dataEditShop?.shop_province || '',
-        regionDistrict: dataEditShop?.shop_district || '',
+        storeOpeningHours: dataEditShop?.opening_hours || "",
+        thema: dataEditShop?.category?.thema_id || "",
+        category: dataEditShop?.category_id || "",
+        regionProvince: dataEditShop?.shop_province || "",
+        regionDistrict: dataEditShop?.shop_district || "",
         hashtag: dataEditShop?.tag_ids,
-        subwayLocation: dataEditShop?.subway_location || '',
-        subwayLine: dataEditShop?.subway_line || '',
-        subwayStation: dataEditShop?.subway_station || '',
+        subwayLocation: dataEditShop?.subway_location || "",
+        subwayLine: dataEditShop?.subway_line || "",
+        subwayStation: dataEditShop?.subway_station || "",
         chatMessageFunc: dataEditShop?.messenger_status || false,
         stampSetting: dataEditShop?.loyalty_status || false,
         reservationFuncSetting: dataEditShop?.reservation_status || false,
         reservationFuncValue: dataEditShop?.reservation_times || [],
-        reservationPaymentMethod: dataEditShop?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
+        reservationPaymentMethod: dataEditShop?.payment_methods || [
+          PAYMENT_METHODS.MEET_AND_CASH,
+        ],
         reservationBankInfo: {
-          bankId: dataEditShop?.bank_information?.bank_name || '',
-          bankName: dataEditShop?.bank_information?.bank_name || '',
-          bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
-          bankNumber: dataEditShop?.bank_information?.bank_number || '',
-          bankUserName: dataEditShop?.bank_information?.bank_user_name || '',
-        }
+          bankId: dataEditShop?.bank_information?.bank_name || "",
+          bankName: dataEditShop?.bank_information?.bank_name || "",
+          bankImage:
+            LIST_BANKING.find(
+              (item) =>
+                item.nameBank === dataEditShop?.bank_information?.bank_name
+            )?.imageBank || "",
+          bankNumber: dataEditShop?.bank_information?.bank_number || "",
+          bankUserName: dataEditShop?.bank_information?.bank_user_name || "",
+        },
       });
       setFormDataPage2({
-        storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
+        storeIntroduction:
+          dataEditShop?.description_content || dataEditShop?.description || "",
         priceList: dataEditShop?.courses || [],
         manager: dataEditShop?.mentors || [],
-      })
+      });
     }
-  }, [dataEditShop])
+  }, [dataEditShop]);
 
   useEffect(() => {
     let isMounted = true;
 
     if (dataEditShop) {
-      mentorApi.getList({
-        fields: JSON.stringify(["$all"]),
-        filter: JSON.stringify({ "shop_id": { "$eq": dataEditShop?.id } }),
-      }).then((res: any) => {
-        if (isMounted) {
-          setIdEditedShop(dataEditShop?.id);
-          setStoreOwnerMembershipSetting({
-            id: dataEditShop?.user_id,
-            nickname: dataEditShop?.user?.nickname,
-          });
-          setFormDataPage1({
-            storeCopyFunc: '',
-            storeOwnerMembershipSetting: dataEditShop?.user?.nickname || '',
-            storeName: dataEditShop?.title || '',
-            storeNumber: dataEditShop?.contact_phone || '',
-            storeAddress: dataEditShop?.address || '',
-            storeAddressDetails: dataEditShop?.address_2 || '',
-            storeImages: dataEditShop?.images || [],
-            storeOpeningHours: dataEditShop?.opening_hours || '',
-            thema: dataEditShop?.category?.thema_id || '',
-            category: dataEditShop?.category_id || '',
-            regionProvince: dataEditShop?.shop_province || '',
-            regionDistrict: dataEditShop?.shop_district || '',
-            hashtag: dataEditShop?.tag_ids,
-            subwayLocation: dataEditShop?.subway_location || '',
-            subwayLine: dataEditShop?.subway_line || '',
-            subwayStation: dataEditShop?.subway_station || '',
-            chatMessageFunc: dataEditShop?.messenger_status || false,
-            stampSetting: dataEditShop?.loyalty_status || false,
-            reservationFuncSetting: dataEditShop?.reservation_status || false,
-            reservationFuncValue: dataEditShop?.reservation_times || [],
-            reservationPaymentMethod: dataEditShop?.payment_methods || [PAYMENT_METHODS.MEET_AND_CASH],
-            reservationBankInfo: {
-              bankId: dataEditShop?.bank_information?.bank_name || '',
-              bankName: dataEditShop?.bank_information?.bank_name || '',
-              bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
-              bankNumber: dataEditShop?.bank_information?.bank_number || '',
-              bankUserName: dataEditShop?.bank_information?.bank_user_name || '',
-            }
-          });
-          setFormDataPage2({
-            storeIntroduction: dataEditShop?.description_content || dataEditShop?.description || '',
-            priceList: dataEditShop?.courses || [],
-            manager: res?.results?.objects?.rows || [],
-          })
-        }
-      }).catch((err) => {
-        console.log('err listMentors', err);
-        message.error('Failed to get mentor list');
-        navigate(-1);
-      });
+      mentorApi
+        .getList({
+          fields: JSON.stringify(["$all"]),
+          filter: JSON.stringify({ shop_id: { $eq: dataEditShop?.id } }),
+        })
+        .then((res: any) => {
+          if (isMounted) {
+            setIdEditedShop(dataEditShop?.id);
+            setStoreOwnerMembershipSetting({
+              id: dataEditShop?.user_id,
+              nickname: dataEditShop?.user?.nickname,
+            });
+            setFormDataPage1({
+              storeCopyFunc: "",
+              storeOwnerMembershipSetting: dataEditShop?.user?.nickname || "",
+              storeName: dataEditShop?.title || "",
+              storeNumber: dataEditShop?.contact_phone || "",
+              storeAddress: dataEditShop?.address || "",
+              storeAddressDetails: dataEditShop?.address_2 || "",
+              storeImages: dataEditShop?.images || [],
+              storeOpeningHours: dataEditShop?.opening_hours || "",
+              thema: dataEditShop?.category?.thema_id || "",
+              category: dataEditShop?.category_id || "",
+              regionProvince: dataEditShop?.shop_province || "",
+              regionDistrict: dataEditShop?.shop_district || "",
+              hashtag: dataEditShop?.tag_ids,
+              subwayLocation: dataEditShop?.subway_location || "",
+              subwayLine: dataEditShop?.subway_line || "",
+              subwayStation: dataEditShop?.subway_station || "",
+              chatMessageFunc: dataEditShop?.messenger_status || false,
+              stampSetting: dataEditShop?.loyalty_status || false,
+              reservationFuncSetting: dataEditShop?.reservation_status || false,
+              reservationFuncValue: dataEditShop?.reservation_times || [],
+              reservationPaymentMethod: dataEditShop?.payment_methods || [
+                PAYMENT_METHODS.MEET_AND_CASH,
+              ],
+              reservationBankInfo: {
+                bankId: dataEditShop?.bank_information?.bank_name || "",
+                bankName: dataEditShop?.bank_information?.bank_name || "",
+                bankImage:
+                  LIST_BANKING.find(
+                    (item) =>
+                      item.nameBank ===
+                      dataEditShop?.bank_information?.bank_name
+                  )?.imageBank || "",
+                bankNumber: dataEditShop?.bank_information?.bank_number || "",
+                bankUserName:
+                  dataEditShop?.bank_information?.bank_user_name || "",
+              },
+            });
+            setFormDataPage2({
+              storeIntroduction:
+                dataEditShop?.description_content ||
+                dataEditShop?.description ||
+                "",
+              priceList: dataEditShop?.courses || [],
+              manager: res?.results?.objects?.rows || [],
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("err listMentors", err);
+          message.error("Failed to get mentor list");
+          navigate(-1);
+        });
     }
 
     return () => {
@@ -775,18 +883,24 @@ const NewStore = () => {
   return (
     <>
       <Layout className="h-screen bg-white">
-        <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
+        <Spin
+          spinning={loadingScreen}
+          tip="Loading..."
+          size="large"
+          fullscreen
+        />
         <Header className="bg-white border-b h-[71px] px-6">
           <div className="flex flex-row items-center justify-between h-full">
             <div className="flex flex-row items-center gap-3">
-              <img src={Images.arrowLeft} className="w-6 h-6" onClick={() => { navigate(-1) }} />
-              <BaseText
-                locale
-                size={20}
-                bold
-                className="line-clamp-1"
-              >
-                {idEditedShop ? 'Edit Shop' : 'New Shop'}
+              <img
+                src={Images.arrowLeft}
+                className="w-6 h-6"
+                onClick={() => {
+                  navigate(-1);
+                }}
+              />
+              <BaseText locale size={20} bold className="line-clamp-1">
+                {idEditedShop ? "Edit Shop" : "New Shop"}
               </BaseText>
             </div>
             <div className="flex flex-row items-center">
@@ -801,7 +915,8 @@ const NewStore = () => {
             </div>
           </div>
         </Header>
-        <div className="flex w-full overflow-hidden"
+        <div
+          className="flex w-full overflow-hidden"
           style={{ height: "calc(100vh - 71px)" }}
         >
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto ">
@@ -815,36 +930,39 @@ const NewStore = () => {
               value={storeOwnerMembershipSetting}
               onChange={(value) => {
                 setStoreOwnerMembershipSetting(value);
-                handleInputChange('storeOwnerMembershipSetting', value?.nickname);
+                handleInputChange(
+                  "storeOwnerMembershipSetting",
+                  value?.nickname
+                );
               }}
             />
             <BaseInput
               title="매장 이름"
               placeholder="지역명도 같이 넣어주세요"
               value={formDataPage1.storeName}
-              onChange={(value) => handleInputChange('storeName', value)}
+              onChange={(value) => handleInputChange("storeName", value)}
             />
             <BaseInput
               title="매장 번호"
               placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
-              onChange={(value) => handleInputChange('storeNumber', value)}
+              onChange={(value) => handleInputChange("storeNumber", value)}
             />
             <div>
-              <div
-                onClick={handleClickPostalCode}
-              >
+              <div onClick={handleClickPostalCode}>
                 <BaseInput
                   title="매장 주소(위치기반 적용)"
                   placeholder="주소입력"
                   value={formDataPage1.storeAddress}
-                // onChange={(value) => handleInputChange('storeAddress', value)}
+                  // onChange={(value) => handleInputChange('storeAddress', value)}
                 />
               </div>
               <BaseInput
                 placeholder="상세주소 입력"
                 value={formDataPage1.storeAddressDetails}
-                onChange={(value) => handleInputChange('storeAddressDetails', value)}
+                onChange={(value) =>
+                  handleInputChange("storeAddressDetails", value)
+                }
                 className="mt-2"
               />
             </div>
@@ -858,99 +976,197 @@ const NewStore = () => {
               </BaseText>
             </div>
             {/* <ListSelectImage onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} /> */}
-            <ListSelectImageDrag onImagesChange={handleImagesChange} listImages={formDataPage1.storeImages} />
-            <ListCategoryPart1 isLocale={false} title="영업시간" value={formDataPage1?.storeOpeningHours} placeholder={t("영업시간을 설정해주세요")} onClick={() => { setOpenModalOpenHours(true) }} />
+            <ListSelectImageDrag
+              onImagesChange={handleImagesChange}
+              listImages={formDataPage1.storeImages}
+            />
+            <ListCategoryPart1
+              isLocale={false}
+              title="영업시간"
+              value={formDataPage1?.storeOpeningHours}
+              placeholder={t("영업시간을 설정해주세요")}
+              onClick={() => {
+                setOpenModalOpenHours(true);
+              }}
+            />
             <BaseInputSelect
               title="Theme"
               options={listThema}
               placeholder="Select"
-              defaultValue={formDataPage1.thema ? formDataPage1.thema : undefined}
+              defaultValue={
+                formDataPage1.thema ? formDataPage1.thema : undefined
+              }
               value={formDataPage1.thema}
               onChange={(value) => {
-                setFormDataPage1({ ...formDataPage1, thema: value, category: '', hashtag: [] });
+                setFormDataPage1({
+                  ...formDataPage1,
+                  thema: value,
+                  category: "",
+                  hashtag: [],
+                });
               }}
             />
-            {
-              (formDataPage1.thema !== '' && formDataPage1.thema !== undefined) && (
+            {formDataPage1.thema !== "" &&
+              formDataPage1.thema !== undefined && (
                 <>
                   <BaseInputSelect
                     title="카테고리"
                     options={listCategory}
                     placeholder="카테고리를 선택해주세요"
-                    defaultValue={formDataPage1.category ? formDataPage1.category : undefined}
-                    value={formDataPage1.category ? formDataPage1.category : undefined}
-                    onChange={(value) => handleInputChange('category', value)}
+                    defaultValue={
+                      formDataPage1.category
+                        ? formDataPage1.category
+                        : undefined
+                    }
+                    value={
+                      formDataPage1.category
+                        ? formDataPage1.category
+                        : undefined
+                    }
+                    onChange={(value) => handleInputChange("category", value)}
                   />
                   <BaseInputSelect
                     title="Tag"
                     options={listHashtag}
                     placeholder="Select tags"
-                    defaultValue={formDataPage1.hashtag ? formDataPage1.hashtag : []}
+                    defaultValue={
+                      formDataPage1.hashtag ? formDataPage1.hashtag : []
+                    }
                     value={formDataPage1.hashtag ? formDataPage1.hashtag : []}
-                    onChange={(value) => handleInputChange('hashtag', value)}
+                    onChange={(value) => handleInputChange("hashtag", value)}
                     multiple
                   />
                 </>
-              )
-            }
-            <ListCategoryPart1 title="지역" value={formDataPage1?.regionProvince + formDataPage1?.regionDistrict} placeholder={t("지역을 선택해주세요")} onClick={() => { setOpenModalRegion(true) }} />
-            <ListCategoryPart1 title="지하철" value={formDataPage1?.subwayLocation + formDataPage1?.subwayLine + formDataPage1?.subwayStation} placeholder={t("지하철을 선택해주세요")} onClick={() => { setOpenModalSubway(true) }} />
+              )}
+            <ListCategoryPart1
+              title="지역"
+              value={
+                formDataPage1?.regionProvince + formDataPage1?.regionDistrict
+              }
+              placeholder={t("지역을 선택해주세요")}
+              onClick={() => {
+                setOpenModalRegion(true);
+              }}
+            />
+            <ListCategoryPart1
+              title="지하철"
+              value={
+                formDataPage1?.subwayLocation +
+                formDataPage1?.subwayLine +
+                formDataPage1?.subwayStation
+              }
+              placeholder={t("지하철을 선택해주세요")}
+              onClick={() => {
+                setOpenModalSubway(true);
+              }}
+            />
 
             <ChatMessageFuncPart1
               title="채팅 메시지 기능"
-              value={formDataPage1?.chatMessageFunc === '' ? '' : (formDataPage1?.chatMessageFunc ? '1' : '2')}
+              value={
+                formDataPage1?.chatMessageFunc === ""
+                  ? ""
+                  : formDataPage1?.chatMessageFunc
+                  ? "1"
+                  : "2"
+              }
               onClick={(value) => {
-                handleInputChange('chatMessageFunc', value === '1' ? true : false);
+                handleInputChange(
+                  "chatMessageFunc",
+                  value === "1" ? true : false
+                );
               }}
               options={[
-                { value: '1', label: '활성화' },
-                { value: '2', label: '비활성화' }
-              ]} />
+                { value: "1", label: "활성화" },
+                { value: "2", label: "비활성화" },
+              ]}
+            />
             <ChatMessageFuncPart1
               title="스탬프 설정"
-              value={formDataPage1?.stampSetting === '' ? '' : (formDataPage1?.stampSetting ? '1' : '2')}
+              value={
+                formDataPage1?.stampSetting === ""
+                  ? ""
+                  : formDataPage1?.stampSetting
+                  ? "1"
+                  : "2"
+              }
               onClick={(value) => {
-                handleInputChange('stampSetting', value === '1' ? true : false);
+                handleInputChange("stampSetting", value === "1" ? true : false);
               }}
               options={[
-                { value: '1', label: '활성화' },
-                { value: '2', label: '비활성화' }
-              ]} />
+                { value: "1", label: "활성화" },
+                { value: "2", label: "비활성화" },
+              ]}
+            />
             <ChatMessageFuncPart1
               title="예약기능 설정"
-              value={formDataPage1?.reservationFuncSetting === '' ? '' : (formDataPage1?.reservationFuncSetting ? '1' : '2')}
+              value={
+                formDataPage1?.reservationFuncSetting === ""
+                  ? ""
+                  : formDataPage1?.reservationFuncSetting
+                  ? "1"
+                  : "2"
+              }
               onClick={(value) => {
-                const isActivated = value === '1';
+                const isActivated = value === "1";
                 setFormDataPage1({
                   ...formDataPage1,
                   reservationFuncSetting: isActivated,
-                  reservationFuncValue: isActivated ? formDataPage1.reservationFuncValue : [],
-                  reservationPaymentMethod: isActivated ? formDataPage1.reservationPaymentMethod : [PAYMENT_METHODS.MEET_AND_CASH],
-                  reservationBankInfo: isActivated ? formDataPage1.reservationBankInfo : {
-                    bankId: '',
-                    bankName: '',
-                    bankImage: '',
-                    bankNumber: '',
-                    bankUserName: '',
-                  }
+                  reservationFuncValue: isActivated
+                    ? formDataPage1.reservationFuncValue
+                    : [],
+                  reservationPaymentMethod: isActivated
+                    ? formDataPage1.reservationPaymentMethod
+                    : [PAYMENT_METHODS.MEET_AND_CASH],
+                  reservationBankInfo: isActivated
+                    ? formDataPage1.reservationBankInfo
+                    : {
+                        bankId: "",
+                        bankName: "",
+                        bankImage: "",
+                        bankNumber: "",
+                        bankUserName: "",
+                      },
                 });
               }}
               options={[
-                { value: '1', label: '활성화' },
-                { value: '2', label: '비활성화' }
-              ]} />
-            {formDataPage1?.reservationFuncSetting &&
+                { value: "1", label: "활성화" },
+                { value: "2", label: "비활성화" },
+              ]}
+            />
+            {formDataPage1?.reservationFuncSetting && (
               <ReservationPart
-                dataMeetAndCash={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_CASH)}
-                dataMeetAndTransfer={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_TRANSFER)}
-                dataMeetAndCard={formDataPage1?.reservationPaymentMethod.includes(PAYMENT_METHODS.MEET_AND_CARD)}
+                dataMeetAndCash={formDataPage1?.reservationPaymentMethod.includes(
+                  PAYMENT_METHODS.MEET_AND_CASH
+                )}
+                dataMeetAndTransfer={formDataPage1?.reservationPaymentMethod.includes(
+                  PAYMENT_METHODS.MEET_AND_TRANSFER
+                )}
+                dataMeetAndCard={formDataPage1?.reservationPaymentMethod.includes(
+                  PAYMENT_METHODS.MEET_AND_CARD
+                )}
                 dataBanking={formDataPage1?.reservationBankInfo}
-                onChangeMeetAndCash={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_CASH, value)}
-                onChangeMeetAndTransfer={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_TRANSFER, value)}
-                onChangeMeetAndCard={(value) => handlePaymentMethodChange(PAYMENT_METHODS.MEET_AND_CARD, value)}
+                onChangeMeetAndCash={(value) =>
+                  handlePaymentMethodChange(
+                    PAYMENT_METHODS.MEET_AND_CASH,
+                    value
+                  )
+                }
+                onChangeMeetAndTransfer={(value) =>
+                  handlePaymentMethodChange(
+                    PAYMENT_METHODS.MEET_AND_TRANSFER,
+                    value
+                  )
+                }
+                onChangeMeetAndCard={(value) =>
+                  handlePaymentMethodChange(
+                    PAYMENT_METHODS.MEET_AND_CARD,
+                    value
+                  )
+                }
                 onSubmitBank={handleSubmitBank}
               />
-            }
+            )}
             {/* {formDataPage1?.reservationFuncSetting &&
               <ListCategoryPart1
                 value={formDataPage1?.reservationFuncValue.length > 0 ? '설정완료' : ""}
@@ -961,10 +1177,11 @@ const NewStore = () => {
             } */}
           </div>
 
-
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
             <BaseInput
-              onChange={(value) => handleInputChangePage2('storeIntroduction', value)}
+              onChange={(value) =>
+                handleInputChangePage2("storeIntroduction", value)
+              }
               value={formDataPage2?.storeIntroduction}
               placeholder="매장의 소개해주세요
             구글 혹은 네이버에 노출 될 수 있으니
@@ -1012,7 +1229,7 @@ const NewStore = () => {
               })}
             </div>
             <div>
-              {optionPart2Selected === "담당자" ?
+              {optionPart2Selected === "담당자" ? (
                 <ManageTab
                   data={formDataPage2?.manager}
                   onCLickCreateNew={() => {
@@ -1021,7 +1238,7 @@ const NewStore = () => {
                     setIndexEditManager(undefined);
                   }}
                   onArchiveTick={(index: number) => {
-                    console.log('index', index);
+                    console.log("index", index);
                   }}
                   onEdit={(item, index) => {
                     setDataEditManager({ ...item });
@@ -1032,30 +1249,35 @@ const NewStore = () => {
                     const temp = list[index];
                     list[index] = list[index - 1];
                     list[index - 1] = temp;
-                    handleInputChangePage2('manager', list);
+                    handleInputChangePage2("manager", list);
                   }}
                   onDown={(index) => {
                     const list = formDataPage2?.manager;
                     const temp = list[index];
                     list[index] = list[index + 1];
                     list[index + 1] = temp;
-                    handleInputChangePage2('manager', list);
+                    handleInputChangePage2("manager", list);
                   }}
                   onCopy={(item) => {
-                    handleInputChangePage2('manager', [...formDataPage2?.manager, item]);
+                    handleInputChangePage2("manager", [
+                      ...formDataPage2?.manager,
+                      item,
+                    ]);
                   }}
                   onDelete={(index) => {
                     const list = formDataPage2?.manager;
                     list.splice(index, 1);
-                    handleInputChangePage2('manager', list);
+                    handleInputChangePage2("manager", list);
                   }}
                 />
-                :
+              ) : (
                 <PriceListTab
                   data={formDataPage2?.priceList}
-                  onCLickCreateNew={() => { setOpenModalCreateNewPrice(true) }}
+                  onCLickCreateNew={() => {
+                    setOpenModalCreateNewPrice(true);
+                  }}
                   onArchiveTick={(index: number) => {
-                    console.log('index', index);
+                    console.log("index", index);
                   }}
                   onEdit={(item, index) => {
                     setDataEditPrice({ ...item });
@@ -1066,122 +1288,199 @@ const NewStore = () => {
                     const temp = list[index];
                     list[index] = list[index - 1];
                     list[index - 1] = temp;
-                    handleInputChangePage2('priceList', list);
+                    handleInputChangePage2("priceList", list);
                   }}
                   onDown={(index) => {
                     const list = formDataPage2?.priceList;
                     const temp = list[index];
                     list[index] = list[index + 1];
                     list[index + 1] = temp;
-                    handleInputChangePage2('priceList', list);
+                    handleInputChangePage2("priceList", list);
                   }}
                   onCopy={(item) => {
-                    handleInputChangePage2('priceList', [...formDataPage2?.priceList, item]);
+                    handleInputChangePage2("priceList", [
+                      ...formDataPage2?.priceList,
+                      item,
+                    ]);
                   }}
                   onDelete={(index) => {
                     const list = formDataPage2?.priceList;
                     list.splice(index, 1);
-                    handleInputChangePage2('priceList', list);
+                    handleInputChangePage2("priceList", list);
                   }}
-                />}
+                />
+              )}
             </div>
-
           </div>
 
-
           <div className="flex flex-col w-1/3 p-4 overflow-auto ">
-            {formDataPage1.storeImages[0] && <img src={typeof formDataPage1.storeImages[0] === 'string' ? formDataPage1.storeImages[0] : URL.createObjectURL(formDataPage1?.storeImages[0])} className="w-full h-[260px]" />}
-            {formDataPage1.storeName && <div className="p-4 border">
-              <BaseText locale size={16} bold className="flex justify-center py-8 border-b">{formDataPage1.storeName}</BaseText>
-              <div className="flex py-4">
-                <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
-                  <img src={Images.iconPhone} className="w-9 h-9" />
-                  <BaseText locale size={16} className="text-center">전화</BaseText>
-                </div>
-                <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
-                  <img src={Images.iconHeart} className="w-9 h-9" />
-                  <BaseText locale size={16} className="text-center">찜하기</BaseText>
-                </div>
-                <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
-                  <img src={Images.iconDirection} className="w-9 h-9" />
-                  <BaseText locale size={16} className="text-center">길찾기</BaseText>
-                </div>
-                <div className="flex flex-col items-center justify-center flex-1 gap-1 cursor-pointer">
-                  <img src={Images.share} className="w-9 h-9" />
-                  <BaseText locale size={16} className="text-center">공유</BaseText>
+            {formDataPage1.storeImages[0] && (
+              <img
+                src={
+                  typeof formDataPage1.storeImages[0] === "string"
+                    ? formDataPage1.storeImages[0]
+                    : URL.createObjectURL(formDataPage1?.storeImages[0])
+                }
+                className="w-full h-[260px]"
+              />
+            )}
+            {formDataPage1.storeName && (
+              <div className="p-4 border">
+                <BaseText
+                  locale
+                  size={16}
+                  bold
+                  className="flex justify-center py-8 border-b"
+                >
+                  {formDataPage1.storeName}
+                </BaseText>
+                <div className="flex py-4">
+                  <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                    <img src={Images.iconPhone} className="w-9 h-9" />
+                    <BaseText locale size={16} className="text-center">
+                      전화
+                    </BaseText>
+                  </div>
+                  <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                    <img src={Images.iconHeart} className="w-9 h-9" />
+                    <BaseText locale size={16} className="text-center">
+                      찜하기
+                    </BaseText>
+                  </div>
+                  <div className="flex flex-col items-center justify-center flex-1 gap-1 border-r cursor-pointer">
+                    <img src={Images.iconDirection} className="w-9 h-9" />
+                    <BaseText locale size={16} className="text-center">
+                      길찾기
+                    </BaseText>
+                  </div>
+                  <div className="flex flex-col items-center justify-center flex-1 gap-1 cursor-pointer">
+                    <img src={Images.share} className="w-9 h-9" />
+                    <BaseText locale size={16} className="text-center">
+                      공유
+                    </BaseText>
+                  </div>
                 </div>
               </div>
-            </div>}
-            {(formDataPage1.storeAddress || formDataPage1.storeNumber || formDataPage1.storeAddressDetails || formDataPage1.storeOpeningHours) &&
+            )}
+            {(formDataPage1.storeAddress ||
+              formDataPage1.storeNumber ||
+              formDataPage1.storeAddressDetails ||
+              formDataPage1.storeOpeningHours) && (
               <div className="mt-1 border ">
                 <div className="flex">
-                  <BaseText locale size={16} bold className="flex justify-center flex-1 p-[10px] border-b-8 border-r">정보</BaseText>
-                  <BaseText locale size={16} className="flex justify-center flex-1 p-[10px]">리뷰</BaseText>
+                  <BaseText
+                    locale
+                    size={16}
+                    bold
+                    className="flex justify-center flex-1 p-[10px] border-b-8 border-r"
+                  >
+                    정보
+                  </BaseText>
+                  <BaseText
+                    locale
+                    size={16}
+                    className="flex justify-center flex-1 p-[10px]"
+                  >
+                    리뷰
+                  </BaseText>
                 </div>
                 <div className="p-4">
-                  {(formDataPage1.storeAddress || formDataPage1.storeAddressDetails) &&
+                  {(formDataPage1.storeAddress ||
+                    formDataPage1.storeAddressDetails) && (
                     <div className="flex items-center gap-1 py-3 border-b">
                       <img src={Images.iconGps} className="w-5 h-5" />
-                      <BaseText locale size={16} className="text-center">{formDataPage1.storeAddress + ' ' + formDataPage1.storeAddressDetails}</BaseText>
+                      <BaseText locale size={16} className="text-center">
+                        {formDataPage1.storeAddress +
+                          " " +
+                          formDataPage1.storeAddressDetails}
+                      </BaseText>
                     </div>
-                  }
-                  {formDataPage1.storeOpeningHours &&
+                  )}
+                  {formDataPage1.storeOpeningHours && (
                     <div className="flex items-center gap-1 py-3 border-b">
                       <img src={Images.iconClock} className="w-5 h-5" />
-                      <BaseText size={16} className="text-center">{formDataPage1.storeOpeningHours}</BaseText>
+                      <BaseText size={16} className="text-center">
+                        {formDataPage1.storeOpeningHours}
+                      </BaseText>
                     </div>
-                  }
-                  {formDataPage1.storeNumber &&
+                  )}
+                  {formDataPage1.storeNumber && (
                     <div className="flex items-center gap-1 py-3 border-b">
                       <img src={Images.iconPhone2} className="w-5 h-5" />
-                      <BaseText locale size={16} className="text-center">{formDataPage1.storeNumber}</BaseText>
+                      <BaseText locale size={16} className="text-center">
+                        {formDataPage1.storeNumber}
+                      </BaseText>
                     </div>
-                  }
-                  {
-                    formDataPage1.thema &&
+                  )}
+                  {formDataPage1.thema && (
                     <div className="flex items-center gap-1 py-3 border-b">
                       <img src={Images.iconCategory} className="w-5 h-5" />
-                      {
-                        listThema.filter((item: any) => item.value === formDataPage1.thema).map((item: any, index: number) => {
+                      {listThema
+                        .filter(
+                          (item: any) => item.value === formDataPage1.thema
+                        )
+                        .map((item: any, index: number) => {
                           return (
-                            <BaseText key={index} locale size={16} className="text-center">{item.label}</BaseText>
-                          )
-                        })
-                      }
+                            <BaseText
+                              key={index}
+                              locale
+                              size={16}
+                              className="text-center"
+                            >
+                              {item.label}
+                            </BaseText>
+                          );
+                        })}
                     </div>
-                  }
-                  {
-                    formDataPage1.category &&
+                  )}
+                  {formDataPage1.category && (
                     <div className="flex items-center gap-1 py-3 border-b">
                       <img src={Images.iconSquare} className="w-5 h-5" />
-                      {
-                        listCategory.filter((item: any) => item.value === formDataPage1.category).map((item: any, index: number) => {
+                      {listCategory
+                        .filter(
+                          (item: any) => item.value === formDataPage1.category
+                        )
+                        .map((item: any, index: number) => {
                           return (
-                            <BaseText key={index} locale size={16} className="text-center">{item.label}</BaseText>
-                          )
-                        })
-                      }
+                            <BaseText
+                              key={index}
+                              locale
+                              size={16}
+                              className="text-center"
+                            >
+                              {item.label}
+                            </BaseText>
+                          );
+                        })}
                     </div>
-                  }
+                  )}
                   <div className="flex items-center gap-1 py-3 ">
                     <img src={Images.iconTag} className="w-5 h-5" />
                     {formDataPage1.hashtag.map((item, index) => {
                       // Find the corresponding object with matching id
-                      const correspondingItem = listHashtag.find((i: any) => i.value === item);
+                      const correspondingItem = listHashtag.find(
+                        (i: any) => i.value === item
+                      );
 
                       // Check if correspondingItem exists and retrieve the label
-                      const label = correspondingItem ? correspondingItem.label : '';
+                      const label = correspondingItem
+                        ? correspondingItem.label
+                        : "";
                       return (
-                        <div key={index} className="px-4 mr-1 rounded-lg bg-darkNight100">
-                          <BaseText locale size={16} className="text-center">{label}</BaseText>
+                        <div
+                          key={index}
+                          className="px-4 mr-1 rounded-lg bg-darkNight100"
+                        >
+                          <BaseText locale size={16} className="text-center">
+                            {label}
+                          </BaseText>
                         </div>
                       );
                     })}
                   </div>
                 </div>
               </div>
-            }
-
+            )}
 
             {/* event part */}
 
@@ -1208,61 +1507,84 @@ const NewStore = () => {
             </div>
           </div> */}
 
-            {formDataPage2?.priceList?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
-              <BaseText locale size={16} bold>가격표</BaseText>
-              {
-                formDataPage2?.priceList.map((item: INewPrice, index) => {
+            {formDataPage2?.priceList?.length > 0 && (
+              <div className="flex flex-col gap-2 py-3 mt-1">
+                <BaseText locale size={16} bold>
+                  가격표
+                </BaseText>
+                {formDataPage2?.priceList.map((item: INewPrice, index) => {
                   return (
-                    <div className='flex flex-col gap-2 py-2 border-t'>
-                      {(item?.title && item?.running_time) && <BaseText
-                        bold
-                        size={18}
-                      >
-                        {item?.title} ({item?.running_time})
-                      </BaseText>}
-                      <BaseText
-                        size={16}
-                        medium
-                        color='text-darkNight700'
-                      >
+                    <div className="flex flex-col gap-2 py-2 border-t">
+                      {item?.title && item?.running_time && (
+                        <BaseText bold size={18}>
+                          {item?.title} ({item?.running_time})
+                        </BaseText>
+                      )}
+                      <BaseText size={16} medium color="text-darkNight700">
                         {item?.description}
                       </BaseText>
-                      {
-                        (item?.prices || []).map((price: any, index: number) => {
-                          return (
-                            <div className='flex gap-1'>
-                              <BaseText size={16} locale color='text-primary' bold>{price?.name === 'ALL' ? 'Charge' : price?.name}</BaseText>
-                              <BaseText size={16} bold>{handleConvertCurrency(price?.discount)} {item?.unit}</BaseText>
-                              <BaseText size={16} className='line-through'>{handleConvertCurrency(price?.price)} {item?.unit}</BaseText>
-                              <BaseText size={16} bold color='text-cyan600'>{handlePercentageDecrease(price?.price, price?.discount)}</BaseText>
-                            </div>
-                          )
-                        })
-                      }
+                      {(item?.prices || []).map((price: any, index: number) => {
+                        return (
+                          <div className="flex gap-1">
+                            <BaseText
+                              size={16}
+                              locale
+                              color="text-primary"
+                              bold
+                            >
+                              {price?.name === "ALL" ? "Charge" : price?.name}
+                            </BaseText>
+                            <BaseText size={16} bold>
+                              {handleConvertCurrency(price?.discount)}{" "}
+                              {item?.unit}
+                            </BaseText>
+                            <BaseText size={16} className="line-through">
+                              {handleConvertCurrency(price?.price)} {item?.unit}
+                            </BaseText>
+                            <BaseText size={16} bold color="text-cyan600">
+                              {handlePercentageDecrease(
+                                price?.price,
+                                price?.discount
+                              )}
+                            </BaseText>
+                          </div>
+                        );
+                      })}
                     </div>
-                  )
-                })
-              }
-            </div>
-            }
-            {formDataPage2?.storeIntroduction && <BaseText size={16} bold className="text-center" >{formDataPage2?.storeIntroduction}</BaseText>}
-            {formDataPage2?.manager?.length > 0 && <div className="flex flex-col gap-2 py-3 mt-1">
-              <BaseText size={16} bold>{t('담당자')}({formDataPage2?.manager?.length})</BaseText>
-              {
-                formDataPage2?.manager.map((item, index) => {
+                  );
+                })}
+              </div>
+            )}
+            {formDataPage2?.storeIntroduction && (
+              <BaseText size={16} bold className="text-center">
+                {formDataPage2?.storeIntroduction}
+              </BaseText>
+            )}
+            {formDataPage2?.manager?.length > 0 && (
+              <div className="flex flex-col gap-2 py-3 mt-1">
+                <BaseText size={16} bold>
+                  {t("담당자")}({formDataPage2?.manager?.length})
+                </BaseText>
+                {formDataPage2?.manager.map((item, index) => {
                   return (
                     <div className="flex gap-3 p-2 border rounded-lg">
-                      <img src={item?.images[0] || Images.avatarEmpty} className="w-[84px] h-[84px] rounded-lg" />
+                      <img
+                        src={item?.images[0] || Images.avatarEmpty}
+                        className="w-[84px] h-[84px] rounded-lg"
+                      />
                       <div className="flex flex-col justify-center w-full">
-                        <BaseText size={16} bold>{item?.name}</BaseText>
-                        <BaseText size={16} bold>{item?.description}</BaseText>
+                        <BaseText size={16} bold>
+                          {item?.name}
+                        </BaseText>
+                        <BaseText size={16} bold>
+                          {item?.description}
+                        </BaseText>
                       </div>
                     </div>
-                  )
-                })
-              }
-            </div>
-            }
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
