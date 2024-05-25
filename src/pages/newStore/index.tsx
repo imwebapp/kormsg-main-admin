@@ -61,6 +61,7 @@ interface IFormDataPage1 {
     bankName: string;
     bankImage: string;
     bankNumber: string;
+    bankUserName: string;
   };
 }
 
@@ -279,6 +280,8 @@ const NewStore = () => {
       bankName: '',
       bankImage: '',
       bankNumber: '',
+      bankUserName: '',
+      
     }
   });
 
@@ -424,6 +427,7 @@ const NewStore = () => {
         bank_information: {
           bank_name: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankName : '',
           bank_number: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankNumber : '',
+          bank_user_name: formDataPage1?.reservationFuncSetting ? formDataPage1?.reservationBankInfo?.bankUserName : '',
         },
       }
       console.log('DataCreateNewShop', DataCreateNewShop);
@@ -521,6 +525,7 @@ const NewStore = () => {
     bankName: string;
     bankImage: string;
     bankNumber: string;
+    bankUserName: string;
   }) => {
     setFormDataPage1({
       ...formDataPage1,
@@ -594,6 +599,8 @@ const NewStore = () => {
         id: storeCopyFunc?.user_id,
         nickname: storeCopyFunc?.user?.nickname,
       });
+      console.log('storeCopyFunc',storeCopyFunc);
+      
       setFormDataPage1({
         storeCopyFunc: storeCopyFunc?.id,
         storeOwnerMembershipSetting: storeCopyFunc?.user?.nickname || '',
@@ -621,6 +628,7 @@ const NewStore = () => {
           bankName: storeCopyFunc?.bank_information?.bank_name || '',
           bankImage: LIST_BANKING.find((item) => item.nameBank === storeCopyFunc?.bank_information?.bank_name)?.imageBank || '',
           bankNumber: storeCopyFunc?.bank_information?.bank_number || '',
+          bankUserName: storeCopyFunc?.bank_information?.bank_user_name || '',
         }
       });
       setFormDataPage2({
@@ -634,6 +642,8 @@ const NewStore = () => {
   //update data when edit Shop
   useEffect(() => {
     if (dataEditShop) {
+      console.log('dataEditShop',dataEditShop);
+      
 
       mentorApi.getList({
         fields: JSON.stringify(["$all"]),
@@ -675,6 +685,7 @@ const NewStore = () => {
           bankName: dataEditShop?.bank_information?.bank_name || '',
           bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
           bankNumber: dataEditShop?.bank_information?.bank_number || '',
+          bankUserName: dataEditShop?.bank_information?.bank_user_name || '',
         }
       });
       setFormDataPage2({
@@ -726,6 +737,7 @@ const NewStore = () => {
               bankName: dataEditShop?.bank_information?.bank_name || '',
               bankImage: LIST_BANKING.find((item) => item.nameBank === dataEditShop?.bank_information?.bank_name)?.imageBank || '',
               bankNumber: dataEditShop?.bank_information?.bank_number || '',
+              bankUserName: dataEditShop?.bank_information?.bank_user_name || '',
             }
           });
           setFormDataPage2({
@@ -919,6 +931,7 @@ const NewStore = () => {
                     bankName: '',
                     bankImage: '',
                     bankNumber: '',
+                    bankUserName: '',
                   }
                 });
               }}

@@ -452,5 +452,6 @@
   "안드로이드 APP URL": "Android APP URL",
   "IOS APP URL": "IOS APP URL",
   "WEB URL": "WEB URL",
-  "Phone number": "Phone number"
+  "Phone number": "Phone number",
+  "입금자명": "Depositor name"
 }
