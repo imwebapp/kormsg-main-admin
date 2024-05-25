@@ -101,74 +101,108 @@ export const RESERVATION_STATUS = {
 };
 
 export const PAYMENT_METHODS = {
-  MEET_AND_CASH: 'MEET_AND_CASH',
-  MEET_AND_TRANSFER: 'MEET_AND_TRANSFER',
-  MEET_AND_CARD: 'MEET_AND_CARD',
-  IN_APP_PAYMENT: 'IN_APP_PAYMENT',
-}
+  MEET_AND_CASH: "MEET_AND_CASH",
+  MEET_AND_TRANSFER: "MEET_AND_TRANSFER",
+  MEET_AND_CARD: "MEET_AND_CARD",
+  IN_APP_PAYMENT: "IN_APP_PAYMENT",
+};
 
 export const LIST_BANKING = [
   {
-    nameBank: '토스뱅크',
-    imageBank: Images.bank1
+    nameBank: "토스뱅크",
+    imageBank: Images.bank1,
   },
   {
-    nameBank:'카카오뱅크',
-    imageBank: Images.bank2
+    nameBank: "카카오뱅크",
+    imageBank: Images.bank2,
   },
   {
-    nameBank: '신한은행',
-    imageBank: Images.bank3
+    nameBank: "신한은행",
+    imageBank: Images.bank3,
   },
   {
-    nameBank: '우체국',
-    imageBank: Images.bank4
+    nameBank: "우체국",
+    imageBank: Images.bank4,
   },
   {
-    nameBank: '부산은행',
-    imageBank:  Images.bank5
+    nameBank: "부산은행",
+    imageBank: Images.bank5,
   },
   {
-    nameBank: '국민은행',
-    imageBank: Images.bank6
+    nameBank: "국민은행",
+    imageBank: Images.bank6,
   },
   {
-    nameBank: '우리은행', 
-    imageBank:Images.bank7
+    nameBank: "우리은행",
+    imageBank: Images.bank7,
   },
   {
-    nameBank: '케이뱅크',
-    imageBank: Images.bank8
+    nameBank: "케이뱅크",
+    imageBank: Images.bank8,
   },
   {
-    nameBank: '기업은행',
-    imageBank: Images.bank9
+    nameBank: "기업은행",
+    imageBank: Images.bank9,
   },
   {
-    nameBank: '농협',
-    imageBank: Images.bank10
+    nameBank: "농협",
+    imageBank: Images.bank10,
   },
 ];
 
 export const WORKING_DAY = {
-  MONDAY: 'MONDAY',
-  TUESDAY: 'TUESDAY',
-  WEDNESDAY: 'WEDNESDAY',
-  THURSDAY: 'THURSDAY',
-  FRIDAY: 'FRIDAY',
-  SATURDAY: 'SATURDAY',
-  SUNDAY: 'SUNDAY',
+  MONDAY: "MONDAY",
+  TUESDAY: "TUESDAY",
+  WEDNESDAY: "WEDNESDAY",
+  THURSDAY: "THURSDAY",
+  FRIDAY: "FRIDAY",
+  SATURDAY: "SATURDAY",
+  SUNDAY: "SUNDAY",
 };
 
 export const Weekdays = [
-  { id: 'MONDAY', name: 'Monday' },
-  { id: 'TUESDAY', name: 'Tuesday' },
-  { id: 'WEDNESDAY', name: 'Wednesday' },
-  { id: 'THURSDAY', name: 'Thursday' },
-  { id: 'FRIDAY', name: 'Friday' },
-  { id: 'SATURDAY', name: 'Saturday' },
-  { id: 'SUNDAY', name: 'Sunday' },
-]
+  { id: "MONDAY", name: "Monday" },
+  { id: "TUESDAY", name: "Tuesday" },
+  { id: "WEDNESDAY", name: "Wednesday" },
+  { id: "THURSDAY", name: "Thursday" },
+  { id: "FRIDAY", name: "Friday" },
+  { id: "SATURDAY", name: "Saturday" },
+  { id: "SUNDAY", name: "Sunday" },
+];
+
+export const HOLIDAYS: {
+  name: string | null;
+  id: number;
+  child?: { name: string | null; id: number }[];
+}[] = [
+  { name: "새해 첫날", id: 1 },
+  {
+    name: null,
+    id: 2,
+    child: [
+      { name: "연휴", id: 21 },
+      { name: "설날", id: 22 },
+      { name: "연휴", id: 23 },
+    ],
+  },
+  { name: "삼일절", id: 3 },
+  { name: "어린이날", id: 4 },
+  { name: "부처님 오신", id: 5 },
+  { name: "현충일", id: 6 },
+  { name: "광복절", id: 7 },
+  {
+    name: null,
+    id: 8,
+    child: [
+      { name: "연휴", id: 81 },
+      { name: "추석", id: 82 },
+      { name: "연휴", id: 83 },
+    ],
+  },
+  { name: "개천절", id: 9 },
+  { name: "한글날", id: 10 },
+  { name: "성탄절", id: 11 },
+];
 
 export const ListTypeUserActivityReservation = [
   {

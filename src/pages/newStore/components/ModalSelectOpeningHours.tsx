@@ -13,41 +13,10 @@ import { Checkbox, Tag, TimePicker, TimePickerProps, TimeRangePickerProps } from
 import dayjs from 'dayjs';
 import BaseButton from '../../../components/baseButton';
 import { CheckOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
-import { Weekdays } from '../../../utils/constants';
+import { HOLIDAYS, Weekdays } from '../../../utils/constants';
+import TimePickerAbout from './TimePickerAbout';
 
-const holidays: {
-    name: string | null
-    id: number
-    child?: { name: string | null; id: number }[]
-}[] = [
-        { name: '새해 첫날', id: 1 },
-        {
-            name: null,
-            id: 2,
-            child: [
-                { name: '연휴', id: 21 },
-                { name: '설날', id: 22 },
-                { name: '연휴', id: 23 },
-            ],
-        },
-        { name: '삼일절', id: 3 },
-        { name: '어린이날', id: 4 },
-        { name: '부처님 오신', id: 5 },
-        { name: '현충일', id: 6 },
-        { name: '광복절', id: 7 },
-        {
-            name: null,
-            id: 8,
-            child: [
-                { name: '연휴', id: 81 },
-                { name: '추석', id: 82 },
-                { name: '연휴', id: 83 },
-            ],
-        },
-        { name: '개천절', id: 9 },
-        { name: '한글날', id: 10 },
-        { name: '성탄절', id: 11 },
-    ]
+
 interface IProps {
     isOpen: boolean;
     onClose?: () => void;
@@ -166,7 +135,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
             setListHolidaySelected([22, 82])
         } else if (optionChecked === 2) {
             let ids: number[] = [];
-            holidays.forEach(holiday => {
+            HOLIDAYS.forEach(holiday => {
                 ids.push(holiday.id);
                 if (holiday.child) {
                     holiday.child.forEach(child => {
@@ -259,7 +228,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                                {holidays.map((holiday, index) => {
+                                {HOLIDAYS.map((holiday, index) => {
                                     if (holiday.child) {
                                         return (
                                             <div key={index} className='flex border rounded-md cursor-pointer bg-darkNight50'>
@@ -305,6 +274,12 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                                 })}
                             </div>
                         </div>
+                        <TimePickerAbout
+                            startTime='00:00'
+                            setStartTime={(e) => console.log(e)}
+                            endTime='00:00'
+                            setEndTime={(e) => console.log(e)}
+                        />
 
                         <div className='flex flex-col gap-1 mb-4'>
                             <BaseText bold locale>영업 시간을 알려주세요.</BaseText>
