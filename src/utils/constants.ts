@@ -170,6 +170,12 @@ export const Weekdays = [
   { id: "SUNDAY", name: "Sunday" },
 ];
 
+export const HOLIDAY_SETTING = {
+  ONLY_LUNAR_NEW_YEAR_AND_CHUSEOK: "ONLY_LUNAR_NEW_YEAR_AND_CHUSEOK",
+  ALL: "ALL",
+  OTHER: 'OTHER'
+}
+
 export const HOLIDAYS: {
   name: string | null;
   id: number;

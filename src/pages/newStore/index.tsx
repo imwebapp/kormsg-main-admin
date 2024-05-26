@@ -33,7 +33,7 @@ import { UserFilter } from "./components/UserFilter";
 import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
 import { BoardLinkApi } from "../../apis/boardLinkApi";
 import { ReservationPart } from "./components/ReservationPart";
-import { LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
+import { HOLIDAY_SETTING, LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -42,7 +42,15 @@ interface IFormDataPage1 {
   storeAddress: string;
   storeAddressDetails: string;
   storeImages: File[];
-  storeOpeningHours: string;
+  // storeOpeningHours: string;
+  leave_day?: boolean;
+  working_day?: string[];
+  holiday_setting?: string;
+  holiday_day?: number[];
+  opening_hours: string;
+  opening_hours_weekend?: string;
+  break_time?: string[];
+  break_time_weekend?: string[];
   thema: string;
   category: string;
   regionProvince: string;
@@ -167,8 +175,9 @@ const NewStore = () => {
     setOpenModalOpenHours(false);
   };
 
-  const handleSubmitOpenHours = (value: string) => {
-    setFormDataPage1({ ...formDataPage1, storeOpeningHours: value });
+  const handleSubmitOpenHours = (value: any) => {
+    // setFormDataPage1({ ...formDataPage1, storeOpeningHours: value });
+    setFormDataPage1({ ...formDataPage1, ...value });
     setOpenModalOpenHours(false);
   };
 
@@ -280,7 +289,15 @@ const NewStore = () => {
     storeAddress: "",
     storeAddressDetails: "",
     storeImages: [],
-    storeOpeningHours: "",
+    // storeOpeningHours: "",
+    leave_day: true,
+    working_day: [],
+    holiday_setting: HOLIDAY_SETTING.OTHER,
+    holiday_day: [],
+    opening_hours: "",
+    opening_hours_weekend: "",
+    break_time: [],
+    break_time_weekend: [],
     thema: "",
     category: "",
     regionProvince: "",
@@ -450,8 +467,15 @@ const NewStore = () => {
         images: resultArrayImageConvert,
         latitude: 37.3957122,
         longitude: 127.1105181,
-        opening_hours: formDataPage1?.storeOpeningHours,
-        // working_day : listDaySelected,
+        // opening_hours: formDataPage1?.storeOpeningHours,
+        leave_day: formDataPage1?.leave_day,
+        working_day: formDataPage1?.working_day,
+        holiday_setting: formDataPage1?.holiday_setting,
+        holiday_day: formDataPage1?.holiday_day,
+        opening_hours: formDataPage1?.opening_hours,
+        opening_hours_weekend: formDataPage1?.opening_hours_weekend,
+        break_time: formDataPage1?.break_time,
+        break_time_weekend: formDataPage1?.break_time_weekend,
         // reservation_times: formDataPage1?.reservationFuncValue,
         messenger_status:
           formDataPage1?.chatMessageFunc === undefined
@@ -686,7 +710,15 @@ const NewStore = () => {
         storeAddress: storeCopyFunc?.address || "",
         storeAddressDetails: storeCopyFunc?.address_2 || "",
         storeImages: storeCopyFunc?.images || [],
-        storeOpeningHours: storeCopyFunc?.opening_hours || "",
+        // storeOpeningHours: storeCopyFunc?.opening_hours || "",
+        leave_day: storeCopyFunc?.leave_day || true,
+        working_day: storeCopyFunc?.working_day || [],
+        holiday_setting: storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
+        holiday_day: storeCopyFunc?.holiday_day || [],
+        opening_hours: storeCopyFunc?.opening_hours || "",
+        opening_hours_weekend: storeCopyFunc?.opening_hours_weekend || "",
+        break_time: storeCopyFunc?.break_time || [],
+        break_time_weekend: storeCopyFunc?.break_time_weekend || [],
         thema: storeCopyFunc?.category?.thema_id || "",
         category: storeCopyFunc?.category_id || "",
         regionProvince: storeCopyFunc?.shop_province || "",
@@ -753,7 +785,15 @@ const NewStore = () => {
         storeAddress: dataEditShop?.address || "",
         storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
-        storeOpeningHours: dataEditShop?.opening_hours || "",
+        // storeOpeningHours: dataEditShop?.opening_hours || "",
+        leave_day: dataEditShop?.leave_day || true,
+        working_day: dataEditShop?.working_day || [],
+        holiday_setting: dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
+        holiday_day: dataEditShop?.holiday_day || [],
+        opening_hours: dataEditShop?.opening_hours || "",
+        opening_hours_weekend: dataEditShop?.opening_hours_weekend || "",
+        break_time: dataEditShop?.break_time || [],
+        break_time_weekend: dataEditShop?.break_time_weekend || [],
         thema: dataEditShop?.category?.thema_id || "",
         category: dataEditShop?.category_id || "",
         regionProvince: dataEditShop?.shop_province || "",
@@ -814,7 +854,15 @@ const NewStore = () => {
               storeAddress: dataEditShop?.address || "",
               storeAddressDetails: dataEditShop?.address_2 || "",
               storeImages: dataEditShop?.images || [],
-              storeOpeningHours: dataEditShop?.opening_hours || "",
+              // storeOpeningHours: dataEditShop?.opening_hours || "",
+              leave_day: storeCopyFunc?.leave_day || true,
+              working_day: storeCopyFunc?.working_day || [],
+              holiday_setting: storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
+              holiday_day: storeCopyFunc?.holiday_day || [],
+              opening_hours: storeCopyFunc?.opening_hours || "",
+              opening_hours_weekend: storeCopyFunc?.opening_hours_weekend || "",
+              break_time: storeCopyFunc?.break_time || [],
+              break_time_weekend: storeCopyFunc?.break_time_weekend || [],
               thema: dataEditShop?.category?.thema_id || "",
               category: dataEditShop?.category_id || "",
               regionProvince: dataEditShop?.shop_province || "",
@@ -954,7 +1002,7 @@ const NewStore = () => {
                   title="매장 주소(위치기반 적용)"
                   placeholder="주소입력"
                   value={formDataPage1.storeAddress}
-                  // onChange={(value) => handleInputChange('storeAddress', value)}
+                // onChange={(value) => handleInputChange('storeAddress', value)}
                 />
               </div>
               <BaseInput
@@ -983,7 +1031,7 @@ const NewStore = () => {
             <ListCategoryPart1
               isLocale={false}
               title="영업시간"
-              value={formDataPage1?.storeOpeningHours}
+              value={formDataPage1?.opening_hours}
               placeholder={t("영업시간을 설정해주세요")}
               onClick={() => {
                 setOpenModalOpenHours(true);
@@ -1067,8 +1115,8 @@ const NewStore = () => {
                 formDataPage1?.chatMessageFunc === ""
                   ? ""
                   : formDataPage1?.chatMessageFunc
-                  ? "1"
-                  : "2"
+                    ? "1"
+                    : "2"
               }
               onClick={(value) => {
                 handleInputChange(
@@ -1087,8 +1135,8 @@ const NewStore = () => {
                 formDataPage1?.stampSetting === ""
                   ? ""
                   : formDataPage1?.stampSetting
-                  ? "1"
-                  : "2"
+                    ? "1"
+                    : "2"
               }
               onClick={(value) => {
                 handleInputChange("stampSetting", value === "1" ? true : false);
@@ -1104,8 +1152,8 @@ const NewStore = () => {
                 formDataPage1?.reservationFuncSetting === ""
                   ? ""
                   : formDataPage1?.reservationFuncSetting
-                  ? "1"
-                  : "2"
+                    ? "1"
+                    : "2"
               }
               onClick={(value) => {
                 const isActivated = value === "1";
@@ -1121,12 +1169,12 @@ const NewStore = () => {
                   reservationBankInfo: isActivated
                     ? formDataPage1.reservationBankInfo
                     : {
-                        bankId: "",
-                        bankName: "",
-                        bankImage: "",
-                        bankNumber: "",
-                        bankUserName: "",
-                      },
+                      bankId: "",
+                      bankName: "",
+                      bankImage: "",
+                      bankNumber: "",
+                      bankUserName: "",
+                    },
                 });
               }}
               options={[
@@ -1365,122 +1413,122 @@ const NewStore = () => {
             {(formDataPage1.storeAddress ||
               formDataPage1.storeNumber ||
               formDataPage1.storeAddressDetails ||
-              formDataPage1.storeOpeningHours) && (
-              <div className="mt-1 border ">
-                <div className="flex">
-                  <BaseText
-                    locale
-                    size={16}
-                    bold
-                    className="flex justify-center flex-1 p-[10px] border-b-8 border-r"
-                  >
-                    정보
-                  </BaseText>
-                  <BaseText
-                    locale
-                    size={16}
-                    className="flex justify-center flex-1 p-[10px]"
-                  >
-                    리뷰
-                  </BaseText>
-                </div>
-                <div className="p-4">
-                  {(formDataPage1.storeAddress ||
-                    formDataPage1.storeAddressDetails) && (
-                    <div className="flex items-center gap-1 py-3 border-b">
-                      <img src={Images.iconGps} className="w-5 h-5" />
-                      <BaseText locale size={16} className="text-center">
-                        {formDataPage1.storeAddress +
-                          " " +
-                          formDataPage1.storeAddressDetails}
-                      </BaseText>
-                    </div>
-                  )}
-                  {formDataPage1.storeOpeningHours && (
-                    <div className="flex items-center gap-1 py-3 border-b">
-                      <img src={Images.iconClock} className="w-5 h-5" />
-                      <BaseText size={16} className="text-center">
-                        {formDataPage1.storeOpeningHours}
-                      </BaseText>
-                    </div>
-                  )}
-                  {formDataPage1.storeNumber && (
-                    <div className="flex items-center gap-1 py-3 border-b">
-                      <img src={Images.iconPhone2} className="w-5 h-5" />
-                      <BaseText locale size={16} className="text-center">
-                        {formDataPage1.storeNumber}
-                      </BaseText>
-                    </div>
-                  )}
-                  {formDataPage1.thema && (
-                    <div className="flex items-center gap-1 py-3 border-b">
-                      <img src={Images.iconCategory} className="w-5 h-5" />
-                      {listThema
-                        .filter(
-                          (item: any) => item.value === formDataPage1.thema
-                        )
-                        .map((item: any, index: number) => {
-                          return (
-                            <BaseText
-                              key={index}
-                              locale
-                              size={16}
-                              className="text-center"
-                            >
-                              {item.label}
-                            </BaseText>
-                          );
-                        })}
-                    </div>
-                  )}
-                  {formDataPage1.category && (
-                    <div className="flex items-center gap-1 py-3 border-b">
-                      <img src={Images.iconSquare} className="w-5 h-5" />
-                      {listCategory
-                        .filter(
-                          (item: any) => item.value === formDataPage1.category
-                        )
-                        .map((item: any, index: number) => {
-                          return (
-                            <BaseText
-                              key={index}
-                              locale
-                              size={16}
-                              className="text-center"
-                            >
-                              {item.label}
-                            </BaseText>
-                          );
-                        })}
-                    </div>
-                  )}
-                  <div className="flex items-center gap-1 py-3 ">
-                    <img src={Images.iconTag} className="w-5 h-5" />
-                    {formDataPage1.hashtag.map((item, index) => {
-                      // Find the corresponding object with matching id
-                      const correspondingItem = listHashtag.find(
-                        (i: any) => i.value === item
-                      );
-
-                      // Check if correspondingItem exists and retrieve the label
-                      const label = correspondingItem
-                        ? correspondingItem.label
-                        : "";
-                      return (
-                        <div
-                          key={index}
-                          className="px-4 mr-1 rounded-lg bg-darkNight100"
-                        >
+              formDataPage1.opening_hours) && (
+                <div className="mt-1 border ">
+                  <div className="flex">
+                    <BaseText
+                      locale
+                      size={16}
+                      bold
+                      className="flex justify-center flex-1 p-[10px] border-b-8 border-r"
+                    >
+                      정보
+                    </BaseText>
+                    <BaseText
+                      locale
+                      size={16}
+                      className="flex justify-center flex-1 p-[10px]"
+                    >
+                      리뷰
+                    </BaseText>
+                  </div>
+                  <div className="p-4">
+                    {(formDataPage1.storeAddress ||
+                      formDataPage1.storeAddressDetails) && (
+                        <div className="flex items-center gap-1 py-3 border-b">
+                          <img src={Images.iconGps} className="w-5 h-5" />
                           <BaseText locale size={16} className="text-center">
-                            {label}
+                            {formDataPage1.storeAddress +
+                              " " +
+                              formDataPage1.storeAddressDetails}
                           </BaseText>
                         </div>
-                      );
-                    })}
+                      )}
+                    {formDataPage1.opening_hours && (
+                      <div className="flex items-center gap-1 py-3 border-b">
+                        <img src={Images.iconClock} className="w-5 h-5" />
+                        <BaseText size={16} className="text-center">
+                          {formDataPage1.opening_hours}
+                        </BaseText>
+                      </div>
+                    )}
+                    {formDataPage1.storeNumber && (
+                      <div className="flex items-center gap-1 py-3 border-b">
+                        <img src={Images.iconPhone2} className="w-5 h-5" />
+                        <BaseText locale size={16} className="text-center">
+                          {formDataPage1.storeNumber}
+                        </BaseText>
+                      </div>
+                    )}
+                    {formDataPage1.thema && (
+                      <div className="flex items-center gap-1 py-3 border-b">
+                        <img src={Images.iconCategory} className="w-5 h-5" />
+                        {listThema
+                          .filter(
+                            (item: any) => item.value === formDataPage1.thema
+                          )
+                          .map((item: any, index: number) => {
+                            return (
+                              <BaseText
+                                key={index}
+                                locale
+                                size={16}
+                                className="text-center"
+                              >
+                                {item.label}
+                              </BaseText>
+                            );
+                          })}
+                      </div>
+                    )}
+                    {formDataPage1.category && (
+                      <div className="flex items-center gap-1 py-3 border-b">
+                        <img src={Images.iconSquare} className="w-5 h-5" />
+                        {listCategory
+                          .filter(
+                            (item: any) => item.value === formDataPage1.category
+                          )
+                          .map((item: any, index: number) => {
+                            return (
+                              <BaseText
+                                key={index}
+                                locale
+                                size={16}
+                                className="text-center"
+                              >
+                                {item.label}
+                              </BaseText>
+                            );
+                          })}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1 py-3 ">
+                      <img src={Images.iconTag} className="w-5 h-5" />
+                      {formDataPage1.hashtag.map((item, index) => {
+                        // Find the corresponding object with matching id
+                        const correspondingItem = listHashtag.find(
+                          (i: any) => i.value === item
+                        );
+
+                        // Check if correspondingItem exists and retrieve the label
+                        const label = correspondingItem
+                          ? correspondingItem.label
+                          : "";
+                        return (
+                          <div
+                            key={index}
+                            className="px-4 mr-1 rounded-lg bg-darkNight100"
+                          >
+                            <BaseText locale size={16} className="text-center">
+                              {label}
+                            </BaseText>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* event part */}
 
@@ -1592,7 +1640,16 @@ const NewStore = () => {
           isOpen={openModalOpenHours}
           onClose={handleCloseModalOpenHours}
           onSubmit={(value) => handleSubmitOpenHours(value)}
-          data={formDataPage1?.storeOpeningHours}
+          data={{
+            leave_day: formDataPage1?.leave_day,
+            working_day: formDataPage1?.working_day,
+            holiday_setting: formDataPage1?.holiday_setting,
+            holiday_day: formDataPage1?.holiday_day,
+            opening_hours: formDataPage1?.opening_hours,
+            opening_hours_weekend: formDataPage1?.opening_hours_weekend,
+            break_time: formDataPage1?.break_time,
+            break_time_weekend: formDataPage1?.break_time_weekend,
+          }}
         />
 
         <ModalSelectRegion
