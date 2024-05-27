@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { BaseModal } from "../../../components/modal/BaseModal";
-import { BaseText, CustomButton } from "../../../components";
-import { classNames, generateRandomID } from "../../../utils/common";
-import Images from "../../../assets/gen";
-import { BaseInput } from "../../../components/input/BaseInput";
-import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
-import { ChatMessageFuncPart1 } from "./ChatMessageFuncPart1";
-import { useTranslation } from "react-i18next";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+import { CheckOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Checkbox,
-  Tag,
-  TimePicker,
-  TimePickerProps,
-  TimeRangePickerProps,
+  Tag
 } from "antd";
-import dayjs from "dayjs";
-import BaseButton from "../../../components/baseButton";
-import { CheckOutlined, PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import Images from "../../../assets/gen";
+import { BaseText } from "../../../components";
+import { BaseModal } from "../../../components/modal/BaseModal";
+import { classNames } from "../../../utils/common";
 import { HOLIDAYS, HOLIDAY_SETTING, Weekdays } from "../../../utils/constants";
 import TimePickerAbout from "./TimePickerAbout";
 
@@ -51,12 +41,8 @@ export const ModalSelectOpeningHours = (props: IProps) => {
   const [optionChecked, setOptionChecked] = useState<number | null>(null);
 
   const [listDaySelected, setListDaySelected] = useState<any[]>([]);
-  console.log("listDaySelected", listDaySelected);
   const [listHolidaySelected, setListHolidaySelected] = useState<number[]>([]);
-  console.log("listHolidaySelected", listHolidaySelected);
-
   const [listBreakTime, setListBreakTime] = useState<string[]>([]);
-  console.log("listBreakTime", listBreakTime);
   const [listBreakTimeWeekend, setListBreakTimeWeekend] = useState<string[]>([]);
 
   const handleSelectedDay = (id: string) => {
@@ -111,7 +97,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
   };
 
   const setStartBreakTimeWeekend = (index: number, startTime: string) => {
-    const newList = [...listBreakTime];
+    const newList = [...listBreakTimeWeekend];
     const [_, endTime] = newList[index].split('~');
     newList[index] = `${startTime}~${endTime || ''}`;
     setListBreakTimeWeekend(newList);
@@ -147,30 +133,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
       break_time: listBreakTime,
       break_time_weekend: listBreakTimeWeekend,
     };
-    console.log("dataSubmitConvert", dataConvert);
-
     onSubmit && onSubmit(dataConvert);
-  };
-
-  const onChangeTime: TimePickerProps["onChange"] = (time, timeString) => {
-    if (typeof timeString === "string") {
-      setDataOpening(timeString);
-    }
-  };
-  const onChangeTimeClosing: TimePickerProps["onChange"] = (
-    time,
-    timeString
-  ) => {
-    if (typeof timeString === "string") {
-      setDataClosing(timeString);
-    }
-  };
-
-  const handleChangeOpeningHours: TimeRangePickerProps["onChange"] = (
-    time,
-    timeString
-  ) => {
-    console.log("hihi", timeString);
   };
 
   //dataEdit
@@ -188,6 +151,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
       }
       if (data?.opening_hours_weekend) {
         const dataOpeningWeekendConvert = data?.opening_hours_weekend.split("~");
+        setTypePickTime(true);
         setDataOpeningWeekend(dataOpeningWeekendConvert[0]);
         setDataClosingWeekend(dataOpeningWeekendConvert[1]);
       }
@@ -197,11 +161,10 @@ export const ModalSelectOpeningHours = (props: IProps) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    console.log("typePickTime", typePickTime);
-    setListBreakTime([]);
-    setListBreakTimeWeekend([]);
-  }, [typePickTime]);
+  // useEffect(() => {
+  //   setListBreakTime([]);
+  //   setListBreakTimeWeekend([]);
+  // }, [typePickTime]);
 
   useEffect(() => {
     if (optionChecked === 1) {
@@ -593,7 +556,6 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                       <TimePickerAbout
                         startTime={dataOpening}
                         setStartTime={(e) => {
-                          console.log("e setStartTime", e);
                           setDataOpening(e);
                         }}
                         endTime={dataClosing}

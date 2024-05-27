@@ -29,8 +29,6 @@ export const PriceListTab = (props: IProps) => {
     const [dataPrice, setDataPrice] = useState<any>(data);
     const [showOptionIndex, setShowOptionIndex] = useState<number | null>(null);
 
-    console.log('data PriceListTab', dataPrice);
-
     const handlePercentageDecrease = (amountBeforeDiscount: number, amountAfterDiscount: number) => {
         return ((amountBeforeDiscount - amountAfterDiscount) / amountBeforeDiscount * 100).toFixed(0) + '%';
     }

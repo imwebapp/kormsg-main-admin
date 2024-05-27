@@ -44,7 +44,6 @@ const UserActivity = () => {
     countReservation: 0,
     countReview: 0,
   });
-  console.log("formDataCreateUserXX", showModalEdit);
 
   const [typeUserSelected, setTypeUserSelected] = useState<ITypeUser>(
     ListTypeUserActivity[0]

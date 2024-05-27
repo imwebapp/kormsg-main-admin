@@ -7,7 +7,6 @@ const CardInfor = () => {
   const navigate = useNavigate();
   const { setRefreshToken, setAccessToken, setExpiresIn } = useLocalStorage((state) => state);
   const handleLogout = () => {
-    console.log('logout');
     setAccessToken("");
     setRefreshToken("");
     setExpiresIn(0);

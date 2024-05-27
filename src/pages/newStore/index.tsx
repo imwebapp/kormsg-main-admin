@@ -165,8 +165,6 @@ const NewStore = () => {
   const [dataEditManager, setDataEditManager] = useState();
   const [indexEditManager, setIndexEditManager] = useState<number>();
 
-  console.log("dataEditManager: ", indexEditManager, dataEditManager);
-
   const [optionPart2Selected, setOptionPart2Selected] =
     useState<string>("가격표");
 
@@ -266,7 +264,6 @@ const NewStore = () => {
       setOpenModalCreateNewManage(false);
       return;
     }
-    console.log("submit create new manage: ", dataNewManage);
 
     handleInputChangePage2("manager", [
       ...formDataPage2?.manager,
@@ -317,13 +314,6 @@ const NewStore = () => {
     },
   });
 
-  console.log(
-    "formDataPage1",
-    formDataPage1?.reservationPaymentMethod,
-    "Bank",
-    formDataPage1?.reservationBankInfo
-  );
-
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
     storeIntroduction: "",
     priceList: [],
@@ -366,10 +356,6 @@ const NewStore = () => {
       }
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
-
-    console.log(fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
-
-    console.log(extractedPostalCode); // e.g. '04794'
 
     handleInputChange("storeAddress", fullAddress);
   };
@@ -512,8 +498,6 @@ const NewStore = () => {
             : "",
         },
       };
-      console.log("DataCreateNewShop", DataCreateNewShop);
-
       if (idEditedShop) {
         //editShop
 
@@ -696,8 +680,6 @@ const NewStore = () => {
         id: storeCopyFunc?.user_id,
         nickname: storeCopyFunc?.user?.nickname,
       });
-      console.log("storeCopyFunc", storeCopyFunc);
-
       setFormDataPage1({
         storeCopyFunc: storeCopyFunc?.id,
         storeOwnerMembershipSetting: storeCopyFunc?.user?.nickname || "",
@@ -755,15 +737,13 @@ const NewStore = () => {
   //update data when edit Shop
   useEffect(() => {
     if (dataEditShop) {
-      console.log("dataEditShop", dataEditShop);
-
       mentorApi
         .getList({
           fields: JSON.stringify(["$all"]),
           filter: JSON.stringify({ shop_id: { $eq: dataEditShop?.id } }),
         })
         .then((res) => {
-          console.log("res listMentors", res);
+          // console.log("res listMentors", res);
         })
         .catch((err) => {
           console.log("err listMentors", err);

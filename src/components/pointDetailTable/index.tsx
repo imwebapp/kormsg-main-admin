@@ -40,7 +40,6 @@ export default function PointDetailTable(props: PointDetailProps) {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [platformsSelected, setPlatformSelected] = useState<Array<string>>([]);
   const [listRowSelected, setListRowSelected] = useState<string[]>([]);
-  console.log("ListRowSelected: ", listRowSelected);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);

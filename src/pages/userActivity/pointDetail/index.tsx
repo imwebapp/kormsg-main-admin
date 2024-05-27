@@ -18,7 +18,6 @@ export const PointDetail = (props: IProps) => {
     const { dataUser } = props;
     const navigate = useNavigate();
     const [dataListPointDetail, setDataListPointDetail] = useState<any[]>([]);
-    console.log("dataListPointDetail", dataListPointDetail);
     const [loadingScreen, setLoadingScreen] = useState(false);
 
     const [page, setPage] = useState(1);

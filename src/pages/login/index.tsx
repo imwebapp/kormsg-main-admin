@@ -64,10 +64,8 @@ const Login = () => {
       const data = {
         phone: dialCode + cleanedPhoneNumber,
       }
-      console.log('data: ', data);
       const resSendOtp: any = await authApi.sendOtp(data)
 
-      console.log('resSendOtp: ', resSendOtp);
       if (resSendOtp.code === 200) {
         setLoadingScreen(false);
 

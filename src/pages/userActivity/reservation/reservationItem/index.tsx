@@ -20,10 +20,8 @@ const convertTime = (time: number) => {
 
 export const ReservationItem = (props: IProps) => {
     const { dataItem } = props;
-    console.log("dataItem", dataItem);
     const navigate = useNavigate();
     const [dataReservation, setDataReservation] = useState<any[]>([]);
-    console.log("dataReservation", dataReservation);
     const [page, setPage] = useState(1);
     const [totalCount, setTotalCount] = useState(0);
     // const limit = 10;

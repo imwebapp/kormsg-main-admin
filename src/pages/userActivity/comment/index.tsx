@@ -18,7 +18,6 @@ export const Comment = (props: IProps) => {
   const navigate = useNavigate();
   const [dataListComment, setDataListComment] = useState<any[]>([]);
   const [loadingScreen, setLoadingScreen] = useState(false);
-  console.log("dataListComment", dataListComment);
 
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);

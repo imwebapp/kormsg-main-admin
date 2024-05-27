@@ -42,7 +42,6 @@ export const ReservationPart = (props: IProps) => {
     onChangeMeetAndTransfer,
     onChangeMeetAndCard,
   } = props;
-  console.log('dataBanking', dataBanking);
 
   const { t } = useTranslation();
   const [meetAndCash, setMeetAndCash] = useState(dataMeetAndCash);

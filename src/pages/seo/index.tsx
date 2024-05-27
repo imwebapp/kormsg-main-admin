@@ -81,7 +81,6 @@ const SeoPage = () => {
         meta: dataSeo?.metaCode,
         meta_naver: dataSeo?.metaNaverCode,
       };
-      console.log('dataConvertSEO', dataConvert);
       
       const response: any = await seoApi.updateSEO(dataConvert);
       if (response.code === 200) {

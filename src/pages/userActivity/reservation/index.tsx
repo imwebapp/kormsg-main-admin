@@ -23,7 +23,6 @@ export const Reservation = (props: IProps) => {
     const [totalCount, setTotalCount] = useState(0);
 
     const [dataReservation, setDataReservation] = useState<any[]>([]);
-    console.log("dataReservation: ", dataReservation);
 
     const [typeUserReservationSelected, setTypeUserReservationSelected] = useState<any>(
         ListTypeUserActivityReservation[0]

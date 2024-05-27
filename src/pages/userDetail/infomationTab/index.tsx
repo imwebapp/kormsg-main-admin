@@ -44,7 +44,6 @@ export const InformationTab = (props: IProps) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [dataUser, setDataUser] = useState<User>(props?.dataUser);
-  console.log("dataUserXXXX: ", dataUser);
   const [listUserGroup, setListUserGroup] = useState<any[]>([]);
   const [openModalEditInfo, setOpenModalEditInfo] = useState(false);
   const [isChecked, setIsChecked] = useState(false);

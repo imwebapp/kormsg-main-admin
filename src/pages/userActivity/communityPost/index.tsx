@@ -18,7 +18,6 @@ export const CommunityPost = (props: IProps) => {
   const { dataUser } = props;
   const navigate = useNavigate();
   const [dataListCommunityPost, setDataListCommunityPost] = useState<any[]>([]);
-  console.log("dataListCommunityPost", dataListCommunityPost);
   const [loadingScreen, setLoadingScreen] = useState(false);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);

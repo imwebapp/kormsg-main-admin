@@ -53,7 +53,6 @@ export const ShopInformationTab = (props: IProps) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [dataUser, setDataUser] = useState<User>(props.dataUser);
-  console.log("dataUser ShopInformationTab", dataUser);
 
   const [loadingScreen, setLoadingScreen] = useState(false);
 

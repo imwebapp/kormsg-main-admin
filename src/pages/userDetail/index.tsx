@@ -23,7 +23,6 @@ const UserDetail = () => {
   const [optionSelected, setOptionSelected] = useState(initTab);
   const [showModalEdit, setShowModalEdit] = useState(isShowModalEdit);
 
-  console.log("formDataCreateUserXX", showModalEdit);
   const checkGroup = (group: string) => {
     if (group === null || group === undefined || group === "") {
       return "All";

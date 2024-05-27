@@ -469,7 +469,6 @@ export default function StoreListTable(props: StoreListTableProps) {
             src={Images.edit2}
             className="w-6 h-6 cursor-pointer"
             onClick={() => {
-              console.log("edit store", record);
               navigate(Url.newStore, { state: { dataEdit: record } });
             }}
           />
@@ -609,9 +608,8 @@ export default function StoreListTable(props: StoreListTableProps) {
             <img
               src={Images.edit2}
               alt=""
-              className="w-7 h-7 cursor-pointer"
+              className="cursor-pointer w-7 h-7"
               onClick={() => {
-                console.log("edit store", record);
                 navigate(Url.newStore, { state: { dataEdit: record } });
               }}
             />
@@ -775,7 +773,7 @@ export default function StoreListTable(props: StoreListTableProps) {
             board/Start date and End date/Uniquene
           </BaseText>
         </div>
-        <div className="flex gap-2 text-base leading-6  max-md:flex-wrap">
+        <div className="flex gap-2 text-base leading-6 max-md:flex-wrap">
           <BaseInput
             value={memoValue}
             onChange={(value) => setMemoValue(value)}
@@ -799,7 +797,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       >
         {dataHistory.map((item) => (
           <div
-            className="flex flex-col border-b border-black py-2"
+            className="flex flex-col py-2 border-b border-black"
             key={item.id}
           >
             <div style={{ flexDirection: "row", display: "flex" }}>

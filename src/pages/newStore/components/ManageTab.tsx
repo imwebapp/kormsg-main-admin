@@ -19,7 +19,6 @@ export const ManageTab = (props: IProps) => {
     const { data, onCLickCreateNew, onArchiveTick, onEdit, onCopy, onDelete, onDown, onUp } = props;
     const [dataManage, setDataManage] = useState<any>(data);
     const [showOptionIndex, setShowOptionIndex] = useState<number | null>(null);
-    console.log('data ManageTab', dataManage);
 
     const handleShowOption = (index: number) => {
         setShowOptionIndex((prevIndex) => (prevIndex === index ? null : index));

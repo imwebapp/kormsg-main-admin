@@ -129,7 +129,6 @@ const UserManage = () => {
   };
 
   const handleDeleteGroup = async (item: any) => {
-    console.log("listUserGroup", listUserGroup);
 
     if (item?.numberUser === 0) {
       try {
@@ -344,7 +343,6 @@ const UserManage = () => {
         username: formDataCreateUser.userId,
         platform_create: deviceType,
       };
-      console.log("dataCreateConvert", dataCreateConvert);
 
       //create Admin
       if (formDataCreateUser?.userType === TypeUser.ADMIN) {
@@ -541,7 +539,6 @@ const UserManage = () => {
           prev_index_number,
           next_index_number,
         });
-        console.log("resOrderGroup: ", resOrderGroup);
       }
 
       await getListGroup();
@@ -581,7 +578,6 @@ const UserManage = () => {
   };
 
   const onDragEnd = (result: any) => {
-    console.log("result onDragEnd", result);
     if (!result.destination) {
       return;
     }
@@ -653,7 +649,6 @@ const UserManage = () => {
         fields: '["$all"]',
       });
       if (resListGroup?.code === 200) {
-        console.log("res getList Group: ", resListGroup.results?.objects?.rows);
         listUserGroups[0].numberUser =
           resListGroup.results?.objects?.totalUser || 0;
         setListUserGroup([
