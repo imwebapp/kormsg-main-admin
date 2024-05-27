@@ -174,7 +174,9 @@ const UserManage = () => {
           (group) => group.id.toString() !== id
         );
         setListUserGroup(newListUserGroup);
+        await getListGroup();
         setGroupSelected(listUserGroup[0]);
+        setReloading(!reloading);
         message.success("Delete group successfully");
       }
     } catch (error) {
