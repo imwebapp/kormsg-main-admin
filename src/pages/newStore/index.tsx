@@ -42,7 +42,6 @@ interface IFormDataPage1 {
   storeAddress: string;
   storeAddressDetails: string;
   storeImages: File[];
-  // storeOpeningHours: string;
   leave_day?: boolean;
   working_day?: string[];
   holiday_setting?: string;
@@ -176,7 +175,6 @@ const NewStore = () => {
   };
 
   const handleSubmitOpenHours = (value: any) => {
-    // setFormDataPage1({ ...formDataPage1, storeOpeningHours: value });
     setFormDataPage1({ ...formDataPage1, ...value });
     setOpenModalOpenHours(false);
   };
@@ -289,7 +287,6 @@ const NewStore = () => {
     storeAddress: "",
     storeAddressDetails: "",
     storeImages: [],
-    // storeOpeningHours: "",
     leave_day: true,
     working_day: [],
     holiday_setting: HOLIDAY_SETTING.OTHER,
@@ -467,7 +464,6 @@ const NewStore = () => {
         images: resultArrayImageConvert,
         latitude: 37.3957122,
         longitude: 127.1105181,
-        // opening_hours: formDataPage1?.storeOpeningHours,
         leave_day: formDataPage1?.leave_day,
         working_day: formDataPage1?.working_day,
         holiday_setting: formDataPage1?.holiday_setting,
@@ -710,7 +706,6 @@ const NewStore = () => {
         storeAddress: storeCopyFunc?.address || "",
         storeAddressDetails: storeCopyFunc?.address_2 || "",
         storeImages: storeCopyFunc?.images || [],
-        // storeOpeningHours: storeCopyFunc?.opening_hours || "",
         leave_day: storeCopyFunc?.leave_day || true,
         working_day: storeCopyFunc?.working_day || [],
         holiday_setting: storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
@@ -785,7 +780,6 @@ const NewStore = () => {
         storeAddress: dataEditShop?.address || "",
         storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
-        // storeOpeningHours: dataEditShop?.opening_hours || "",
         leave_day: dataEditShop?.leave_day || true,
         working_day: dataEditShop?.working_day || [],
         holiday_setting: dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
@@ -854,7 +848,6 @@ const NewStore = () => {
               storeAddress: dataEditShop?.address || "",
               storeAddressDetails: dataEditShop?.address_2 || "",
               storeImages: dataEditShop?.images || [],
-              // storeOpeningHours: dataEditShop?.opening_hours || "",
               leave_day: storeCopyFunc?.leave_day || true,
               working_day: storeCopyFunc?.working_day || [],
               holiday_setting: storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
