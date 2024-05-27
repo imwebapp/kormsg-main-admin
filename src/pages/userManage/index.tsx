@@ -140,6 +140,7 @@ const UserManage = () => {
           );
           setListUserGroup(newListUserGroup);
           setGroupSelected(listUserGroup[0]);
+          setReloading(!reloading);
           message.success("Delete group successfully");
         }
       } catch (error) {
@@ -238,6 +239,7 @@ const UserManage = () => {
       getListGroup();
       setValueInputCreateGroup("");
       setIsCreatingGroupName(false);
+      setReloading(!reloading);
     } else {
       console.log("err: ", res);
       setIsCreatingGroupName(false);
@@ -697,8 +699,8 @@ const UserManage = () => {
             else {
               setTotalCountUser(
                 countTypeUser.countBizUser +
-                  countTypeUser.countFreeUser +
-                  countTypeUser.countPaidUser
+                countTypeUser.countFreeUser +
+                countTypeUser.countPaidUser
               );
             }
             break;
@@ -770,7 +772,7 @@ const UserManage = () => {
                           onDoubleClick={handleEditGroupName}
                         >
                           {isEditingGroupName &&
-                          groupSelected.id === item.id ? (
+                            groupSelected.id === item.id ? (
                             <>
                               {checkSelected && (
                                 <CheckOutlined
@@ -839,7 +841,7 @@ const UserManage = () => {
                             onDoubleClick={handleEditGroupName}
                           >
                             {isEditingGroupName &&
-                            groupSelected.id === item.id ? (
+                              groupSelected.id === item.id ? (
                               <>
                                 {checkSelected && (
                                   <CheckOutlined
@@ -910,8 +912,8 @@ const UserManage = () => {
                       className={classNames(
                         "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                       )}
-                      onClick={() => {}}
-                      // onDoubleClick={handleEditGroupName}
+                      onClick={() => { }}
+                    // onDoubleClick={handleEditGroupName}
                     >
                       <CheckOutlined
                         className={classNames("text-dayBreakBlue500 text-xl")}
@@ -1090,7 +1092,7 @@ const UserManage = () => {
           }
           명의 회원이 이동할 게시판을 선택하십시오.
         </BaseText>
-        <div className="flex flex-row gap-4 mt-1 mb-5 items-center">
+        <div className="flex flex-row items-center gap-4 mt-1 mb-5">
           {listUserGroup
             .filter((item, index) => {
               return index !== 0 && String(item.id) !== idGroupDelete;
@@ -1144,7 +1146,7 @@ const UserManage = () => {
               }
             }}
             className="flex font-bold text-center bg-darkNight50 focus:outline-none text-dark"
-            // type="number"
+          // type="number"
           />
           <img
             src={Images.plusCircle}
