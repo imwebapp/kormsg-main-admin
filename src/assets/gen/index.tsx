@@ -116,6 +116,7 @@ export default class Images {
     static readonly exportIcon = require("../../../src/assets/images/exportIcon.png");
     static readonly eyeCross = require("../../../src/assets/images/eye-cross.png");
     static readonly eye = require("../../../src/assets/images/eye.png");
+    static readonly filled = require("../../../src/assets/images/filled.png");
     static readonly gridActive = require("../../../src/assets/images/grid-active.png");
     static readonly gridInactive = require("../../../src/assets/images/grid-inactive.png");
     static readonly hourglassIcon = require("../../../src/assets/images/hourglassIcon.png");

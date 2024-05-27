@@ -10,6 +10,7 @@ import { Url } from "../../routers/paths";
 import { analyticsApi } from "../../apis/analyticsApi";
 import dayjs from "dayjs";
 import { URL_SEARCH_SITE } from "../../utils/constants";
+import { showError } from "../../utils/showToast";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -32,24 +33,28 @@ export default function DashboardSearchTermTable(
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const getInfoAnalytics = async () => {
-    const params = {
-      siteUrl: URL_SEARCH_SITE,
-      startDate: dateTimeSelect[0],
-      endDate: dateTimeSelect[1],
-      dimensions: ["query"],
-    };
-    let result: any = await analyticsApi.getQuerySearch(params);
+    try {
+      const params = {
+        siteUrl: URL_SEARCH_SITE,
+        startDate: dateTimeSelect[0],
+        endDate: dateTimeSelect[1],
+        dimensions: ["query"],
+      };
+      let result: any = await analyticsApi.getQuerySearch(params);
 
-    const convertedData = result.data.data.rows.map((item: any) => ({
-      query: item.keys[0],
-      click: item.clicks,
-      impressions: item.impressions,
-    }));
+      const convertedData = result.data.data.rows.map((item: any) => ({
+        query: item.keys[0],
+        click: item.clicks,
+        impressions: item.impressions,
+      }));
 
-    if (isViewAll) {
-      setData(convertedData);
-    } else {
-      setData(convertedData.slice(0, 10));
+      if (isViewAll) {
+        setData(convertedData);
+      } else {
+        setData(convertedData.slice(0, 10));
+      }
+    } catch (error) {
+      showError(error);
     }
   };
   useEffect(() => {

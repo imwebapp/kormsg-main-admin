@@ -16,6 +16,9 @@ export const settingApi = {
   editFaqCategory: (params: any) => {
     return axiosClient.put(`${FAQ_CATEGORY}/multiple/data`, params);
   },
+  editSingleFaqCategory: (params: any, id: string) => {
+    return axiosClient.put(`${FAQ_CATEGORY}/${id}`, params);
+  },
   deleteFaqCategory: (id: any) => {
     return axiosClient.delete(`${FAQ_CATEGORY}/${id}`);
   },

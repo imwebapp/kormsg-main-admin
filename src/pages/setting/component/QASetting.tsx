@@ -7,7 +7,7 @@ import {
 } from "../../../components";
 import { useTranslation } from "react-i18next";
 import { settingApi } from "../../../apis/settingApi";
-import { TableColumnsType } from "antd";
+import { Popover, TableColumnsType } from "antd";
 import Images from "../../../assets/gen";
 import dayjs from "dayjs";
 import { PlusOutlined } from "@ant-design/icons";
@@ -26,12 +26,16 @@ export default function QASetting() {
   const [openModalCreateFAQ, setOpenModalCreateFAQ] = useState(false);
   const [openModalDeleteFAQCategory, setOpenModalDeleteFAQCategory] =
     useState(false);
+  const [openModalModifyCategory, setOpenModalModifyCategory] = useState(false);
+  const [openModalDeleteCategory, setOpenModalDeleteCategory] = useState(false);
   const [nameFAQCategory, setNameFAQCategory] = useState("");
   const [contentFAQ, setContentFAQ] = useState("");
   const [titleFAQ, setTitleFAQ] = useState("");
   const [faqCategoryId, setFaqCategoryId] = useState("");
   const [defaultContent, setDefaultContent] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [openModify, setOpenModify] = useState(false);
+  const [itemFaqCategory, setItemFaqCategory] = useState<any>();
   const idFAQ = useRef("");
   const idFAQCategory = useRef("");
   const getListFaqCategory = async () => {
@@ -187,6 +191,8 @@ export default function QASetting() {
     } catch (error) {}
   };
   const handleSubmitEditCategory = async (temp: any) => {
+    console.log("temp", temp);
+
     try {
       const params = {
         list_data: [],
@@ -199,6 +205,22 @@ export default function QASetting() {
       console.log("mappedData", params);
 
       let result: any = await settingApi.editFaqCategory(params);
+      if (result.code === 200) {
+        getListFaqCategory();
+      }
+      console.log("result", result);
+    } catch (error) {}
+  };
+  const handleSubmitSingleEditCategory = async () => {
+    try {
+      const params = {
+        name: itemFaqCategory.name,
+      };
+
+      let result: any = await settingApi.editSingleFaqCategory(
+        params,
+        itemFaqCategory.id
+      );
       if (result.code === 200) {
         getListFaqCategory();
       }
@@ -245,16 +267,71 @@ export default function QASetting() {
 
     return (
       <div id="faqContainer" className="flex flex-row gap-4 overflow-x-auto">
-        {listFAQCategory.map(({ id, name }: any) => (
+        {listFAQCategory.map((item: any) => (
           <CustomButton
-            key={id}
+            key={item.id}
             className="text-base h-11 font-medium rounded-full px-4"
-            style={getButtonStyle(id)}
-            onClick={() => handleButtonClick(id)}
+            style={getButtonStyle(item.id)}
+            onClick={() => handleButtonClick(item.id)}
           >
-            <BaseText color={getTextColor(id)} size={16}>
-              {name}
+            <BaseText color={getTextColor(item.id)} size={16}>
+              {item.name}
             </BaseText>
+            {selectedButton === item.id && (
+              <Popover
+                placement="bottomRight"
+                content={
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100"
+                      onClick={() => {
+                        setOpenModalModifyCategory(true);
+                        setOpenModify(false);
+                        setItemFaqCategory(item);
+                      }}
+                    >
+                      <img
+                        src={Images.edit2}
+                        className="w-5 h-5 cursor-pointer"
+                      />
+                      <BaseText locale size={16}>
+                        수정
+                      </BaseText>
+                    </div>
+                    <div
+                      className="flex items-center gap-1 p-2 rounded-lg cursor-pointer hover:bg-darkNight100"
+                      onClick={() => {
+                        setOpenModify(false);
+                        setOpenModalDeleteCategory(true);
+                        setItemFaqCategory(item);
+                      }}
+                    >
+                      <img
+                        src={Images.trashred}
+                        className="w-5 h-5 cursor-pointer"
+                      />
+                      <BaseText locale size={16} className="text-red-500">
+                        삭제
+                      </BaseText>
+                    </div>
+                  </div>
+                }
+                trigger="click"
+                open={openModify}
+                onOpenChange={(newOpen) => {
+                  setOpenModify(true);
+                }}
+              >
+                <div className="flex justify-center items-center w-6 h-6 bg-white rounded-[40px]">
+                  <img
+                    loading="lazy"
+                    src={Images.filled}
+                    alt=""
+                    className="w-full aspect-square"
+                  />
+                </div>
+              </Popover>
+            )}
           </CustomButton>
         ))}
       </div>
@@ -400,22 +477,102 @@ export default function QASetting() {
       </BaseModal2>
     );
   };
-
-  useEffect(() => {
-    getListFaqCategory();
-    return () => {};
-  }, []);
-
-  useEffect(() => {
-    if (selectedButton !== "") getListFaq(selectedButton);
-  }, [selectedButton]);
-  return (
-    <div className="p-4 py-0">
-      {headerTable()}
-      {bodyTable()}
-      {modalCategoryList()}
-      {modalCreateCategory()}
-      {modalDeleteFaqCategory()}
+  const modalModifyCategory = () => {
+    return (
+      <BaseModal2
+        isOpen={!!openModalModifyCategory}
+        styleButtonConfirm={"bg-rose-500"}
+        title={t("Edit Category")}
+        onSubmit={() => {
+          handleSubmitSingleEditCategory();
+          setOpenModalModifyCategory(false);
+        }}
+        onClose={() => {
+          setOpenModalModifyCategory(false);
+        }}
+      >
+        <BaseInput
+          className="w-full"
+          value={itemFaqCategory?.name}
+          onChange={(value) => {
+            setItemFaqCategory((prevItemFaqCategory: any) => ({
+              ...prevItemFaqCategory,
+              name: value,
+            }));
+          }}
+        />
+      </BaseModal2>
+    );
+  };
+  const modalDeleteCategory = () => {
+    return (
+      <BaseModal2
+        isOpen={!!openModalDeleteCategory}
+        onSubmit={() => {
+          // handleSubmitSingleEditCategory();
+          setOpenModalDeleteCategory(false);
+        }}
+        onClose={() => {
+          setOpenModalDeleteCategory(false);
+        }}
+        title="Delete group"
+      >
+        <BaseText size={16}>
+          {itemFaqCategory?.total_faq}
+          명의 회원이 이동할 게시판을 선택하십시오.
+        </BaseText>
+        {/* <div className="flex flex-col flex-wrap content-start pr-6 text-xl font-medium leading-7 max-w-[632px] text-neutral-600 max-md:pr-5">
+          <div className="flex gap-3 max-md:flex-wrap">
+            {listFAQCategory
+              // .filter((item:any, index:any) => {
+              //   return index !== 0 && String(item.id) !== idGroupDelete;
+              // })
+              .map((item: any, index: any) => (
+                <CustomButton
+                  key={index}
+                  className="text-base h-11 font-medium rounded-full px-4 py-2.5"
+                  style={getButtonStyle(item.id)}
+                  // onClick={() => handleButtonClick(item.id)}
+                >
+                  <BaseText color={getTextColor(item.id)} size={16}>
+                    {item.name}
+                  </BaseText>
+                </CustomButton>
+              ))}
+          </div>
+        </div> */}
+        {/* <div
+          role="button"
+          className="justify-center px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
+        >
+          Group 1
+        </div> */}
+        <section className="text-xl font-medium leading-7 max-w-[632px] text-neutral-600 max-md:pr-5 pr-6">
+          <div className="grid gap-3 max-md:grid-cols-1 grid-cols-3">
+            {itemFaqCategory?.total_faq > 0 &&
+              listFAQCategory
+                // .filter((item:any, index:any) => {
+                //   return index !== 0 && String(item.id) !== idGroupDelete;
+                // })
+                .map((item: any, index: any) => (
+                  <CustomButton
+                    key={index}
+                    className="justify-center px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
+                    style={getButtonStyle(item.id)}
+                    // onClick={() => handleButtonClick(item.id)}
+                  >
+                    <BaseText color={getTextColor(item.id)} size={16}>
+                      {item.name}
+                    </BaseText>
+                  </CustomButton>
+                ))}
+          </div>
+        </section>
+      </BaseModal2>
+    );
+  };
+  const modalCreateFAQ = () => {
+    return (
       <BaseModal2
         isOpen={!!openModalCreateFAQ}
         onClose={() => {
@@ -462,6 +619,27 @@ export default function QASetting() {
           />
         </div>
       </BaseModal2>
+    );
+  };
+
+  useEffect(() => {
+    getListFaqCategory();
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    if (selectedButton !== "") getListFaq(selectedButton);
+  }, [selectedButton]);
+  return (
+    <div className="p-4 py-0">
+      {headerTable()}
+      {bodyTable()}
+      {modalCategoryList()}
+      {modalCreateCategory()}
+      {modalDeleteFaqCategory()}
+      {modalModifyCategory()}
+      {modalDeleteCategory()}
+      {modalCreateFAQ()}
     </div>
   );
 }
