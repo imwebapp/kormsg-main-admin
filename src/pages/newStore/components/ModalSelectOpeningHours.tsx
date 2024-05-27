@@ -176,15 +176,15 @@ export const ModalSelectOpeningHours = (props: IProps) => {
   //dataEdit
   useEffect(() => {
     if (data?.opening_hours) {
-      setLeaveDay(data?.leave_day || true);
+      setLeaveDay(typeof data?.leave_day === 'boolean' ? data?.leave_day : true);
       setListDaySelected(data?.working_day || []);
       setOptionChecked(data?.holiday_setting === HOLIDAY_SETTING.ONLY_LUNAR_NEW_YEAR_AND_CHUSEOK ? 1 : data?.holiday_setting === HOLIDAY_SETTING.ALL ? 2 : null);
       setListHolidaySelected(data?.holiday_day || []);
 
       if (data?.opening_hours) {
-      const dataOpeningConvert = data?.opening_hours.split("~");
-      setDataOpening(dataOpeningConvert[0]);
-      setDataClosing(dataOpeningConvert[1]);
+        const dataOpeningConvert = data?.opening_hours.split("~");
+        setDataOpening(dataOpeningConvert[0]);
+        setDataClosing(dataOpeningConvert[1]);
       }
       if (data?.opening_hours_weekend) {
         const dataOpeningWeekendConvert = data?.opening_hours_weekend.split("~");

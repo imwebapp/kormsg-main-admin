@@ -8,6 +8,7 @@ import {
   PlusOutlined,
   ArrowUpOutlined,
   CaretDownOutlined,
+  SearchOutlined
 } from "@ant-design/icons";
 import { DatePicker, Input, Select, message, notification } from "antd";
 
@@ -63,7 +64,7 @@ const StorePage = () => {
       if (resultCount.code === 200) {
         setCountStore(resultCount.results.object);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const getListThema = async () => {
     try {
@@ -156,7 +157,7 @@ const StorePage = () => {
       };
       let result: any = await storeApi.downloadExcel(params);
       window.open(result.results?.object?.url, "_blank");
-    } catch (error) {}
+    } catch (error) { }
   };
   const onDragEnd = (result: any) => {
     console.log("result onDragEnd", result);
@@ -227,7 +228,7 @@ const StorePage = () => {
   useEffect(() => {
     getListThema();
     getCountStore();
-    return () => {};
+    return () => { };
   }, []);
 
   const handleButtonClick = (buttonName: string) => {
@@ -239,8 +240,11 @@ const StorePage = () => {
   const handleChangeAdvertise = (value: string) => {
     setSelectedSorting(value);
   };
-  const handleChangeTextKeyword = (e: any) => {
-    setValueKeywordFilter(e.target.value);
+  // const handleChangeTextKeyword = (e: any) => {
+  //   setValueKeywordFilter(e.target.value);
+  // };
+  const handleChangeTextKeyword = (value: string) => {
+    setValueKeywordFilter(value);
   };
 
   const getButtonStyle = (buttonKey: any) => {
@@ -283,7 +287,7 @@ const StorePage = () => {
     ];
 
     return (
-      <div className="flex flex-row gap-4 mt-1 mb-5 items-center">
+      <div className="flex flex-row items-center gap-4 mt-1 mb-5">
         {buttonData.map(({ status, label, count }) => {
           return (
             <Droppable droppableId={status}>
@@ -313,11 +317,22 @@ const StorePage = () => {
       <div className="p-6">
         <div className="flex gap-2.5 justify-between self-stretch py-2 text-base font-medium leading-6 max-md:flex-wrap items-center">
           <div className="flex gap-4 text-base font-medium leading-6 whitespace-nowrap max-w-[651px] max-md:flex-wrap w-full my-4">
-            <Input
+            {/* <Input
               className="items-start justify-center flex-1 px-4 py-3 rounded-xl bg-neutral-100 max-md:pr-5"
               placeholder="Keyword"
               onChange={handleChangeTextKeyword}
               value={valueKeywordFilter}
+            /> */}
+            <BaseInput
+              placeholder="Keyword"
+              className="w-full"
+              value={valueKeywordFilter}
+              onChange={(value) => {
+                handleChangeTextKeyword(value);
+              }}
+              iconLeft={
+                <SearchOutlined className="mr-3 text-2xl text-darkNight500" />
+              }
             />
           </div>
           <div className="flex gap-3 whitespace-nowrap">
@@ -365,7 +380,7 @@ const StorePage = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex justify-between">
             {listButton()}
-            <div className="flex gap-3 text-base font-medium h-11 align-middle leading-6 text-neutral-900 align-center">
+            <div className="flex gap-3 text-base font-medium leading-6 align-middle h-11 text-neutral-900 align-center">
               <div
                 className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
                 onClick={() => {
@@ -375,7 +390,7 @@ const StorePage = () => {
                 <img
                   src={Images.download}
                   alt="Excel download"
-                  className="shrink-0 w-6 h-6 aspect-square"
+                  className="w-6 h-6 shrink-0 aspect-square"
                 />
                 <span>Download Excel</span>
               </div>
@@ -388,7 +403,7 @@ const StorePage = () => {
                 <img
                   src={Images.uploadExcel}
                   alt="Excel upload"
-                  className="shrink-0 w-6 h-6 aspect-square"
+                  className="w-6 h-6 shrink-0 aspect-square"
                 />
                 <span>Upload Excel</span>
                 <input
@@ -488,7 +503,7 @@ const StorePage = () => {
               onClick={() => {
                 deleteEvent();
               }}
-              className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+              className="text-sm font-medium text-white bg-red-700 rounded-lg focus:outline-none hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
             >
               {"Delete"}
             </BaseButton>
