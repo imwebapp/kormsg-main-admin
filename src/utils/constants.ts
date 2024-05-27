@@ -179,7 +179,7 @@ export const HOLIDAY_SETTING = {
 export const HOLIDAYS: {
   name: string | null;
   id: number;
-  child?: { name: string | null; id: number }[];
+  child?: { name: string; id: number }[];
 }[] = [
   { name: "새해 첫날", id: 1 },
   {

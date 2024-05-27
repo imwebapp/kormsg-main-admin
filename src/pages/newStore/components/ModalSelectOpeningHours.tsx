@@ -20,7 +20,10 @@ interface IProps {
     leave_day?: boolean;
     working_day?: string[];
     holiday_setting?: string;
-    holiday_day?: number[];
+    holiday_day?: {
+      id: number;
+      name: string | null;
+    }[];
     opening_hours: string;
     opening_hours_weekend?: string;
     break_time?: string[];
@@ -41,7 +44,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
   const [optionChecked, setOptionChecked] = useState<number | null>(null);
 
   const [listDaySelected, setListDaySelected] = useState<any[]>([]);
-  const [listHolidaySelected, setListHolidaySelected] = useState<number[]>([]);
+  const [listHolidaySelected, setListHolidaySelected] = useState<{ id: number; name: string | null }[]>([]);
   const [listBreakTime, setListBreakTime] = useState<string[]>([]);
   const [listBreakTimeWeekend, setListBreakTimeWeekend] = useState<string[]>([]);
 
@@ -53,11 +56,12 @@ export const ModalSelectOpeningHours = (props: IProps) => {
     }
   };
 
-  const handleSelectedHoliday = (id: number) => {
-    if (listHolidaySelected.includes(id)) {
-      setListHolidaySelected(listHolidaySelected.filter((day) => day !== id));
+  const handleSelectedHoliday = (item: { id: number; name: string | null }) => {
+    const isAlreadySelected = listHolidaySelected.some(holiday => holiday.id === item.id);
+    if (isAlreadySelected) {
+      setListHolidaySelected(listHolidaySelected.filter(holiday => holiday.id !== item.id));
     } else {
-      setListHolidaySelected([...listHolidaySelected, id]);
+      setListHolidaySelected([...listHolidaySelected, item]);
     }
   };
 
@@ -168,18 +172,21 @@ export const ModalSelectOpeningHours = (props: IProps) => {
 
   useEffect(() => {
     if (optionChecked === 1) {
-      setListHolidaySelected([22, 82]);
+      setListHolidaySelected([
+        { name: "설날", id: 22 },
+        { name: "추석", id: 82 },
+      ]);
     } else if (optionChecked === 2) {
-      let ids: number[] = [];
+      let list: { id: number, name: string | null }[] = [];
       HOLIDAYS.forEach((holiday) => {
-        ids.push(holiday.id);
+        list.push(holiday);
         if (holiday.child) {
           holiday.child.forEach((child) => {
-            ids.push(child.id);
+            list.push(child);
           });
         }
       });
-      setListHolidaySelected(ids);
+      setListHolidaySelected(list);
     } else {
       setListHolidaySelected([]);
     }
@@ -329,13 +336,13 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                             key={index}
                             onClick={() => {
                               if (optionChecked === null) {
-                                handleSelectedHoliday(item.id);
+                                handleSelectedHoliday(item);
                               }
                             }}
                             className={classNames(
                               "p-2 text-center ",
                               index == 1 ? "border-x" : "",
-                              listHolidaySelected.includes(item.id)
+                              listHolidaySelected.some(holiday => holiday.id === item.id)
                                 ? "bg-dayBreakBlue50"
                                 : ""
                             )}
@@ -343,7 +350,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                             <BaseText
                               locale
                               color={
-                                listHolidaySelected.includes(item.id)
+                                listHolidaySelected.some(holiday => holiday.id === item.id)
                                   ? "text-primary"
                                   : ""
                               }
@@ -360,12 +367,12 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                         key={index}
                         onClick={() => {
                           if (optionChecked === null) {
-                            handleSelectedHoliday(holiday.id);
+                            handleSelectedHoliday(holiday);
                           }
                         }}
                         className={classNames(
                           "p-2 text-center cursor-pointer bg-darkNight50",
-                          listHolidaySelected.includes(holiday.id)
+                          listHolidaySelected.some(h => h.id === holiday.id)
                             ? "bg-dayBreakBlue50"
                             : ""
                         )}
@@ -373,7 +380,7 @@ export const ModalSelectOpeningHours = (props: IProps) => {
                         <BaseText
                           locale
                           color={
-                            listHolidaySelected.includes(holiday.id)
+                            listHolidaySelected.some(h => h.id === holiday.id)
                               ? "text-primary"
                               : ""
                           }

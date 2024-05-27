@@ -45,7 +45,10 @@ interface IFormDataPage1 {
   leave_day?: boolean;
   working_day?: string[];
   holiday_setting?: string;
-  holiday_day?: number[];
+  holiday_day?: {
+    id: number;
+    name: string | null;
+  }[];
   opening_hours: string;
   opening_hours_weekend?: string;
   break_time?: string[];
@@ -760,7 +763,7 @@ const NewStore = () => {
         storeAddress: dataEditShop?.address || "",
         storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
-        leave_day: typeof dataEditShop?.leave_day ==='boolean' ? dataEditShop?.leave_day : true,
+        leave_day: typeof dataEditShop?.leave_day === 'boolean' ? dataEditShop?.leave_day : true,
         working_day: dataEditShop?.working_day || [],
         holiday_setting: dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
         holiday_day: dataEditShop?.holiday_day || [],
