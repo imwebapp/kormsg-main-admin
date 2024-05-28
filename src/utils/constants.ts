@@ -84,8 +84,7 @@ export const TypeUserActivity = {
   CHAT: "CHAT",
 };
 
-// export const BASE_URL = process.env.REACT_APP_PRODUCT_BASE_URL; //product
-export const BASE_URL = process.env.REACT_APP_DEV_BASE_URL;
+export const BASE_URL = process.env.REACT_APP_API_URL;
 export const BASE_URL_ANALYTICS = process.env.REACT_APP_BASE_URL_ANALYTICS; // analytics
 export const BASE_URL_LINK_SHOP = process.env.REACT_APP_BASE_URL_LINK_SHOP; // link shop
 export const BASE_URL_LINK_POST = process.env.REACT_APP_BASE_URL_LINK_POST; // link post
