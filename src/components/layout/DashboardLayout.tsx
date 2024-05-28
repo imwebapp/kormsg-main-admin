@@ -7,12 +7,42 @@ import Images from "../../assets/gen";
 import BaseText from "../text";
 import { classNames } from "../../utils/common";
 import { useLocalStorage } from "../../stores/localStorage";
+import { useEffect, useState } from "react";
+import { seoApi } from "../../apis/seoApi";
+import { settingApi } from "../../apis/settingApi";
 const { Header, Sider } = Layout;
 
 const DashboardLayout = ({ children }: any) => {
   // const [collapsed, setCollapsed] = useState(true);
-  const { collapsed, setCollapsed } = useLocalStorage((state) => state);
+  const { collapsed, setCollapsed, logo, setLogo, appName, setAppName } = useLocalStorage((state) => state);
   const navigate = useNavigate();
+
+  const _getDataSeo = async () => {
+    const response: any = await seoApi.getSEO();
+    if (response.code === 200) {
+      console.log('response getSEO', response);
+      setLogo(response?.results?.object?.avatar);
+    }
+  }
+
+  const _getSettingPage = async () => {
+    try {
+      const params = {
+        fields: '["$all"]',
+        filter: JSON.stringify({ field: "APP_NAME" }),
+      };
+      let result: any = await settingApi.getList(params);
+      if (result.code === 200) {
+        console.log('result getSettingPage', result);
+        setAppName(result?.results?.objects?.rows[0].value);
+      }
+    } catch (error) { }
+  };
+
+  useEffect(() => {
+    _getDataSeo()
+    _getSettingPage()
+  }, []);
 
   return (
     <Layout className="h-screen bg-white">
@@ -28,18 +58,18 @@ const DashboardLayout = ({ children }: any) => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="flex flex-row items-center py-4 border-b-[1px] px-[18px]">
-          <img
+          {logo && <img
             className="w-[38px] h-[38px] rounded-lg"
-            src={Images.logo}
+            src={logo}
             alt=""
             onClick={() => {
               navigate(Url.dashboard);
             }}
-          />
+          />}
           {!collapsed && (
             <div className="pl-3 flex flex-1 min-w-[160px]">
               <BaseText bold size={18}>
-                GM4 Data
+                {appName}
               </BaseText>
             </div>
           )}
@@ -56,7 +86,7 @@ const DashboardLayout = ({ children }: any) => {
             src={!!collapsed ? Images.collapse2 : Images.collapse}
           />
           {!collapsed && (
-            <BaseText medium size={16} className="pr-8 pl-2">
+            <BaseText medium size={16} className="pl-2 pr-8">
               Collapse
             </BaseText>
           )}
