@@ -84,12 +84,12 @@ export const TypeUserActivity = {
   CHAT: "CHAT",
 };
 
-// export const BASE_URL = "https://server.kormsg.com/api/v1"; //product
-export const BASE_URL = "https://server-dev.kormsg.com/api/v1"; //dev
-export const BASE_URL_ANALYTICS = "https://ga.bamgama.com"; // analytics
-export const BASE_URL_LINK_SHOP = "https://dev.kormsg.com/detail"; // link shop
-export const BASE_URL_LINK_POST = "https://pc.kormsg.com/post/detail"; // link post
-export const URL_SEARCH_SITE = "https://kormsg.com";
+// export const BASE_URL = process.env.REACT_APP_PRODUCT_BASE_URL; //product
+export const BASE_URL = process.env.REACT_APP_DEV_BASE_URL;
+export const BASE_URL_ANALYTICS = process.env.REACT_APP_BASE_URL_ANALYTICS; // analytics
+export const BASE_URL_LINK_SHOP = process.env.REACT_APP_BASE_URL_LINK_SHOP; // link shop
+export const BASE_URL_LINK_POST = process.env.REACT_APP_BASE_URL_LINK_POST; // link post
+export const URL_SEARCH_SITE = process.env.REACT_APP_URL_SEARCH_SITE;
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
@@ -173,8 +173,8 @@ export const Weekdays = [
 export const HOLIDAY_SETTING = {
   ONLY_LUNAR_NEW_YEAR_AND_CHUSEOK: "ONLY_LUNAR_NEW_YEAR_AND_CHUSEOK",
   ALL: "ALL",
-  OTHER: 'OTHER'
-}
+  OTHER: "OTHER",
+};
 
 export const HOLIDAYS: {
   name: string | null;
