@@ -6,4 +6,4 @@ gen-model:
 	node src/entities/gen/gen-model
 
 merge:
-	git merge origin/feature/development
+	git merge origin/development
