@@ -1,11 +1,10 @@
 import axios, { AxiosResponse } from "axios";
-import { BASE_URL } from "../utils/constants";
 import { Url } from "../routers/paths";
 import { REFRESH_TOKEN } from "./urlConfig";
 import { useLocalStorage } from "../stores/localStorage";
 
 const axiosClient = axios.create({
-  baseURL: BASE_URL,
+  baseURL: process.env.BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -41,7 +40,7 @@ axiosClient.interceptors.response.use(
         useLocalStorage.getState();
       axios
         .post(
-          `${BASE_URL}${REFRESH_TOKEN}`,
+          `${process.env.BASE_URL}${REFRESH_TOKEN}`,
           {},
           {
             headers: {

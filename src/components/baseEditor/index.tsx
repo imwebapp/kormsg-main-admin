@@ -1,6 +1,5 @@
 import JoditEditor from "jodit-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BASE_URL } from "../../utils/constants";
 import "./index.css";
 type BaseEditorProps = {
   value?: string;
@@ -23,7 +22,7 @@ export default function BaseEditor(props: BaseEditorProps) {
     },
     uploader: {
       insertImageAsBase64URI: false,
-      url: `${BASE_URL}/image/upload_multiple/300/1920`,
+      url: `${process.env.BASE_URL}/image/upload_multiple/300/1920`,
       filesVariableName(i: number): string {
         return `images`;
       },

@@ -12,7 +12,6 @@ import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { convertDateTime } from "../../utils/common";
-import { BASE_URL_LINK_POST } from "../../utils/constants";
 import { BaseModal2 } from "../modal/BaseModal2";
 import { reviewApi } from "../../apis/reviewApi";
 import { showError, showSuccess } from "../../utils/showToast";
@@ -39,7 +38,7 @@ export default function CommentTable(props: CommentProps) {
   const idComment = useRef("");
 
   const handleViewPost = (id: string) => {
-    const url = `${BASE_URL_LINK_POST}/${id}`;
+    const url = `${process.env.BASE_URL_LINK_POST}/${id}`;
     window.open(url, "_blank");
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {

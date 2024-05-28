@@ -5,14 +5,13 @@ import { useEffect, useState } from "react";
 import { ItemShop } from "./components";
 import { useTranslation } from "react-i18next";
 import { shopApi } from "../../../apis/shopApi";
-import { CloseOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { CloseOutlined, PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
 import dayjs from "dayjs";
 import { BaseInput } from "../../../components/input/BaseInput";
 import { App, DatePicker, Popconfirm, Popover, Spin } from "antd";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { userApi } from "../../../apis/userApi";
-import { BASE_URL_LINK_SHOP } from "../../../utils/constants";
 import { eventApi } from "../../../apis/eventApi";
 
 const ListTabBar = [
@@ -99,7 +98,6 @@ export const ShopInformationTab = (props: IProps) => {
     return true;
   };
 
-
   const checkCount = (type: string) => {
     switch (type) {
       case "APPROVED":
@@ -124,22 +122,28 @@ export const ShopInformationTab = (props: IProps) => {
         ...formDataAddEvent,
         start_time: startDate.valueOf(),
         end_time: endDate.valueOf(),
-      })
+      });
     } else {
       setRangeValue(null);
       setFormDataAddEvent({
         ...formDataAddEvent,
         start_time: "",
         end_time: "",
-      })
+      });
     }
   };
 
-  const handleShopSelected = (selectedItems: { id: string; checked: boolean }) => {
+  const handleShopSelected = (selectedItems: {
+    id: string;
+    checked: boolean;
+  }) => {
     if (selectedItems.checked) {
-      !(listShopSelected.find((item) => item === selectedItems.id)) && setListShopSelected([...listShopSelected, selectedItems.id]);
+      !listShopSelected.find((item) => item === selectedItems.id) &&
+        setListShopSelected([...listShopSelected, selectedItems.id]);
     } else {
-      setListShopSelected(listShopSelected.filter((item) => item !== selectedItems.id));
+      setListShopSelected(
+        listShopSelected.filter((item) => item !== selectedItems.id)
+      );
     }
   };
   const handleClickShop = (id: string | number) => {
@@ -156,18 +160,19 @@ export const ShopInformationTab = (props: IProps) => {
         const dataUpdate = {
           days: valueMinusDay,
         };
-        const resUpdateDate: any = await shopApi.updateForceExpiredMultiple(listIdUpdate, dataUpdate)
+        const resUpdateDate: any = await shopApi.updateForceExpiredMultiple(
+          listIdUpdate,
+          dataUpdate
+        );
         if (resUpdateDate.code === 200) {
           setLoadingScreen(false);
-          _getListShop()
+          _getListShop();
           _getUser();
           setValueMinusDay(undefined);
           setListShopSelected([]);
           message.success("Update success");
-
         }
-      }
-      catch (error) {
+      } catch (error) {
         setLoadingScreen(false);
         console.log("error update minus time", error);
         message.error("Update failed");
@@ -183,24 +188,25 @@ export const ShopInformationTab = (props: IProps) => {
         const dataUpdate = {
           days: valueAddDay,
         };
-        const resUpdateDate: any = await shopApi.updateExpirationDateMultiple(listIdUpdate, dataUpdate)
+        const resUpdateDate: any = await shopApi.updateExpirationDateMultiple(
+          listIdUpdate,
+          dataUpdate
+        );
         if (resUpdateDate.code === 200) {
           setLoadingScreen(false);
-          _getListShop()
+          _getListShop();
           _getUser();
           setValueAddDay(undefined);
           setListShopSelected([]);
           message.success("Update success");
         }
-      }
-      catch (error) {
+      } catch (error) {
         setLoadingScreen(false);
         console.log("error update add time", error);
         message.error("Update failed");
       }
     }
   };
-
 
   const handleCreateEvent = async () => {
     try {
@@ -228,7 +234,6 @@ export const ShopInformationTab = (props: IProps) => {
         _getListShop();
         _getUser();
         _getListShopOfUser();
-
       }
     } catch (error) {
       console.log("error create event", error);
@@ -238,18 +243,20 @@ export const ShopInformationTab = (props: IProps) => {
   };
 
   const _getUser = () => {
-    userApi.getUser(dataUser.id, {
-      fields: JSON.stringify(["$all"]),
-      filter: JSON.stringify({}),
-    })
+    userApi
+      .getUser(dataUser.id, {
+        fields: JSON.stringify(["$all"]),
+        filter: JSON.stringify({}),
+      })
       .then((res: any) => {
         setDataUser({
           ...dataUser,
           current_active_post: res?.results?.object?.current_active_post,
           current_expired_post: res?.results?.object?.current_expired_post,
-          current_recommendation_post: res?.results?.object?.current_recommendation_post,
+          current_recommendation_post:
+            res?.results?.object?.current_recommendation_post,
           current_on_event_shop: res?.results?.object?.current_on_event_shop,
-        })
+        });
       })
       .catch((err) => {
         console.log("err get User ", err);
@@ -266,7 +273,8 @@ export const ShopInformationTab = (props: IProps) => {
     ];
 
     const convertFieldsDuringTheEvent: any = [
-      "$all", { events: ["$all", { "$filter": {} }] },
+      "$all",
+      { events: ["$all", { $filter: {} }] },
       { shop_tags: ["$all"] },
     ];
 
@@ -275,29 +283,29 @@ export const ShopInformationTab = (props: IProps) => {
     };
     switch (tabSelected.value) {
       case "APPROVED":
-        convertFilter['$or'] = [
+        convertFilter["$or"] = [
           { denied_shop: { $ne: null } },
-          { state: { $in: ['APPROVED'] } },
+          { state: { $in: ["APPROVED"] } },
         ];
         break;
       case "EXPIRED":
-        convertFilter['$or'] = [
+        convertFilter["$or"] = [
           { denied_shop: { $ne: null } },
-          { state: { $in: ['EXPIRED'] } },
+          { state: { $in: ["EXPIRED"] } },
         ];
         break;
       case "Recommended store":
-        convertFilter['is_random_20_shop'] = true;
-        convertFilter['state'] = { $in: ['APPROVED'] };
+        convertFilter["is_random_20_shop"] = true;
+        convertFilter["state"] = { $in: ["APPROVED"] };
         break;
       case "During the event":
         convertFields = convertFieldsDuringTheEvent;
-        convertFilter['state'] = { $not: ['EXPIRED'] };
+        convertFilter["state"] = { $not: ["EXPIRED"] };
         break;
       default:
-        convertFilter['$or'] = [
+        convertFilter["$or"] = [
           { denied_shop: { $ne: null } },
-          { state: { $in: ['APPROVED'] } },
+          { state: { $in: ["APPROVED"] } },
         ];
         break;
     }
@@ -314,14 +322,14 @@ export const ShopInformationTab = (props: IProps) => {
         setLoadingScreen(false);
         setTabSelected({
           ...tabSelected,
-          data: res.results.objects.rows
+          data: res.results.objects.rows,
         });
       })
       .catch((err) => {
         setLoadingScreen(false);
         console.log("err getList SHOP API", err);
       });
-  }
+  };
 
   const _getListShopOfUser = () => {
     let convertFields: any = [
@@ -334,9 +342,9 @@ export const ShopInformationTab = (props: IProps) => {
     const convertFilter: any = {
       user_id: `${dataUser.id}`,
     };
-    convertFilter['$or'] = [
+    convertFilter["$or"] = [
       { denied_shop: { $ne: null } },
-      { state: { $in: ['APPROVED'] } },
+      { state: { $in: ["APPROVED"] } },
     ];
     setLoadingScreen(true);
     shopApi
@@ -348,22 +356,24 @@ export const ShopInformationTab = (props: IProps) => {
       })
       .then((res: any) => {
         setLoadingScreen(false);
-        const shopsNoEvent = res?.results?.objects?.rows.filter((item: any) => item.events.length === 0);
+        const shopsNoEvent = res?.results?.objects?.rows.filter(
+          (item: any) => item.events.length === 0
+        );
         setListShopNoEvent(shopsNoEvent);
       })
       .catch((err) => {
         setLoadingScreen(false);
         console.log("err getList SHOP API", err);
       });
-  }
+  };
 
   useEffect(() => {
-    _getListShop()
+    _getListShop();
     setListShopSelected([]);
   }, [tabSelected.value]);
 
   useEffect(() => {
-    _getUser()
+    _getUser();
     _getListShopOfUser();
   }, []);
 
@@ -425,88 +435,112 @@ export const ShopInformationTab = (props: IProps) => {
                 }
                 name={item.title}
                 timeOpening={item.opening_hours}
-                hashtag={(item?.shop_tags || []).map((item: any) => `#${item.name}`)}
+                hashtag={(item?.shop_tags || []).map(
+                  (item: any) => `#${item.name}`
+                )}
                 item={item}
                 onClick={(id) => handleClickShop(id)}
                 className=""
                 onShopSelected={handleShopSelected}
                 isUnCheck={listShopSelected.length === 0}
               />
-            )
+            );
           })}
         </div>
-        {listShopSelected.length > 0 && <div className="fixed bottom-6 right-6 left-1/4">
-          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
-            <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
-              <CloseOutlined className="text-xl text-black cursor-pointer" />
-              <BaseText bold size={16} >{t('선택됨')} <span className="text-primary">{listShopSelected.length}</span></BaseText>
-            </div>
-            <div className="flex items-center justify-center gap-2">
-              <div className="flex justify-center border rounded-full border-darkNight100">
-                <Popover
-                  placement="topRight"
-                  trigger="click"
-                  content={
-                    <div>
-                      <BaseInput
-                        placeholder="00"
-                        iconRight={
-                          <BaseText locale bold>일</BaseText>
-                        }
-                        type="number"
-                        value={valueMinusDay}
-                        onChange={(value) => { setValueMinusDay(value) }}
-                      />
-                      <CustomButton
-                        className="flex justify-center w-full mt-4"
-                        primary
-                        onClick={handleMinusDay}
-                        disabled={!valueMinusDay}
-                        locale
-                      >
-                        적용
-                      </CustomButton>
-                    </div>
-                  }
-                >
-                  <MinusOutlined className="px-4 py-3 text-2xl border-r cursor-pointer text-primary border-darkNight100" />
-                </Popover>
-
-                <Popover
-                  placement="topLeft"
-                  trigger="click"
-                  content={
-                    <div>
-                      <BaseInput
-                        placeholder="00"
-                        iconRight={
-                          <BaseText locale bold>일</BaseText>
-                        }
-                        type="number"
-                        value={valueAddDay}
-                        onChange={(value) => { setValueAddDay(value) }}
-                      />
-                      <CustomButton
-                        className="flex justify-center w-full mt-4"
-                        primary
-                        locale
-                        onClick={handleAddDay}
-                        disabled={!valueAddDay}
-                      >
-                        적용
-                      </CustomButton>
-                    </div>
-                  }
-                >
-                  <PlusOutlined className="px-4 text-2xl cursor-pointer text-primary" />
-                </Popover>
+        {listShopSelected.length > 0 && (
+          <div className="fixed bottom-6 right-6 left-1/4">
+            <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
+              <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
+                <CloseOutlined className="text-xl text-black cursor-pointer" />
+                <BaseText bold size={16}>
+                  {t("선택됨")}{" "}
+                  <span className="text-primary">
+                    {listShopSelected.length}
+                  </span>
+                </BaseText>
               </div>
-              <BaseText locale size={16} bold className="text-center">기간을 입력해주세요</BaseText>
+              <div className="flex items-center justify-center gap-2">
+                <div className="flex justify-center border rounded-full border-darkNight100">
+                  <Popover
+                    placement="topRight"
+                    trigger="click"
+                    content={
+                      <div>
+                        <BaseInput
+                          placeholder="00"
+                          iconRight={
+                            <BaseText locale bold>
+                              일
+                            </BaseText>
+                          }
+                          type="number"
+                          value={valueMinusDay}
+                          onChange={(value) => {
+                            setValueMinusDay(value);
+                          }}
+                        />
+                        <CustomButton
+                          className="flex justify-center w-full mt-4"
+                          primary
+                          onClick={handleMinusDay}
+                          disabled={!valueMinusDay}
+                          locale
+                        >
+                          적용
+                        </CustomButton>
+                      </div>
+                    }
+                  >
+                    <MinusOutlined className="px-4 py-3 text-2xl border-r cursor-pointer text-primary border-darkNight100" />
+                  </Popover>
+
+                  <Popover
+                    placement="topLeft"
+                    trigger="click"
+                    content={
+                      <div>
+                        <BaseInput
+                          placeholder="00"
+                          iconRight={
+                            <BaseText locale bold>
+                              일
+                            </BaseText>
+                          }
+                          type="number"
+                          value={valueAddDay}
+                          onChange={(value) => {
+                            setValueAddDay(value);
+                          }}
+                        />
+                        <CustomButton
+                          className="flex justify-center w-full mt-4"
+                          primary
+                          locale
+                          onClick={handleAddDay}
+                          disabled={!valueAddDay}
+                        >
+                          적용
+                        </CustomButton>
+                      </div>
+                    }
+                  >
+                    <PlusOutlined className="px-4 text-2xl cursor-pointer text-primary" />
+                  </Popover>
+                </div>
+                <BaseText locale size={16} bold className="text-center">
+                  기간을 입력해주세요
+                </BaseText>
+              </div>
             </div>
           </div>
-        </div>}
-        <div className="fixed px-6 py-3 rounded-full shadow-xl cursor-pointer bg-dayBreakBlue500 right-8 bottom-10" onClick={() => setOpenModalCreateEvent(true)}>
-          <BaseText locale bold size={16} color="text-white">이벤트+</BaseText>
+        )}
+        <div
+          className="fixed px-6 py-3 rounded-full shadow-xl cursor-pointer bg-dayBreakBlue500 right-8 bottom-10"
+          onClick={() => setOpenModalCreateEvent(true)}
+        >
+          <BaseText locale bold size={16} color="text-white">
+            이벤트+
+          </BaseText>
         </div>
       </div>
 
@@ -532,7 +566,9 @@ export const ShopInformationTab = (props: IProps) => {
           title="Store"
           defaultValue={formDataAddEvent.shop_id || undefined}
           value={formDataAddEvent.shop_id || undefined}
-          onChange={(value) => { setFormDataAddEvent({ ...formDataAddEvent, shop_id: value }) }}
+          onChange={(value) => {
+            setFormDataAddEvent({ ...formDataAddEvent, shop_id: value });
+          }}
           placeholder="Select"
           options={(listShopNoEvent || []).map((item: any) => ({
             value: item.id,
@@ -542,7 +578,7 @@ export const ShopInformationTab = (props: IProps) => {
 
         <div className="flex flex-col my-4">
           <BaseText bold size={14}>
-            {t('행사 기간')} <span className="text-red-500">*</span>
+            {t("행사 기간")} <span className="text-red-500">*</span>
           </BaseText>
           <RangePicker
             defaultValue={undefined}

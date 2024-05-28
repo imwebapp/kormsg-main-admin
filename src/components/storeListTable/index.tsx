@@ -6,11 +6,7 @@ import { useTranslation } from "react-i18next";
 import { storeApi } from "../../apis/storeApi";
 import moment from "moment";
 import { ceilRemainingTime, mathRemainingTime } from "../../utils/common";
-import {
-  BASE_URL_LINK_SHOP,
-  SORTING,
-  STORE_STATUS,
-} from "../../utils/constants";
+import { SORTING, STORE_STATUS } from "../../utils/constants";
 import { PlusOutlined, MinusOutlined, CloseOutlined } from "@ant-design/icons";
 import { BaseModal2 } from "../modal/BaseModal2";
 import { Url } from "../../routers/paths";
@@ -116,7 +112,7 @@ export default function StoreListTable(props: StoreListTableProps) {
     }
   };
   const handleClick = (id: string) => {
-    const url = `${BASE_URL_LINK_SHOP}/${id}`;
+    const url = `${process.env.BASE_URL_LINK_SHOP}/${id}`;
     window.open(url, "_blank");
   };
   const handlePageChange = (page: any) => {
@@ -746,7 +742,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         }}
       >
         <iframe
-          src={`${BASE_URL_LINK_SHOP}/${idStore.current}`}
+          src={`${process.env.BASE_URL_LINK_SHOP}/${idStore.current}`}
           className="w-full h-[950px] pointer-events-none"
         />
       </BaseModal2>

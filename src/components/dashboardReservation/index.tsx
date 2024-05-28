@@ -6,7 +6,7 @@ import Images from "../../assets/gen";
 import BaseTable from "../table";
 import { useTranslation } from "react-i18next";
 import { reservationApi } from "../../apis/reservationApi";
-import { BASE_URL_LINK_SHOP, RESERVATION_STATUS } from "../../utils/constants";
+import { RESERVATION_STATUS } from "../../utils/constants";
 import moment from "moment";
 import { formatDateTime } from "../../utils/common";
 type DashboardReservationProps = {
@@ -38,7 +38,7 @@ export default function DashboardReservation(props: DashboardReservationProps) {
     setCurrentPage(page);
   };
   const handleClick = (id: string) => {
-    const url = `${BASE_URL_LINK_SHOP}/${id}`;
+    const url = `${process.env.BASE_URL_LINK_SHOP}/${id}`;
     window.open(url, "_blank");
   };
   useEffect(() => {

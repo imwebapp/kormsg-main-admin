@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
 import { analyticsApi } from "../../apis/analyticsApi";
 import dayjs from "dayjs";
-import { URL_SEARCH_SITE } from "../../utils/constants";
 import { showError } from "../../utils/showToast";
 
 type DashboardOverviewProps = {
@@ -35,7 +34,7 @@ export default function DashboardSearchTermTable(
   const getInfoAnalytics = async () => {
     try {
       const params = {
-        siteUrl: URL_SEARCH_SITE,
+        siteUrl: process.env.URL_SEARCH_SITE,
         startDate: dateTimeSelect[0],
         endDate: dateTimeSelect[1],
         dimensions: ["query"],
