@@ -89,6 +89,7 @@ export const BASE_URL_ANALYTICS = process.env.REACT_APP_BASE_URL_ANALYTICS; // a
 export const BASE_URL_LINK_SHOP = process.env.REACT_APP_BASE_URL_LINK_SHOP; // link shop
 export const BASE_URL_LINK_POST = process.env.REACT_APP_BASE_URL_LINK_POST; // link post
 export const URL_SEARCH_SITE = process.env.REACT_APP_URL_SEARCH_SITE;
+export const IS_TEST = process.env.REACT_APP_IS_TEST;
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
