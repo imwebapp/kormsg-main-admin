@@ -1,0 +1,53 @@
+name: CI/CD Pipeline Backend for Goodvina Environment
+
+env:
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  IMAGE_TAG: ${{ vars.IMAGE_TAG_GOODVINA }}
+  DOCKER_COMPOSE: ${{ vars.DOCKER_COMPOSE_GOODVINA }}
+
+on:
+  push:
+    branches: [goodvina]
+  # pull_request:
+  #   branches: [goodvina]
+
+jobs:
+  # Build Image
+  build-and-push-image:
+    strategy:
+      matrix:
+        node-version: [18]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to Docker Hub
+        run:
+          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{
+          secrets.DOCKER_PASSWORD }}
+      - name: Build and push Docker image
+        run: |
+          sudo docker build -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -f Dockerfile.goodvina .
+          sudo docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          echo "Compile complete."
+
+  # Deploy to server
+  deploy-to-server:
+    runs-on: [self-hosted, Linux, X64, goodvina]
+    needs: [build-and-push-image]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Login docker registry
+        run:
+          sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p
+          ${{secrets.DOCKER_PASSWORD}}
+      - name: Pull image from Docker Hub
+        run: sudo docker pull ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      - name: Build service
+        run: |
+          sudo docker-compose -f ${{ env.DOCKER_COMPOSE }} down
+          sudo docker-compose -f ${{ env.DOCKER_COMPOSE }} up -d
+          sudo docker image prune -f
+          echo "Application successfully deployed."

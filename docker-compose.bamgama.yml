@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   # CMS
-  cms-kormsg:
-    image: greenapps/new-cms-clone:kormsg
-    container_name: cms-clone-kormsg
+  cms-bamgama:
+    image: greenapps/new-cms-clone:bamgama
+    container_name: cms-clone-bamgama
     logging:
       driver: 'json-file'
       options:
@@ -16,7 +16,7 @@ services:
     #   - '.:/app'
     restart: always
     networks:
-      - kormsg_network
+      - bamgama_network
 networks:
-  kormsg_network:
+  bamgama_network:
     driver: bridge

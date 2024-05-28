@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   # CMS
-  cms-kormsg:
-    image: greenapps/new-cms-clone:kormsg
-    container_name: cms-clone-kormsg
+  cms-newbkshop:
+    image: greenapps/new-cms-clone:newbkshop
+    container_name: cms-clone-newbkshop
     logging:
       driver: 'json-file'
       options:
@@ -16,7 +16,7 @@ services:
     #   - '.:/app'
     restart: always
     networks:
-      - kormsg_network
+      - newbkshop_network
 networks:
-  kormsg_network:
+  newbkshop_network:
     driver: bridge

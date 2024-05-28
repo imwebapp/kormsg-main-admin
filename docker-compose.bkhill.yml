@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   # CMS
-  cms-kormsg:
-    image: greenapps/new-cms-clone:kormsg
-    container_name: cms-clone-kormsg
+  cms-bkhill:
+    image: greenapps/new-cms-clone:bkhill
+    container_name: cms-clone-bkhill
     logging:
       driver: 'json-file'
       options:
@@ -16,7 +16,7 @@ services:
     #   - '.:/app'
     restart: always
     networks:
-      - kormsg_network
+      - bkhill_network
 networks:
-  kormsg_network:
+  bkhill_network:
     driver: bridge

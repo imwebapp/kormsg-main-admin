@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   # CMS
-  cms-kormsg:
-    image: greenapps/new-cms-clone:kormsg
-    container_name: cms-clone-kormsg
+  cms-goodvina:
+    image: greenapps/new-cms-clone:goodvina
+    container_name: cms-clone-goodvina
     logging:
       driver: 'json-file'
       options:
@@ -16,7 +16,7 @@ services:
     #   - '.:/app'
     restart: always
     networks:
-      - kormsg_network
+      - goodvina_network
 networks:
-  kormsg_network:
+  goodvina_network:
     driver: bridge
