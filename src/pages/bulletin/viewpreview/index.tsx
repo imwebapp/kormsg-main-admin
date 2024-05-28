@@ -24,7 +24,7 @@ export default function BulletinPreview() {
         boardSelected.route ?? "",
         boardSelected.thema_id
       );
-      setUrl(BASE_URL + url);
+      setUrl(URL_SEARCH_SITE + url);
     }
   }, [boardSelected]);
 
