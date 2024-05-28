@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import Images from "../../../assets/gen";
-import { BOARD, BOARD_ROUTE } from "../../../utils/constants";
+import { BOARD, BOARD_ROUTE, URL_SEARCH_SITE } from "../../../utils/constants";
 import { useBulletinState } from "../store";
-const BASE_URL = "https://pc.kormsg.com";
 
 export default function BulletinPreview() {
   const [key, setKeyIframe] = useState(0);
-  const [url, setUrl] = useState(BASE_URL);
+  const [url, setUrl] = useState(URL_SEARCH_SITE);
   const { boardSelected, lastRefresh } = useBulletinState((state) => state);
 
   useEffect(() => {
