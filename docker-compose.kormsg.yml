@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  # CMS
+  cms-kormsg:
+    image: greenapps/cms-clone:kormsg
+    container_name: cms-clone-kormsg
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    ports:
+      - '3301:80'
+    # volumes:
+    #   - '.:/app'
+    restart: always
+    networks:
+      - kormsg_network
+networks:
+  kormsg_network:
+    driver: bridge
