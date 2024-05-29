@@ -14,15 +14,19 @@ const { Header, Sider } = Layout;
 
 const DashboardLayout = ({ children }: any) => {
   // const [collapsed, setCollapsed] = useState(true);
-  const { collapsed, setCollapsed, logo, setLogo, appName, setAppName } = useLocalStorage((state) => state);
+  const { collapsed, setCollapsed, logo, setLogo, appName, setAppName } =
+    useLocalStorage((state) => state);
   const navigate = useNavigate();
 
   const _getDataSeo = async () => {
-    const response: any = await seoApi.getSEO();
-    if (response.code === 200) {
-      setLogo(response?.results?.object?.avatar);
-    }
-  }
+    try {
+      const response: any = await seoApi.getSEO();
+      if (response.code === 200) {
+        console.log("response getSEO", response);
+        setLogo(response?.results?.object?.avatar);
+      }
+    } catch (error) {}
+  };
 
   const _getSettingPage = async () => {
     try {
@@ -34,12 +38,12 @@ const DashboardLayout = ({ children }: any) => {
       if (result.code === 200) {
         setAppName(result?.results?.objects?.rows[0]?.value);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   useEffect(() => {
-    _getDataSeo()
-    _getSettingPage()
+    _getDataSeo();
+    _getSettingPage();
   }, []);
 
   return (
@@ -56,14 +60,16 @@ const DashboardLayout = ({ children }: any) => {
         onCollapse={(value) => setCollapsed(value)}
       >
         <div className="flex flex-row items-center py-4 border-b-[1px] px-[18px]">
-          {logo && <img
-            className="w-[38px] h-[38px] rounded-lg"
-            src={logo}
-            alt=""
-            onClick={() => {
-              navigate(Url.dashboard);
-            }}
-          />}
+          {logo && (
+            <img
+              className="w-[38px] h-[38px] rounded-lg"
+              src={logo}
+              alt=""
+              onClick={() => {
+                navigate(Url.dashboard);
+              }}
+            />
+          )}
           {!collapsed && (
             <div className="pl-3 flex flex-1 min-w-[160px]">
               <BaseText bold size={18}>
