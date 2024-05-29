@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Table, TableColumnsType, TablePaginationConfig } from 'antd';
-import './styles.css';
+import React, { useState } from "react";
+import { Table, TableColumnsType, TablePaginationConfig } from "antd";
+import "./styles.css";
 
 type TableProps = {
   onSelectChange?: (newSelectedRowKeys: any) => void;
@@ -12,6 +12,7 @@ type TableProps = {
   scroll?: any;
   onRowClick?: (record: any, index: any) => void;
   className?: string; // for tailwindcss
+  selectedKeys?: any;
 };
 
 export default function BaseTable(props: TableProps) {
@@ -25,8 +26,11 @@ export default function BaseTable(props: TableProps) {
     scroll = {},
     maxContent,
     onRowClick,
+    selectedKeys,
   } = props;
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
+    selectedKeys || []
+  );
   const [rowClickKey, setRowClickKey] = useState<any>();
 
   const _onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -40,16 +44,16 @@ export default function BaseTable(props: TableProps) {
   };
 
   const getRowClassName = (record: any, index: any) => {
-    let classCustom = onRowClick ? 'row-click' : '';
-    return rowClickKey === `${(pagination as any)?.current || ''}-${index}`
-      ? classCustom + ' selected-row'
+    let classCustom = onRowClick ? "row-click" : "";
+    return rowClickKey === `${(pagination as any)?.current || ""}-${index}`
+      ? classCustom + " selected-row"
       : classCustom;
   };
 
   return (
     <>
       <Table
-        scroll={maxContent ? { x: 'max-content' } : scroll}
+        scroll={maxContent ? { x: "max-content" } : scroll}
         sticky={sticky}
         className={className}
         rowClassName={getRowClassName}
@@ -61,7 +65,7 @@ export default function BaseTable(props: TableProps) {
           onClick: () => {
             if (onRowClick) {
               onRowClick(record, index);
-              setRowClickKey(`${(pagination as any)?.current || ''}-${index}`);
+              setRowClickKey(`${(pagination as any)?.current || ""}-${index}`);
             }
           },
         })}

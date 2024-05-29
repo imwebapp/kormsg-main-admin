@@ -20,7 +20,8 @@ import {
   SettingPage,
   HelpCenter,
   PointHistoryPage,
-  ToolBoxPage
+  ToolBoxPage,
+  SiteLinkPage,
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -134,12 +135,16 @@ const routes = [
     element: <SeoPage />,
   },
   {
+    path: Url.site,
+    element: <SiteLinkPage />,
+  },
+  {
     path: Url.setting,
     element: <SettingPage />,
   },
   {
     path: Url.toolbox,
-    element: <ToolBoxPage/>,
+    element: <ToolBoxPage />,
     custom: true,
   },
 ];

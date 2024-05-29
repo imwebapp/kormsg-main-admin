@@ -36,3 +36,4 @@ export const FAQ = "/faq";
 export const POINT_PRODUCT = "/point_product";
 export const POINT = "/point";
 export const POINT_PRODUCT_HISTORY = "/point_product_history";
+export const SITE_CATEGORY = "/site_category";

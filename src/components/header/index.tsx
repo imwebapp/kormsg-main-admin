@@ -69,7 +69,7 @@ const HeaderComponent = () => {
         setTitle("User Detail");
         setIsDetail(true);
         break;
-        case Url.userActivity:
+      case Url.userActivity:
         setTitle("User Activity");
         setIsDetail(true);
         break;
@@ -105,6 +105,9 @@ const HeaderComponent = () => {
         break;
       case Url.seo:
         setTitle("SEO Page");
+        break;
+      case Url.site:
+        setTitle("Site Links");
         break;
       case Url.setting:
         setTitle("Setting");
