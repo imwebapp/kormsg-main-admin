@@ -5,7 +5,7 @@ import { setTokens } from "../../apis/axiosClient";
 import { BaseText, CustomButton } from "../../components";
 import { Url } from "../../routers/paths";
 import { useLocalStorage } from "../../stores/localStorage";
-import { ListCountries } from "../../utils/constants";
+import { BASE_URL, IS_TEST, ListCountries } from "../../utils/constants";
 import ReactFlagsSelect from "react-flags-select";
 import Images from "../../assets/gen";
 import BaseButton from "../../components/baseButton";
@@ -44,6 +44,8 @@ const Login = () => {
   const [isVerifyOtp, setIsVerifyOtp] = useState(false);
   const [otp, setOtp] = useState('');
   const [isErrorOtp, setIsErrorOtp] = useState(false);
+
+  const isServerTest = BASE_URL?.includes(IS_TEST || 'server-dev');
 
   const handleChangeOtp = (otp: string) => {
     setOtp(otp);
@@ -239,14 +241,16 @@ const Login = () => {
                 Continue
               </BaseText>
             </BaseButton>
-            <BaseButton onClick={handleLoginTest} className="w-full mt-6">
-              <BaseText bold size={16} className="text-white">
-                TEST
-              </BaseText>
-            </BaseButton>
+            {isServerTest &&
+              <BaseButton onClick={handleLoginTest} className="w-full mt-6">
+                <BaseText bold size={16} className="text-white">
+                  TEST
+                </BaseText>
+              </BaseButton>
+            }
           </div>)}
       </div>
-    </div>
+    </div >
   );
 };
 

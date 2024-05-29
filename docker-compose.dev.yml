@@ -2,9 +2,9 @@ version: '3.7'
 
 services:
   # CMS
-  cms-bamgama:
-    image: greenapps/new-cms-clone:bamgama
-    container_name: cms-clone-bamgama
+  cms-dev:
+    image: greenapps/new-cms-clone:dev
+    container_name: cms-clone-dev
     logging:
       driver: 'json-file'
       options:
@@ -16,7 +16,7 @@ services:
     #   - '.:/app'
     restart: always
     networks:
-      - bamgama_network
+      - dev_network
 networks:
-  bamgama_network:
+  dev_network:
     driver: bridge
