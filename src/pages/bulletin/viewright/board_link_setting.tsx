@@ -91,13 +91,16 @@ export default function BulletinSetting() {
       const data: Array<ThemaInterface> = await getListThema(boardTypeSelected);
       if (data[0]) {
         if (boardTypeSelected == BOARD.EVENT_BOARD) {
-          updateOrCreateBoardLink({
-            ...boardSelected,
-            route: boardTypeSelected,
-            themas: [],
-            thema_id: undefined,
-            category_ids: undefined,
-          });
+          updateOrCreateBoardLink(
+            {
+              ...boardSelected,
+              route: boardTypeSelected,
+              themas: [],
+              thema_id: null,
+              category_ids: null,
+            },
+            true
+          );
           return;
         }
         const dataCategories = await CategoryApi.getList({
@@ -107,12 +110,15 @@ export default function BulletinSetting() {
           (item: CategoryInterface) => item.id
         );
 
-        updateOrCreateBoardLink({
-          ...boardSelected,
-          route: boardTypeSelected,
-          thema_id: data[0].id,
-          category_ids: category_ids,
-        });
+        updateOrCreateBoardLink(
+          {
+            ...boardSelected,
+            route: boardTypeSelected,
+            thema_id: data[0].id,
+            category_ids: category_ids,
+          },
+          true
+        );
       } else {
         showError(t("There are no thema containing this board type"));
       }
@@ -123,7 +129,11 @@ export default function BulletinSetting() {
     getListThema(boardTypeSelected);
   }, []);
 
-  const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
+  const updateOrCreateBoardLink = async (
+    boardLink: BoardLinkInterface,
+    reverse?: boolean
+  ) => {
+    let oldBoardLink = boardSelected;
     setBoardSelected(boardLink);
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
@@ -137,6 +147,7 @@ export default function BulletinSetting() {
       setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
+      if (reverse) setBoardSelected(oldBoardLink);
     }
   };
 
@@ -177,11 +188,14 @@ export default function BulletinSetting() {
         filter: `{"thema_id":"${thema_id}"}`,
       });
       const category_ids = data.map((item: CategoryInterface) => item.id);
-      updateOrCreateBoardLink({
-        ...boardSelected,
-        thema_id,
-        category_ids: category_ids,
-      });
+      updateOrCreateBoardLink(
+        {
+          ...boardSelected,
+          thema_id,
+          category_ids: category_ids,
+        },
+        true
+      );
     } catch (error) {}
   };
 
@@ -338,8 +352,8 @@ export default function BulletinSetting() {
                   updateOrCreateBoardLink({
                     ...boardSelected,
                     themas: value,
-                    thema_id: undefined,
-                    category_ids: undefined,
+                    thema_id: null,
+                    category_ids: null,
                   });
                 }
               }}

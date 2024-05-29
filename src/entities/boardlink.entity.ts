@@ -13,10 +13,10 @@ export interface BoardLinkInterface {
     accessible_user_type?: Array<string>;
     route?: string;
     geolocation_api_type?: string;
-    thema_id?: string;
+    thema_id?: string | null;
     keywords?: object;
     thema?: ThemaInterface;
     themas?: Array<any>;
     categories?: Array<any>;
-    category_ids?: Array<string>;
+    category_ids?: Array<string> | null;
 }

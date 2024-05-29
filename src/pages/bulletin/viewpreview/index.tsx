@@ -22,7 +22,7 @@ export default function BulletinPreview() {
     if (boardSelected) {
       const url = createBoardLink(
         boardSelected.route ?? "",
-        boardSelected.thema_id
+        boardSelected.thema_id ?? ""
       );
       setUrl(URL_SEARCH_SITE + url);
     }
