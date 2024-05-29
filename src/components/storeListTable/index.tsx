@@ -46,7 +46,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [listStore, setListStore] = useState<any>();
+  const [listStore, setListStore] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isShowModalMap, setIsShowModalMap] = useState(false);
   const [isShowImages, setIsShowImages] = useState(false);
@@ -627,7 +627,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         selectedKeys={listRowSelected}
         className={className}
         columns={dynamicColumns}
-        data={listStore?.map((item: any) => ({ ...item, key: item.id }))}
+        data={(listStore || [])?.map((item: any) => ({ ...item, key: item.id }))}
         pagination={{
           current: currentPage,
           pageSize: limit,
