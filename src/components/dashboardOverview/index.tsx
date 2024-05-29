@@ -28,27 +28,29 @@ export default function DashboardOverviewTable(props: DashboardOverviewProps) {
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
 
   const getInfoAnalytics = async () => {
-    const params = {
-      property: "properties/244725891",
-      dimensions: [{ name: "firstUserPrimaryChannelGroup" }],
-      metrics: [
-        { name: "activeUsers" },
-        { name: "bounceRate" },
-        { name: "eventCount" },
-      ],
-      dateRanges: [
-        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
-      ],
-    };
-    let result = await analyticsApi.getInfo(params);
+    try {
+      const params = {
+        property: "properties/244725891",
+        dimensions: [{ name: "firstUserPrimaryChannelGroup" }],
+        metrics: [
+          { name: "activeUsers" },
+          { name: "bounceRate" },
+          { name: "eventCount" },
+        ],
+        dateRanges: [
+          { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+        ],
+      };
+      let result = await analyticsApi.getInfo(params);
 
-    const convertedData = result.data[0].rows.map((item: any) => ({
-      name: item.dimensionValues[0].value,
-      userActive: item.metricValues[0].value,
-      bounceRate: item.metricValues[1].value,
-      eventCount: item.metricValues[2].value,
-    }));
-    setData(convertedData);
+      const convertedData = result.data[0].rows.map((item: any) => ({
+        name: item.dimensionValues[0].value,
+        userActive: item.metricValues[0].value,
+        bounceRate: item.metricValues[1].value,
+        eventCount: item.metricValues[2].value,
+      }));
+      setData(convertedData);
+    } catch (error) {}
   };
   useEffect(() => {
     getInfoAnalytics();

@@ -20,6 +20,7 @@ import {
   SettingPage,
   HelpCenter,
   PointHistoryPage,
+  ToolBoxPage
 } from "../pages";
 import { Url } from "./paths";
 const routes = [
@@ -135,6 +136,11 @@ const routes = [
   {
     path: Url.setting,
     element: <SettingPage />,
+  },
+  {
+    path: Url.toolbox,
+    element: <ToolBoxPage/>,
+    custom: true,
   },
 ];
 export default routes;

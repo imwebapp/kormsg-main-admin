@@ -34,32 +34,34 @@ export default function DashboardInflowDomaineTable(
   };
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
   const getInfoAnalytics = async () => {
-    const params = {
-      property: "properties/244725891",
-      dimensions: [{ name: "fullPageUrl" }],
-      metrics: [{ name: "activeUsers" }],
-      dateRanges: [
-        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: "fullPageUrl",
-          stringFilter: { matchType: "BEGINS_WITH", value: "kormsg.com" },
+    try {
+      const params = {
+        property: "properties/244725891",
+        dimensions: [{ name: "fullPageUrl" }],
+        metrics: [{ name: "activeUsers" }],
+        dateRanges: [
+          { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+        ],
+        dimensionFilter: {
+          filter: {
+            fieldName: "fullPageUrl",
+            stringFilter: { matchType: "BEGINS_WITH", value: "kormsg.com" },
+          },
         },
-      },
-    };
+      };
 
-    let result = await analyticsApi.getInfo(params);
+      let result = await analyticsApi.getInfo(params);
 
-    const convertedData = result.data[0].rows.map((item: any) => ({
-      url: item.dimensionValues[0].value,
-      click: item.metricValues[0].value,
-    }));
-    if (isViewAll) {
-      setData(convertedData);
-    } else {
-      setData(convertedData.slice(0, 10));
-    }
+      const convertedData = result.data[0].rows.map((item: any) => ({
+        url: item.dimensionValues[0].value,
+        click: item.metricValues[0].value,
+      }));
+      if (isViewAll) {
+        setData(convertedData);
+      } else {
+        setData(convertedData.slice(0, 10));
+      }
+    } catch (error) {}
   };
   useEffect(() => {
     getInfoAnalytics();
