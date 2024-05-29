@@ -20,7 +20,6 @@ const DashboardLayout = ({ children }: any) => {
   const _getDataSeo = async () => {
     const response: any = await seoApi.getSEO();
     if (response.code === 200) {
-      console.log('response getSEO', response);
       setLogo(response?.results?.object?.avatar);
     }
   }
@@ -33,8 +32,7 @@ const DashboardLayout = ({ children }: any) => {
       };
       let result: any = await settingApi.getList(params);
       if (result.code === 200) {
-        console.log('result getSettingPage', result);
-        setAppName(result?.results?.objects?.rows[0].value);
+        setAppName(result?.results?.objects?.rows[0]?.value);
       }
     } catch (error) { }
   };
