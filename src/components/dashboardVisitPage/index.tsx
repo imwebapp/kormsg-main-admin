@@ -25,24 +25,26 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
   const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
 
   const getInfoAnalytics = async () => {
-    const params = {
-      property: "properties/244725891",
-      dimensions: [{ name: "city" }],
-      metrics: [{ name: "activeUsers" }],
-      dateRanges: [
-        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
-      ],
-    };
-    let result = await analyticsApi.getInfo(params);
-    const convertedData = result.data[0].rows.map((item: any) => ({
-      city: item.dimensionValues[0].value,
-      user: item.metricValues[0].value,
-    }));
-    if (isViewAll) {
-      setData(convertedData);
-    } else {
-      setData(convertedData.slice(0, 10));
-    }
+    try {
+      const params = {
+        property: "properties/244725891",
+        dimensions: [{ name: "city" }],
+        metrics: [{ name: "activeUsers" }],
+        dateRanges: [
+          { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+        ],
+      };
+      let result = await analyticsApi.getInfo(params);
+      const convertedData = result.data[0].rows.map((item: any) => ({
+        city: item.dimensionValues[0].value,
+        user: item.metricValues[0].value,
+      }));
+      if (isViewAll) {
+        setData(convertedData);
+      } else {
+        setData(convertedData.slice(0, 10));
+      }
+    } catch (error) {}
   };
   useEffect(() => {
     getInfoAnalytics();
