@@ -69,10 +69,10 @@ export const InformationTab = (props: IProps) => {
     setOpenModalEditInfo(false);
     setFormDataEditInfo({
       account_type: dataUser?.account_type || "",
-      group_id: dataUser.group_id || "",
-      nickname: dataUser.nickname || "",
-      username: dataUser.username || "",
-      post_limit: dataUser.post_limit || 0,
+      group_id: dataUser?.group_id || "",
+      nickname: dataUser?.nickname || "",
+      username: dataUser?.username || "",
+      post_limit: dataUser?.post_limit || 0,
     });
   };
 
@@ -187,6 +187,24 @@ export const InformationTab = (props: IProps) => {
       .catch((err) => {
         console.log("err getList PaymentHistory API", err);
       });
+
+    //get user 
+    userApi.getUser(props?.dataUser?.id, {
+      fields: JSON.stringify([
+        "$all",
+      ]),
+    }).then((res: any) => {
+      setDataUser(res?.results?.object);
+      setFormDataEditInfo({
+        account_type: res?.results?.object?.account_type,
+        group_id: res?.results?.object?.group_id,
+        nickname: res?.results?.object?.nickname,
+        username: res?.results?.object?.username,
+        post_limit: res?.results?.object?.post_limit,
+      });
+    }).catch((err) => {
+      console.log("err get user: ", err);
+    });
   }, []);
 
   return (
