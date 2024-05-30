@@ -35,6 +35,7 @@ import { BoardLinkApi } from "../../apis/boardLinkApi";
 import { ReservationPart } from "./components/ReservationPart";
 import { HOLIDAY_SETTING, LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
 import axios from "axios";
+import { SelectAddress } from "./components/SelectAddress";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -1001,14 +1002,33 @@ const NewStore = () => {
               onChange={(value) => handleInputChange("storeNumber", value)}
             />
             <div>
-              <div onClick={handleClickPostalCode}>
+              {/* <div onClick={handleClickPostalCode}>
                 <BaseInput
                   title="매장 주소(위치기반 적용)"
                   placeholder="주소입력"
                   value={formDataPage1.storeAddress}
                 // onChange={(value) => handleInputChange('storeAddress', value)}
                 />
-              </div>
+              </div> */}
+              <SelectAddress
+                value={{
+                  fullAddress: formDataPage1.storeAddress,
+                  lat: formDataPage1.latitude,
+                  lng: formDataPage1.longitude,
+                }}
+                onChange={(value: {
+                  fullAddress: string;
+                  lat: number;
+                  lng: number;
+                }) => {
+                  setFormDataPage1({
+                    ...formDataPage1,
+                    latitude: value.lat || 37.3957122,
+                    longitude: value.lng || 127.1105181,
+                    storeAddress: value.fullAddress || "",
+                  });
+                }}
+              />
               <BaseInput
                 placeholder="상세주소 입력"
                 value={formDataPage1.storeAddressDetails}
