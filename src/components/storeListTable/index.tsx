@@ -239,16 +239,16 @@ export default function StoreListTable(props: StoreListTableProps) {
       // default event on going
       return '["$all",{"events":["$all",{"$filter":{}}]}]';
     }
-    const convertFilter: any = {};
-    if (valueSearch !== "") {
-      convertFilter["$filter"] = {
-        $or: [
-          { username: { $ilike: `%${valueSearch}%` } },
-          { nickname: { $ilike: `%${valueSearch}%` } },
-          { email: { $ilike: `%${valueSearch}%` } },
-        ],
-      };
-    }
+    // const convertFilter: any = {};
+    // if (valueSearch !== "") {
+    //   convertFilter["$filter"] = {
+    //     $or: [
+    //       { username: { $ilike: `%${valueSearch}%` } },
+    //       { nickname: { $ilike: `%${valueSearch}%` } },
+    //       { email: { $ilike: `%${valueSearch}%` } },
+    //     ],
+    //   };
+    // }
 
     // {"user":["$all",${JSON.stringify(
     //   convertFilter
@@ -259,9 +259,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
     //{"user":["$all",{"new_group":["$all"]}]}
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",{"new_group":["name"]},${JSON.stringify(
-      convertFilter
-    )}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",{"new_group":["name"]}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
 
     return fields;
   };
@@ -294,6 +292,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         fields: fieldsCustom,
         filter: filterCustom,
         order: orderCustom,
+        search_value: valueSearch,
       })
       .then((res: any) => {
         setListStore(res.results.objects.rows);
@@ -627,7 +626,10 @@ export default function StoreListTable(props: StoreListTableProps) {
         selectedKeys={listRowSelected}
         className={className}
         columns={dynamicColumns}
-        data={(listStore || [])?.map((item: any) => ({ ...item, key: item.id }))}
+        data={(listStore || [])?.map((item: any) => ({
+          ...item,
+          key: item.id,
+        }))}
         pagination={{
           current: currentPage,
           pageSize: limit,
