@@ -4,31 +4,31 @@ import {
   Popconfirm,
   Popover,
   TableColumnsType,
-} from 'antd';
-import { useTranslation } from 'react-i18next';
-import { BaseTable, BaseText, CustomButton } from '../../../components';
-import Images from '../../../assets/gen';
-import { useEffect, useState } from 'react';
-import { BaseInput } from '../../../components/input/BaseInput';
-import { BaseModal2 } from '../../../components/modal/BaseModal2';
-import { ThemaDetail } from './thema_detail';
+} from "antd";
+import { useTranslation } from "react-i18next";
+import { BaseTable, BaseText, CustomButton } from "../../../components";
+import Images from "../../../assets/gen";
+import { useEffect, useState } from "react";
+import { BaseInput } from "../../../components/input/BaseInput";
+import { BaseModal2 } from "../../../components/modal/BaseModal2";
+import { ThemaDetail } from "./thema_detail";
 import {
   BOARD,
   SELECT_ALL,
   USER_PERMISSION,
   USER_PERMISSION_TEXT,
-} from '../../../utils/constants';
+} from "../../../utils/constants";
 import {
   CategoryInterface,
   TagThemaInterface,
   ThemaInterface,
-} from '../../../entities';
-import { ThemaApi } from '../../../apis/themaApi';
-import { showError, showSuccess } from '../../../utils/showToast';
-import { CategoryApi } from '../../../apis/categoryApi';
-import { TagApi } from '../../../apis/tagApi';
-import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
-import { groupApi } from '../../../apis/groupApi';
+} from "../../../entities";
+import { ThemaApi } from "../../../apis/themaApi";
+import { showError, showSuccess } from "../../../utils/showToast";
+import { CategoryApi } from "../../../apis/categoryApi";
+import { TagApi } from "../../../apis/tagApi";
+import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
+import { groupApi } from "../../../apis/groupApi";
 
 export default function ThemaTable() {
   const { t } = useTranslation();
@@ -85,8 +85,8 @@ export default function ThemaTable() {
 
   const updateThema = async (data: ThemaInterface) => {
     try {
-      await ThemaApi.updateThema(data.id || '', data);
-      showSuccess('Success');
+      await ThemaApi.updateThema(data.id || "", data);
+      showSuccess("Success");
     } catch (error) {
       showError(error);
     }
@@ -100,7 +100,7 @@ export default function ThemaTable() {
     try {
       await ThemaApi.deleteThema(id);
       getListThema();
-      showSuccess('Success');
+      showSuccess("Success");
     } catch (error) {
       showError(error);
     }
@@ -110,7 +110,7 @@ export default function ThemaTable() {
     try {
       await ThemaApi.cloneThema(id);
       getListThema();
-      showSuccess('Success');
+      showSuccess("Success");
     } catch (error) {
       showError(error);
     }
@@ -118,29 +118,29 @@ export default function ThemaTable() {
 
   const columns: TableColumnsType<ThemaInterface> = [
     {
-      title: t('No'),
+      title: t("No"),
       width: 60,
       render: (value, record, index) => <BaseText>{index + 1}</BaseText>,
     },
     {
-      title: t('Id'),
+      title: t("Id"),
       width: 200,
-      dataIndex: 'id',
+      dataIndex: "id",
     },
     {
-      title: t('Name'),
-      dataIndex: 'name',
+      title: t("Name"),
+      dataIndex: "name",
     },
     {
-      title: t('Tags'),
+      title: t("Tags"),
       render: ({ id }) => (
         <Popover
           onOpenChange={() => {
             setLastOpenTag(Date.now());
           }}
           content={<ListTags lastOpen={lastOpenTag} themaId={id} />}
-          placement='bottomLeft'
-          trigger='click'
+          placement="bottomLeft"
+          trigger="click"
         >
           <CustomButton locale primary>
             Select tags
@@ -149,15 +149,15 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('List Category'),
+      title: t("List Category"),
       render: ({ id }) => (
         <Popover
           onOpenChange={() => {
             setLastOpenCate(Date.now());
           }}
           content={<ListCategory lastOpen={lastOpenCate} themaId={id} />}
-          placement='bottomLeft'
-          trigger='click'
+          placement="bottomLeft"
+          trigger="click"
           forceRender={true}
         >
           <CustomButton locale primary>
@@ -167,10 +167,10 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('View permission'),
+      title: t("View permission"),
       width: 220,
       render: ({ view_group_ids, view_user_permissions, id }) => (
-        <div className='flex flex-col gap-y-2'>
+        <div className="flex flex-col gap-y-2">
           <BaseInputSelect
             multiple
             onChange={(value: any) => {
@@ -179,9 +179,9 @@ export default function ThemaTable() {
             defaultValue={view_user_permissions}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={Object.values(USER_PERMISSION).map((item, index) => {
               return {
                 label: t(USER_PERMISSION_TEXT[item]),
@@ -197,11 +197,11 @@ export default function ThemaTable() {
             defaultValue={view_group_ids}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={[
-              { label: t('All users'), value: SELECT_ALL },
+              { label: t("All users"), value: SELECT_ALL },
               ...groupUsers.map((item: any, index) => {
                 return {
                   label: item.name,
@@ -214,10 +214,10 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('Creation Permission'),
+      title: t("Creation Permission"),
       width: 220,
       render: ({ post_user_permissions, post_group_ids, id }) => (
-        <div className='flex flex-col gap-y-2'>
+        <div className="flex flex-col gap-y-2">
           <BaseInputSelect
             multiple
             onChange={(value: any) => {
@@ -226,9 +226,9 @@ export default function ThemaTable() {
             defaultValue={post_user_permissions}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={Object.values(USER_PERMISSION).map((item, index) => {
               return {
                 label: t(USER_PERMISSION_TEXT[item]),
@@ -244,11 +244,11 @@ export default function ThemaTable() {
             defaultValue={post_group_ids}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={[
-              { label: t('All users'), value: SELECT_ALL },
+              { label: t("All users"), value: SELECT_ALL },
               ...groupUsers.map((item: any, index) => {
                 return {
                   label: item.name,
@@ -261,10 +261,10 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('Comment & review permission'),
+      title: t("Comment & review permission"),
       width: 220,
       render: ({ comment_user_permissions, comment_group_ids, id }) => (
-        <div className='flex flex-col gap-y-2'>
+        <div className="flex flex-col gap-y-2">
           <BaseInputSelect
             multiple
             onChange={(value: any) => {
@@ -273,9 +273,9 @@ export default function ThemaTable() {
             defaultValue={comment_user_permissions}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={Object.values(USER_PERMISSION).map((item, index) => {
               return {
                 label: t(USER_PERMISSION_TEXT[item]),
@@ -291,11 +291,11 @@ export default function ThemaTable() {
             defaultValue={comment_group_ids}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
-            placeholder='Select'
+            placeholder="Select"
             options={[
-              { label: t('All users'), value: SELECT_ALL },
+              { label: t("All users"), value: SELECT_ALL },
               ...groupUsers.map((item: any, index) => {
                 return {
                   label: item.name,
@@ -308,20 +308,20 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('Reservation function point payment'),
+      title: t("Reservation function point payment"),
       width: 160,
       render: ({ bonus_point, id }) => (
         <BaseInputSelect
           onChange={(value: any) => {
-            updateThema({ id, bonus_point: value === 'ON' ? true : false });
+            updateThema({ id, bonus_point: value === "ON" ? true : false });
           }}
-          defaultValue={bonus_point ? 'ON' : 'OFF'}
+          defaultValue={bonus_point ? "ON" : "OFF"}
           required={true}
           allowClear={false}
-          size='middle'
+          size="middle"
           textInputSize={12}
-          placeholder='Select'
-          options={['ON', 'OFF'].map((item, index) => {
+          placeholder="Select"
+          options={["ON", "OFF"].map((item, index) => {
             return {
               label: item,
               value: item,
@@ -331,7 +331,7 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('Review writing type'),
+      title: t("Review writing type"),
       width: 160,
       render: ({ review_require, id }) => (
         <BaseInputSelect
@@ -339,18 +339,18 @@ export default function ThemaTable() {
             updateThema({
               id,
               review_require:
-                value === 'Available upon reservation' ? true : false,
+                value === "Available upon reservation" ? true : false,
             });
           }}
           defaultValue={
-            review_require ? 'Available upon reservation' : 'Anyone can do it'
+            review_require ? "Available upon reservation" : "Anyone can do it"
           }
           required={true}
           allowClear={false}
-          size='middle'
+          size="middle"
           textInputSize={12}
-          placeholder='Select'
-          options={['Available upon reservation', 'Anyone can do it'].map(
+          placeholder="Select"
+          options={["Available upon reservation", "Anyone can do it"].map(
             (item, index) => {
               return {
                 label: t(item),
@@ -362,13 +362,13 @@ export default function ThemaTable() {
       ),
     },
     {
-      title: t('Actions'),
+      title: t("Actions"),
       render: ({ id }, record) => (
-        <div className='flex flex-row items-center'>
+        <div className="flex flex-row items-center">
           <img
             onClick={() => cloneThema(id)}
             src={Images.copy}
-            className='w-6 h-6 cursor-pointer'
+            className="w-6 h-6 cursor-pointer"
           />
           <img
             onClick={() => {
@@ -376,14 +376,14 @@ export default function ThemaTable() {
               setThemaUpdating(record);
             }}
             src={Images.edit}
-            className='w-6 h-6 ml-3 cursor-pointer'
+            className="w-6 h-6 ml-3 cursor-pointer"
           />
           <Popconfirm
             onConfirm={() => deleteThema(id)}
-            title={t('Delete the thema')}
-            description={t('Are you sure to delete this thema?')}
+            title={t("Delete the thema")}
+            description={t("Are you sure to delete this thema?")}
           >
-            <img src={Images.trash} className='w-5 h-5 ml-3 cursor-pointer' />
+            <img src={Images.trash} className="w-5 h-5 ml-3 cursor-pointer" />
           </Popconfirm>
         </div>
       ),
@@ -391,9 +391,9 @@ export default function ThemaTable() {
   ];
 
   return (
-    <div className='flex flex-col h-full'>
+    <div className="flex flex-col h-full">
       <BaseTable
-        scroll={{ x: 'max-content', y: 'calc(80vh - 180px)' }}
+        scroll={{ x: "max-content", y: "calc(80vh - 180px)" }}
         sticky={{ offsetHeader: -20 }}
         pagination={!{ pageSize: 100 }}
         columns={columns}
@@ -401,17 +401,17 @@ export default function ThemaTable() {
       />
       <div
         onClick={() => setOpenModalCreateThema(true)}
-        className='flex flex-row gap-1 cursor-pointer mt-4'
+        className="flex flex-row gap-1 cursor-pointer mt-4"
       >
-        <img src={Images.plus2} className='w-6 h-6' />
-        <BaseText locale medium size={16} className='text-primary'>
+        <img src={Images.plus2} className="w-6 h-6" />
+        <BaseText locale medium size={16} className="text-primary">
           Create a thema
         </BaseText>
       </div>
 
       {/* Create thema */}
       <BaseModal2
-        title='New Thema'
+        title="New Thema"
         isOpen={openModalCreateThema}
         isHideAction
         afterOpenChange={(value: any) => {
@@ -431,7 +431,7 @@ export default function ThemaTable() {
 
       {/* Edit thema */}
       <BaseModal2
-        title='Edit Thema'
+        title="Edit Thema"
         isOpen={openModalEditThema}
         isHideAction
         afterOpenChange={(value: any) => {
@@ -480,14 +480,14 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
       await Promise.all(
         categories.map(async (item: CategoryInterface) => {
           if (item.id) {
-            await CategoryApi.updateCategory(item.id || '', item);
+            await CategoryApi.updateCategory(item.id || "", item);
           } else {
             await CategoryApi.createCategory(item);
           }
         })
       );
       getCategory();
-      showSuccess('Success');
+      showSuccess("Success");
     } catch (error) {
       showError(error);
     }
@@ -495,8 +495,10 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
 
   const deleteCategory = async (item: CategoryInterface) => {
     try {
-      await CategoryApi.deleteCategory(item.id || '');
-      showSuccess('Success');
+      if (item.id) {
+        await CategoryApi.deleteCategory(item.id || "");
+        showSuccess("Success");
+      }
       getCategory();
     } catch (error) {
       showError(error);
@@ -504,19 +506,19 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
   };
 
   return (
-    <div className='flex flex-col w-[400px] max-h-[400px]'>
-      <div className='flex flex-row p-4 border-b'>
+    <div className="flex flex-col w-[400px] max-h-[400px]">
+      <div className="flex flex-row p-4 border-b">
         <BaseText locale bold size={18}>
           List Category
         </BaseText>
       </div>
-      <div className='overflow-auto'>
+      <div className="overflow-auto">
         {categories.map((item, index) => {
           return (
-            <div key={index} className='flex flex-row mx-4 mt-4 items-center'>
+            <div key={index} className="flex flex-row mx-4 mt-4 items-center">
               <BaseInput
-                className='flex-1'
-                styleInputContainer='h-[40px]'
+                className="flex-1"
+                styleInputContainer="h-[40px]"
                 onChange={(value) => {
                   const data = [...categories];
                   data[index].name = value;
@@ -531,19 +533,19 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
                       setCategories(data);
                     }}
                     defaultValue={item.theme_color}
-                    size='small'
+                    size="small"
                   />
                 }
-                placeholder='Enter Category'
+                placeholder="Enter Category"
               />
               <Popconfirm
                 onConfirm={() => deleteCategory(item)}
-                title={t('Delete the category')}
-                description={t('Are you sure to delete this category?')}
+                title={t("Delete the category")}
+                description={t("Are you sure to delete this category?")}
               >
                 <img
                   src={Images.trash}
-                  className='w-6 h-6 ml-3 cursor-pointer'
+                  className="w-6 h-6 ml-3 cursor-pointer"
                 />
               </Popconfirm>
             </div>
@@ -554,23 +556,23 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
             const data = [
               ...categories,
               {
-                name: '',
+                name: "",
                 thema_id: themaId,
-                theme_color: '#1677ff',
+                theme_color: "#1677ff",
               },
             ];
             setCategories(data);
           }}
-          className='flex flex-row gap-1 cursor-pointer m-4'
+          className="flex flex-row gap-1 cursor-pointer m-4"
         >
-          <img src={Images.plus2} className='w-6 h-6' />
-          <BaseText locale medium size={16} className='text-primary'>
+          <img src={Images.plus2} className="w-6 h-6" />
+          <BaseText locale medium size={16} className="text-primary">
             Create a category
           </BaseText>
         </div>
       </div>
-      <div className='flex flex-row justify-center mt-4'>
-        <CustomButton onClick={submit} className='w-[100px]' primary locale>
+      <div className="flex flex-row justify-center mt-4">
+        <CustomButton onClick={submit} className="w-[100px]" primary locale>
           Save
         </CustomButton>
       </div>
@@ -604,14 +606,14 @@ const ListTags = ({ lastOpen, themaId }: any) => {
       await Promise.all(
         tags.map(async (item: TagThemaInterface) => {
           if (item.id) {
-            await TagApi.updateTag(item.id || '', item);
+            await TagApi.updateTag(item.id || "", item);
           } else {
             await TagApi.createTag(item);
           }
         })
       );
       getTags();
-      showSuccess('Success');
+      showSuccess("Success");
     } catch (error) {
       showError(error);
     }
@@ -619,8 +621,10 @@ const ListTags = ({ lastOpen, themaId }: any) => {
 
   const deleteTag = async (item: TagThemaInterface) => {
     try {
-      await TagApi.deleteTag(item.id || '');
-      showSuccess('Success');
+      if (item.id) {
+        await TagApi.deleteTag(item.id || "");
+        showSuccess("Success");
+      }
       getTags();
     } catch (error) {
       showError(error);
@@ -628,35 +632,35 @@ const ListTags = ({ lastOpen, themaId }: any) => {
   };
 
   return (
-    <div className='flex flex-col w-[400px] max-h-[400px]'>
-      <div className='flex flex-row p-4 border-b'>
+    <div className="flex flex-col w-[400px] max-h-[400px]">
+      <div className="flex flex-row p-4 border-b">
         <BaseText locale bold size={18}>
           List Tags
         </BaseText>
       </div>
-      <div className='overflow-auto'>
+      <div className="overflow-auto">
         {tags.map((item, index) => {
           return (
-            <div key={index} className='flex flex-row mx-4 mt-4 items-center'>
+            <div key={index} className="flex flex-row mx-4 mt-4 items-center">
               <BaseInput
-                className='flex-1'
-                styleInputContainer='h-[40px]'
+                className="flex-1"
+                styleInputContainer="h-[40px]"
                 onChange={(value) => {
                   const data = [...tags];
                   data[index].name = value;
                   setTags(data);
                 }}
                 defaultValue={item.name}
-                placeholder='Enter Tag'
+                placeholder="Enter Tag"
               />
               <Popconfirm
                 onConfirm={() => deleteTag(item)}
-                title={t('Delete the tag')}
-                description={t('Are you sure to delete this tag?')}
+                title={t("Delete the tag")}
+                description={t("Are you sure to delete this tag?")}
               >
                 <img
                   src={Images.trash}
-                  className='w-6 h-6 ml-3 cursor-pointer'
+                  className="w-6 h-6 ml-3 cursor-pointer"
                 />
               </Popconfirm>
             </div>
@@ -667,23 +671,23 @@ const ListTags = ({ lastOpen, themaId }: any) => {
             const data = [
               ...tags,
               {
-                name: '',
+                name: "",
                 thema_id: themaId,
               },
             ];
             setTags(data);
           }}
-          className='flex flex-row gap-1 cursor-pointer m-4'
+          className="flex flex-row gap-1 cursor-pointer m-4"
         >
-          <img src={Images.plus2} className='w-6 h-6' />
-          <BaseText locale medium size={16} className='text-primary'>
+          <img src={Images.plus2} className="w-6 h-6" />
+          <BaseText locale medium size={16} className="text-primary">
             Create a tag
           </BaseText>
         </div>
       </div>
 
-      <div className='flex flex-row justify-center mt-4'>
-        <CustomButton onClick={submit} className='w-[100px]' primary locale>
+      <div className="flex flex-row justify-center mt-4">
+        <CustomButton onClick={submit} className="w-[100px]" primary locale>
           Save
         </CustomButton>
       </div>

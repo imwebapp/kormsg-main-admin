@@ -566,22 +566,20 @@ export default function BulletinSetting() {
       {_buildMapBrand()}
       {_buildTags()}
 
-      {boardSelected.id && boardSelected.id !== NEW_ID && (
-        <Popconfirm
-          onConfirm={deleteBoardLink}
-          title={t("Delete")}
-          description={t("Are you sure to delete")}
+      <Popconfirm
+        onConfirm={deleteBoardLink}
+        title={t("Delete")}
+        description={t("Are you sure to delete")}
+      >
+        <CustomButton
+          className="mt-5 bg-dustRed50 border-none"
+          classNameTitle="text-dustRed500"
+          medium
+          locale
         >
-          <CustomButton
-            className="mt-5 bg-dustRed50 border-none"
-            classNameTitle="text-dustRed500"
-            medium
-            locale
-          >
-            Delete Main
-          </CustomButton>
-        </Popconfirm>
-      )}
+          Delete Main
+        </CustomButton>
+      </Popconfirm>
 
       <BaseModal2
         width="80vw"
