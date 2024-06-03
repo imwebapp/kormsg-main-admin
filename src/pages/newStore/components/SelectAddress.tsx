@@ -68,7 +68,7 @@ export const SelectAddress = (props: IProps) => {
         <>
             <div onClick={() => { setOpenListSelectAddress(true) }}>
                 <BaseInput
-                    title="매장 주소(위치기반 적용)"
+                    // title="매장 주소(위치기반 적용)"
                     placeholder="주소입력"
                     value={value?.fullAddress}
                 />
