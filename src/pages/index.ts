@@ -19,6 +19,8 @@ import BlogPage from "./blog";
 import SettingPage from "./setting";
 import HelpCenter from "./helpCenter";
 import PointHistoryPage from "./pointHistory";
+import ToolBoxPage from "./toolbox";
+import SiteLinkPage from "./site";
 
 export {
   Login,
@@ -42,4 +44,6 @@ export {
   SettingPage,
   HelpCenter,
   PointHistoryPage,
+  ToolBoxPage,
+  SiteLinkPage,
 };

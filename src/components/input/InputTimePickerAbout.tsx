@@ -52,7 +52,7 @@ export const InputTimePicker: React.FC<TimePickerProps> = ({
 	}
 
 	const handleHourBlur = () => {
-setTimeout(() => {
+		setTimeout(() => {
 			setIsHourFocused(false)
 		}, 300)
 	}
@@ -78,14 +78,17 @@ setTimeout(() => {
 							).map((hour, index) => (
 								<MenuItem
 									key={hour}
-									style={{
-										color: index > 23 ? '#0866FF' : 'black',
-										fontSize: 16,
-										fontWeight: '700',
-									}}
 									onClick={() => handleHourChange(hour)}
 								>
-									{String(hour).padStart(2, '0')}
+									<BaseText
+										size={16}
+										bold
+										color={index > 23
+											? 'text-primary'
+											: 'text-black'}
+									>
+										{String(hour).padStart(2, '0')}
+									</BaseText>
 								</MenuItem>
 							))}
 						</Menu>

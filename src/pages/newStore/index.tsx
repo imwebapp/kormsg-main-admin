@@ -34,12 +34,15 @@ import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
 import { BoardLinkApi } from "../../apis/boardLinkApi";
 import { ReservationPart } from "./components/ReservationPart";
 import { HOLIDAY_SETTING, LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
+import axios from "axios";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
   storeName: string;
   storeNumber: string;
   storeAddress: string;
+  latitude: number;
+  longitude: number;
   storeAddressDetails: string;
   storeImages: File[];
   leave_day?: boolean;
@@ -285,6 +288,8 @@ const NewStore = () => {
     storeName: "",
     storeNumber: "",
     storeAddress: "",
+    latitude: 37.3957122,
+    longitude: 127.1105181,
     storeAddressDetails: "",
     storeImages: [],
     leave_day: true,
@@ -344,7 +349,24 @@ const NewStore = () => {
   const scriptUrl = "URL_TO_DAUM_POSTCODE_SCRIPT";
   const open = useDaumPostcodePopup();
 
-  const handleComplete = (data: any) => {
+  const getCoordinates = async (address: string) => {
+    const fullAddress = address;
+    try {
+      const response = await axios.get(`https://photon.komoot.io/api/?q=${fullAddress}&limit=1`);
+      if (response.status === 200) {
+        const location = response.data.features[0].geometry.coordinates;
+        setFormDataPage1({ ...formDataPage1, latitude: location[1], longitude: location[0], storeAddress: fullAddress })
+      } else {
+        console.error('Geocoding failed:', response.data.status);
+        setFormDataPage1({ ...formDataPage1, latitude: 37.3957122, longitude: 127.1105181, storeAddress: fullAddress });
+      }
+    } catch (error) {
+      console.error('Error occurred while fetching geocode:', error);
+      setFormDataPage1({ ...formDataPage1, latitude: 37.3957122, longitude: 127.1105181, storeAddress: fullAddress });
+    }
+  };
+
+  const handleComplete = async (data: any) => {
     let fullAddress = data.address;
     let extractedPostalCode = data.zonecode;
     let extraAddress = "";
@@ -360,7 +382,7 @@ const NewStore = () => {
       fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
     }
 
-    handleInputChange("storeAddress", fullAddress);
+    await getCoordinates(fullAddress);
   };
 
   const handleClickPostalCode = () => {
@@ -451,8 +473,8 @@ const NewStore = () => {
         contact_phone: formDataPage1?.storeNumber,
         description: formDataPage2?.storeIntroduction,
         images: resultArrayImageConvert,
-        latitude: 37.3957122,
-        longitude: 127.1105181,
+        latitude: formDataPage1?.latitude,
+        longitude: formDataPage1?.longitude,
         leave_day: formDataPage1?.leave_day,
         working_day: formDataPage1?.working_day,
         holiday_setting: formDataPage1?.holiday_setting,
@@ -689,6 +711,8 @@ const NewStore = () => {
         storeName: storeCopyFunc?.title || "",
         storeNumber: storeCopyFunc?.contact_phone || "",
         storeAddress: storeCopyFunc?.address || "",
+        latitude: storeCopyFunc?.latitude || 37.3957122,
+        longitude: storeCopyFunc?.longitude || 127.1105181,
         storeAddressDetails: storeCopyFunc?.address_2 || "",
         storeImages: storeCopyFunc?.images || [],
         leave_day: typeof storeCopyFunc?.leave_day === 'boolean' ? storeCopyFunc?.leave_day : true,
@@ -761,6 +785,8 @@ const NewStore = () => {
         storeName: dataEditShop?.title || "",
         storeNumber: dataEditShop?.contact_phone || "",
         storeAddress: dataEditShop?.address || "",
+        latitude: dataEditShop?.latitude || 37.3957122,
+        longitude: dataEditShop?.longitude || 127.1105181,
         storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
         leave_day: typeof dataEditShop?.leave_day === 'boolean' ? dataEditShop?.leave_day : true,
@@ -829,6 +855,8 @@ const NewStore = () => {
               storeName: dataEditShop?.title || "",
               storeNumber: dataEditShop?.contact_phone || "",
               storeAddress: dataEditShop?.address || "",
+              latitude: dataEditShop?.latitude || 37.3957122,
+              longitude: dataEditShop?.longitude || 127.1105181,
               storeAddressDetails: dataEditShop?.address_2 || "",
               storeImages: dataEditShop?.images || [],
               leave_day: typeof dataEditShop?.leave_day === 'boolean' ? dataEditShop?.leave_day : true,

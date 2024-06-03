@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { Url } from "./paths";
 import { useEffect } from "react";
 import routes from "./routes";
@@ -8,9 +8,13 @@ import { useLocalStorage } from "../stores/localStorage";
 
 const Router = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { accessToken } = useLocalStorage((state) => state);
+
   useEffect(() => {
-    if (!accessToken) {
+    console.log("location", location.pathname);
+
+    if (!accessToken && location.pathname != Url.toolbox) {
       navigate(Url.login);
     } else {
       // navigate(Url.dashboard);
@@ -46,12 +50,10 @@ const Router = () => {
               item.path !== Url.login ? (
                 item.detail ? (
                   <DetailLayout>{item.element}</DetailLayout>
+                ) : item.custom ? (
+                  item.element
                 ) : (
-                  item.custom ? (
-                    item.element
-                  ) : (
-                    <DashboardLayout>{item.element}</DashboardLayout>
-                  )
+                  <DashboardLayout>{item.element}</DashboardLayout>
                 )
               ) : (
                 item.element

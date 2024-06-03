@@ -12,6 +12,7 @@
   "Blogs Manage": "Blogs Manage",
   "App Version": "App Version",
   "SEO Page": "SEO Page",
+  "Site Link": "Site Link",
   "Setting": "Setting",
   "Store Listing": "Store Listing",
   "Reservation details": "Reservation details",
@@ -397,7 +398,7 @@
   "평일/주말 달라요": "Different on weekdays/weekends",
   "24시간 운영해요.": "We are open 24 hours.",
   "설정하기": "Set",
-  "시간 추가":"Add time",
+  "시간 추가": "Add time",
   "휴게시간": "Break time",
   "평일(월~금)": "Weekdays (Mon-Fri)",
   "주말": "Weekends",
@@ -474,5 +475,6 @@
   "IOS APP URL": "IOS APP URL",
   "WEB URL": "WEB URL",
   "Phone number": "Phone number",
-  "입금자명": "Depositor name"
+  "입금자명": "Depositor name",
+  "Link collection" : "Link collection"
 }

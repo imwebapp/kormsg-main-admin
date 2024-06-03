@@ -25,35 +25,37 @@ export default function DashboardReferralTable(props: DashboardOverviewProps) {
   const [dateTimeSelect, setDateTimeSelect] = useState(["30daysAgo", "today"]);
 
   const getInfoAnalytics = async () => {
-    const params = {
-      property: "properties/244725891",
-      dimensions: [{ name: "browser" }, { name: "pageReferrer" }],
-      metrics: [{ name: "newUsers" }],
-      dateRanges: [
-        { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
-      ],
-      dimensionFilter: {
-        filter: {
-          stringFilter: {
-            matchType: "FULL_REGEXP",
-            caseSensitive: false,
-            value: "^.+$", // check not null
+    try {
+      const params = {
+        property: "properties/244725891",
+        dimensions: [{ name: "browser" }, { name: "pageReferrer" }],
+        metrics: [{ name: "newUsers" }],
+        dateRanges: [
+          { startDate: dateTimeSelect[0], endDate: dateTimeSelect[1] },
+        ],
+        dimensionFilter: {
+          filter: {
+            stringFilter: {
+              matchType: "FULL_REGEXP",
+              caseSensitive: false,
+              value: "^.+$", // check not null
+            },
+            fieldName: "pageReferrer",
           },
-          fieldName: "pageReferrer",
         },
-      },
-    };
-    let result = await analyticsApi.getInfo(params);
-    const convertedData = result.data[0].rows.map((item: any) => ({
-      communication: item.dimensionValues[0].value,
-      url: item.dimensionValues[1].value,
-      click: item.metricValues[0].value,
-    }));
-    if (isViewAll) {
-      setData(convertedData);
-    } else {
-      setData(convertedData.slice(0, 10));
-    }
+      };
+      let result = await analyticsApi.getInfo(params);
+      const convertedData = result.data[0].rows.map((item: any) => ({
+        communication: item.dimensionValues[0].value,
+        url: item.dimensionValues[1].value,
+        click: item.metricValues[0].value,
+      }));
+      if (isViewAll) {
+        setData(convertedData);
+      } else {
+        setData(convertedData.slice(0, 10));
+      }
+    } catch (error) {}
   };
   useEffect(() => {
     getInfoAnalytics();
