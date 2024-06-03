@@ -11,6 +11,8 @@ import { BaseInputSelect } from "../../components/input/BaseInputSelect";
 import { BaseInput } from "../../components/input/BaseInput";
 import { UploadApi } from "../../apis/uploadApi";
 import { showError, showSuccess } from "../../utils/showToast";
+import { BaseTableDnD } from "../../components/table/BaseTableDnD";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const SiteLinkPage = () => {
   const { t } = useTranslation();
@@ -315,24 +317,63 @@ const SiteLinkPage = () => {
       }
     } catch (error) {}
   };
+  const handleUpdateSite = async (id: string, site_category_id: string) => {
+    try {
+      const params = {
+        site_category_id: site_category_id,
+      };
+      const result: any = await siteLinkApi.editSite(params, id);
+      if (result.code === 200) {
+        getListSite(selectedButton);
+        getListSiteCategory();
+        showSuccess("Change Site Link Success");
+      }
+    } catch (error) {
+      showError(error);
+    }
+  };
+  const onDragEnd = (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.droppableId === result.source.droppableId) return;
+    handleUpdateSite(result.draggableId, result.destination.droppableId);
+
+    // function update
+  };
+  const onDragStartCate = () => {
+    // setLinkCateDragging(linkIndex);
+    console.log("SiteIndex");
+  };
   const listButton = () => {
     const handleButtonClick = (id: any) => {
       setSelectedButton(id);
     };
 
     return (
-      <div id="faqContainer" className="flex flex-row gap-4 overflow-x-auto">
+      <div
+        id="faqContainer"
+        className="flex flex-row gap-4 overflow-x-auto items-center"
+      >
         {listSiteCategory.map((item: any) => (
-          <CustomButton
-            key={item.id}
-            className="text-base h-11 font-medium rounded-full px-4"
-            style={getButtonStyle(item.id)}
-            onClick={() => handleButtonClick(item.id)}
-          >
-            <BaseText color={getTextColor(item.id)} size={16}>
-              {item.name}
-            </BaseText>
-          </CustomButton>
+          <Droppable droppableId={item?.id}>
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <CustomButton
+                  key={item.id}
+                  className="text-base h-11 font-medium rounded-full px-4"
+                  style={getButtonStyle(item.id)}
+                  onClick={() => handleButtonClick(item.id)}
+                >
+                  <BaseText color={getTextColor(item.id)} size={16}>
+                    {item.name}
+                  </BaseText>
+                </CustomButton>
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         ))}
       </div>
     );
@@ -458,7 +499,7 @@ const SiteLinkPage = () => {
       },
     ];
     return (
-      <BaseTable
+      <BaseTableDnD
         maxContent
         sticky={{ offsetHeader: 0 }}
         onSelectChange={onSelectChange}
@@ -767,9 +808,14 @@ const SiteLinkPage = () => {
 
   return (
     <div className="p-4 py-5">
-      {headerTable()}
-      {searchKeyword()}
-      {bodyTable()}
+      <DragDropContext
+        onDragStart={() => onDragStartCate()}
+        onDragEnd={onDragEnd}
+      >
+        {headerTable()}
+        {searchKeyword()}
+        {bodyTable()}
+      </DragDropContext>
       {listRowSelected.length > 0 && (
         <div className="fixed bottom-6 right-1/4 left-1/4">
           <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl justify-between">
@@ -784,7 +830,6 @@ const SiteLinkPage = () => {
               <button
                 className="justify-center px-6 py-3 text-lg font-bold leading-7 text-white whitespace-nowrap bg-red-600 rounded-[100px] max-md:px-5"
                 onClick={() => {
-                  // setOpenModalDeleteMultiComment(true);
                   setOpenModalDeleteMultiSite(true);
                 }}
               >
@@ -799,12 +844,6 @@ const SiteLinkPage = () => {
       {modalCreateCategory()}
       {modalDeleteSiteCategory()}
       {modalDeleteMultiSite()}
-      {/* {modalCategoryList()}
-          {modalCreateCategory()}
-          {modalDeleteFaqCategory()}
-          {modalModifyCategory()}
-          {modalDeleteCategory()}
-          {modalCreateFAQ()} */}
     </div>
   );
 };
