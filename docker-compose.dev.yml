@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  # CMS
+  cms-dev:
+    image: greenapps/new-cms-clone:dev
+    container_name: cms-clone-dev
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    ports:
+      - '3401:80'
+    # volumes:
+    #   - '.:/app'
+    restart: always
+    networks:
+      - dev_network
+networks:
+  dev_network:
+    driver: bridge

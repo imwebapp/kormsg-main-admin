@@ -30,78 +30,81 @@ export default function BasePieChart(props: PieChartProps) {
     });
   };
   const getInfoAnalyticsPlatform = async () => {
-    const paramsWeb = {
-      property: "properties/244725891",
-      dimensions: [{ name: "platformDeviceCategory" }],
-      metrics: [{ name: "screenPageViews" }],
-      dateRanges: [
-        {
-          startDate: date ? date[0] : "30daysAgo",
-          endDate: date ? date[1] : "today",
-        },
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: "platformDeviceCategory",
-          inListFilter: { values: ["web / desktop", "web / mobile"] },
-        },
-      },
-      orderBys: [
-        {
-          dimension: {
-            orderType: "NUMERIC",
-            dimensionName: "platformDeviceCategory",
+    try {
+      const paramsWeb = {
+        property: "properties/244725891",
+        dimensions: [{ name: "platformDeviceCategory" }],
+        metrics: [{ name: "screenPageViews" }],
+        dateRanges: [
+          {
+            startDate: date ? date[0] : "30daysAgo",
+            endDate: date ? date[1] : "today",
+          },
+        ],
+        dimensionFilter: {
+          filter: {
+            fieldName: "platformDeviceCategory",
+            inListFilter: { values: ["web / desktop", "web / mobile"] },
           },
         },
-      ],
-    };
-    const paramsApp = {
-      property: "properties/435982517",
-      dimensions: [{ name: "platform" }],
-      metrics: [{ name: "screenPageViews" }],
-      dateRanges: [
-        {
-          startDate: date ? date[0] : "30daysAgo",
-          endDate: date ? date[1] : "today",
-        },
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: "platform",
-          inListFilter: { values: ["Android", "iOS"] },
-        },
-      },
-      orderBys: [
-        {
-          dimension: {
-            orderType: "NUMERIC",
-            dimensionName: "platform",
+        orderBys: [
+          {
+            dimension: {
+              orderType: "NUMERIC",
+              dimensionName: "platformDeviceCategory",
+            },
           },
-        },
-      ],
-    };
-    let resultPlatformWeb = await analyticsApi.getInfo(paramsWeb);
-    let resultPlatformApp = await analyticsApi.getInfo(paramsApp);
-    const mergedResult = resultPlatformWeb?.data[0]?.rows?.concat(
-      resultPlatformApp?.data[0]?.rows
-    );
-
-    const convertedData = mergedResult.map((item: any) => {
-      const value = parseFloat(item?.metricValues[0]?.value);
-      const totalValue = mergedResult.reduce(
-        (acc: any, curr: any) => acc + parseFloat(curr?.metricValues[0]?.value),
-        0
-      );
-      const percentage = (value / totalValue) * 100;
-
-      return {
-        name: item.dimensionValues[0].value,
-        value: value,
-        percentage: `${percentage.toFixed(2)}%`,
+        ],
       };
-    });
+      const paramsApp = {
+        property: "properties/435982517",
+        dimensions: [{ name: "platform" }],
+        metrics: [{ name: "screenPageViews" }],
+        dateRanges: [
+          {
+            startDate: date ? date[0] : "30daysAgo",
+            endDate: date ? date[1] : "today",
+          },
+        ],
+        dimensionFilter: {
+          filter: {
+            fieldName: "platform",
+            inListFilter: { values: ["Android", "iOS"] },
+          },
+        },
+        orderBys: [
+          {
+            dimension: {
+              orderType: "NUMERIC",
+              dimensionName: "platform",
+            },
+          },
+        ],
+      };
+      let resultPlatformWeb = await analyticsApi.getInfo(paramsWeb);
+      let resultPlatformApp = await analyticsApi.getInfo(paramsApp);
+      const mergedResult = resultPlatformWeb?.data[0]?.rows?.concat(
+        resultPlatformApp?.data[0]?.rows
+      );
 
-    setData(convertedData);
+      const convertedData = mergedResult.map((item: any) => {
+        const value = parseFloat(item?.metricValues[0]?.value);
+        const totalValue = mergedResult.reduce(
+          (acc: any, curr: any) =>
+            acc + parseFloat(curr?.metricValues[0]?.value),
+          0
+        );
+        const percentage = (value / totalValue) * 100;
+
+        return {
+          name: item.dimensionValues[0].value,
+          value: value,
+          percentage: `${percentage.toFixed(2)}%`,
+        };
+      });
+
+      setData(convertedData);
+    } catch (error) {}
   };
 
   useEffect(() => {

@@ -1,22 +1,32 @@
 import { message as Toast } from "antd";
+import { Button, notification } from 'antd';
 
 export const showError = (error: any) => {
     try {
-        Toast.error(error?.response?.data?.message || error?.message || error || 'Error');
+        notification['error']({
+            message: 'Error',
+            description: error?.response?.data?.message || error?.message || error || 'Error',
+        });
     } catch (error) {
     }
 }
 
 export const showSuccess = (message: string) => {
     try {
-        Toast.success(message);
+        notification['success']({
+            message: 'Success',
+            description: message,
+        });
     } catch (error) {
     }
 }
 
 export const showInfo = (message: string) => {
     try {
-        Toast.info(message);
+        notification['info']({
+            message: '',
+            description: message,
+        });
     } catch (error) {
     }
 }

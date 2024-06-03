@@ -22,6 +22,9 @@ export const settingApi = {
   deleteFaqCategory: (id: any) => {
     return axiosClient.delete(`${FAQ_CATEGORY}/${id}`);
   },
+  deleteFaqSingleCategory: (id: any, params?: any) => {
+    return axiosClient.delete(`${FAQ_CATEGORY}/${id}`, { params });
+  },
   createFaq: (params: any) => {
     return axiosClient.post(`${FAQ}`, params);
   },
