@@ -89,6 +89,7 @@ export const BASE_URL_ANALYTICS = process.env.REACT_APP_BASE_URL_ANALYTICS; // a
 export const BASE_URL_LINK_SHOP = process.env.REACT_APP_BASE_URL_LINK_SHOP; // link shop
 export const BASE_URL_LINK_POST = process.env.REACT_APP_BASE_URL_LINK_POST; // link post
 export const URL_SEARCH_SITE = process.env.REACT_APP_URL_SEARCH_SITE;
+export const IS_TEST = process.env.REACT_APP_IS_TEST;
 
 export const RESERVATION_STATUS = {
   PENDING: "PENDING",
@@ -180,34 +181,34 @@ export const HOLIDAYS: {
   id: number;
   child?: { name: string; id: number }[];
 }[] = [
-  { name: "새해 첫날", id: 1 },
-  {
-    name: null,
-    id: 2,
-    child: [
-      { name: "연휴", id: 21 },
-      { name: "설날", id: 22 },
-      { name: "연휴", id: 23 },
-    ],
-  },
-  { name: "삼일절", id: 3 },
-  { name: "어린이날", id: 4 },
-  { name: "부처님 오신", id: 5 },
-  { name: "현충일", id: 6 },
-  { name: "광복절", id: 7 },
-  {
-    name: null,
-    id: 8,
-    child: [
-      { name: "연휴", id: 81 },
-      { name: "추석", id: 82 },
-      { name: "연휴", id: 83 },
-    ],
-  },
-  { name: "개천절", id: 9 },
-  { name: "한글날", id: 10 },
-  { name: "성탄절", id: 11 },
-];
+    { name: "새해 첫날", id: 1 },
+    {
+      name: null,
+      id: 2,
+      child: [
+        { name: "연휴", id: 21 },
+        { name: "설날", id: 22 },
+        { name: "연휴", id: 23 },
+      ],
+    },
+    { name: "삼일절", id: 3 },
+    { name: "어린이날", id: 4 },
+    { name: "부처님 오신", id: 5 },
+    { name: "현충일", id: 6 },
+    { name: "광복절", id: 7 },
+    {
+      name: null,
+      id: 8,
+      child: [
+        { name: "연휴", id: 81 },
+        { name: "추석", id: 82 },
+        { name: "연휴", id: 83 },
+      ],
+    },
+    { name: "개천절", id: 9 },
+    { name: "한글날", id: 10 },
+    { name: "성탄절", id: 11 },
+  ];
 
 export const ListTypeUserActivityReservation = [
   {
@@ -266,6 +267,7 @@ export const BOARD = {
   EVENT_BOARD: "EVENT_BOARD",
   SHOP_SALES_BOARD: "SHOP_SALES_BOARD",
   BLOG: "BLOG",
+  SITE: "SITE"
 };
 
 export const BOARD_TEXT = {
@@ -280,6 +282,7 @@ export const BOARD_TEXT = {
   [BOARD.EVENT_BOARD]: "Event",
   [BOARD.SHOP_SALES_BOARD]: "Property for Rent",
   [BOARD.BLOG]: "Blog",
+  [BOARD.SITE]: "Link collection",
 };
 
 export const ROUTE = {
@@ -292,6 +295,7 @@ export const ROUTE = {
   PROFILE_DESIGN1: "/profile_design1",
   RECRUIT_BOARD: "/recruit",
   SHOP_SALES_BOARD: "/shop-sale",
+  SITE: "/site",
 };
 
 export const QUESTION_STATUS = {

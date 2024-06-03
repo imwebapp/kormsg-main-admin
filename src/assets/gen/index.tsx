@@ -91,6 +91,7 @@ export default class Images {
     static readonly calendar = require("../../../src/assets/images/calendar.png");
     static readonly cancel = require("../../../src/assets/images/cancel.png");
     static readonly cancelCircleActive = require("../../../src/assets/images/cancelCircleActive.png");
+    static readonly category2 = require("../../../src/assets/images/category2.png");
     static readonly checkedCircleActive = require("../../../src/assets/images/checkedCircleActive.png");
     static readonly checkedCircleInactive = require("../../../src/assets/images/checkedCircleInactive.png");
     static readonly chevronDownTiny = require("../../../src/assets/images/chevron-down-tiny.png");

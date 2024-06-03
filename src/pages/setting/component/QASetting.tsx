@@ -19,6 +19,7 @@ export default function QASetting() {
   const { t } = useTranslation();
   const [data, setData] = useState<any>();
   const [selectedButton, setSelectedButton] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [listFAQCategory, setListFAQCategory] = useState<any>([]);
   const [tempFAQCategories, setTempFAQCategories] = useState<any>([]);
   const [openModalCreateCategory, setOpenModalCreateCategory] = useState(false);
@@ -47,6 +48,8 @@ export default function QASetting() {
       };
       let result: any = await settingApi.getListFaqCategory(params);
       if (result.code === 200) {
+        console.log(listFAQCategory);
+
         setListFAQCategory(result.results.objects.rows);
         setTempFAQCategories(result.results.objects.rows);
         setSelectedButton(result.results.objects.rows[0].id);
@@ -86,6 +89,13 @@ export default function QASetting() {
     const isSelected = buttonKey === selectedButton;
     return {
       backgroundColor: isSelected ? "black" : "white",
+      color: isSelected ? "white" : "black",
+    };
+  };
+  const getButtonStyleCategory = (buttonKey: any) => {
+    const isSelected = buttonKey === selectedCategory;
+    return {
+      backgroundColor: isSelected ? "blue" : "white",
       color: isSelected ? "white" : "black",
     };
   };
@@ -167,6 +177,7 @@ export default function QASetting() {
       }
     } catch (error) {}
   };
+
   const handleSubmitNewFAQ = async () => {
     const resetModalCreateFAQ = () => {
       setTitleFAQ("");
@@ -185,6 +196,7 @@ export default function QASetting() {
         if (result.code === 200) {
           showSuccess("Create FAQ Success");
           getListFaq(faqCategoryId);
+          getListFaqCategory();
           resetModalCreateFAQ();
         }
       }
@@ -230,6 +242,20 @@ export default function QASetting() {
   const handleDeleteCategory = async (id: string) => {
     try {
       let result: any = await settingApi.deleteFaqCategory(id);
+      if (result.code === 200) {
+        getListFaqCategory();
+        showSuccess("Delete FAQ Category Success");
+      }
+    } catch (error) {}
+  };
+  const handleDeleteSingleCategory = async (id: string) => {
+    try {
+      const params = {
+        new_group: selectedCategory,
+      };
+      console.log("params", params);
+
+      let result: any = await settingApi.deleteFaqSingleCategory(id, params);
       if (result.code === 200) {
         getListFaqCategory();
         showSuccess("Delete FAQ Category Success");
@@ -505,15 +531,21 @@ export default function QASetting() {
     );
   };
   const modalDeleteCategory = () => {
+    const handleButtonClick = (id: string) => {
+      setSelectedCategory(id);
+    };
     return (
       <BaseModal2
         isOpen={!!openModalDeleteCategory}
         onSubmit={() => {
           // handleSubmitSingleEditCategory();
+          handleDeleteSingleCategory(selectedButton);
           setOpenModalDeleteCategory(false);
+          setSelectedCategory("");
         }}
         onClose={() => {
           setOpenModalDeleteCategory(false);
+          setSelectedCategory("");
         }}
         title="Delete group"
       >
@@ -521,45 +553,17 @@ export default function QASetting() {
           {itemFaqCategory?.total_faq}
           명의 회원이 이동할 게시판을 선택하십시오.
         </BaseText>
-        {/* <div className="flex flex-col flex-wrap content-start pr-6 text-xl font-medium leading-7 max-w-[632px] text-neutral-600 max-md:pr-5">
-          <div className="flex gap-3 max-md:flex-wrap">
-            {listFAQCategory
-              // .filter((item:any, index:any) => {
-              //   return index !== 0 && String(item.id) !== idGroupDelete;
-              // })
-              .map((item: any, index: any) => (
-                <CustomButton
-                  key={index}
-                  className="text-base h-11 font-medium rounded-full px-4 py-2.5"
-                  style={getButtonStyle(item.id)}
-                  // onClick={() => handleButtonClick(item.id)}
-                >
-                  <BaseText color={getTextColor(item.id)} size={16}>
-                    {item.name}
-                  </BaseText>
-                </CustomButton>
-              ))}
-          </div>
-        </div> */}
-        {/* <div
-          role="button"
-          className="justify-center px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
-        >
-          Group 1
-        </div> */}
         <section className="text-xl font-medium leading-7 max-w-[632px] text-neutral-600 max-md:pr-5 pr-6">
           <div className="grid gap-3 max-md:grid-cols-1 grid-cols-3">
             {itemFaqCategory?.total_faq > 0 &&
               listFAQCategory
-                // .filter((item:any, index:any) => {
-                //   return index !== 0 && String(item.id) !== idGroupDelete;
-                // })
+                .filter((item: { id: any }) => item.id !== selectedButton)
                 .map((item: any, index: any) => (
                   <CustomButton
                     key={index}
-                    className="justify-center px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
-                    style={getButtonStyle(item.id)}
-                    // onClick={() => handleButtonClick(item.id)}
+                    className="justify-center  px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
+                    style={getButtonStyleCategory(item.id)}
+                    onClick={() => handleButtonClick(item.id)}
                   >
                     <BaseText color={getTextColor(item.id)} size={16}>
                       {item.name}

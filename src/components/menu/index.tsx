@@ -165,6 +165,14 @@ const MenuHome: React.FC = () => {
       />
     ),
     getItem(
+      t("Site Link"),
+      Url.site,
+      <img
+        className="w-6 h-6"
+        src={selectedKeys === Url.site ? Images.seoPage : Images.seoPage2}
+      />
+    ),
+    getItem(
       t("Setting"),
       Url.setting,
       <img

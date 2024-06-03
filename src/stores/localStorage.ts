@@ -12,6 +12,10 @@ interface LocalStorageInterface {
   setExpiresIn: (expiresIn: LocalStorageInterface['expiresIn']) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: LocalStorageInterface['collapsed']) => void;
+  logo: string;
+  setLogo: (logo: LocalStorageInterface['logo']) => void;
+  appName: string;
+  setAppName: (appName: LocalStorageInterface['appName']) => void;
 }
 
 export const useLocalStorage = create<LocalStorageInterface>()(
@@ -27,6 +31,10 @@ export const useLocalStorage = create<LocalStorageInterface>()(
       setExpiresIn: (expiresIn) => set({ expiresIn }),
       collapsed: false,
       setCollapsed: (collapsed) => set({ collapsed }),
+      logo: '',
+      setLogo: (logo) => set({ logo }),
+      appName: '',
+      setAppName: (appName) => set({ appName }),
     }),
     {
       name: 'local-storage',
