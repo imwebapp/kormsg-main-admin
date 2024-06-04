@@ -601,6 +601,7 @@ const UserManage = () => {
         { nickname: { $like: `%${valueSearch}%` } },
         { email: { $like: `%${valueSearch}%` } },
         { username: { $like: `%${valueSearch}%` } },
+        { phone: { $like: `%${valueSearch}%` } },
       ];
     }
 
