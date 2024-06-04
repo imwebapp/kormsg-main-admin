@@ -263,6 +263,8 @@ export const ShopInformationTab = (props: IProps) => {
       { category: ["$all", { thema: ["$all"] }] },
       { events: ["$all"] },
       { shop_tags: ["$all"] },
+      { courses: ["$all", { prices: ["$all"] }] },
+      { mentors: ["$all"] },
     ];
 
     const convertFieldsDuringTheEvent: any = [
@@ -330,6 +332,8 @@ export const ShopInformationTab = (props: IProps) => {
       { category: ["$all", { thema: ["$all"] }] },
       { events: ["$all"] },
       { shop_tags: ["$all"] },
+      { courses: ["$all", { prices: ["$all"] }] },
+      { mentors: ["$all"] },
     ];
     const convertFilter: any = {
       user_id: `${dataUser.id}`,
