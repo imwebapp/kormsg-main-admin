@@ -600,6 +600,7 @@ const UserManage = () => {
       convertFilter["$or"] = [
         { nickname: { $like: `%${valueSearch}%` } },
         { email: { $like: `%${valueSearch}%` } },
+        { username: { $like: `%${valueSearch}%` } },
       ];
     }
 
