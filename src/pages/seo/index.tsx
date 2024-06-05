@@ -83,14 +83,14 @@ const SeoPage = () => {
         imageUploaded = ResUploadAvatar.url;
       }
       const dataConvert = {
-        title: dataSeo?.siteName,
-        description: dataSeo?.siteDescription,
+        title: dataSeo?.siteName.trim(),
+        description: dataSeo?.siteDescription.trim(),
         icon: iconUploaded,
         avatar: imageUploaded,
-        keywords: dataSeo?.metaKeyword,
-        meta: dataSeo?.metaCode,
-        meta_naver: dataSeo?.metaNaverCode,
-        google_ads: dataSeo?.google_ads,
+        keywords: dataSeo?.metaKeyword.trim(),
+        meta: dataSeo?.metaCode.trim(),
+        meta_naver: dataSeo?.metaNaverCode.trim(),
+        google_ads: dataSeo?.google_ads.trim(),
       };
 
       const response: any = await seoApi.updateSEO(dataConvert);
@@ -316,8 +316,8 @@ const SeoPage = () => {
         </BaseText>
 
         <BaseInput
-          title="Google AWS code"
-          placeholder="Google AWS code"
+          title="Google AdSense code"
+          placeholder="Google AdSense code"
           value={dataSeo.google_ads}
           onChange={(value) => handleChange("google_ads", value)}
           textArea
