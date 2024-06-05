@@ -11,8 +11,8 @@ export const siteLinkApi = {
   editSiteCategory: (params: any) => {
     return axiosClient.put(`${SITE_CATEGORY}/multiple/data`, params);
   },
-  deleteSiteCategory: (id: any) => {
-    return axiosClient.delete(`${SITE_CATEGORY}/${id}`);
+  deleteSiteCategory: (id: any, params?: any) => {
+    return axiosClient.delete(`${SITE_CATEGORY}/${id}`, { params });
   },
   getListSite: (params?: any) => {
     return axiosClient.get(`${SITE}`, { params });
@@ -25,5 +25,9 @@ export const siteLinkApi = {
   },
   deleteSite: (params?: any) => {
     return axiosClient.delete(`${SITE}/?items=["${params}"]`);
+  },
+  deleteMultiSite: (ids?: any) => {
+    const itemsParam = JSON.stringify(ids);
+    return axiosClient.delete(`${SITE}?items=${itemsParam}`);
   },
 };
