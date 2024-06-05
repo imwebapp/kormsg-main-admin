@@ -11,7 +11,7 @@ services:
         max-file: '5'
         max-size: '10m'
     ports:
-      - '3201:80'
+      - '3101:80'
     # volumes:
     #   - '.:/app'
     restart: always
