@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable, BaseText, CustomButton } from "../../components";
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
+import { PlusOutlined, SearchOutlined, CloseOutlined } from "@ant-design/icons";
 import { siteLinkApi } from "../../apis/siteLinkApi";
 import Images from "../../assets/gen";
 import { classNames } from "../../utils/common";
@@ -10,7 +10,9 @@ import { BaseModal2 } from "../../components/modal/BaseModal2";
 import { BaseInputSelect } from "../../components/input/BaseInputSelect";
 import { BaseInput } from "../../components/input/BaseInput";
 import { UploadApi } from "../../apis/uploadApi";
-import { showSuccess } from "../../utils/showToast";
+import { showError, showSuccess } from "../../utils/showToast";
+import { BaseTableDnD } from "../../components/table/BaseTableDnD";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 const SiteLinkPage = () => {
   const { t } = useTranslation();
@@ -25,12 +27,16 @@ const SiteLinkPage = () => {
   const [openModalCreateCategory, setOpenModalCreateCategory] = useState(false);
 
   const [openModalCreateSite, setOpenModalCreateSite] = useState(false);
+  const [openModalDeleteMultiSite, setOpenModalDeleteMultiSite] =
+    useState(false);
 
   const [selectedButton, setSelectedButton] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
   const [listSiteCategory, setListSiteCategory] = useState<any>([]);
   const [tempSiteCategories, setTempSiteCategories] = useState<any>([]);
   const [listRowSelected, setListRowSelected] = useState<string[]>([]);
-
+  const [selectSiteCategory, setSelectSiteCategory] = useState<any>();
   const [imageCreateSite, setImageCreateSite] = useState<File>();
 
   // form create
@@ -42,7 +48,6 @@ const SiteLinkPage = () => {
     link: "",
     id: "",
   });
-  const idSiteCategory = useRef("");
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);
   };
@@ -53,11 +58,9 @@ const SiteLinkPage = () => {
         limit: 50,
       };
       let result: any = await siteLinkApi.getListCategory(params);
-      console.log("result", result);
 
       if (result.code === 200) {
         setListSiteCategory(result?.results?.objects?.rows);
-        // setListFAQCategory(result.results.objects.rows);
         setTempSiteCategories(result.results.objects.rows);
         setSelectedButton(result.results.objects.rows[0].id);
       }
@@ -67,8 +70,14 @@ const SiteLinkPage = () => {
     try {
       const params = {
         fields: '["$all"]',
-        filter: JSON.stringify({ site_category_id: id }),
-
+        filter: JSON.stringify({
+          site_category_id: id,
+          $or: [
+            { title: { $iLike: `%${valueKeywordFilter}%` } },
+            { content: { $iLike: `%${valueKeywordFilter}%` } },
+            { link: { $iLike: `%${valueKeywordFilter}%` } },
+          ],
+        }),
         limit: 50,
       };
       let result: any = await siteLinkApi.getListSite(params);
@@ -87,6 +96,13 @@ const SiteLinkPage = () => {
       color: isSelected ? "white" : "black",
     };
   };
+  const getButtonStyleCategory = (buttonKey: any) => {
+    const isSelected = buttonKey === selectedCategory;
+    return {
+      backgroundColor: isSelected ? "blue" : "white",
+      color: isSelected ? "white" : "black",
+    };
+  };
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -100,8 +116,6 @@ const SiteLinkPage = () => {
     setTempSiteCategories(updatedCategories);
   };
   const handleEditSite = (record: any) => {
-    console.log(record);
-
     setIsCreate(false);
     setOpenModalCreateSite(true);
     setFormDataCreateSite({
@@ -145,11 +159,20 @@ const SiteLinkPage = () => {
     setImageCreateSite(undefined);
     setOpenModalCreateSite(true);
   };
+  const handleDeleteMultiSite = async () => {
+    try {
+      let result: any = await siteLinkApi.deleteMultiSite(listRowSelected);
+      if (result.code === 200) {
+        setListRowSelected([]);
+        getListSite(selectedButton);
+        getListSiteCategory();
+        showSuccess("Delete Site Links Success");
+      }
+    } catch (error) {}
+  };
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log("file", file);
-
       setImageCreateSite(file);
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -164,7 +187,6 @@ const SiteLinkPage = () => {
         }
       };
     }
-    console.log(formDataCreateSite);
   };
   const handleChangeTextKeyword = (value: string) => {
     setValueKeywordFilter(value);
@@ -189,7 +211,6 @@ const SiteLinkPage = () => {
   const handleCreateSite = async () => {
     try {
       //Upload Image
-      console.log("imageCreateSite", imageCreateSite);
 
       let resUploadImg: string = "";
       if (imageCreateSite !== undefined) {
@@ -205,13 +226,12 @@ const SiteLinkPage = () => {
         link: formDataCreateSite?.link,
       };
       //create product
-      console.log("dataCreateConvert", dataCreateConvert);
 
       const resCreateSite: any = await siteLinkApi.createSite(
         dataCreateConvert
       );
       if (resCreateSite.code === 200) {
-        message.success("Create product successfully");
+        message.success("Create Site successfully");
         setFormDataCreateSite({
           image: "",
           site_category_id: "",
@@ -222,9 +242,10 @@ const SiteLinkPage = () => {
         });
         setImageCreateSite(undefined);
         getListSite(selectedButton);
+        getListSiteCategory();
       }
     } catch (error: any) {
-      console.log("error Create user", error);
+      showError(error);
     }
   };
   const handleSubmitEditSite = async () => {
@@ -264,9 +285,10 @@ const SiteLinkPage = () => {
         });
         setImageCreateSite(undefined);
         getListSite(selectedButton);
+        getListSiteCategory();
       }
     } catch (error: any) {
-      console.log("error Create user", error);
+      showError(error);
     }
   };
   const handleSubmitNewCategory = async () => {
@@ -284,12 +306,45 @@ const SiteLinkPage = () => {
   };
   const handleDeleteCategory = async (id: string) => {
     try {
-      let result: any = await siteLinkApi.deleteSiteCategory(id);
+      const params = {
+        new_group: selectedCategory,
+      };
+      let result: any = await siteLinkApi.deleteSiteCategory(id, params);
       if (result.code === 200) {
         getListSiteCategory();
+        getListSite(selectedButton);
         showSuccess("Delete Site Link Category Success");
       }
     } catch (error) {}
+  };
+  const handleUpdateSite = async (id: string, site_category_id: string) => {
+    try {
+      const params = {
+        site_category_id: site_category_id,
+      };
+      const result: any = await siteLinkApi.editSite(params, id);
+      if (result.code === 200) {
+        getListSite(selectedButton);
+        getListSiteCategory();
+        showSuccess("Change Site Link Success");
+      }
+    } catch (error) {
+      showError(error);
+    }
+  };
+  const onDragEnd = (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.droppableId === result.source.droppableId) return;
+    handleUpdateSite(result.draggableId, result.destination.droppableId);
+
+    // function update
+  };
+  const onDragStartCate = () => {
+    // setLinkCateDragging(linkIndex);
+    console.log("SiteIndex");
   };
   const listButton = () => {
     const handleButtonClick = (id: any) => {
@@ -297,18 +352,28 @@ const SiteLinkPage = () => {
     };
 
     return (
-      <div id="faqContainer" className="flex flex-row gap-4 overflow-x-auto">
+      <div
+        id="faqContainer"
+        className="flex flex-row gap-4 overflow-x-auto items-center"
+      >
         {listSiteCategory.map((item: any) => (
-          <CustomButton
-            key={item.id}
-            className="text-base h-11 font-medium rounded-full px-4"
-            style={getButtonStyle(item.id)}
-            onClick={() => handleButtonClick(item.id)}
-          >
-            <BaseText color={getTextColor(item.id)} size={16}>
-              {item.name}
-            </BaseText>
-          </CustomButton>
+          <Droppable droppableId={item?.id}>
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                <CustomButton
+                  key={item.id}
+                  className="text-base h-11 font-medium rounded-full px-4"
+                  style={getButtonStyle(item.id)}
+                  onClick={() => handleButtonClick(item.id)}
+                >
+                  <BaseText color={getTextColor(item.id)} size={16}>
+                    {item.name}
+                  </BaseText>
+                </CustomButton>
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         ))}
       </div>
     );
@@ -364,6 +429,9 @@ const SiteLinkPage = () => {
           bold
           locale
           className="flex items-center justify-center p-3 text-base text-white bg-blue-600 rounded-xl h-12"
+          onClick={() => {
+            getListSite(selectedButton);
+          }}
         >
           Search
         </CustomButton>
@@ -431,7 +499,7 @@ const SiteLinkPage = () => {
       },
     ];
     return (
-      <BaseTable
+      <BaseTableDnD
         maxContent
         sticky={{ offsetHeader: 0 }}
         onSelectChange={onSelectChange}
@@ -462,7 +530,7 @@ const SiteLinkPage = () => {
             handleSubmitEditSite();
           }
         }}
-        title={isCreate ? "Create a product" : "Edit a product"}
+        title={isCreate ? "Create a site" : "Edit a site"}
         nameConfirm="적용"
         // disableSubmitBtn={!isFormDataValid()}
       >
@@ -583,7 +651,7 @@ const SiteLinkPage = () => {
               alt="Notification icon"
               className="shrink-0 my-auto w-6 aspect-square cursor-pointer"
               onClick={() => {
-                idSiteCategory.current = category.id;
+                setSelectSiteCategory(category);
                 setOpenModalDeleteSiteCategory(true);
               }}
             />
@@ -602,20 +670,87 @@ const SiteLinkPage = () => {
     );
   };
   const modalDeleteSiteCategory = () => {
+    const handleButtonClick = (id: string) => {
+      setSelectedCategory(id);
+    };
     return (
       <BaseModal2
         isOpen={!!openModalDeleteSiteCategory}
-        // styleButtonConfirm={"bg-rose-500"}
         title={t("Delete Category")}
         onSubmit={() => {
-          handleDeleteCategory(idSiteCategory.current);
+          handleDeleteCategory(selectSiteCategory.id);
           setOpenModalDeleteSiteCategory(false);
         }}
         onClose={() => {
           setOpenModalDeleteSiteCategory(false);
+          setSelectedCategory("");
         }}
+        isHideAction={true}
       >
-        <div>{t("명의 회원이 이동할 게시판을 선택하십시오.")}</div>
+        <div>
+          {selectSiteCategory?.total_site +
+            t("명의 회원이 이동할 게시판을 선택하십시오.")}
+        </div>
+        <section className="text-xl font-medium leading-7 max-w-[632px] text-neutral-600 max-md:pr-5 pr-6 py-3">
+          <div className="grid gap-3 max-md:grid-cols-1 grid-cols-3">
+            {selectSiteCategory?.total_site > 0 &&
+              listSiteCategory
+                .filter(
+                  (item: { id: any }) => item.id !== selectSiteCategory.id
+                )
+                .map((item: any, index: any) => (
+                  <CustomButton
+                    key={index}
+                    className="justify-center  px-6 pt-2.5 pb-3 bg-neutral-100 rounded-[100px] max-md:px-5"
+                    style={getButtonStyleCategory(item.id)}
+                    onClick={() => handleButtonClick(item.id)}
+                  >
+                    <BaseText color={getTextColor(item.id)} size={16}>
+                      {item.name}
+                    </BaseText>
+                  </CustomButton>
+                ))}
+          </div>
+        </section>
+        <section className="flex gap-2.5 justify-between self-stretch px-6 py-4 text-base leading-6 bg-white border-t border-gray-200 border-solid max-w-[680px] max-md:flex-wrap max-md:px-5">
+          <div
+            className="flex gap-2  items-center text-base cursor-pointer"
+            onClick={() => {
+              handleDeleteCategory(selectSiteCategory.id);
+              setOpenModalDeleteSiteCategory(false);
+            }}
+          >
+            {selectSiteCategory?.total_site > 0 && (
+              <>
+                <img src={Images.trashred} className="w-6 h-6" />
+                <div className="text-dustRed500 underline font-bold text-16px">
+                  {selectSiteCategory?.total_site}명의 회원이
+                </div>
+              </>
+            )}
+          </div>
+          <div className="flex gap-4 font-bold whitespace-nowrap">
+            <button
+              className="justify-center px-5 py-2.5 border border-gray-200 border-solid rounded-[100px] text-neutral-900 max-md:px-5"
+              onClick={() => {
+                setOpenModalDeleteSiteCategory(false);
+                setSelectedCategory("");
+              }}
+            >
+              {t("Cancel")}
+            </button>
+            <button
+              className="justify-center px-5 py-2.5 text-white bg-blue-600 rounded-[100px] max-md:px-5"
+              onClick={() => {
+                handleDeleteCategory(selectSiteCategory.id);
+                setOpenModalDeleteSiteCategory(false);
+                setSelectedCategory("");
+              }}
+            >
+              {t("Confirm")}
+            </button>
+          </div>
+        </section>
       </BaseModal2>
     );
   };
@@ -642,6 +777,28 @@ const SiteLinkPage = () => {
       </BaseModal2>
     );
   };
+  const modalDeleteMultiSite = () => {
+    return (
+      <BaseModal2
+        isOpen={!!openModalDeleteMultiSite}
+        onClose={() => {
+          setOpenModalDeleteMultiSite(false);
+        }}
+        title="Delete Site Links"
+        styleButtonConfirm={"bg-rose-500"}
+        onSubmit={() => {
+          handleDeleteMultiSite();
+          setOpenModalDeleteMultiSite(false);
+        }}
+      >
+        <div className="pt-2">
+          <BaseText bold locale className="mt-30 mb-5">
+            {`Are you sure you want to delete these ${listRowSelected.length} site links?`}
+          </BaseText>
+        </div>
+      </BaseModal2>
+    );
+  };
   useEffect(() => {
     getListSiteCategory();
   }, []);
@@ -651,19 +808,42 @@ const SiteLinkPage = () => {
 
   return (
     <div className="p-4 py-5">
-      {headerTable()}
-      {searchKeyword()}
-      {bodyTable()}
+      <DragDropContext
+        onDragStart={() => onDragStartCate()}
+        onDragEnd={onDragEnd}
+      >
+        {headerTable()}
+        {searchKeyword()}
+        {bodyTable()}
+      </DragDropContext>
+      {listRowSelected.length > 0 && (
+        <div className="fixed bottom-6 right-1/4 left-1/4">
+          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl justify-between">
+            <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
+              <CloseOutlined className="text-xl text-black cursor-pointer" />
+              <BaseText bold size={16}>
+                {t("선택됨")}{" "}
+                <span className="text-primary">{listRowSelected.length}</span>
+              </BaseText>
+            </div>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                className="justify-center px-6 py-3 text-lg font-bold leading-7 text-white whitespace-nowrap bg-red-600 rounded-[100px] max-md:px-5"
+                onClick={() => {
+                  setOpenModalDeleteMultiSite(true);
+                }}
+              >
+                {t("Delete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {modalCreateSite()}
       {modalCategoryList()}
       {modalCreateCategory()}
       {modalDeleteSiteCategory()}
-      {/* {modalCategoryList()}
-          {modalCreateCategory()}
-          {modalDeleteFaqCategory()}
-          {modalModifyCategory()}
-          {modalDeleteCategory()}
-          {modalCreateFAQ()} */}
+      {modalDeleteMultiSite()}
     </div>
   );
 };
