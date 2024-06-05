@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  # CMS
+  cms-goldkey:
+    image: greenapps/new-cms-clone:goldkey
+    container_name: cms-clone-goldkey
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    ports:
+      - '3201:80'
+    # volumes:
+    #   - '.:/app'
+    restart: always
+    networks:
+      - goldkey_network
+networks:
+  goldkey_network:
+    driver: bridge
