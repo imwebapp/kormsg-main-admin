@@ -19,6 +19,7 @@ const SeoPage = () => {
     avatar: "",
     metaCode: "",
     metaNaverCode: "",
+    google_ads: "",
   });
   const [selectedIcon, setSelectedIcon] = useState<File | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
@@ -89,6 +90,7 @@ const SeoPage = () => {
         keywords: dataSeo?.metaKeyword,
         meta: dataSeo?.metaCode,
         meta_naver: dataSeo?.metaNaverCode,
+        google_ads: dataSeo?.google_ads,
       };
 
       const response: any = await seoApi.updateSEO(dataConvert);
@@ -103,6 +105,7 @@ const SeoPage = () => {
           avatar: response?.results?.object?.avatar,
           metaCode: response?.results?.object?.meta,
           metaNaverCode: response?.results?.object?.meta_naver,
+          google_ads: response?.results?.object?.google_ads,
         });
         setLoadingScreen(false);
         message.success("Update SEO success");
@@ -127,9 +130,10 @@ const SeoPage = () => {
           avatar: response?.results?.object?.avatar,
           metaCode: response?.results?.object?.meta,
           metaNaverCode: response?.results?.object?.meta_naver,
+          google_ads: response?.results?.object?.google_ads,
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -309,6 +313,18 @@ const SeoPage = () => {
         <BaseText locale bold size={14} color="text-darkNight700">
           Insert the meta tag for ownership for Naver and Google Webmaster Tools
           here.
+        </BaseText>
+
+        <BaseInput
+          title="Google AWS code"
+          placeholder="Google AWS code"
+          value={dataSeo.google_ads}
+          onChange={(value) => handleChange("google_ads", value)}
+          textArea
+        />
+        <BaseText locale bold size={14} color="text-darkNight700">
+          {/* Insert the meta tag for ownership for Naver and Google Webmaster Tools
+          here. */}
         </BaseText>
       </div>
       <CustomButton
