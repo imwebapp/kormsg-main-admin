@@ -267,7 +267,7 @@ export default function UserManageTable(props: UserManageTableProps) {
               src={Images.copy}
               className="w-6 h-6 cursor-pointer"
               onClick={() => {
-                copyToClipboard(record.id);
+                copyToClipboard(record.username);
               }}
             />
           </div>
