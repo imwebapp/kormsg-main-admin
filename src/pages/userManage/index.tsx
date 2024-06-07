@@ -614,7 +614,6 @@ const UserManage = () => {
           page,
           fields: '["$all"]',
         });
-        console.log("resGetListAdmin: ", resGetListAdmin);
         if (resGetListAdmin?.code === 200) {
           const listUserConvert = (resGetListAdmin?.results?.objects?.rows || []).map(
             (item: any) => {
@@ -639,7 +638,6 @@ const UserManage = () => {
           filter: JSON.stringify(convertFilter),
           statistic: true,
         });
-        console.log("resGetListUser: ", resGetListUser);
         if (resGetListUser?.code === 200) {
           setListUser(resGetListUser?.results?.objects?.rows || []);
         }
