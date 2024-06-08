@@ -42,7 +42,6 @@ export const ReservationItem = (props: IProps) => {
     }
 
     const checkStatus = (status: string) => {
-        console.log("statusWW", status);
         switch (status) {
             case RESERVATION_STATUS.PENDING:
                 return (

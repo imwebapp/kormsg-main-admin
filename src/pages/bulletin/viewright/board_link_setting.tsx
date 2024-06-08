@@ -1,35 +1,35 @@
-import { BaseText, CustomButton } from '../../../components';
-import Images from '../../../assets/gen';
-import { BaseInput } from '../../../components/input/BaseInput';
-import { useEffect, useRef, useState } from 'react';
+import { BaseText, CustomButton } from "../../../components";
+import Images from "../../../assets/gen";
+import { BaseInput } from "../../../components/input/BaseInput";
+import { useEffect, useRef, useState } from "react";
 import {
   BOARD,
   BOARD_TEXT,
   MAP_TYPE,
   SELECT_ALL,
   VISIBLE_BOARDS,
-} from '../../../utils/constants';
-import { classNames } from '../../../utils/common';
-import { BaseInputSelect } from '../../../components/input/BaseInputSelect';
-import ThemaTable from '../thema/thema_table';
-import { BaseModal2 } from '../../../components/modal/BaseModal2';
-import { ThemaApi } from '../../../apis/themaApi';
+} from "../../../utils/constants";
+import { classNames } from "../../../utils/common";
+import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
+import ThemaTable from "../thema/thema_table";
+import { BaseModal2 } from "../../../components/modal/BaseModal2";
+import { ThemaApi } from "../../../apis/themaApi";
 import {
   BoardLinkInterface,
   CategoryInterface,
   TagThemaInterface,
   ThemaInterface,
-} from '../../../entities';
-import { useBulletinState } from '../store';
-import { UploadApi } from '../../../apis/uploadApi';
-import { showError } from '../../../utils/showToast';
-import { BoardLinkApi } from '../../../apis/boardLinkApi';
-import { useTranslation } from 'react-i18next';
-import { CategoryApi } from '../../../apis/categoryApi';
-import { TagApi } from '../../../apis/tagApi';
-import { NEW_ID } from '../viewleft';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { Popconfirm } from 'antd';
+} from "../../../entities";
+import { useBulletinState } from "../store";
+import { UploadApi } from "../../../apis/uploadApi";
+import { showError } from "../../../utils/showToast";
+import { BoardLinkApi } from "../../../apis/boardLinkApi";
+import { useTranslation } from "react-i18next";
+import { CategoryApi } from "../../../apis/categoryApi";
+import { TagApi } from "../../../apis/tagApi";
+import { NEW_ID } from "../viewleft";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Popconfirm } from "antd";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
@@ -40,7 +40,7 @@ export default function BulletinSetting() {
     (state) => state
   );
   const [boardTypeSelected, setBoardTypeSelected] = useState<string>(
-    boardSelected.route || ''
+    boardSelected.route || ""
   );
   const [themaMultiSelect, selectThemaMultiSelect] = useState<boolean>(false);
   const [themaIds, setThemaIds] = useState<string[]>([]);
@@ -50,7 +50,7 @@ export default function BulletinSetting() {
     if (boardSelected.route === BOARD.EVENT_BOARD) {
       selectThemaMultiSelect(true);
       if (boardSelected.themas && boardSelected.themas[0]) {
-        if (typeof boardSelected.themas[0] === 'string') {
+        if (typeof boardSelected.themas[0] === "string") {
           setThemaIds(boardSelected.themas);
         } else {
           const newThemas = (boardSelected.themas || []).map((item) => {
@@ -71,7 +71,7 @@ export default function BulletinSetting() {
   const { t } = useTranslation();
 
   const getListThema = async (boardTypeSelected: string) => {
-    if (boardTypeSelected === '') return [];
+    if (boardTypeSelected === "") return [];
     // const filter = VISIBLE_BOARDS.includes(boardTypeSelected)
     //   ? `{"visible_boards": {"$contains": ["${boardTypeSelected}"]}}`
     //   : "";
@@ -164,7 +164,7 @@ export default function BulletinSetting() {
 
   useEffect(() => {
     getTagsWithThema();
-    setBoardTypeSelected(boardSelected.route || '');
+    setBoardTypeSelected(boardSelected.route || "");
   }, [boardSelected]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,8 +205,8 @@ export default function BulletinSetting() {
         await BoardLinkApi.delete(boardSelected.id);
       }
       setBoardSelected({
-        id: 'HOME',
-        name: 'Home',
+        id: "HOME",
+        name: "Home",
       });
       setLastRefresh(Date.now());
     } catch (error) {
@@ -217,43 +217,43 @@ export default function BulletinSetting() {
   const _buildImageAndName = () => {
     return (
       <>
-        <div className='flex flex-row justify-between items-center mt-4'>
+        <div className="flex flex-row justify-between items-center mt-4">
           <BaseText locale medium>
             Image
           </BaseText>
           <input
-            type='file'
-            accept='image/*'
-            id='image-link'
-            style={{ display: 'none' }}
+            type="file"
+            accept="image/*"
+            id="image-link"
+            style={{ display: "none" }}
             onChange={handleImageChange}
           />
           <label
-            htmlFor='image-link'
-            className='flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer'
+            htmlFor="image-link"
+            className="flex flex-row bg-dayBreakBlue50 justify-between items-center rounded-md p-2 cursor-pointer"
           >
-            <img src={Images.upload} className='w-5 h-5 mr-2' />
-            <BaseText locale bold className='text-dayBreakBlue500'>
+            <img src={Images.upload} className="w-5 h-5 mr-2" />
+            <BaseText locale bold className="text-dayBreakBlue500">
               Upload
             </BaseText>
           </label>
         </div>
-        <div className='flex flex-row justify-center items-center mt-[10px]'>
+        <div className="flex flex-row justify-center items-center mt-[10px]">
           {boardSelected.image && (
             <img
               src={boardSelected.image}
-              alt=''
-              className='w-[100px] h-[100px] object-cover rounded-xl'
+              alt=""
+              className="w-[100px] h-[100px] object-cover rounded-xl"
             />
           )}
         </div>
-        <div className='flex flex-row justify-between items-center mt-4'>
+        <div className="flex flex-row justify-between items-center mt-4">
           <BaseText locale medium>
             Board Name
           </BaseText>
           <BaseInput
             key={Date.now()}
-            styleInputContainer='h-9'
+            styleInputContainer="h-9"
             onSave={(value) => {
               updateOrCreateBoardLink({
                 ...boardSelected,
@@ -267,8 +267,8 @@ export default function BulletinSetting() {
               });
             }}
             defaultValue={boardSelected.name}
-            placeholder='Typing....'
-            className='w-[170px]'
+            placeholder="Typing...."
+            className="w-[170px]"
           />
         </div>
       </>
@@ -278,7 +278,7 @@ export default function BulletinSetting() {
   const _buildBoardType = () => {
     return (
       <>
-        <div className='flex flex-row justify-between items-center mt-4'>
+        <div className="flex flex-row justify-between items-center mt-4">
           <BaseText locale medium>
             Board Type
           </BaseText>
@@ -288,18 +288,18 @@ export default function BulletinSetting() {
               isShowBoardType ? Images.chevronUpTiny : Images.chevronDownTiny
             }
             width={24}
-            className='cursor-pointer'
+            className="cursor-pointer"
           />
         </div>
         {isShowBoardType && (
-          <div className='flex flex-wrap gap-[10px] mt-4'>
+          <div className="flex flex-wrap gap-[10px] mt-4">
             {Object.keys(BOARD).map((item, index) => {
               return (
                 <div
                   onClick={() => {
                     setBoardTypeSelected(item);
                     getListThema(item);
-                    setBoardSelected({
+                    updateOrCreateBoardLink({
                       ...boardSelected,
                       route: item,
                     });
@@ -307,17 +307,17 @@ export default function BulletinSetting() {
                   }}
                   key={index}
                   className={classNames(
-                    'w-20 h-20  rounded-xl flex justify-center items-center flex-col cursor-pointer',
+                    "w-20 h-20  rounded-xl flex justify-center items-center flex-col cursor-pointer",
                     boardTypeSelected === item
-                      ? 'bg-dayBreakBlue50'
-                      : 'bg-darkNight50'
+                      ? "bg-dayBreakBlue50"
+                      : "bg-darkNight50"
                   )}
                 >
                   <img
                     src={
                       boardTypeSelected === item ? Images.board2 : Images.board
                     }
-                    className='w-6 h-6 mb-1'
+                    className="w-6 h-6 mb-1"
                   />
                   <BaseText
                     locale
@@ -325,9 +325,9 @@ export default function BulletinSetting() {
                     size={10}
                     className={classNames(
                       boardTypeSelected === item
-                        ? 'text-dayBreakBlue500'
-                        : 'text-darkNight500',
-                      'text-center'
+                        ? "text-dayBreakBlue500"
+                        : "text-darkNight500",
+                      "text-center"
                     )}
                   >
                     {BOARD_TEXT[item]}
@@ -344,8 +344,8 @@ export default function BulletinSetting() {
   const _buildThema = () => {
     return (
       <>
-        <div className='flex flex-row justify-between items-center mt-4'>
-          <BaseText locale medium className='flex-1 mr-3'>
+        <div className="flex flex-row justify-between items-center mt-4">
+          <BaseText locale medium className="flex-1 mr-3">
             Thema
           </BaseText>
           {!!themaMultiSelect ? (
@@ -362,22 +362,22 @@ export default function BulletinSetting() {
                   });
                 }
               }}
-              className='!min-w-[100px]'
+              className="!min-w-[100px]"
               defaultValue={themaIds}
               required={true}
               allowClear={false}
-              size='middle'
+              size="middle"
               textInputSize={12}
-              placeholder='Select'
+              placeholder="Select"
               options={[
                 {
-                  label: 'All',
+                  label: "All",
                   value: SELECT_ALL,
                 },
                 ...themas.map((item, index) => {
                   return {
-                    label: t(item.name || ''),
-                    value: item.id || '',
+                    label: t(item.name || ""),
+                    value: item.id || "",
                   };
                 }),
               ]}
@@ -385,20 +385,20 @@ export default function BulletinSetting() {
           ) : (
             <BaseInputSelect
               key={Date.now()}
-              className='!min-w-[100px]'
+              className="!min-w-[100px]"
               onChange={(value: any) => {
                 getCategories(value);
               }}
               defaultValue={boardSelected.thema_id}
               required={true}
               allowClear={false}
-              size='middle'
+              size="middle"
               textInputSize={12}
-              placeholder='Select'
+              placeholder="Select"
               options={themas.map((item, index) => {
                 return {
-                  label: t(item.name || ''),
-                  value: item.id || '',
+                  label: t(item.name || ""),
+                  value: item.id || "",
                 };
               })}
             />
@@ -407,7 +407,7 @@ export default function BulletinSetting() {
           <img
             onClick={() => setOpenModalThema(true)}
             src={Images.setting3}
-            className='w-[36px] ml-3 cursor-pointer'
+            className="w-[36px] ml-3 cursor-pointer"
           />
         </div>
       </>
@@ -417,14 +417,14 @@ export default function BulletinSetting() {
   const _buildMapBrand = () => {
     return (
       <>
-        <div className='flex flex-row justify-between items-center mt-4'>
+        <div className="flex flex-row justify-between items-center mt-4">
           <BaseText locale medium>
             Map Brand
           </BaseText>
           <BaseInputSelect
             key={Date.now()}
-            className='!min-w-[100px]'
-            placeholder='Select'
+            className="!min-w-[100px]"
+            placeholder="Select"
             onChange={(value) => {
               updateOrCreateBoardLink({
                 ...boardSelected,
@@ -433,7 +433,7 @@ export default function BulletinSetting() {
             }}
             required={true}
             allowClear={false}
-            size='middle'
+            size="middle"
             textInputSize={12}
             defaultValue={boardSelected.geolocation_api_type}
             options={Object.values(MAP_TYPE).map((item) => {
@@ -497,7 +497,7 @@ export default function BulletinSetting() {
     if (boardTypeSelected != BOARD.EVENT_BOARD)
       return (
         <>
-          <div className='flex flex-row justify-between items-center mt-4'>
+          <div className="flex flex-row justify-between items-center mt-4">
             <BaseText locale medium>
               Tags
             </BaseText>
@@ -517,10 +517,10 @@ export default function BulletinSetting() {
           })} */}
 
           <DragDropContext onDragEnd={onDragEndTag}>
-            <Droppable droppableId='droppableTags'>
+            <Droppable droppableId="droppableTags">
               {(provided) => (
                 <div
-                  className='flex flex-wrap gap-3 mt-4'
+                  className="flex flex-wrap gap-3 mt-4"
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                 >
@@ -537,7 +537,7 @@ export default function BulletinSetting() {
                             {...provided.dragHandleProps}
                             ref={provided.innerRef}
                           >
-                            <div className='px-3 py-2 bg-darkNight50 rounded-full'>
+                            <div className="px-3 py-2 bg-darkNight50 rounded-full">
                               <BaseText size={12} medium>
                                 {item.name}
                               </BaseText>
@@ -556,8 +556,8 @@ export default function BulletinSetting() {
   };
 
   return (
-    <div className='flex flex-col'>
-      <BaseText locale medium className='mt-4'>
+    <div className="flex flex-col">
+      <BaseText locale medium className="mt-4">
         SREEN
       </BaseText>
       {_buildImageAndName()}
@@ -566,26 +566,24 @@ export default function BulletinSetting() {
       {_buildMapBrand()}
       {_buildTags()}
 
-      {boardSelected.id && boardSelected.id !== NEW_ID && (
-        <Popconfirm
-          onConfirm={deleteBoardLink}
-          title={t('Delete')}
-          description={t('Are you sure to delete')}
+      <Popconfirm
+        onConfirm={deleteBoardLink}
+        title={t("Delete")}
+        description={t("Are you sure to delete")}
+      >
+        <CustomButton
+          className="mt-5 bg-dustRed50 border-none"
+          classNameTitle="text-dustRed500"
+          medium
+          locale
         >
-          <CustomButton
-            className='mt-5 bg-dustRed50 border-none'
-            classNameTitle='text-dustRed500'
-            medium
-            locale
-          >
-            Delete Main
-          </CustomButton>
-        </Popconfirm>
-      )}
+          Delete Main
+        </CustomButton>
+      </Popconfirm>
 
       <BaseModal2
-        width='80vw'
-        bodyStyle='h-[80vh]'
+        width="80vw"
+        bodyStyle="h-[80vh]"
         noScroll
         isOpen={openModalThema}
         onClose={() => {
@@ -594,7 +592,7 @@ export default function BulletinSetting() {
         onSubmit={() => {
           setOpenModalThema(false);
         }}
-        title='Thema Management'
+        title="Thema Management"
         isHideAction
         children={<ThemaTable key={Date.now()} />}
       ></BaseModal2>

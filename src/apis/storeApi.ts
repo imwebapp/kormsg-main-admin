@@ -13,8 +13,8 @@ export const storeApi = {
   getListCategory: (params?: any) => {
     return axiosClient.get(`${CATEGORY}`, { params });
   },
-  getCountStore: () => {
-    return axiosClient.get(`${STORE}/count_shop`);
+  getCountStore: (params?: any) => {
+    return axiosClient.get(`${STORE}/count_shop`, { params });
   },
   getListThema: (params?: any) => {
     return axiosClient.get(`${CATEGORY}`, { params });

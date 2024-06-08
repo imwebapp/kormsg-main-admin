@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BaseText } from "../../../components";
 import { classNames } from "../../../utils/common";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, DownOutlined } from "@ant-design/icons";
 import { BoardLinkInterface, ThemaInterface } from "../../../entities";
 import { BoardLinkApi } from "../../../apis/boardLinkApi";
 import { useBulletinState } from "../store";
@@ -205,6 +205,7 @@ export default function BulletinLeft() {
     index: any,
     snapshot?: DraggableStateSnapshot
   ) => {
+    const isCollapsed = boardSelected?.id !== item.id;
     return (
       <div key={index} className={classNames("flex flex-col")}>
         <div
@@ -245,101 +246,116 @@ export default function BulletinLeft() {
               className="w-[170px]"
             />
           ) : (
-            <BaseText
-              bold
-              size={16}
-              className={classNames(
-                boardSelected?.id === item.id || snapshot?.isDragging
-                  ? "text-dayBreakBlue500"
-                  : ""
-              )}
-            >
-              {item.name}
-            </BaseText>
+            <div className="flex items-center justify-between flex-1">
+              <BaseText
+                bold
+                size={16}
+                className={classNames(
+                  boardSelected?.id === item.id || snapshot?.isDragging
+                    ? "text-dayBreakBlue500"
+                    : ""
+                )}
+              >
+                {item.name}
+              </BaseText>
+              <div
+                className="p-1"
+                onClick={(event) => {
+                  event.stopPropagation(); // Stop event propagation
+                  //custom show list
+                }}
+              >
+                <DownOutlined />
+              </div>
+            </div>
           )}
         </div>
-        <DragDropContext
-          onDragStart={() => onDragStartCate(index)}
-          onDragEnd={(result: any) => {
-            onDragEndCategory(result, index);
-          }}
-        >
-          <Droppable droppableId={`droppableCate-${item.id}`}>
-            {(provided) => (
-              <div
-                className="flex flex-col pl-8"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                {item.route === BOARD.EVENT_BOARD
-                  ? (item.themas || []).map((elem: ThemaInterface, i) => (
-                      <Draggable
-                        key={elem?.id}
-                        draggableId={elem?.id || ""}
-                        index={i}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                            className={classNames(
-                              "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
-                              snapshot.isDragging ? "bg-dayBreakBlue50" : ""
-                            )}
-                          >
-                            <BaseText
-                              key={`thema${i}`}
-                              medium
-                              size={16}
+        {
+          !isCollapsed && (
+            <DragDropContext
+              onDragStart={() => onDragStartCate(index)}
+              onDragEnd={(result: any) => {
+                onDragEndCategory(result, index);
+              }}
+            >
+              <Droppable droppableId={`droppableCate-${item.id}`}>
+                {(provided) => (
+                  <div
+                    className="flex flex-col pl-8"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                  >
+                    {item.route === BOARD.EVENT_BOARD
+                      ? (item.themas || []).map((elem: ThemaInterface, i) => (
+                        <Draggable
+                          key={elem?.id}
+                          draggableId={elem?.id || ""}
+                          index={i}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
                               className={classNames(
-                                snapshot.isDragging
-                                  ? "text-dayBreakBlue500"
-                                  : "text-darkNight700"
+                                "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
+                                snapshot.isDragging ? "bg-dayBreakBlue50" : ""
                               )}
                             >
-                              {elem?.name || ""}
-                            </BaseText>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))
-                  : (item.categories || []).map((elem, i) => (
-                      <Draggable
-                        key={elem.category?.id}
-                        draggableId={elem.category?.id}
-                        index={i}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            ref={provided.innerRef}
-                            className={classNames(
-                              "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
-                              snapshot.isDragging ? "bg-dayBreakBlue50" : ""
-                            )}
-                          >
-                            <BaseText
-                              key={`category${i}`}
-                              medium
-                              size={16}
+                              <BaseText
+                                key={`thema${i}`}
+                                medium
+                                size={16}
+                                className={classNames(
+                                  snapshot.isDragging
+                                    ? "text-dayBreakBlue500"
+                                    : "text-darkNight700"
+                                )}
+                              >
+                                {elem?.name || ""}
+                              </BaseText>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))
+                      : (item.categories || []).map((elem, i) => (
+                        <Draggable
+                          key={elem.category?.id}
+                          draggableId={elem.category?.id}
+                          index={i}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              ref={provided.innerRef}
                               className={classNames(
-                                snapshot.isDragging
-                                  ? "text-dayBreakBlue500"
-                                  : "text-darkNight700"
+                                "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
+                                snapshot.isDragging ? "bg-dayBreakBlue50" : ""
                               )}
                             >
-                              {elem.category?.name}
-                            </BaseText>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+                              <BaseText
+                                key={`category${i}`}
+                                medium
+                                size={16}
+                                className={classNames(
+                                  snapshot.isDragging
+                                    ? "text-dayBreakBlue500"
+                                    : "text-darkNight700"
+                                )}
+                              >
+                                {elem.category?.name}
+                              </BaseText>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          )
+        }
         <div
           className={classNames(linkCateDragging === index ? "h-[24px]" : "")}
         ></div>

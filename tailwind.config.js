@@ -39,6 +39,9 @@ module.exports = {
         neutral9: "#F6F8FA",
         bgItemActive: "#EEF2F6",
       },
+      fontSize: {
+        "16px": "16px",
+      },
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],
