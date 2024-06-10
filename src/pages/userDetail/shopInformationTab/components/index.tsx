@@ -4,11 +4,12 @@ import { ceilRemainingTime, classNames, mathRemainingTime } from "../../../../ut
 import { BaseText } from "../../../../components";
 import Images from "../../../../assets/gen";
 import { Url } from "../../../../routers/paths";
-import { Checkbox } from "antd";
+import { Checkbox, notification } from "antd";
 import { useEffect, useState } from "react";
 import { CheckboxChangeEvent } from "antd/es/checkbox";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import { storeApi } from "../../../../apis/storeApi";
 
 interface IItemShop {
   id: string;
@@ -19,12 +20,14 @@ interface IItemShop {
   item?: any;
   className?: string;
   onClick: (id: number | string) => void;
+  onCloneShop: (id: string) => void;
+  onDeleteShop: (id: string) => void;
   onShopSelected?: ({ id, checked }: { id: string; checked: boolean }) => void;
   isUnCheck?: boolean;
 }
 
 export const ItemShop = (props: IItemShop) => {
-  const { id, avatar, name, timeOpening, hashtag, item, className, onClick, onShopSelected, isUnCheck } = props;
+  const { id, avatar, name, timeOpening, hashtag, item, className, onClick, onCloneShop, onDeleteShop, onShopSelected, isUnCheck } = props;
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [checked, setChecked] = useState(false);
@@ -61,11 +64,23 @@ export const ItemShop = (props: IItemShop) => {
             </div>
           </div>
         )}
-        <img src={Images.edit2} alt="avatar" className="absolute p-2 bg-white rounded-full shadow-lg w-9 h-9 top-2 right-2"
-          onClick={(event) => {
-            event.stopPropagation(); // Stop event propagation
-            navigate(Url.newStore, { state: { dataEdit: item } });
-          }} />
+        <div className="absolute flex gap-1 top-2 right-2">
+          <img src={Images.copy} alt="avatar" className="p-2 bg-white rounded-full shadow-lg w-9 h-9"
+            onClick={(event) => {
+              event.stopPropagation(); // Stop event propagation
+              onCloneShop && onCloneShop(id);
+            }} />
+          <img src={Images.trash} alt="avatar" className="p-2 bg-white rounded-full shadow-lg w-9 h-9"
+            onClick={(event) => {
+              event.stopPropagation(); // Stop event propagation
+              onDeleteShop && onDeleteShop(id);
+            }} />
+          <img src={Images.edit2} alt="avatar" className="p-2 bg-white rounded-full shadow-lg w-9 h-9"
+            onClick={(event) => {
+              event.stopPropagation(); // Stop event propagation
+              navigate(Url.newStore, { state: { dataEdit: item } });
+            }} />
+        </div>
         <Checkbox
           className="absolute p-2 top-2 left-2"
           onChange={(e: CheckboxChangeEvent) => onChange(e, id)}

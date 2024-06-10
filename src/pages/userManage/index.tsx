@@ -115,6 +115,7 @@ const UserManage = () => {
 
   const [reloading, setReloading] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
+  const [triggerSearch, setTriggerSearch] = useState(false);
 
   const [page, setPage] = useState(1);
   const [totalCountUser, setTotalCountUser] = useState(0);
@@ -588,7 +589,7 @@ const UserManage = () => {
     handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
   };
 
-  const searchUser = () => {
+  const searchUser = async () => {
     const convertFilter: any = {};
     if (typeUserSelected.id !== "ALL") {
       convertFilter["account_type"] = typeUserSelected.id;
@@ -600,45 +601,49 @@ const UserManage = () => {
       convertFilter["$or"] = [
         { nickname: { $like: `%${valueSearch}%` } },
         { email: { $like: `%${valueSearch}%` } },
+        { username: { $like: `%${valueSearch}%` } },
+        { phone: { $like: `%${valueSearch}%` } },
       ];
     }
 
     if (typeUserSelected.id === TypeUser.ADMIN) {
       // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
-      employeeApi
-        .getList({
+      try {
+        const resGetListAdmin: any = await employeeApi.getList({
           limit: limit,
           page,
           fields: '["$all"]',
-        })
-        .then((res: any) => {
-          const listUserConvert = res.results.objects.rows.map((item: any) => {
-            return {
-              ...item,
-              nickname: item.fullname,
-              account_type: TypeUser.ADMIN,
-            };
-          });
-          setListUser(listUserConvert);
-        })
-        .catch((err: any) => {
-          console.log("err: ", err);
         });
+        if (resGetListAdmin?.code === 200) {
+          const listUserConvert = (resGetListAdmin?.results?.objects?.rows || []).map(
+            (item: any) => {
+              return {
+                ...item,
+                nickname: item.fullname,
+                account_type: TypeUser.ADMIN,
+              };
+            }
+          );
+          setListUser(listUserConvert);
+        }
+      } catch (error) {
+        console.log("err: ", error);
+      }
     } else {
-      userApi
-        .getList({
+      try {
+        const resGetListUser: any = await userApi.getList({
           limit: limit,
           page,
           fields: '["$all"]',
           filter: JSON.stringify(convertFilter),
           statistic: true,
-        })
-        .then((res: any) => {
-          setListUser(res.results.objects.rows);
-        })
-        .catch((err) => {
-          console.log("err: ", err);
         });
+        if (resGetListUser?.code === 200) {
+          setListUser(resGetListUser?.results?.objects?.rows || []);
+        }
+      } catch (error) {
+        console.log("err: ", error);
+      }
     }
   };
 
@@ -661,15 +666,17 @@ const UserManage = () => {
     }
   };
   useEffect(() => {
-    setPage(0);
-    setTimeout(() => {
-      setPage(1);
-    }, 50);
+   // Reset page to 1 and trigger search effect
+   if (page !== 1) {
+    setPage(1);
+  } else {
+    setTriggerSearch(prev => !prev); // Toggle triggerSearch to force re-run
+  }
   }, [groupSelected, typeUserSelected, valueSearch]);
 
   useEffect(() => {
     searchUser();
-  }, [page]);
+  }, [page, triggerSearch]);
 
   useEffect(() => {
     userApi

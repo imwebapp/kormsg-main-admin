@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BaseText, CustomButton } from "../../components";
 
 import { CheckOutlined } from "@ant-design/icons";
-import { App, Layout, Spin } from "antd";
+import { App, Layout, Spin, Radio } from "antd";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -35,6 +35,7 @@ import { BoardLinkApi } from "../../apis/boardLinkApi";
 import { ReservationPart } from "./components/ReservationPart";
 import { HOLIDAY_SETTING, LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
 import axios from "axios";
+import { SelectAddress } from "./components/SelectAddress";
 interface IFormDataPage1 {
   storeCopyFunc: string;
   storeOwnerMembershipSetting: string;
@@ -141,6 +142,7 @@ const NewStore = () => {
   const { message } = App.useApp();
 
   const dataEditShop = location?.state?.dataEdit;
+  const idOwnerShopEdit = location?.state?.dataEdit?.user_id;
 
   const [loadingScreen, setLoadingScreen] = useState<boolean>(false);
 
@@ -278,10 +280,14 @@ const NewStore = () => {
     setOpenModalCreateNewManage(false);
   };
 
+  const [typeAddress, setTypeAddress] = useState<boolean>(true);
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
-    useState<any>();
+    useState<{
+      id: string;
+      nickname: string;
+    }>();
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
     storeCopyFunc: "",
     storeOwnerMembershipSetting: "",
@@ -505,6 +511,7 @@ const NewStore = () => {
         thumbnails: resultArrayImageConvert,
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
+        change_owner: (idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id) ? true : false, //change owner when edit shop
         verified: true,
         payment_methods: formDataPage1?.reservationFuncSetting
           ? formDataPage1?.reservationPaymentMethod.length > 0
@@ -981,7 +988,10 @@ const NewStore = () => {
             <UserFilter
               value={storeOwnerMembershipSetting}
               onChange={(value) => {
-                setStoreOwnerMembershipSetting(value);
+                setStoreOwnerMembershipSetting({
+                  id: value?.id,
+                  nickname: value?.nickname,
+                });
                 handleInputChange(
                   "storeOwnerMembershipSetting",
                   value?.nickname
@@ -1001,14 +1011,51 @@ const NewStore = () => {
               onChange={(value) => handleInputChange("storeNumber", value)}
             />
             <div>
-              <div onClick={handleClickPostalCode}>
-                <BaseInput
-                  title="매장 주소(위치기반 적용)"
-                  placeholder="주소입력"
-                  value={formDataPage1.storeAddress}
-                // onChange={(value) => handleInputChange('storeAddress', value)}
-                />
+              <div className={classNames('flex items-center mb-2 gap-2')}>
+                <BaseText locale bold>
+                  매장 주소(위치기반 적용)
+                </BaseText>
+                <Radio.Group className="flex items-center" onChange={(e) => setTypeAddress(e.target.value)} value={typeAddress}>
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
               </div>
+              {typeAddress ?
+                <div onClick={handleClickPostalCode}>
+                  <BaseInput
+                    // title="매장 주소(위치기반 적용)"
+                    placeholder="주소입력"
+                    value={formDataPage1?.storeAddress}
+                  // onChange={(value) => handleInputChange('storeAddress', value)}
+                  />
+                </div> :
+                <SelectAddress
+                  value={{
+                    fullAddress: formDataPage1?.storeAddress,
+                    lat: formDataPage1?.latitude,
+                    lng: formDataPage1?.longitude,
+                  }}
+                  onChange={(value: {
+                    fullAddress: string;
+                    lat: number;
+                    lng: number;
+                  }) => {
+                    setFormDataPage1({
+                      ...formDataPage1,
+                      latitude: value.lat || 37.3957122,
+                      longitude: value.lng || 127.1105181,
+                      storeAddress: value.fullAddress || "",
+                    });
+                  }}
+                />}
               <BaseInput
                 placeholder="상세주소 입력"
                 value={formDataPage1.storeAddressDetails}

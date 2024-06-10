@@ -19,6 +19,7 @@ const SeoPage = () => {
     avatar: "",
     metaCode: "",
     metaNaverCode: "",
+    google_ads: "",
   });
   const [selectedIcon, setSelectedIcon] = useState<File | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<File | null>(null);
@@ -29,25 +30,14 @@ const SeoPage = () => {
 
   const isFormDataValid = () => {
     for (const key in dataSeo) {
-      if (
-        key === "favicon" &&
-        selectedIcon === null &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      const value = dataSeo[key as keyof typeof dataSeo];
+      if (key === "favicon" && selectedIcon === null && !value) {
         return false;
       }
-      if (
-        key === "avatar" &&
-        selectedAvatar === null &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      if (key === "avatar" && selectedAvatar === null && !value) {
         return false;
       }
-      if (
-        key !== "favicon" &&
-        key !== "avatar" &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      if (key !== "favicon" && key !== "avatar" && key !== "google_ads" && !value) {
         return false;
       }
     }
@@ -82,13 +72,14 @@ const SeoPage = () => {
         imageUploaded = ResUploadAvatar.url;
       }
       const dataConvert = {
-        title: dataSeo?.siteName,
-        description: dataSeo?.siteDescription,
+        title: dataSeo?.siteName.trim(),
+        description: dataSeo?.siteDescription.trim(),
         icon: iconUploaded,
         avatar: imageUploaded,
-        keywords: dataSeo?.metaKeyword,
-        meta: dataSeo?.metaCode,
-        meta_naver: dataSeo?.metaNaverCode,
+        keywords: dataSeo?.metaKeyword.trim(),
+        meta: dataSeo?.metaCode.trim(),
+        meta_naver: dataSeo?.metaNaverCode.trim(),
+        google_ads: dataSeo?.google_ads.trim(),
       };
 
       const response: any = await seoApi.updateSEO(dataConvert);
@@ -103,6 +94,7 @@ const SeoPage = () => {
           avatar: response?.results?.object?.avatar,
           metaCode: response?.results?.object?.meta,
           metaNaverCode: response?.results?.object?.meta_naver,
+          google_ads: response?.results?.object?.google_ads,
         });
         setLoadingScreen(false);
         message.success("Update SEO success");
@@ -127,9 +119,10 @@ const SeoPage = () => {
           avatar: response?.results?.object?.avatar,
           metaCode: response?.results?.object?.meta,
           metaNaverCode: response?.results?.object?.meta_naver,
+          google_ads: response?.results?.object?.google_ads,
         });
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -309,6 +302,18 @@ const SeoPage = () => {
         <BaseText locale bold size={14} color="text-darkNight700">
           Insert the meta tag for ownership for Naver and Google Webmaster Tools
           here.
+        </BaseText>
+
+        <BaseInput
+          title="Google AdSense code"
+          placeholder="Google AdSense code"
+          value={dataSeo.google_ads}
+          onChange={(value) => handleChange("google_ads", value)}
+          textArea
+        />
+        <BaseText locale bold size={14} color="text-darkNight700">
+          {/* Insert the meta tag for ownership for Naver and Google Webmaster Tools
+          here. */}
         </BaseText>
       </div>
       <CustomButton

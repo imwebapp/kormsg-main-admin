@@ -9,11 +9,12 @@ import { CloseOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { BaseModal2 } from "../../../components/modal/BaseModal2";
 import dayjs from "dayjs";
 import { BaseInput } from "../../../components/input/BaseInput";
-import { App, DatePicker, Popconfirm, Popover, Spin } from "antd";
+import { App, DatePicker, Popconfirm, Popover, Spin, notification } from "antd";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { userApi } from "../../../apis/userApi";
 import { BASE_URL_LINK_SHOP } from "../../../utils/constants";
 import { eventApi } from "../../../apis/eventApi";
+import { storeApi } from "../../../apis/storeApi";
 
 const ListTabBar = [
   {
@@ -148,6 +149,44 @@ export const ShopInformationTab = (props: IProps) => {
     // window.open(url, "_blank");
   };
 
+  const handleCloneShop = async (id: string) => {
+    try {
+      setLoadingScreen(true);
+      await storeApi.cloneStore(id);
+      notification.success({
+        message: "Clone Store Success",
+      });
+      _getListShop()
+      _getUser();
+      setLoadingScreen(false);
+    } catch (error: any) {
+      setLoadingScreen(false);
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+
+  const handleDeleteShop = async (id: string) => {
+    try {
+      setLoadingScreen(true);
+      await storeApi.deleteStore(id);
+      notification.success({
+        message: "Delete Success",
+      });
+      _getListShop()
+      _getUser();
+      setLoadingScreen(false);
+    } catch (error: any) {
+      setLoadingScreen(false);
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+
   const handleMinusDay = async () => {
     if (valueMinusDay && valueMinusDay > 0) {
       try {
@@ -263,6 +302,8 @@ export const ShopInformationTab = (props: IProps) => {
       { category: ["$all", { thema: ["$all"] }] },
       { events: ["$all"] },
       { shop_tags: ["$all"] },
+      { courses: ["$all", { prices: ["$all"] }] },
+      { mentors: ["$all"] },
     ];
 
     const convertFieldsDuringTheEvent: any = [
@@ -330,6 +371,8 @@ export const ShopInformationTab = (props: IProps) => {
       { category: ["$all", { thema: ["$all"] }] },
       { events: ["$all"] },
       { shop_tags: ["$all"] },
+      { courses: ["$all", { prices: ["$all"] }] },
+      { mentors: ["$all"] },
     ];
     const convertFilter: any = {
       user_id: `${dataUser.id}`,
@@ -423,13 +466,15 @@ export const ShopInformationTab = (props: IProps) => {
                     ? item.images[0]
                     : "https://via.placeholder.com/300"
                 }
+                className=""
                 name={item.title}
                 timeOpening={item.opening_hours}
                 hashtag={(item?.shop_tags || []).map((item: any) => `#${item.name}`)}
                 item={item}
                 onClick={(id) => handleClickShop(id)}
-                className=""
                 onShopSelected={handleShopSelected}
+                onCloneShop={(id) => handleCloneShop(id)}
+                onDeleteShop={(id) => handleDeleteShop(id)}
                 isUnCheck={listShopSelected.length === 0}
               />
             )
