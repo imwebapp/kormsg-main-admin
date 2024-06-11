@@ -142,6 +142,7 @@ const NewStore = () => {
   const { message } = App.useApp();
 
   const dataEditShop = location?.state?.dataEdit;
+  const idOwnerShopEdit = location?.state?.dataEdit?.user_id;
 
   const [loadingScreen, setLoadingScreen] = useState<boolean>(false);
 
@@ -283,7 +284,10 @@ const NewStore = () => {
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
-    useState<any>();
+    useState<{
+      id: string;
+      nickname: string;
+    }>();
   const [formDataPage1, setFormDataPage1] = useState<IFormDataPage1>({
     storeCopyFunc: "",
     storeOwnerMembershipSetting: "",
@@ -507,6 +511,7 @@ const NewStore = () => {
         thumbnails: resultArrayImageConvert,
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
+        change_owner: (idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id) ? true : false, //change owner when edit shop
         verified: true,
         payment_methods: formDataPage1?.reservationFuncSetting
           ? formDataPage1?.reservationPaymentMethod.length > 0
@@ -983,7 +988,10 @@ const NewStore = () => {
             <UserFilter
               value={storeOwnerMembershipSetting}
               onChange={(value) => {
-                setStoreOwnerMembershipSetting(value);
+                setStoreOwnerMembershipSetting({
+                  id: value?.id,
+                  nickname: value?.nickname,
+                });
                 handleInputChange(
                   "storeOwnerMembershipSetting",
                   value?.nickname

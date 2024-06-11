@@ -1,7 +1,7 @@
 import { BaseText, CustomButton } from "../../../components";
 import Images from "../../../assets/gen";
 import { BaseInput } from "../../../components/input/BaseInput";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BOARD,
   BOARD_TEXT,
@@ -148,6 +148,17 @@ export default function BulletinSetting() {
     } catch (error) {
       showError(error);
       if (reverse) setBoardSelected(oldBoardLink);
+    }
+  };
+
+  const updateMapTypeForThema = async ({ themaId, mapType }: any) => {
+    try {
+      await ThemaApi.updateThema(themaId, {
+        geolocation_api_type: mapType,
+      });
+      setLastRefresh(Date.now());
+    } catch (error) {
+      showError(error);
     }
   };
 
@@ -414,39 +425,41 @@ export default function BulletinSetting() {
     );
   };
 
-  const _buildMapBrand = () => {
+  const _buildMapBrand = useMemo(() => {
     return (
       <>
-        <div className="flex flex-row justify-between items-center mt-4">
-          <BaseText locale medium>
-            Map Brand
-          </BaseText>
-          <BaseInputSelect
-            key={Date.now()}
-            className="!min-w-[100px]"
-            placeholder="Select"
-            onChange={(value) => {
-              updateOrCreateBoardLink({
-                ...boardSelected,
-                geolocation_api_type: value,
-              });
-            }}
-            required={true}
-            allowClear={false}
-            size="middle"
-            textInputSize={12}
-            defaultValue={boardSelected.geolocation_api_type}
-            options={Object.values(MAP_TYPE).map((item) => {
-              return {
-                label: t(item),
-                value: item,
-              };
-            })}
-          />
-        </div>
+        {boardSelected.route !== BOARD.EVENT_BOARD && (
+          <div className="flex flex-row justify-between items-center mt-4">
+            <BaseText locale medium>
+              Map Brand
+            </BaseText>
+            <BaseInputSelect
+              key={Date.now()}
+              className="!min-w-[100px]"
+              placeholder="Select"
+              onChange={(value) => {
+                updateMapTypeForThema({
+                  themaId: boardSelected.thema_id,
+                  mapType: value,
+                });
+              }}
+              required={true}
+              allowClear={false}
+              size="middle"
+              textInputSize={12}
+              defaultValue={boardSelected.thema?.geolocation_api_type || ""}
+              options={Object.values(MAP_TYPE).map((item) => {
+                return {
+                  label: t(item),
+                  value: item,
+                };
+              })}
+            />
+          </div>
+        )}
       </>
     );
-  };
+  }, [boardSelected]);
 
   const orderTag = async (
     prev_index_number: number | undefined,
@@ -563,7 +576,7 @@ export default function BulletinSetting() {
       {_buildImageAndName()}
       {_buildBoardType()}
       {_buildThema()}
-      {_buildMapBrand()}
+      {_buildMapBrand}
       {_buildTags()}
 
       <Popconfirm

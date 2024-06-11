@@ -86,7 +86,7 @@ export const InformationTab = (props: IProps) => {
         message.error("Edit user failed");
       });
     } else {
-      console.log("FormData is not valid. Please fill all fields.");
+      message.error("FormData is not valid. Please fill all fields.");
     }
     setOpenModalEditInfo(false);
   };
