@@ -8,7 +8,7 @@ import {
   PlusOutlined,
   ArrowUpOutlined,
   CaretDownOutlined,
-  SearchOutlined
+  SearchOutlined,
 } from "@ant-design/icons";
 import { DatePicker, Input, Select, message, notification } from "antd";
 
@@ -60,11 +60,14 @@ const StorePage = () => {
 
   const getCountStore = async () => {
     try {
-      let resultCount: any = await storeApi.getCountStore();
+      let params = {
+        search_value: valueKeywordFilter,
+      };
+      let resultCount: any = await storeApi.getCountStore(params);
       if (resultCount.code === 200) {
         setCountStore(resultCount.results.object);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
   const getListThema = async () => {
     try {
@@ -157,7 +160,7 @@ const StorePage = () => {
       };
       let result: any = await storeApi.downloadExcel(params);
       window.open(result.results?.object?.url, "_blank");
-    } catch (error) { }
+    } catch (error) {}
   };
   const onDragEnd = (result: any) => {
     console.log("result onDragEnd", result);
@@ -228,8 +231,11 @@ const StorePage = () => {
   useEffect(() => {
     getListThema();
     getCountStore();
-    return () => { };
+    return () => {};
   }, []);
+  useEffect(() => {
+    getCountStore();
+  }, [valueKeywordFilter]);
 
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
