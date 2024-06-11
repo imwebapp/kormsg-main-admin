@@ -322,7 +322,7 @@ const SeoPage = () => {
         primary
         onClick={handleSubmit}
         bold
-        disabled={!isFormDataValid()}
+        // disabled={!isFormDataValid()}
       >
         Save
       </CustomButton>
