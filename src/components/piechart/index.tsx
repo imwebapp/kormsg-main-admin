@@ -7,6 +7,7 @@ import BaseCard from "../baseCard";
 import { BaseInputSelect } from "../input/BaseInputSelect";
 import { useTranslation } from "react-i18next";
 import { analyticsApi } from "../../apis/analyticsApi";
+import { PARAMS_PROPERTY_MOBILE, PARAMS_PROPERTY_WEB } from "../../utils/constants";
 
 type PieChartProps = {
   className?: string; // for tailwindcss
@@ -32,7 +33,7 @@ export default function BasePieChart(props: PieChartProps) {
   const getInfoAnalyticsPlatform = async () => {
     try {
       const paramsWeb = {
-        property: "properties/244725891",
+        property: PARAMS_PROPERTY_WEB,
         dimensions: [{ name: "platformDeviceCategory" }],
         metrics: [{ name: "screenPageViews" }],
         dateRanges: [
@@ -57,7 +58,7 @@ export default function BasePieChart(props: PieChartProps) {
         ],
       };
       const paramsApp = {
-        property: "properties/435982517",
+        property: PARAMS_PROPERTY_MOBILE,
         dimensions: [{ name: "platform" }],
         metrics: [{ name: "screenPageViews" }],
         dateRanges: [
@@ -104,12 +105,12 @@ export default function BasePieChart(props: PieChartProps) {
       });
 
       setData(convertedData);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
     getInfoAnalyticsPlatform();
-    return () => {};
+    return () => { };
   }, [date]);
 
   useEffect(() => {
