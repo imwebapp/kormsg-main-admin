@@ -23,4 +23,5 @@ export interface ThemaInterface {
     view_group_ids?: Array<any>;
     post_group_ids?: Array<any>;
     comment_group_ids?: Array<any>;
+    geolocation_api_type?: string;
 }
