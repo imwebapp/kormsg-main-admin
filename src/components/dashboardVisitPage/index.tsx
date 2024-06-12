@@ -8,6 +8,7 @@ import CustomTimePicker from "../calendar";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
 import { analyticsApi } from "../../apis/analyticsApi";
+import { PARAMS_PROPERTY_WEB } from "../../utils/constants";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -27,7 +28,7 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
   const getInfoAnalytics = async () => {
     try {
       const params = {
-        property: "properties/244725891",
+        property: PARAMS_PROPERTY_WEB,
         dimensions: [{ name: "city" }],
         metrics: [{ name: "activeUsers" }],
         dateRanges: [
@@ -44,13 +45,13 @@ export default function DashboardVisitTable(props: DashboardOverviewProps) {
       } else {
         setData(convertedData.slice(0, 10));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     getInfoAnalytics();
-    return () => {};
+    return () => { };
   }, [dateTimeSelect]);
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {};
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => { };
   const columns: TableColumnsType<any> = [
     {
       title: t("City"),
