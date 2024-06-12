@@ -10,6 +10,7 @@ import CustomTimePicker from "../calendar";
 import { useNavigate } from "react-router-dom";
 import { Url } from "../../routers/paths";
 import { analyticsApi } from "../../apis/analyticsApi";
+import { PARAMS_PROPERTY_WEB } from "../../utils/constants";
 
 type DashboardOverviewProps = {
   isViewAll: boolean;
@@ -36,7 +37,7 @@ export default function DashboardInflowDomaineTable(
   const getInfoAnalytics = async () => {
     try {
       const params = {
-        property: "properties/244725891",
+        property: PARAMS_PROPERTY_WEB,
         dimensions: [{ name: "fullPageUrl" }],
         metrics: [{ name: "activeUsers" }],
         dateRanges: [
