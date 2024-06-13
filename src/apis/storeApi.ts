@@ -7,6 +7,9 @@ export const storeApi = {
   cloneStore: (id: string) => {
     return axiosClient.post(`${STORE}/clone_shop/${id}`);
   },
+  hardDeleteStore: (id: string) => {
+    return axiosClient.delete(`${STORE}/hard_delete/${id}`);
+  },
   deleteStore: (id: string) => {
     return axiosClient.delete(`${STORE}/${id}`);
   },
