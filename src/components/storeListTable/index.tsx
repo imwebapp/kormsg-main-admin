@@ -138,7 +138,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   const deleteStore = async (id: string) => {
     try {
-      await storeApi.deleteStore(id);
+      await storeApi.hardDeleteStore(id);
       notification.success({
         message: "Delete Success",
       });
