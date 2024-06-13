@@ -16,6 +16,7 @@ import { classNames } from "../../utils/common";
 import { useLocalStorage } from "../../stores/localStorage";
 import { analyticsApi } from "../../apis/analyticsApi";
 import dayjs from "dayjs";
+import { PARAMS_PROPERTY_WEB } from "../../utils/constants";
 
 export interface BarChartDataInterface {
   label: string;
@@ -41,7 +42,7 @@ export default function BaseBarChart(props: BarChartProps) {
   const getInfoAnalytics = async () => {
     try {
       const params = {
-        property: "properties/244725891",
+        property: PARAMS_PROPERTY_WEB,
         dimensions: [{ name: optionTime === t("Hours") ? "hour" : "date" }],
         metrics: [{ name: "screenPageViews" }],
         dateRanges: [
@@ -113,8 +114,8 @@ export default function BaseBarChart(props: BarChartProps) {
     if (onSelectDateTime) onSelectDateTime(dateTimeSelect);
   }, [dateTimeSelect]);
   return (
-    <BaseCard className="flex-1 mr-4 flex flex-col items-end">
-      <div className="flex flex-row w-full justify-between">
+    <BaseCard className="flex flex-col items-end flex-1 mr-4">
+      <div className="flex flex-row justify-between w-full">
         <BaseText locale size={24} bold>
           Traffic
         </BaseText>
