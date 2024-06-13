@@ -151,7 +151,6 @@ const Login = () => {
     <div className="flex h-screen bg-white ">
       <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
       <div className="relative w-1/3 bg-red-100">
-        <img src={Images.logoKormsg} className="absolute w-12 h-12 top-8 left-8" />
         <img src={bg} className="w-full h-full" />
       </div>
       <div className="flex items-center justify-center w-2/3">
