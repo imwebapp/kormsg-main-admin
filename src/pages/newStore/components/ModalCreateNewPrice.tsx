@@ -42,7 +42,7 @@ export const ModalCreateNewPrice = (props: IProps) => {
         amountAfterDiscount: undefined,
         amountBeforeNightDiscount: undefined,
         amountAfterNightDiscount: undefined,
-        unit: 'KRW',
+        unit: '원',
     });
     const [isShowPriceNight, setIsShowPriceNight] = useState<string>('0');
     const [isErrorTime, setIsErrorTime] = useState<string>('')
@@ -85,7 +85,7 @@ export const ModalCreateNewPrice = (props: IProps) => {
                 amountAfterDiscount: undefined,
                 amountBeforeNightDiscount: undefined,
                 amountAfterNightDiscount: undefined,
-                unit: 'KRW',
+                unit: '원',
             }
         )
         const dataPrices = (dataNewPrice?.amountBeforeNightDiscount && dataNewPrice?.amountAfterNightDiscount) ? [
@@ -181,15 +181,14 @@ export const ModalCreateNewPrice = (props: IProps) => {
                 <BaseInput
                     title="코스시간"
                     placeholder="시간선택"
-                    type='number'
                     isError={isErrorTime}
                     value={dataNewPrice.time}
                     onChange={(value) => handleInputChangeNewPrice('time', value)}
-                    iconRight={<BaseText
-                        locale
-                    >
-                        Minutes
-                    </BaseText>}
+                    // iconRight={<BaseText
+                    //     locale
+                    // >
+                    //     Minutes
+                    // </BaseText>}
                 />
 
                 <div className='relative'>
@@ -267,16 +266,9 @@ export const ModalCreateNewPrice = (props: IProps) => {
                     </div>
                 </>}
 
-                <BaseInputSelect
+                <BaseInput
                     title="결제가능한 화폐"
                     placeholder=""
-                    options={[
-                        {
-                            value: "KRW",
-                            label: t('KRW'),
-                        },
-                    ]}
-                    defaultValue={dataNewPrice.unit}
                     value={dataNewPrice.unit}
                     onChange={(value) => {
                         handleInputChangeNewPrice('unit', value)

@@ -54,7 +54,6 @@ export default function DashboardSearchTermTable(
         setData(convertedData.slice(0, 10));
       }
     } catch (error) {
-      showError(error);
     }
   };
   useEffect(() => {
