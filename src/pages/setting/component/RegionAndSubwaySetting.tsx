@@ -1,5 +1,4 @@
-import React from 'react';
-import { BaseSegmented } from '../../../components';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Segmented } from 'antd';
 import { RegionSetting } from './RegionSetting';
@@ -7,7 +6,7 @@ import { SubwaySetting } from './SubwaySetting';
 
 export const RegionAndSubwaySetting = () => {
     const { t } = useTranslation();
-    const [optionTime, setOptionTime] = React.useState<string>('지역 설정');
+    const [optionTime, setOptionTime] = useState<string>("지역 설정");
     return (
         <div className='flex flex-col gap-2 px-6'>
             <Segmented<string>
@@ -23,14 +22,13 @@ export const RegionAndSubwaySetting = () => {
                     }
                 ]}
                 onChange={(value) => {
-                    console.log(value); // string
                     setOptionTime(value);
                 }}
                 block
             />
             <div>
                 {
-                    optionTime ==="지역 설정" ? (
+                    optionTime === "지역 설정" ? (
                         <RegionSetting />
                     ) : (
                         <SubwaySetting />
