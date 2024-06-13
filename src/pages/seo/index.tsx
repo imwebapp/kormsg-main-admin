@@ -30,25 +30,14 @@ const SeoPage = () => {
 
   const isFormDataValid = () => {
     for (const key in dataSeo) {
-      if (
-        key === "favicon" &&
-        selectedIcon === null &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      const value = dataSeo[key as keyof typeof dataSeo];
+      if (key === "favicon" && selectedIcon === null && !value) {
         return false;
       }
-      if (
-        key === "avatar" &&
-        selectedAvatar === null &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      if (key === "avatar" && selectedAvatar === null && !value) {
         return false;
       }
-      if (
-        key !== "favicon" &&
-        key !== "avatar" &&
-        !dataSeo[key as keyof typeof dataSeo]
-      ) {
+      if (key !== "favicon" && key !== "avatar" && key !== "google_ads" && !value) {
         return false;
       }
     }
@@ -333,7 +322,7 @@ const SeoPage = () => {
         primary
         onClick={handleSubmit}
         bold
-        disabled={!isFormDataValid()}
+        // disabled={!isFormDataValid()}
       >
         Save
       </CustomButton>
