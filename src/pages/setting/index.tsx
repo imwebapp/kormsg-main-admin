@@ -7,6 +7,7 @@ import CompanyInformation from "./component/CompanyInformation";
 import { useTranslation } from "react-i18next";
 import QASetting from "./component/QASetting";
 import CustomService from "./component/CustomService";
+import { RegionAndSubwaySetting } from "./component/RegionAndSubwaySetting";
 const SettingPage = () => {
   const { t } = useTranslation();
 
@@ -71,7 +72,7 @@ const SettingPage = () => {
         }
         key="5"
       >
-        <div>필터 지역 및 지하철 설정</div>
+        <RegionAndSubwaySetting />
       </TabPane>
     </Tabs>
   );
