@@ -1,15 +1,13 @@
+import { notification } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
-import { BaseSegmented, BaseText, CustomButton } from '../../../components';
-import { useTranslation } from 'react-i18next';
-import { Radio, Segmented, notification } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined, CheckOutlined } from "@ant-design/icons";
-import Images from '../../../assets/gen';
-import { storeApi } from '../../../apis/storeApi';
-import { showError } from '../../../utils/showToast';
-import { classNames } from '../../../utils/common';
-import { BaseInput } from '../../../components/input/BaseInput';
-import { regionApi } from '../../../apis/regionApi';
 import { districtApi } from '../../../apis/districtApi';
+import { regionApi } from '../../../apis/regionApi';
+import { storeApi } from '../../../apis/storeApi';
+import Images from '../../../assets/gen';
+import { BaseText } from '../../../components';
+import { BaseInput } from '../../../components/input/BaseInput';
+import { classNames } from '../../../utils/common';
+import { showError } from '../../../utils/showToast';
 
 export const RegionSetting = () => {
     const fileExcelRef = useRef<any>(null);
@@ -313,7 +311,7 @@ export const RegionSetting = () => {
                                                 />
                                                 {!isCreatingRegionName && checkSelected && (
                                                     <div className='flex gap-1'>
-                                                        <div onClick={() => handleUpRegion(item)}>
+                                                        {/* <div onClick={() => handleUpRegion(item)}>
                                                             <img
                                                                 src={Images.arrowUp2}
                                                                 className="w-6 h-6 cursor-pointer"
@@ -324,7 +322,7 @@ export const RegionSetting = () => {
                                                                 src={Images.arrowDown2}
                                                                 className="w-6 h-6 cursor-pointer"
                                                             />
-                                                        </div>
+                                                        </div> */}
                                                         <div onClick={() => handleDeleteRegion(item)}>
                                                             <img
                                                                 src={Images.trash}
@@ -407,7 +405,7 @@ export const RegionSetting = () => {
                                                 />
                                                 {!isCreatingDistrictName && checkSelected && (
                                                     <div className='flex gap-1'>
-                                                        <div onClick={() => handleUpDistrict(item)}>
+                                                        {/* <div onClick={() => handleUpDistrict(item)}>
                                                             <img
                                                                 src={Images.arrowUp2}
                                                                 className="w-6 h-6 cursor-pointer"
@@ -418,7 +416,7 @@ export const RegionSetting = () => {
                                                                 src={Images.arrowDown2}
                                                                 className="w-6 h-6 cursor-pointer"
                                                             />
-                                                        </div>
+                                                        </div> */}
                                                         <div onClick={() => handleDeleteDistrict(item)}>
                                                             <img
                                                                 src={Images.trash}
