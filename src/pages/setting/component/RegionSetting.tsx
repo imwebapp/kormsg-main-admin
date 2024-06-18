@@ -6,9 +6,10 @@ import { storeApi } from "../../../apis/storeApi";
 import Images from "../../../assets/gen";
 import { BaseText } from "../../../components";
 import { BaseInput } from "../../../components/input/BaseInput";
-import { classNames } from "../../../utils/common";
+import { classNames, convertParams } from "../../../utils/common";
 import { showError } from "../../../utils/showToast";
 import { REGION_TYPE } from "../../../utils/constants";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 export const RegionSetting = () => {
   const fileExcelRef = useRef<any>(null);
@@ -27,16 +28,24 @@ export const RegionSetting = () => {
   const [isEditingDistrictName, setIsEditingDistrictName] = useState(false);
   const [newDistrictName, setNewDistrictName] = useState("");
   const [valueInputCreateDistrict, setValueInputCreateDistrict] = useState("");
+  const [regionDragging, setRegionDragging] = useState(false);
+  const [districtDragging, setDistrictDragging] = useState(false);
 
   const getListRegion = async () => {
     try {
-      const resListRegion: any = await regionApi.getList({
-        limit: 50,
-        fields: '["$all"]',
-        filter: JSON.stringify({
-          region: valueRegion,
-        }),
-      });
+      const resListRegion: any = await regionApi.getList(
+        convertParams({
+          limit: 50,
+          fields: ["$all"],
+          filter: {
+            region: valueRegion,
+          },
+          order: [
+            ["index", "ASC"],
+            ["updated_at", "DESC"],
+          ],
+        })
+      );
       if (resListRegion?.code === 200) {
         console.log("resListRegion: ", resListRegion);
         setListRegion(resListRegion?.results?.objects?.rows || []);
@@ -49,11 +58,17 @@ export const RegionSetting = () => {
   };
   const getListDistrict = async () => {
     try {
-      const resListDistrict: any = await districtApi.getList({
-        limit: 50,
-        fields: '["$all"]',
-        filter: JSON.stringify({ setting_province_id: regionSelected.id }),
-      });
+      const resListDistrict: any = await districtApi.getList(
+        convertParams({
+          limit: 50,
+          fields: ["$all"],
+          filter: { setting_province_id: regionSelected.id },
+          order: [
+            ["index", "ASC"],
+            ["updated_at", "DESC"],
+          ],
+        })
+      );
       if (resListDistrict?.code === 200) {
         console.log("resListDistrict: ", resListDistrict);
         setListDistrict(resListDistrict?.results?.objects?.rows || []);
@@ -234,43 +249,162 @@ export const RegionSetting = () => {
     }
   }, [regionSelected]);
 
+  const orderRegion = async (
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    index: number
+  ) => {
+    try {
+      await regionApi.orderRegion(listRegion[index].id, {
+        prev_index_number,
+        next_index_number,
+      });
+      getListRegion();
+    } catch (error) {
+      showError(error);
+      getListRegion();
+    }
+  };
+
+  const onDragRegionEnd = (result: any) => {
+    setRegionDragging(false);
+    try {
+      if (!result.destination) {
+        return;
+      }
+      if (result.source.index < result.destination.index) {
+        orderRegion(
+          listRegion[result.destination.index]?.index,
+          listRegion[result.destination.index + 1]?.index,
+          result.source.index
+        );
+      } else {
+        orderRegion(
+          listRegion[result.destination.index - 1]?.index,
+          listRegion[result.destination.index]?.index,
+          result.source.index
+        );
+      }
+      const newItems = [...listRegion];
+      const [reorderedItem] = newItems.splice(result.source.index, 1);
+      newItems.splice(result.destination.index, 0, reorderedItem);
+      setListRegion(newItems);
+    } catch (error) {}
+  };
+
+  const orderDistrict = async (
+    prev_index_number: number | undefined,
+    next_index_number: number | undefined,
+    index: number
+  ) => {
+    try {
+      await districtApi.orderDistrict(listDistrict[index].id, {
+        prev_index_number,
+        next_index_number,
+      });
+      getListDistrict();
+    } catch (error) {
+      showError(error);
+      getListDistrict();
+    }
+  };
+
+  const onDragEndDistrict = (result: any) => {
+    setDistrictDragging(false);
+    try {
+      if (!result.destination) {
+        return;
+      }
+
+      //////////////////////////////////
+      //////////////////////////////////
+
+      //////////////////////////////////
+      //////////////////////////////////
+      if (result.source.index < result.destination.index) {
+        orderDistrict(
+          listDistrict[result.destination.index]?.index,
+          listDistrict[result.destination.index + 1]?.index,
+          result.source.index
+        );
+      } else {
+        orderDistrict(
+          listDistrict[result.destination.index - 1]?.index,
+          listDistrict[result.destination.index]?.index,
+          result.source.index
+        );
+      }
+      const newItems = [...listDistrict];
+      const [reorderedItem] = newItems.splice(result.source.index, 1);
+      newItems.splice(result.destination.index, 0, reorderedItem);
+      setListDistrict(newItems);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   const _buildDistrict = () => {
     return (
       <div className="w-3/4">
-        <div className="max-h-[500px] px-3 overflow-auto">
-          {listDistrict.map((item: any, index: number) => {
-            const checkSelected =
-              districtSelected && districtSelected.id === item.id;
-            return (
-              <div
-                key={index}
-                className={classNames(
-                  "flex py-[10px] justify-between",
-                  !isEditingDistrictName &&
-                    checkSelected &&
-                    !isCreatingDistrictName
-                    ? "bg-darkNight100 rounded-lg"
-                    : ""
-                )}
-                onClick={() => {
-                  setDistrictSelected(item);
-                }}
-                onDoubleClick={handleEditDistrictName}
-              >
-                {isEditingDistrictName && checkSelected ? (
-                  <div className="flex items-center justify-between flex-1 pr-4 border rounded-lg border-dayBreakBlue500">
-                    <BaseInput
-                      value={newDistrictName}
-                      onChange={(value) => setNewDistrictName(value)}
-                      // onBlur={handleSaveDistrictName}
-                      onSave={handleSaveDistrictName}
-                      autoFocus
-                      styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
-                      styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
-                    />
-                    {!isCreatingDistrictName && checkSelected && (
-                      <div className="flex gap-1">
-                        {/* <div onClick={() => handleUpDistrict(item)}>
+        <div className="px-3">
+          <DragDropContext
+            onDragStart={() => setDistrictDragging(true)}
+            onDragEnd={onDragEndDistrict}
+          >
+            <Droppable droppableId={`droppableDistrict-${regionSelected.id}`}>
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {listDistrict.map((item: any, index: number) => {
+                    const checkSelected =
+                      districtSelected && districtSelected.id === item.id;
+                    return (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className={classNames(
+                              snapshot.isDragging
+                                ? "bg-dayBreakBlue50 rounded-lg"
+                                : ""
+                            )}
+                          >
+                            <div
+                              key={index}
+                              className={classNames(
+                                "flex py-[10px] justify-between",
+                                !isEditingDistrictName &&
+                                  checkSelected &&
+                                  !isCreatingDistrictName
+                                  ? "bg-darkNight100 rounded-lg"
+                                  : ""
+                              )}
+                              onClick={() => {
+                                setDistrictSelected(item);
+                              }}
+                              onDoubleClick={handleEditDistrictName}
+                            >
+                              {isEditingDistrictName && checkSelected ? (
+                                <div className="flex items-center justify-between flex-1 pr-4 border rounded-lg border-dayBreakBlue500">
+                                  <BaseInput
+                                    value={newDistrictName}
+                                    onChange={(value) =>
+                                      setNewDistrictName(value)
+                                    }
+                                    // onBlur={handleSaveDistrictName}
+                                    onSave={handleSaveDistrictName}
+                                    autoFocus
+                                    styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
+                                    styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
+                                  />
+                                  {!isCreatingDistrictName && checkSelected && (
+                                    <div className="flex gap-1">
+                                      {/* <div onClick={() => handleUpDistrict(item)}>
                                             <img
                                                 src={Images.arrowUp2}
                                                 className="w-6 h-6 cursor-pointer"
@@ -282,44 +416,56 @@ export const RegionSetting = () => {
                                                 className="w-6 h-6 cursor-pointer"
                                             />
                                         </div> */}
-                        <div onClick={() => handleDeleteDistrict(item)}>
-                          <img
-                            src={Images.trash}
-                            className="w-6 h-6 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex justify-between w-full px-2 ">
-                    <BaseText
-                      locale
-                      size={16}
-                      bold
-                      className={classNames(
-                        !isCreatingDistrictName &&
-                          checkSelected &&
-                          !isCreatingDistrictName
-                          ? "text-primary"
-                          : ""
-                      )}
-                    >
-                      {item.name}
-                    </BaseText>
-                    {!isCreatingDistrictName && checkSelected && (
-                      <img
-                        src={Images.edit2}
-                        alt="Excel upload"
-                        className="w-6 h-6 text-white cursor-pointer"
-                        onClick={handleEditDistrictName}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                                      <div
+                                        onClick={() =>
+                                          handleDeleteDistrict(item)
+                                        }
+                                      >
+                                        <img
+                                          src={Images.trash}
+                                          className="w-6 h-6 cursor-pointer"
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="flex justify-between w-full px-2 ">
+                                  <BaseText
+                                    locale
+                                    size={16}
+                                    bold
+                                    className={classNames(
+                                      !isCreatingDistrictName &&
+                                        checkSelected &&
+                                        !isCreatingDistrictName
+                                        ? "text-primary"
+                                        : ""
+                                    )}
+                                  >
+                                    {item.name}
+                                  </BaseText>
+                                  {!isCreatingDistrictName && checkSelected && (
+                                    <img
+                                      src={Images.edit2}
+                                      alt="Excel upload"
+                                      className="w-6 h-6 text-white cursor-pointer"
+                                      onClick={handleEditDistrictName}
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+
           {isCreatingDistrictName && (
             <div
               className={classNames("flex items-center mb-2 cursor-pointer")}
@@ -340,7 +486,10 @@ export const RegionSetting = () => {
           )}
         </div>
         <div
-          className="mt-2 ml-2 cursor-pointer"
+          className={classNames(
+            "ml-2 cursor-pointer",
+            districtDragging ? "mt-[52px]" : "mt-2"
+          )}
           onClick={() => {
             setIsCreatingDistrictName(true);
           }}
@@ -356,39 +505,64 @@ export const RegionSetting = () => {
   const _buildRegion = () => {
     return (
       <div className="w-1/4">
-        <div className="max-h-[500px] flex-col pr-2 overflow-auto border-r ">
-          {listRegion.map((item: any, index: number) => {
-            const checkSelected =
-              regionSelected && regionSelected.id === item.id;
-            return (
-              <div
-                key={index}
-                className={classNames(
-                  "flex py-[10px] justify-between",
-                  !isEditingRegionName && checkSelected && !isCreatingRegionName
-                    ? "bg-darkNight900 rounded-xl"
-                    : ""
-                )}
-                onClick={() => {
-                  setIsEditingRegionName(false);
-                  setRegionSelected(item);
-                }}
-                onDoubleClick={handleEditRegionName}
-              >
-                {isEditingRegionName && checkSelected ? (
-                  <div className="flex items-center justify-between flex-1 pr-4 border rounded-lg border-dayBreakBlue500">
-                    <BaseInput
-                      value={newRegionName}
-                      onChange={(value) => setNewRegionName(value)}
-                      // onBlur={handleSaveRegionName}
-                      onSave={handleSaveRegionName}
-                      autoFocus
-                      styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
-                      styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
-                    />
-                    {!isCreatingRegionName && checkSelected && (
-                      <div className="flex gap-1">
-                        {/* <div onClick={() => handleUpRegion(item)}>
+        <div className="flex-col pr-2 border-r">
+          <DragDropContext
+            onDragStart={() => setRegionDragging(true)}
+            onDragEnd={onDragRegionEnd}
+          >
+            <Droppable droppableId="droppableRegion">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {listRegion.map((item: any, index: number) => {
+                    const checkSelected =
+                      regionSelected && regionSelected.id === item.id;
+                    return (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className={classNames(
+                              snapshot.isDragging ? "bg-black rounded-lg " : ""
+                            )}
+                          >
+                            <div
+                              key={index}
+                              className={classNames(
+                                "flex py-[10px] justify-between",
+                                !isEditingRegionName &&
+                                  checkSelected &&
+                                  !isCreatingRegionName
+                                  ? "bg-darkNight900 rounded-xl"
+                                  : ""
+                              )}
+                              onClick={() => {
+                                setIsEditingRegionName(false);
+                                setRegionSelected(item);
+                              }}
+                              onDoubleClick={handleEditRegionName}
+                            >
+                              {isEditingRegionName && checkSelected ? (
+                                <div className="flex items-center justify-between flex-1 pr-4 border rounded-lg border-dayBreakBlue500">
+                                  <BaseInput
+                                    value={newRegionName}
+                                    onChange={(value) =>
+                                      setNewRegionName(value)
+                                    }
+                                    // onBlur={handleSaveRegionName}
+                                    onSave={handleSaveRegionName}
+                                    autoFocus
+                                    styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
+                                    styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
+                                  />
+                                  {!isCreatingRegionName && checkSelected && (
+                                    <div className="flex gap-1">
+                                      {/* <div onClick={() => handleUpRegion(item)}>
                                                       <img
                                                           src={Images.arrowUp2}
                                                           className="w-6 h-6 cursor-pointer"
@@ -400,47 +574,58 @@ export const RegionSetting = () => {
                                                           className="w-6 h-6 cursor-pointer"
                                                       />
                                                   </div> */}
-                        <div onClick={() => handleDeleteRegion(item)}>
-                          <img
-                            src={Images.trash}
-                            className="w-6 h-6 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex justify-between w-full px-4">
-                    <BaseText
-                      locale
-                      size={16}
-                      bold
-                      className={classNames(
-                        !isCreatingRegionName &&
-                          checkSelected &&
-                          !isCreatingRegionName
-                          ? "text-white"
-                          : ""
-                      )}
-                    >
-                      {item.name}
-                    </BaseText>
-                    {!isCreatingRegionName && checkSelected && (
-                      <img
-                        src={Images.edit2White}
-                        alt="Excel upload"
-                        className="w-6 h-6 text-white cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditRegionName();
-                        }}
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                                      <div
+                                        onClick={() => handleDeleteRegion(item)}
+                                      >
+                                        <img
+                                          src={Images.trash}
+                                          className="w-6 h-6 cursor-pointer"
+                                        />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="flex justify-between w-full px-4">
+                                  <BaseText
+                                    locale
+                                    size={16}
+                                    bold
+                                    className={classNames(
+                                      (!isCreatingRegionName &&
+                                        checkSelected &&
+                                        !isCreatingRegionName) ||
+                                        snapshot.isDragging
+                                        ? "text-white"
+                                        : ""
+                                    )}
+                                  >
+                                    {item.name}
+                                  </BaseText>
+                                  {!isCreatingRegionName && checkSelected && (
+                                    <img
+                                      src={Images.edit2White}
+                                      alt="Excel upload"
+                                      className="w-6 h-6 text-white cursor-pointer"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleEditRegionName();
+                                      }}
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </Draggable>
+                    );
+                  })}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+
           {isCreatingRegionName && (
             <div
               className={classNames("flex items-center mb-2 cursor-pointer")}
@@ -461,7 +646,10 @@ export const RegionSetting = () => {
           )}
         </div>
         <div
-          className="mt-2 cursor-pointer"
+          className={classNames(
+            "cursor-pointer",
+            !!regionDragging ? "mt-[54px]" : "mt-2"
+          )}
           onClick={() => {
             setIsCreatingRegionName(true);
           }}
@@ -555,7 +743,7 @@ export const RegionSetting = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-10">
       {_buildAction()}
       <div className="flex">
         {_buildRegion()}
