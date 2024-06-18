@@ -15,14 +15,16 @@ export const regionApi = {
     console.log(new_group_id);
 
     return axiosClient.delete(
-      `${REGION}/${id}${
-        new_group_id && new_group_id.trim() !== ""
-          ? `?new_group=${encodeURIComponent(new_group_id)}`
-          : ""
+      `${REGION}/${id}${new_group_id && new_group_id.trim() !== ""
+        ? `?new_group=${encodeURIComponent(new_group_id)}`
+        : ""
       }`
     );
   },
   orderGroup: (id: string, data?: any) => {
     return axiosClient.put(`${REGION}/order-group/${id}`, data);
+  },
+  orderRegion: async (id?: string, data?: any) => {
+    return await axiosClient.put(`${REGION}/order-item/${id}`, data);
   },
 };

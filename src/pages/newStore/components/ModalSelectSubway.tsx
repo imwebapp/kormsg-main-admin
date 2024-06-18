@@ -6,7 +6,7 @@ import { BaseText } from '../../../components';
 import { BaseInput } from '../../../components/input/BaseInput';
 import { BaseModal } from '../../../components/modal/BaseModal';
 import { classNames } from '../../../utils/common';
-import { LIST_REGION, STATION } from '../../../utils/constants';
+import { STATION } from '../../../utils/constants';
 
 interface IProps {
     isOpen: boolean;
@@ -95,8 +95,8 @@ export const ModalSelectSubway = (props: IProps) => {
                             {
                                 subwaySelectedChild ? (
                                     <>
-                                        <div className="flex gap-2 justify-between">
-                                            <div className="flex gap-2 items-center">
+                                        <div className="flex justify-between gap-2">
+                                            <div className="flex items-center gap-2">
                                                 <img src={Images.arrowLeft} className="w-6 h-6" onClick={() => { setSubwaySelectedDetails(undefined); setSubwaySelectedChild(undefined) }} />
                                                 <BaseText size={24} medium>
                                                     {subwaySelectedChild?.name}

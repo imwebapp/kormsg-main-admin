@@ -398,6 +398,12 @@ export const PLATFORM = {
   BROWSER: "BROWSER",
   BROWSER_MOBILE: "BROWSER_MOBILE",
 };
+
+export const REGION_TYPE = {
+  GLOBAL: 'GLOBAL',
+  KOREA: 'KOREA'
+}
+
 export const LIST_REGION = [
   {
     id: "서울",
