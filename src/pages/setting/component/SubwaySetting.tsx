@@ -1,5 +1,5 @@
-import { notification } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import { Popover, notification } from "antd";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { stationLineApi } from "../../../apis/stationLineApi";
 import { storeApi } from "../../../apis/storeApi";
 import Images from "../../../assets/gen";
@@ -11,6 +11,8 @@ import { REGION_TYPE } from "../../../utils/constants";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { subwayApi } from "../../../apis/stationSubwayApi";
 import { stationApi } from "../../../apis/stationApi";
+import { HexColorPicker } from "react-colorful";
+import _ from "lodash";
 
 export const SubwaySetting = () => {
   const fileExcelRef = useRef<any>(null);
@@ -34,7 +36,7 @@ export const SubwaySetting = () => {
   const [isEditingSubwayName, setIsEditingSubwayName] = useState(false);
   const [newSubwayName, setNewSubwayName] = useState("");
   const [valueInputCreateSubway, setValueInputCreateSubway] = useState("");
-  const [regionDragging, setStationLineDragging] = useState(false);
+  const [stationLineDragging, setStationLineDragging] = useState(false);
   const [subwayDragging, setSubwayDragging] = useState(false);
 
   const getListStation = async () => {
@@ -149,6 +151,29 @@ export const SubwaySetting = () => {
     setNewStationLineName(stationLineSelected.name);
   };
 
+  const handleSaveStationLineColor = useCallback(
+    _.debounce(async (color: string) => {
+      const resEditStationLine: any = await stationLineApi.update(
+        stationLineSelected.id.toString(),
+        { color }
+      );
+      if (resEditStationLine?.code === 200) {
+        const updatedStationLines = listStationLine.map((stationLine: any) => {
+          if (stationLine.id === stationLineSelected.id) {
+            setStationLineSelected({
+              ...stationLine,
+              color,
+            });
+            return { ...stationLine, color };
+          }
+          return stationLine;
+        });
+        setListStationLine(updatedStationLines);
+      }
+    }, 500),
+    [stationLineSelected]
+  );
+
   const handleSaveStationLineName = async () => {
     if (
       newStationLineName === "" ||
@@ -163,40 +188,40 @@ export const SubwaySetting = () => {
       { name: newStationLineName.trim() }
     );
     if (resEditStationLine?.code === 200) {
-      const updatedStationLines = listStationLine.map((region: any) => {
-        if (region.id === stationLineSelected.id) {
+      const updatedStationLines = listStationLine.map((stationLine: any) => {
+        if (stationLine.id === stationLineSelected.id) {
           setStationLineSelected({
-            ...region,
+            ...stationLine,
             name: newStationLineName.trim(),
           });
-          return { ...region, name: newStationLineName.trim() };
+          return { ...stationLine, name: newStationLineName.trim() };
         }
-        return region;
+        return stationLine;
       });
       setListStationLine(updatedStationLines);
     }
     setIsEditingStationLineName(false);
   };
 
-  const handleUpStationLine = async (region: any) => {};
+  const handleUpStationLine = async (stationLine: any) => {};
 
-  const handleDownStationLine = async (region: any) => {};
+  const handleDownStationLine = async (stationLine: any) => {};
 
-  const handleDeleteStationLine = async (region: any) => {
+  const handleDeleteStationLine = async (stationLine: any) => {
     try {
       const resDeleteStationLine: any = await stationLineApi.delete(
-        region.id.toString()
+        stationLine.id.toString()
       );
       if (resDeleteStationLine?.code === 200) {
         const updatedStationLines = listStationLine.filter(
-          (item: any) => item.id !== region.id
+          (item: any) => item.id !== stationLine.id
         );
         setListStationLine(updatedStationLines);
         setStationLineSelected(updatedStationLines[0]);
         setIsEditingStationLineName(false);
       }
     } catch (error: any) {
-      console.log("err delete region: ", error);
+      console.log("err delete stationLine: ", error);
     }
   };
 
@@ -597,17 +622,40 @@ export const SubwaySetting = () => {
                             >
                               {isEditingStationLineName && checkSelected ? (
                                 <div className="flex items-center justify-between flex-1 pr-4 border rounded-lg border-dayBreakBlue500">
-                                  <BaseInput
-                                    value={newStationLineName}
-                                    onChange={(value) =>
-                                      setNewStationLineName(value)
-                                    }
-                                    // onBlur={handleSaveStationLineName}
-                                    onSave={handleSaveStationLineName}
-                                    autoFocus
-                                    styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
-                                    styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
-                                  />
+                                  <div className="flex flex-row items-center">
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                      <Popover
+                                        placement="topRight"
+                                        trigger="click"
+                                        content={
+                                          <HexColorPicker
+                                            color={item.color || "#FFFFFF"}
+                                            onChange={
+                                              handleSaveStationLineColor
+                                            }
+                                          />
+                                        }
+                                      >
+                                        <div
+                                          style={{
+                                            background: item.color || "white",
+                                          }}
+                                          className={`min-w-6 h-6 rounded-full border ml-2`}
+                                        ></div>
+                                      </Popover>
+                                    </div>
+                                    <BaseInput
+                                      value={newStationLineName}
+                                      onChange={(value) =>
+                                        setNewStationLineName(value)
+                                      }
+                                      // onBlur={handleSaveStationLineName}
+                                      onSave={handleSaveStationLineName}
+                                      autoFocus
+                                      styleInputContainer="w-full font-medium bg-white border-none text-darkNight900"
+                                      styleInput="w-full bg-white focus:outline-none font-medium text-darkNight900"
+                                    />
+                                  </div>
                                   {!isCreatingStationLineName &&
                                     checkSelected && (
                                       <div className="flex gap-1">
@@ -638,21 +686,29 @@ export const SubwaySetting = () => {
                                 </div>
                               ) : (
                                 <div className="flex justify-between w-full px-4">
-                                  <BaseText
-                                    locale
-                                    size={16}
-                                    bold
-                                    className={classNames(
-                                      (!isCreatingStationLineName &&
-                                        checkSelected &&
-                                        !isCreatingStationLineName) ||
-                                        snapshot.isDragging
-                                        ? "text-white"
-                                        : ""
-                                    )}
-                                  >
-                                    {item.name}
-                                  </BaseText>
+                                  <div className="flex flex-row items-center gap-3">
+                                    <div
+                                      style={{
+                                        background: item.color || "white",
+                                      }}
+                                      className={`min-w-6 h-6 rounded-full`}
+                                    ></div>
+                                    <BaseText
+                                      locale
+                                      size={16}
+                                      bold
+                                      className={classNames(
+                                        (!isCreatingStationLineName &&
+                                          checkSelected &&
+                                          !isCreatingStationLineName) ||
+                                          snapshot.isDragging
+                                          ? "text-white"
+                                          : ""
+                                      )}
+                                    >
+                                      {item.name}
+                                    </BaseText>
+                                  </div>
                                   {!isCreatingStationLineName &&
                                     checkSelected && (
                                       <img
@@ -686,7 +742,7 @@ export const SubwaySetting = () => {
               <BaseInput
                 value={valueInputCreateStationLine}
                 onChange={(value) => setValueInputCreateStationLine(value)}
-                placeholder="Enter station_line name"
+                placeholder="Enter station line name"
                 // onBlur={handleCreateStationLine}
                 onSave={handleCreateStationLine}
                 autoFocus
@@ -700,7 +756,7 @@ export const SubwaySetting = () => {
         <div
           className={classNames(
             "cursor-pointer",
-            !!regionDragging ? "mt-[54px]" : "mt-2"
+            !!stationLineDragging ? "mt-[54px]" : "mt-2"
           )}
           onClick={() => {
             setIsCreatingStationLineName(true);
