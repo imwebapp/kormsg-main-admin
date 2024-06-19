@@ -280,7 +280,7 @@ const NewStore = () => {
     setOpenModalCreateNewManage(false);
   };
 
-  const [typeAddress, setTypeAddress] = useState<boolean>(true);
+  const [isAddressKor, setAddressKor] = useState<boolean>(true);
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
@@ -1015,7 +1015,7 @@ const NewStore = () => {
                 <BaseText locale bold>
                   매장 주소(위치기반 적용)
                 </BaseText>
-                <Radio.Group className="flex items-center" onChange={(e) => setTypeAddress(e.target.value)} value={typeAddress}>
+                <Radio.Group className="flex items-center" onChange={(e) => setAddressKor(e.target.value)} value={isAddressKor}>
                   <Radio value={true}>
                     <BaseText locale medium>
                       Korean
@@ -1028,7 +1028,7 @@ const NewStore = () => {
                   </Radio>
                 </Radio.Group>
               </div>
-              {typeAddress ?
+              {isAddressKor ?
                 <div onClick={handleClickPostalCode}>
                   <BaseInput
                     // title="매장 주소(위치기반 적용)"
@@ -1704,6 +1704,7 @@ const NewStore = () => {
         />
 
         <ModalSelectRegion
+          isAddressKor={isAddressKor}
           isOpen={openModalRegion}
           onClose={handleCloseModalRegion}
           onSubmit={(value) => handleSubmitRegion(value)}
