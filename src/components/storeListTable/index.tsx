@@ -304,8 +304,9 @@ export default function StoreListTable(props: StoreListTableProps) {
           console.log("err: ", err);
         });
     }, 500),
-    [currentPage]
+    [typeStore, typeSorting, thema, isUpdate, currentPage]
   );
+
   const getInfoPaymentHistory = (userId: string) => {
     try {
       userApi
@@ -394,7 +395,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
 
   useEffect(() => {
-    getListStore();
+    getListStore(valueSearch);
     setListRowSelected([]);
   }, [valueSearch]);
 
