@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Popover, TableColumnsType, message, notification } from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
@@ -21,6 +21,8 @@ import NaverMapComponent from "./components/NaverMap";
 import { BaseTableDnD } from "../table/BaseTableDnD";
 import CustomButton from "../button";
 import { shopApi } from "../../apis/shopApi";
+import _ from "lodash";
+
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -280,27 +282,30 @@ export default function StoreListTable(props: StoreListTableProps) {
     }
   };
 
-  const getListStore = () => {
-    // field all selected
-    const fieldsCustom = generateFields();
-    const filterCustom = generateFilter(typeStore);
-    const orderCustom = JSON.stringify(generateOrder(typeSorting));
-    storeApi
-      .getList({
-        limit: limit,
-        page: currentPage,
-        fields: fieldsCustom,
-        filter: filterCustom,
-        order: orderCustom,
-        search_value: valueSearch,
-      })
-      .then((res: any) => {
-        setListStore(res.results.objects.rows);
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
-  };
+  const getListStore = useCallback(
+    _.debounce(async (valueSearch?: string) => {
+      // field all selected
+      const fieldsCustom = generateFields();
+      const filterCustom = generateFilter(typeStore);
+      const orderCustom = JSON.stringify(generateOrder(typeSorting));
+      storeApi
+        .getList({
+          limit: limit,
+          page: currentPage,
+          fields: fieldsCustom,
+          filter: filterCustom,
+          order: orderCustom,
+          search_value: valueSearch,
+        })
+        .then((res: any) => {
+          setListStore(res.results.objects.rows);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    }, 500),
+    [currentPage]
+  );
   const getInfoPaymentHistory = (userId: string) => {
     try {
       userApi
@@ -391,11 +396,18 @@ export default function StoreListTable(props: StoreListTableProps) {
   useEffect(() => {
     getListStore();
     setListRowSelected([]);
-  }, [typeStore, typeSorting, thema, isUpdate, valueSearch, currentPage]);
+  }, [valueSearch]);
+
+  useEffect(() => {
+    getListStore();
+    setListRowSelected([]);
+  }, [typeStore, typeSorting, thema, isUpdate, currentPage]);
+
   useEffect(() => {
     setCurrentPage(1);
     setListRowSelected([]);
   }, [typeStore]);
+
   let dynamicColumns: TableColumnsType<any> = [
     {
       title: t("No"),
