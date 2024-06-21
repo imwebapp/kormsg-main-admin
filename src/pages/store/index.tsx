@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { BaseText, CustomButton, StoreListTable } from "../../components";
 import { Url } from "../../routers/paths";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SORTING, STORE_STATUS } from "../../utils/constants";
 import { useTranslation } from "react-i18next";
 import {
@@ -23,6 +23,8 @@ import Images from "../../assets/gen";
 import { showError } from "../../utils/showToast";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import BaseButton from "../../components/baseButton";
+import _ from "lodash";
+
 const { RangePicker } = DatePicker;
 const StorePage = () => {
   // format date
@@ -58,17 +60,21 @@ const StorePage = () => {
     }
   };
 
-  const getCountStore = async () => {
-    try {
-      let params = {
-        search_value: valueKeywordFilter,
-      };
-      let resultCount: any = await storeApi.getCountStore(params);
-      if (resultCount.code === 200) {
-        setCountStore(resultCount.results.object);
-      }
-    } catch (error) {}
-  };
+  const getCountStore = useCallback(
+    _.debounce(async (valueSearch?: string) => {
+      try {
+        let params = {
+          search_value: valueSearch,
+        };
+        let resultCount: any = await storeApi.getCountStore(params);
+        if (resultCount.code === 200) {
+          setCountStore(resultCount.results.object);
+        }
+      } catch (error) {}
+    }, 500),
+    []
+  );
+
   const getListThema = async () => {
     try {
       const data: Array<ThemaInterface> = await ThemaApi.getList();
@@ -220,22 +226,26 @@ const StorePage = () => {
       showError(error);
     }
   };
+
   const resetModal = () => {
     setDescriptionEvent("");
     setRangeValue(null);
   };
+
   const refreshTable = () => {
     setIsUpdateSuccess(isUpdateSuccess + 1);
     getCountStore();
   };
+
   useEffect(() => {
     getListThema();
     getCountStore();
     return () => {};
   }, []);
+
   useEffect(() => {
-    getCountStore();
-  }, [valueKeywordFilter]);
+    getCountStore(valueKeywordFilter);
+  }, [valueKeywordFilter, getCountStore]);
 
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
