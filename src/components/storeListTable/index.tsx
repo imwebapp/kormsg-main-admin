@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Popover, TableColumnsType, message, notification } from "antd";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Popconfirm,
+  Popover,
+  TableColumnsType,
+  message,
+  notification,
+} from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
 import { useTranslation } from "react-i18next";
@@ -21,6 +27,8 @@ import NaverMapComponent from "./components/NaverMap";
 import { BaseTableDnD } from "../table/BaseTableDnD";
 import CustomButton from "../button";
 import { shopApi } from "../../apis/shopApi";
+import _ from "lodash";
+
 type StoreListTableProps = {
   className?: string; // for tailwindcss
   typeStore?: string;
@@ -128,7 +136,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       notification.success({
         message: "Clone Store Success",
       });
-      getListStore();
+      getListStore(valueSearch);
     } catch (error: any) {
       notification.error({
         message: "Error",
@@ -142,7 +150,25 @@ export default function StoreListTable(props: StoreListTableProps) {
       notification.success({
         message: "Delete Success",
       });
-      getListStore();
+      getListStore(valueSearch);
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+
+  const deleteStoreMultiple = async () => {
+    try {
+      const listIds = JSON.stringify(listRowSelected);
+      await storeApi.deleteStoreMultiple({
+        items: listIds,
+      });
+      notification.success({
+        message: "Delete Success",
+      });
+      getListStore(valueSearch);
     } catch (error: any) {
       notification.error({
         message: "Error",
@@ -280,27 +306,31 @@ export default function StoreListTable(props: StoreListTableProps) {
     }
   };
 
-  const getListStore = () => {
-    // field all selected
-    const fieldsCustom = generateFields();
-    const filterCustom = generateFilter(typeStore);
-    const orderCustom = JSON.stringify(generateOrder(typeSorting));
-    storeApi
-      .getList({
-        limit: limit,
-        page: currentPage,
-        fields: fieldsCustom,
-        filter: filterCustom,
-        order: orderCustom,
-        search_value: valueSearch,
-      })
-      .then((res: any) => {
-        setListStore(res.results.objects.rows);
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
-  };
+  const getListStore = useCallback(
+    _.debounce(async (valueSearch?: string) => {
+      // field all selected
+      const fieldsCustom = generateFields();
+      const filterCustom = generateFilter(typeStore);
+      const orderCustom = JSON.stringify(generateOrder(typeSorting));
+      storeApi
+        .getList({
+          limit: limit,
+          page: currentPage,
+          fields: fieldsCustom,
+          filter: filterCustom,
+          order: orderCustom,
+          search_value: valueSearch,
+        })
+        .then((res: any) => {
+          setListStore(res.results.objects.rows);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
+    }, 500),
+    [typeStore, typeSorting, thema, isUpdate, currentPage]
+  );
+
   const getInfoPaymentHistory = (userId: string) => {
     try {
       userApi
@@ -353,7 +383,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           dataUpdate
         );
         if (resUpdateDate.code === 200) {
-          getListStore();
+          getListStore(valueSearch);
           setValueMinusDay(undefined);
           setListRowSelected([]);
           message.success("Update success");
@@ -376,7 +406,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           dataUpdate
         );
         if (resUpdateDate.code === 200) {
-          getListStore();
+          getListStore(valueSearch);
           setValueAddDay(undefined);
           setListRowSelected([]);
           message.success("Update success");
@@ -389,13 +419,20 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
 
   useEffect(() => {
-    getListStore();
+    getListStore(valueSearch);
     setListRowSelected([]);
-  }, [typeStore, typeSorting, thema, isUpdate, valueSearch, currentPage]);
+  }, [valueSearch]);
+
+  useEffect(() => {
+    getListStore(valueSearch);
+    setListRowSelected([]);
+  }, [typeStore, typeSorting, thema, isUpdate, currentPage]);
+
   useEffect(() => {
     setCurrentPage(1);
     setListRowSelected([]);
   }, [typeStore]);
+
   let dynamicColumns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -478,13 +515,13 @@ export default function StoreListTable(props: StoreListTableProps) {
               cloneStore(record.id);
             }}
           />
-          <img
-            src={Images.trash}
-            className="w-6 h-6 cursor-pointer"
-            onClick={() => {
-              deleteStore(record.id);
-            }}
-          />
+          <Popconfirm
+            onConfirm={() => deleteStore(record.id)}
+            title={t("Delete")}
+            description={t("Are you sure to delete")}
+          >
+            <img src={Images.trash} className="w-6 h-6 cursor-pointer" />
+          </Popconfirm>
         </div>
       ),
     },
@@ -612,6 +649,14 @@ export default function StoreListTable(props: StoreListTableProps) {
                 navigate(Url.newStore, { state: { dataEdit: record } });
               }}
             />
+            <Popconfirm
+              placement="topRight"
+              onConfirm={() => deleteStore(record.id)}
+              title={t("Delete")}
+              description={t("Are you sure to delete")}
+            >
+              <img src={Images.trash} className="w-6 h-6 cursor-pointer mr-10" />
+            </Popconfirm>
           </div>
         ),
       },
@@ -639,7 +684,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       />
       {listRowSelected.length > 0 && (
         <div className="fixed bottom-6 right-1/4 left-1/4">
-          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
+          <div className="flex bg-white gap-6 px-6 py-4  rounded-lg shadow-xl">
             <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
               <CloseOutlined className="text-xl text-black cursor-pointer" />
               <BaseText bold size={16}>
@@ -647,8 +692,8 @@ export default function StoreListTable(props: StoreListTableProps) {
                 <span className="text-primary">{listRowSelected.length}</span>
               </BaseText>
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <div className="flex justify-center border rounded-full border-darkNight100">
+            <div className="flex flex-1 items-center justify-center gap-2">
+              <div className="flex border rounded-full border-darkNight100">
                 <Popover
                   placement="topRight"
                   trigger="click"
@@ -718,6 +763,14 @@ export default function StoreListTable(props: StoreListTableProps) {
               <BaseText locale size={16} bold className="text-center">
                 기간을 입력해주세요
               </BaseText>
+              <div className="flex-1"></div>
+              <Popconfirm
+                onConfirm={() => deleteStoreMultiple()}
+                title={t("Delete")}
+                description={t("Are you sure to delete")}
+              >
+                <img src={Images.trash} className="w-6 h-6 cursor-pointer" />
+              </Popconfirm>
             </div>
           </div>
         </div>

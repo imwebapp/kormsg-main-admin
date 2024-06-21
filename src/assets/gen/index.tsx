@@ -69,8 +69,10 @@ export default class Images {
     static readonly appleIcon = require("../../../src/assets/images/appleIcon.png");
     static readonly archiveTick = require("../../../src/assets/images/archive-tick.png");
     static readonly arrowDown = require("../../../src/assets/images/arrowDown.png");
+    static readonly arrowDown2 = require("../../../src/assets/images/arrowDown2.png");
     static readonly arrowLeft = require("../../../src/assets/images/arrowLeft.png");
     static readonly arrowUp = require("../../../src/assets/images/arrowUp.png");
+    static readonly arrowUp2 = require("../../../src/assets/images/arrowUp2.png");
     static readonly bank1 = require("../../../src/assets/images/bank1.png");
     static readonly bank10 = require("../../../src/assets/images/bank10.png");
     static readonly bank2 = require("../../../src/assets/images/bank2.png");
@@ -110,6 +112,7 @@ export default class Images {
     static readonly dot = require("../../../src/assets/images/dot.png");
     static readonly edit = require("../../../src/assets/images/edit.png");
     static readonly edit2 = require("../../../src/assets/images/edit2.png");
+    static readonly edit2White = require("../../../src/assets/images/edit2White.png");
     static readonly editIcon2 = require("../../../src/assets/images/editIcon2.png");
     static readonly editPencil = require("../../../src/assets/images/editPencil.png");
     static readonly ellipsis = require("../../../src/assets/images/ellipsis.png");

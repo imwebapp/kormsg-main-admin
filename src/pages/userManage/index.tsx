@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Images from "../../assets/gen";
 import { BaseText, CustomButton } from "../../components";
 import { BaseInput } from "../../components/input/BaseInput";
@@ -31,6 +31,7 @@ import { employeeApi } from "../../apis/employeeApi";
 import { Input, Select, App, Spin, Switch } from "antd";
 import { UploadApi } from "../../apis/uploadApi";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import _ from "lodash";
 
 const listUserGroups = [
   {
@@ -130,7 +131,6 @@ const UserManage = () => {
   };
 
   const handleDeleteGroup = async (item: any) => {
-
     if (item?.numberUser === 0) {
       try {
         const resDeleteGroup: any = await groupApi.delete(item?.id.toString());
@@ -501,7 +501,7 @@ const UserManage = () => {
     try {
       const res: any = await userApi.updateUser(id, { account_type: type });
       if (res.code === 200) {
-        searchUser();
+        searchUser(valueSearch);
         message.success("Update type user successfully");
       }
     } catch (error: any) {
@@ -515,7 +515,7 @@ const UserManage = () => {
       const res: any = await userApi.updateUser(id, { group_id: group_id });
       if (res.code === 200) {
         await getListGroup();
-        searchUser();
+        searchUser(valueSearch);
         message.success("Update group user successfully");
       }
     } catch (error: any) {
@@ -589,63 +589,66 @@ const UserManage = () => {
     handleUpdateTypeUser(result.draggableId, result.destination.droppableId);
   };
 
-  const searchUser = async () => {
-    const convertFilter: any = {};
-    if (typeUserSelected.id !== "ALL") {
-      convertFilter["account_type"] = typeUserSelected.id;
-    }
-    if (groupSelected.id !== 1) {
-      convertFilter["group_id"] = groupSelected.id;
-    }
-    if (valueSearch !== "") {
-      convertFilter["$or"] = [
-        { nickname: { $like: `%${valueSearch}%` } },
-        { email: { $like: `%${valueSearch}%` } },
-        { username: { $like: `%${valueSearch}%` } },
-        { phone: { $like: `%${valueSearch}%` } },
-      ];
-    }
+  const searchUser = useCallback(
+    _.debounce(async (valueSearch?: string) => {
+      const convertFilter: any = {};
+      if (typeUserSelected.id !== "ALL") {
+        convertFilter["account_type"] = typeUserSelected.id;
+      }
+      if (groupSelected.id !== 1) {
+        convertFilter["group_id"] = groupSelected.id;
+      }
+      if (valueSearch !== "") {
+        convertFilter["$or"] = [
+          { nickname: { $like: `%${valueSearch}%` } },
+          { email: { $like: `%${valueSearch}%` } },
+          { username: { $like: `%${valueSearch}%` } },
+          { phone: { $like: `%${valueSearch}%` } },
+        ];
+      }
 
-    if (typeUserSelected.id === TypeUser.ADMIN) {
-      // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
-      try {
-        const resGetListAdmin: any = await employeeApi.getList({
-          limit: limit,
-          page,
-          fields: '["$all"]',
-        });
-        if (resGetListAdmin?.code === 200) {
-          const listUserConvert = (resGetListAdmin?.results?.objects?.rows || []).map(
-            (item: any) => {
+      if (typeUserSelected.id === TypeUser.ADMIN) {
+        // employeeApi.getList({ limit: 50, fields: '["$all"]', filter: JSON.stringify(convertFilter) }
+        try {
+          const resGetListAdmin: any = await employeeApi.getList({
+            limit: limit,
+            page,
+            fields: '["$all"]',
+          });
+          if (resGetListAdmin?.code === 200) {
+            const listUserConvert = (
+              resGetListAdmin?.results?.objects?.rows || []
+            ).map((item: any) => {
               return {
                 ...item,
                 nickname: item.fullname,
                 account_type: TypeUser.ADMIN,
               };
-            }
-          );
-          setListUser(listUserConvert);
+            });
+            setListUser(listUserConvert);
+          }
+        } catch (error) {
+          console.log("err: ", error);
         }
-      } catch (error) {
-        console.log("err: ", error);
-      }
-    } else {
-      try {
-        const resGetListUser: any = await userApi.getList({
-          limit: limit,
-          page,
-          fields: '["$all"]',
-          filter: JSON.stringify(convertFilter),
-          statistic: true,
-        });
-        if (resGetListUser?.code === 200) {
-          setListUser(resGetListUser?.results?.objects?.rows || []);
+      } else {
+        try {
+          const resGetListUser: any = await userApi.getList({
+            limit: limit,
+            page,
+            fields: '["$all"]',
+            filter: JSON.stringify(convertFilter),
+            statistic: true,
+          });
+          if (resGetListUser?.code === 200) {
+            setListUser(resGetListUser?.results?.objects?.rows || []);
+          }
+        } catch (error) {
+          console.log("err: ", error);
         }
-      } catch (error) {
-        console.log("err: ", error);
       }
-    }
-  };
+    }, 500),
+    [page, typeUserSelected, groupSelected]
+  );
 
   const getListGroup = async () => {
     try {
@@ -666,16 +669,16 @@ const UserManage = () => {
     }
   };
   useEffect(() => {
-   // Reset page to 1 and trigger search effect
-   if (page !== 1) {
-    setPage(1);
-  } else {
-    setTriggerSearch(prev => !prev); // Toggle triggerSearch to force re-run
-  }
+    // Reset page to 1 and trigger search effect
+    if (page !== 1) {
+      setPage(1);
+    } else {
+      setTriggerSearch((prev) => !prev); // Toggle triggerSearch to force re-run
+    }
   }, [groupSelected, typeUserSelected, valueSearch]);
 
   useEffect(() => {
-    searchUser();
+    searchUser(valueSearch);
   }, [page, triggerSearch]);
 
   useEffect(() => {
@@ -703,8 +706,8 @@ const UserManage = () => {
             else {
               setTotalCountUser(
                 countTypeUser.countBizUser +
-                countTypeUser.countFreeUser +
-                countTypeUser.countPaidUser
+                  countTypeUser.countFreeUser +
+                  countTypeUser.countPaidUser
               );
             }
             break;
@@ -776,7 +779,7 @@ const UserManage = () => {
                           onDoubleClick={handleEditGroupName}
                         >
                           {isEditingGroupName &&
-                            groupSelected.id === item.id ? (
+                          groupSelected.id === item.id ? (
                             <>
                               {checkSelected && (
                                 <CheckOutlined
@@ -845,7 +848,7 @@ const UserManage = () => {
                             onDoubleClick={handleEditGroupName}
                           >
                             {isEditingGroupName &&
-                              groupSelected.id === item.id ? (
+                            groupSelected.id === item.id ? (
                               <>
                                 {checkSelected && (
                                   <CheckOutlined
@@ -916,8 +919,8 @@ const UserManage = () => {
                       className={classNames(
                         "flex items-center gap-1 py-2 mb-2 cursor-pointer"
                       )}
-                      onClick={() => { }}
-                    // onDoubleClick={handleEditGroupName}
+                      onClick={() => {}}
+                      // onDoubleClick={handleEditGroupName}
                     >
                       <CheckOutlined
                         className={classNames("text-dayBreakBlue500 text-xl")}
@@ -1150,7 +1153,7 @@ const UserManage = () => {
               }
             }}
             className="flex font-bold text-center bg-darkNight50 focus:outline-none text-dark"
-          // type="number"
+            // type="number"
           />
           <img
             src={Images.plusCircle}

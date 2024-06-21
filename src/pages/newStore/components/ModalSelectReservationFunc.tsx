@@ -9,7 +9,6 @@ import { ChatMessageFuncPart1 } from './ChatMessageFuncPart1';
 import { useTranslation } from 'react-i18next';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { LIST_REGION } from '../../../utils/constants';
 import { CheckOutlined } from '@ant-design/icons';
 import { Checkbox } from 'antd';
 

@@ -29,6 +29,7 @@ import { CategoryApi } from "../../../apis/categoryApi";
 import { TagApi } from "../../../apis/tagApi";
 import { BaseInputSelect } from "../../../components/input/BaseInputSelect";
 import { groupApi } from "../../../apis/groupApi";
+import { useBulletinState } from "../store";
 
 export default function ThemaTable() {
   const { t } = useTranslation();
@@ -460,6 +461,7 @@ export default function ThemaTable() {
 const ListCategory = ({ lastOpen, themaId }: any) => {
   const { t } = useTranslation();
   const [categories, setCategories] = useState<Array<CategoryInterface>>([]);
+  const { setLastRefresh } = useBulletinState((state) => state);
 
   const getCategory = async () => {
     setCategories([]);
@@ -488,6 +490,7 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
       );
       getCategory();
       showSuccess("Success");
+      setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
     }
@@ -500,6 +503,7 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
         showSuccess("Success");
       }
       getCategory();
+      setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
     }
@@ -586,6 +590,7 @@ const ListCategory = ({ lastOpen, themaId }: any) => {
 const ListTags = ({ lastOpen, themaId }: any) => {
   const { t } = useTranslation();
   const [tags, setTags] = useState<Array<TagThemaInterface>>([]);
+  const { setLastRefresh } = useBulletinState((state) => state);
 
   const getTags = async () => {
     setTags([]);
@@ -614,6 +619,7 @@ const ListTags = ({ lastOpen, themaId }: any) => {
       );
       getTags();
       showSuccess("Success");
+      setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
     }
@@ -626,6 +632,7 @@ const ListTags = ({ lastOpen, themaId }: any) => {
         showSuccess("Success");
       }
       getTags();
+      setLastRefresh(Date.now());
     } catch (error) {
       showError(error);
     }
