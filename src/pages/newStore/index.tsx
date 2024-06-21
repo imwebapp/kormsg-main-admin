@@ -1041,6 +1041,7 @@ const NewStore = () => {
             />
             <BaseInput
               title="매장 번호"
+              type="number"
               placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
               onChange={(value) => handleInputChange("storeNumber", value)}
