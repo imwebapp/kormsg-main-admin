@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Popover, TableColumnsType, message, notification } from "antd";
+import {
+  Popconfirm,
+  Popover,
+  TableColumnsType,
+  message,
+  notification,
+} from "antd";
 import BaseText from "../text";
 import Images from "../../assets/gen";
 import { useTranslation } from "react-i18next";
@@ -141,6 +147,24 @@ export default function StoreListTable(props: StoreListTableProps) {
   const deleteStore = async (id: string) => {
     try {
       await storeApi.hardDeleteStore(id);
+      notification.success({
+        message: "Delete Success",
+      });
+      getListStore();
+    } catch (error: any) {
+      notification.error({
+        message: "Error",
+        description: error.message,
+      });
+    }
+  };
+
+  const deleteStoreMultiple = async () => {
+    try {
+      const listIds = JSON.stringify(listRowSelected);
+      await storeApi.deleteStoreMultiple({
+        items: listIds,
+      });
       notification.success({
         message: "Delete Success",
       });
@@ -491,13 +515,13 @@ export default function StoreListTable(props: StoreListTableProps) {
               cloneStore(record.id);
             }}
           />
-          <img
-            src={Images.trash}
-            className="w-6 h-6 cursor-pointer"
-            onClick={() => {
-              deleteStore(record.id);
-            }}
-          />
+          <Popconfirm
+            onConfirm={() => deleteStore(record.id)}
+            title={t("Delete")}
+            description={t("Are you sure to delete")}
+          >
+            <img src={Images.trash} className="w-6 h-6 cursor-pointer" />
+          </Popconfirm>
         </div>
       ),
     },
@@ -652,7 +676,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       />
       {listRowSelected.length > 0 && (
         <div className="fixed bottom-6 right-1/4 left-1/4">
-          <div className="flex gap-6 px-6 py-4 bg-white rounded-lg shadow-xl">
+          <div className="flex bg-white gap-6 px-6 py-4  rounded-lg shadow-xl">
             <div className="flex justify-center gap-2 px-3 py-3 rounded-full bg-darkNight50">
               <CloseOutlined className="text-xl text-black cursor-pointer" />
               <BaseText bold size={16}>
@@ -660,8 +684,8 @@ export default function StoreListTable(props: StoreListTableProps) {
                 <span className="text-primary">{listRowSelected.length}</span>
               </BaseText>
             </div>
-            <div className="flex items-center justify-center gap-2">
-              <div className="flex justify-center border rounded-full border-darkNight100">
+            <div className="flex flex-1 items-center justify-center gap-2">
+              <div className="flex border rounded-full border-darkNight100">
                 <Popover
                   placement="topRight"
                   trigger="click"
@@ -731,6 +755,14 @@ export default function StoreListTable(props: StoreListTableProps) {
               <BaseText locale size={16} bold className="text-center">
                 기간을 입력해주세요
               </BaseText>
+              <div className="flex-1"></div>
+              <Popconfirm
+                onConfirm={() => deleteStoreMultiple()}
+                title={t("Delete")}
+                description={t("Are you sure to delete")}
+              >
+                <img src={Images.trash} className="w-6 h-6 cursor-pointer" />
+              </Popconfirm>
             </div>
           </div>
         </div>
