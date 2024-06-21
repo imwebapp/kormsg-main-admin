@@ -501,7 +501,7 @@ const UserManage = () => {
     try {
       const res: any = await userApi.updateUser(id, { account_type: type });
       if (res.code === 200) {
-        searchUser();
+        searchUser(valueSearch);
         message.success("Update type user successfully");
       }
     } catch (error: any) {
@@ -515,7 +515,7 @@ const UserManage = () => {
       const res: any = await userApi.updateUser(id, { group_id: group_id });
       if (res.code === 200) {
         await getListGroup();
-        searchUser();
+        searchUser(valueSearch);
         message.success("Update group user successfully");
       }
     } catch (error: any) {

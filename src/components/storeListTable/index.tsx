@@ -136,7 +136,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       notification.success({
         message: "Clone Store Success",
       });
-      getListStore();
+      getListStore(valueSearch);
     } catch (error: any) {
       notification.error({
         message: "Error",
@@ -150,7 +150,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       notification.success({
         message: "Delete Success",
       });
-      getListStore();
+      getListStore(valueSearch);
     } catch (error: any) {
       notification.error({
         message: "Error",
@@ -168,7 +168,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       notification.success({
         message: "Delete Success",
       });
-      getListStore();
+      getListStore(valueSearch);
     } catch (error: any) {
       notification.error({
         message: "Error",
@@ -383,7 +383,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           dataUpdate
         );
         if (resUpdateDate.code === 200) {
-          getListStore();
+          getListStore(valueSearch);
           setValueMinusDay(undefined);
           setListRowSelected([]);
           message.success("Update success");
@@ -406,7 +406,7 @@ export default function StoreListTable(props: StoreListTableProps) {
           dataUpdate
         );
         if (resUpdateDate.code === 200) {
-          getListStore();
+          getListStore(valueSearch);
           setValueAddDay(undefined);
           setListRowSelected([]);
           message.success("Update success");
@@ -424,7 +424,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   }, [valueSearch]);
 
   useEffect(() => {
-    getListStore();
+    getListStore(valueSearch);
     setListRowSelected([]);
   }, [typeStore, typeSorting, thema, isUpdate, currentPage]);
 
