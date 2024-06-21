@@ -649,6 +649,14 @@ export default function StoreListTable(props: StoreListTableProps) {
                 navigate(Url.newStore, { state: { dataEdit: record } });
               }}
             />
+            <Popconfirm
+              placement="topRight"
+              onConfirm={() => deleteStore(record.id)}
+              title={t("Delete")}
+              description={t("Are you sure to delete")}
+            >
+              <img src={Images.trash} className="w-6 h-6 cursor-pointer mr-10" />
+            </Popconfirm>
           </div>
         ),
       },
