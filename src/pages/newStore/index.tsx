@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BaseText, CustomButton } from "../../components";
+import { useEffect, useMemo, useState } from "react";
+import { BaseEditor, BaseText, CustomButton } from "../../components";
 
 import { CheckOutlined } from "@ant-design/icons";
 import { App, Layout, Spin, Radio } from "antd";
@@ -337,6 +337,8 @@ const NewStore = () => {
     priceList: [],
     manager: [],
   });
+
+  const [defaultDescription, setDefaultDescription] = useState("");
 
   const handleInputChange = (name: string, value: any) => {
     setFormDataPage1({ ...formDataPage1, [name]: value });
@@ -786,10 +788,7 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          storeCopyFunc?.description_content ||
-          storeCopyFunc?.description ||
-          "",
+        storeIntroduction: storeCopyFunc?.description || "",
         priceList: storeCopyFunc?.courses || [],
         manager: storeCopyFunc?.mentors || [],
       });
@@ -863,11 +862,11 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          dataEditShop?.description_content || dataEditShop?.description || "",
+        storeIntroduction: dataEditShop?.description || "",
         priceList: dataEditShop?.courses || [],
         manager: dataEditShop?.mentors || [],
       });
+      setDefaultDescription(dataEditShop?.description || "");
     }
   }, [dataEditShop]);
 
@@ -939,10 +938,7 @@ const NewStore = () => {
               },
             });
             setFormDataPage2({
-              storeIntroduction:
-                dataEditShop?.description_content ||
-                dataEditShop?.description ||
-                "",
+              storeIntroduction: dataEditShop?.description || "",
               priceList: dataEditShop?.courses || [],
               manager: res?.results?.objects?.rows || [],
             });
@@ -1319,21 +1315,22 @@ const NewStore = () => {
           </div>
 
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
-            <BaseInput
-              onChange={(value) =>
-                handleInputChangePage2("storeIntroduction", value)
-              }
-              value={formDataPage2?.storeIntroduction}
-              placeholder="매장의 소개해주세요
-            구글 혹은 네이버에 노출 될 수 있으니
-            소개글과 노출 원하는 키워드도 같이
-            입력바랍니다. 예시: 강남케어, 강남맛집,강남추천 등~"
-              title="매장 소개"
-              className="flex w-full"
-              styleInputContainer="w-full"
-              textArea
-              titleSize={16}
-            />
+            <BaseText locale size={16} bold>
+              매장 소개
+            </BaseText>
+            {useMemo(
+              () => (
+                <BaseEditor
+                  defaultValue={defaultDescription}
+                  onChange={(value: string) => {
+                    console.log("value", value);
+
+                    handleInputChangePage2("storeIntroduction", value);
+                  }}
+                />
+              ),
+              [defaultDescription]
+            )}
             <div className="flex">
               {listOptionPart2.map((item, index) => {
                 return (
@@ -1697,9 +1694,11 @@ const NewStore = () => {
               </div>
             )}
             {formDataPage2?.storeIntroduction && (
-              <BaseText size={16} bold className="text-center">
-                {formDataPage2?.storeIntroduction}
-              </BaseText>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: formDataPage2?.storeIntroduction || "",
+                }}
+              ></div>
             )}
             {formDataPage2?.manager?.length > 0 && (
               <div className="flex flex-col gap-2 py-3 mt-1">
