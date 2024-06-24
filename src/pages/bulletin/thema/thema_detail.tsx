@@ -74,6 +74,19 @@ export const ThemaDetail = ({
     <>
       <div className="flex flex-col">
         <BaseInput
+          onChange={(value) => {
+            setThema({
+              ...thema,
+              description: value,
+            });
+          }}
+          textArea
+          value={thema?.description}
+          defaultValue={thema?.description}
+          title="Description"
+          placeholder="Enter description"
+        />
+        <BaseInput
           styleInputContainer="h-[40px]"
           onChange={(value) => {
             setThema({
