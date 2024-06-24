@@ -28,6 +28,7 @@ import { BaseTableDnD } from "../table/BaseTableDnD";
 import CustomButton from "../button";
 import { shopApi } from "../../apis/shopApi";
 import _ from "lodash";
+import { showSuccess } from "../../utils/showToast";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
@@ -433,6 +434,18 @@ export default function StoreListTable(props: StoreListTableProps) {
     setListRowSelected([]);
   }, [typeStore]);
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log("Copied to clipboard:", text);
+        showSuccess("Copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
+  };
+
   let dynamicColumns: TableColumnsType<any> = [
     {
       title: t("No"),
@@ -444,14 +457,30 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Id"),
-      dataIndex: ["user", "username"],
+      render: ({ user }) => (
+        <div className="min-w-[200px] flex flex-row">
+          <BaseText>{user.username}</BaseText>
+          <img
+            onClick={() => copyToClipboard(user.username)}
+            src={Images.copy}
+            className="w-6 h-6 cursor-pointer"
+          />
+        </div>
+      ),
     },
     {
       title: t("Title"),
-      dataIndex: "title",
-      render: (title) => (
-        <div className="min-w-[200px]">
+      render: ({ title, contact_phone }) => (
+        <div className="min-w-[200px] flex flex-col">
           <BaseText>{title}</BaseText>
+          <div className="flex flex-row">
+            <BaseText>{contact_phone}</BaseText>
+            <img
+              onClick={() => copyToClipboard(contact_phone)}
+              src={Images.copy}
+              className="w-6 h-6 cursor-pointer"
+            />
+          </div>
         </div>
       ),
       width: "25%",
@@ -655,7 +684,10 @@ export default function StoreListTable(props: StoreListTableProps) {
               title={t("Delete")}
               description={t("Are you sure to delete")}
             >
-              <img src={Images.trash} className="w-6 h-6 cursor-pointer mr-10" />
+              <img
+                src={Images.trash}
+                className="w-6 h-6 cursor-pointer mr-10"
+              />
             </Popconfirm>
           </div>
         ),
