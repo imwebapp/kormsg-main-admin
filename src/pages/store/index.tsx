@@ -234,12 +234,12 @@ const StorePage = () => {
 
   const refreshTable = () => {
     setIsUpdateSuccess(isUpdateSuccess + 1);
-    getCountStore();
+    getCountStore(valueKeywordFilter);
   };
 
   useEffect(() => {
     getListThema();
-    getCountStore();
+    getCountStore(valueKeywordFilter);
     return () => {};
   }, []);
 
