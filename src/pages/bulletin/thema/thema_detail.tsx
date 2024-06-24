@@ -23,36 +23,36 @@ export const ThemaDetail = ({
   submitModal,
 }: any) => {
   const [thema, setThema] = useState<ThemaInterface>();
-  // const [groupUsers, setGroupUsers] = useState([]);
+  const [groupUsers, setGroupUsers] = useState([]);
 
-  // const getGroupUser = async () => {
-  //   try {
-  //     const repon: any = await groupApi.getList();
-  //     setGroupUsers(repon?.results?.objects?.rows || []);
-  //   } catch (error) {}
-  // };
+  const getGroupUser = async () => {
+    try {
+      const repon: any = await groupApi.getList();
+      setGroupUsers(repon?.results?.objects?.rows || []);
+    } catch (error) {}
+  };
 
-  // useEffect(() => {
-  //   const viewGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_view)
-  //     .map((item) => item.group_view.id);
+  useEffect(() => {
+    const viewGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_view)
+      .map((item) => item.group_view.id);
 
-  //   const postGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_post)
-  //     .map((item) => item.group_post.id);
+    const postGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_post)
+      .map((item) => item.group_post.id);
 
-  //   const commentGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_comment)
-  //     .map((item) => item.group_comment.id);
+    const commentGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_comment)
+      .map((item) => item.group_comment.id);
 
-  //   setThema({
-  //     ...themaProps,
-  //     view_group_ids: viewGroup,
-  //     post_group_ids: postGroup,
-  //     comment_group_ids: commentGroup,
-  //   });
-  //   getGroupUser();
-  // }, [lastOpen, themaProps]);
+    setThema({
+      ...themaProps,
+      view_group_ids: viewGroup,
+      post_group_ids: postGroup,
+      comment_group_ids: commentGroup,
+    });
+    getGroupUser();
+  }, [lastOpen, themaProps]);
 
   const submit = async () => {
     if (!thema) return;
