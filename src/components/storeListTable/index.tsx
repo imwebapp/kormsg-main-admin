@@ -459,9 +459,9 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("Id"),
       render: ({ user }) => (
         <div className="min-w-[200px] flex flex-row">
-          <BaseText>{user.username}</BaseText>
+          <BaseText>{user?.username || ''}</BaseText>
           <img
-            onClick={() => copyToClipboard(user.username)}
+            onClick={() => copyToClipboard(user?.username || '')}
             src={Images.copy}
             className="w-6 h-6 cursor-pointer"
           />
