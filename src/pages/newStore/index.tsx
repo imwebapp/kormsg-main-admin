@@ -121,7 +121,6 @@ interface INewManger {
   images: string[];
 }
 interface IFormDataPage2 {
-  storeIntroduction: string;
   priceList: INewPrice[];
   manager: INewManger[];
 }
@@ -333,11 +332,11 @@ const NewStore = () => {
   });
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
-    storeIntroduction: "",
     priceList: [],
     manager: [],
   });
 
+  const [description, setDescription] = useState("");
   const [defaultDescription, setDefaultDescription] = useState("");
 
   const handleInputChange = (name: string, value: any) => {
@@ -500,7 +499,7 @@ const NewStore = () => {
         address_2: formDataPage1?.storeAddressDetails,
         category_id: formDataPage1?.category,
         contact_phone: formDataPage1?.storeNumber,
-        description: formDataPage2?.storeIntroduction,
+        description: description,
         images: resultArrayImageConvert,
         latitude: formDataPage1?.latitude,
         longitude: formDataPage1?.longitude,
@@ -788,10 +787,10 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction: storeCopyFunc?.description || "",
         priceList: storeCopyFunc?.courses || [],
         manager: storeCopyFunc?.mentors || [],
       });
+      setDescription(storeCopyFunc?.description || "");
     }
   }, [storeCopyFunc]);
 
@@ -862,10 +861,10 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction: dataEditShop?.description || "",
         priceList: dataEditShop?.courses || [],
         manager: dataEditShop?.mentors || [],
       });
+      setDescription(dataEditShop?.description || "");
       setDefaultDescription(dataEditShop?.description || "");
     }
   }, [dataEditShop]);
@@ -938,10 +937,10 @@ const NewStore = () => {
               },
             });
             setFormDataPage2({
-              storeIntroduction: dataEditShop?.description || "",
               priceList: dataEditShop?.courses || [],
               manager: res?.results?.objects?.rows || [],
             });
+            setDescription(dataEditShop?.description || "");
           }
         })
         .catch((err) => {
@@ -1318,19 +1317,12 @@ const NewStore = () => {
             <BaseText locale size={16} bold>
               매장 소개
             </BaseText>
-            {useMemo(
-              () => (
-                <BaseEditor
-                  defaultValue={defaultDescription}
-                  onChange={(value: string) => {
-                    console.log("value", value);
-
-                    handleInputChangePage2("storeIntroduction", value);
-                  }}
-                />
-              ),
-              [defaultDescription]
-            )}
+            <BaseEditor
+              defaultValue={defaultDescription}
+              onChange={(value: string) => {
+                setDescription(value);
+              }}
+            />
             <div className="flex">
               {listOptionPart2.map((item, index) => {
                 return (
@@ -1693,10 +1685,10 @@ const NewStore = () => {
                 })}
               </div>
             )}
-            {formDataPage2?.storeIntroduction && (
+            {description && (
               <div
                 dangerouslySetInnerHTML={{
-                  __html: formDataPage2?.storeIntroduction || "",
+                  __html: description || "",
                 }}
               ></div>
             )}
