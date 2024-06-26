@@ -243,7 +243,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         filterString += `"state":{"$in":["EXPIRED"]}`;
         break;
       case STORE_STATUS.eventOngoing:
-        filterString += ``;
+        filterString += `"state":{"$notIn":["EXPIRED"]}`;
         break;
       default:
         break;
@@ -262,10 +262,10 @@ export default function StoreListTable(props: StoreListTableProps) {
     return `{${filterString}}`;
   }
   const generateFields = () => {
-    if (typeStore === STORE_STATUS.eventOngoing) {
-      // default event on going
-      return '["$all",{"events":["$all",{"$filter":{}}]}]';
-    }
+    // if (typeStore === STORE_STATUS.eventOngoing) {
+    //   // default event on going
+    //   return '["$all",{"events":["$all",{"$filter":{}}]}]';
+    // }
     // const convertFilter: any = {};
     // if (valueSearch !== "") {
     //   convertFilter["$filter"] = {
@@ -286,7 +286,7 @@ export default function StoreListTable(props: StoreListTableProps) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
     //{"user":["$all",{"new_group":["$all"]}]}
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",{"new_group":["name"]}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
 
     return fields;
   };
@@ -422,12 +422,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   useEffect(() => {
     getListStore(valueSearch);
     setListRowSelected([]);
-  }, [valueSearch]);
-
-  useEffect(() => {
-    getListStore(valueSearch);
-    setListRowSelected([]);
-  }, [typeStore, typeSorting, thema, isUpdate, currentPage]);
+  }, [typeStore, typeSorting, thema, isUpdate, currentPage, valueSearch]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -459,9 +454,9 @@ export default function StoreListTable(props: StoreListTableProps) {
       title: t("Id"),
       render: ({ user }) => (
         <div className="min-w-[200px] flex flex-row">
-          <BaseText>{user?.username || ''}</BaseText>
+          <BaseText>{user?.username || ""}</BaseText>
           <img
-            onClick={() => copyToClipboard(user?.username || '')}
+            onClick={() => copyToClipboard(user?.username || "")}
             src={Images.copy}
             className="w-6 h-6 cursor-pointer"
           />

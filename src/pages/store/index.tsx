@@ -60,11 +60,51 @@ const StorePage = () => {
     }
   };
 
+  function generateFilter(status?: string) {
+    let filterString = "";
+
+    // Thêm điều kiện trạng thái
+    switch (status) {
+      case STORE_STATUS.exposure:
+        filterString += `"state":{"$notIn":["REJECTED","EXPIRED"]}`;
+        break;
+      case STORE_STATUS.underReview:
+        filterString += `"state":"PENDING"`;
+        break;
+      case STORE_STATUS.reviewRejected:
+        filterString += `"state":"REJECTED"`;
+        break;
+      case STORE_STATUS.adExpired:
+        filterString += `"state":{"$in":["EXPIRED"]}`;
+        break;
+      case STORE_STATUS.eventOngoing:
+        filterString += `"state":{"$notIn":["EXPIRED"]}`;
+        break;
+      default:
+        break;
+    }
+    return `{${filterString}}`;
+  }
+  const generateFields = () => {
+    let filterThema = "";
+    if (selectedThema && selectedThema !== "" && selectedThema !== t("All")) {
+      filterThema += `,{"$filter":{"thema_id":"${selectedThema}"}}`;
+    }
+    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+
+    return fields;
+  };
+
   const getCountStore = useCallback(
     _.debounce(async (valueSearch?: string) => {
       try {
+        const fieldsCustom = generateFields();
+        const filterCustom = generateFilter(selectedButton);
+
         let params = {
           search_value: valueSearch,
+          fields: fieldsCustom,
+          filter: filterCustom,
         };
         let resultCount: any = await storeApi.getCountStore(params);
         if (resultCount.code === 200) {
@@ -72,7 +112,7 @@ const StorePage = () => {
         }
       } catch (error) {}
     }, 500),
-    []
+    [selectedThema, selectedButton]
   );
 
   const getListThema = async () => {
@@ -239,13 +279,11 @@ const StorePage = () => {
 
   useEffect(() => {
     getListThema();
-    getCountStore(valueKeywordFilter);
-    return () => {};
   }, []);
 
   useEffect(() => {
     getCountStore(valueKeywordFilter);
-  }, [valueKeywordFilter, getCountStore]);
+  }, [valueKeywordFilter, getCountStore, selectedThema, selectedButton]);
 
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
