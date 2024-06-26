@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   Popconfirm,
   Popover,
@@ -41,7 +48,7 @@ type StoreListTableProps = {
   isUpdate?: Number;
   onRefresh?: () => void;
 };
-export default function StoreListTable(props: StoreListTableProps) {
+const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   const {
     className,
     typeStore,
@@ -80,6 +87,17 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [deniedMessagse, setDeniedMessagse] = useState("");
   const [valueAddDay, setValueAddDay] = useState<number>();
   const [valueMinusDay, setValueMinusDay] = useState<number>();
+  const [paramsQuery, setParamsQuery] = useState<any>();
+
+  useImperativeHandle(ref, () => ({
+    async downloadExcel() {
+      try {
+        let result: any = await storeApi.downloadExcel(paramsQuery);
+        window.open(result.results?.object?.url, "_blank");
+      } catch (error) {}
+    },
+  }));
+
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -216,13 +234,13 @@ export default function StoreListTable(props: StoreListTableProps) {
   function generateOrder(sorting: string | undefined) {
     switch (sorting) {
       case SORTING.NONE:
-        return [["geolocation_api_type", "DESC"]];
+        return [["created_at", "DESC"]];
       case SORTING.DESC:
-        return [["expired_date", "DESC"]];
+        return [["created_at", "DESC"]];
       case SORTING.ASC:
-        return [["expired_date", "ASC"]];
+        return [["created_at", "ASC"]];
       default:
-        return [["geolocation_api_type", "DESC"]];
+        return [["created_at", "DESC"]];
     }
   }
   function generateFilter(status?: string) {
@@ -262,10 +280,6 @@ export default function StoreListTable(props: StoreListTableProps) {
     return `{${filterString}}`;
   }
   const generateFields = () => {
-    // if (typeStore === STORE_STATUS.eventOngoing) {
-    //   // default event on going
-    //   return '["$all",{"events":["$all",{"$filter":{}}]}]';
-    // }
     // const convertFilter: any = {};
     // if (valueSearch !== "") {
     //   convertFilter["$filter"] = {
@@ -285,8 +299,13 @@ export default function StoreListTable(props: StoreListTableProps) {
     if (thema && thema !== "" && thema !== t("All")) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
+    let filterEvent = "";
+    if (typeStore === STORE_STATUS.eventOngoing) {
+      // default event on going
+      filterEvent += ',{"$filter":{}}';
+    }
     //{"user":["$all",{"new_group":["$all"]}]}
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    let fields = `["$all",{"courses":["$all","$separate",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"${filterEvent}]}]`;
 
     return fields;
   };
@@ -313,15 +332,18 @@ export default function StoreListTable(props: StoreListTableProps) {
       const fieldsCustom = generateFields();
       const filterCustom = generateFilter(typeStore);
       const orderCustom = JSON.stringify(generateOrder(typeSorting));
+      let params = {
+        limit: limit,
+        page: currentPage,
+        fields: fieldsCustom,
+        filter: filterCustom,
+        order: orderCustom,
+        search_value: valueSearch,
+      };
+      setParamsQuery(params);
+
       storeApi
-        .getList({
-          limit: limit,
-          page: currentPage,
-          fields: fieldsCustom,
-          filter: filterCustom,
-          order: orderCustom,
-          search_value: valueSearch,
-        })
+        .getList(params)
         .then((res: any) => {
           setListStore(res.results.objects.rows);
         })
@@ -916,4 +938,5 @@ export default function StoreListTable(props: StoreListTableProps) {
       </BaseModal2>
     </>
   );
-}
+});
+export default StoreListTable;
