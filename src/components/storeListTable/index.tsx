@@ -36,6 +36,7 @@ import CustomButton from "../button";
 import { shopApi } from "../../apis/shopApi";
 import _ from "lodash";
 import { showSuccess } from "../../utils/showToast";
+import { useCommonState } from "../../stores/commonStorage";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
@@ -73,6 +74,7 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);
   };
+  const { setLoading } = useCommonState((state) => state);
 
   const [positionStore, setPositionStore] = useState({
     lat: 0,
@@ -148,6 +150,7 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   };
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
+    setListStore([]);
   };
   const cloneStore = async (id: string) => {
     try {
@@ -328,6 +331,7 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
 
   const getListStore = useCallback(
     _.debounce(async (valueSearch?: string) => {
+      setLoading(true);
       // field all selected
       const fieldsCustom = generateFields();
       const filterCustom = generateFilter(typeStore);
@@ -341,14 +345,15 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
         search_value: valueSearch,
       };
       setParamsQuery(params);
-
       storeApi
         .getList(params)
         .then((res: any) => {
           setListStore(res.results.objects.rows);
+          setLoading(false);
         })
         .catch((err) => {
           console.log("err: ", err);
+          setLoading(false);
         });
     }, 500),
     [typeStore, typeSorting, thema, isUpdate, currentPage]
@@ -449,6 +454,7 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   useEffect(() => {
     setCurrentPage(1);
     setListRowSelected([]);
+    setListStore([]);
   }, [typeStore]);
 
   const copyToClipboard = (text: string) => {
