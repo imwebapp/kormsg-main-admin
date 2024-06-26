@@ -30,6 +30,7 @@ import { TagApi } from "../../../apis/tagApi";
 import { NEW_ID } from "../viewleft";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { Popconfirm } from "antd";
+import SwitchComponent from "../../../components/switch";
 
 export default function BulletinSetting() {
   const [isShowBoardType, setShowBoardType] = useState(true);
@@ -44,6 +45,7 @@ export default function BulletinSetting() {
   );
   const [themaMultiSelect, selectThemaMultiSelect] = useState<boolean>(false);
   const [themaIds, setThemaIds] = useState<string[]>([]);
+  const [linkStatus, setLinkStatus] = useState(false);
 
   useEffect(() => {
     setThemaIds([]);
@@ -176,6 +178,7 @@ export default function BulletinSetting() {
   useEffect(() => {
     getTagsWithThema();
     setBoardTypeSelected(boardSelected.route || "");
+    setLinkStatus(boardSelected.status || false);
   }, [boardSelected]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -568,6 +571,26 @@ export default function BulletinSetting() {
       );
   };
 
+  const _buildLinkStatus = () => {
+    return (
+      <div className="flex flex-row justify-between mt-4">
+        <BaseText locale medium className="mb-4">
+          Exposed/Non-exposed
+        </BaseText>
+        <SwitchComponent
+          value={linkStatus}
+          onChange={(value) => {
+            setLinkStatus(value);
+            updateOrCreateBoardLink({
+              ...boardSelected,
+              status: value,
+            });
+          }}
+        />
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col">
       <BaseText locale medium className="mt-4">
@@ -576,6 +599,7 @@ export default function BulletinSetting() {
       {_buildImageAndName()}
       {_buildBoardType()}
       {_buildThema()}
+      {_buildLinkStatus()}
       {_buildMapBrand}
       {_buildTags()}
 
