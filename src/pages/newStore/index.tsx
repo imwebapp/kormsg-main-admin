@@ -1044,7 +1044,11 @@ const NewStore = () => {
               type="number"
               placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
-              onChange={(value) => handleInputChange("storeNumber", value)}
+              onChange={(value) => {
+                const digitsOnly = value.match(/\d+/g)?.join("");
+                if (digitsOnly && digitsOnly.length > 0)
+                  handleInputChange("storeNumber", digitsOnly);
+              }}
             />
             <div>
               <div className={classNames("flex items-center mb-2 gap-2")}>
