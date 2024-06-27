@@ -336,6 +336,7 @@ const NewStore = () => {
     manager: [],
   });
 
+  const [seoContent, setSeoContent] = useState("");
   const [description, setDescription] = useState("");
   const [defaultDescription, setDefaultDescription] = useState("");
 
@@ -500,6 +501,7 @@ const NewStore = () => {
         category_id: formDataPage1?.category,
         contact_phone: formDataPage1?.storeNumber,
         description: description,
+        description_content: seoContent,
         images: resultArrayImageConvert,
         latitude: formDataPage1?.latitude,
         longitude: formDataPage1?.longitude,
@@ -791,6 +793,7 @@ const NewStore = () => {
         manager: storeCopyFunc?.mentors || [],
       });
       setDescription(storeCopyFunc?.description || "");
+      setSeoContent(storeCopyFunc?.description_content || "");
     }
   }, [storeCopyFunc]);
 
@@ -866,6 +869,7 @@ const NewStore = () => {
       });
       setDescription(dataEditShop?.description || "");
       setDefaultDescription(dataEditShop?.description || "");
+      setSeoContent(dataEditShop?.description_content || "");
     }
   }, [dataEditShop]);
 
@@ -941,6 +945,7 @@ const NewStore = () => {
               manager: res?.results?.objects?.rows || [],
             });
             setDescription(dataEditShop?.description || "");
+            setSeoContent(dataEditShop?.description_content || "");
           }
         })
         .catch((err) => {
@@ -1441,6 +1446,16 @@ const NewStore = () => {
                 />
               )}
             </div>
+            <BaseInput
+              onChange={(value) => setSeoContent(value)}
+              value={seoContent}
+              placeholder="Please enter description and keywords for SEO"
+              title="SEO"
+              className="flex w-full"
+              styleInputContainer="w-full"
+              textArea
+              titleSize={16}
+            />
           </div>
 
           <div className="flex flex-col w-1/3 p-4 overflow-auto ">
