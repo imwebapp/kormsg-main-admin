@@ -1046,8 +1046,7 @@ const NewStore = () => {
               value={formDataPage1.storeNumber}
               onChange={(value) => {
                 const digitsOnly = value.match(/\d+/g)?.join("");
-                if (digitsOnly && digitsOnly.length > 0)
-                  handleInputChange("storeNumber", digitsOnly);
+                if (digitsOnly) handleInputChange("storeNumber", digitsOnly);
               }}
             />
             <div>
