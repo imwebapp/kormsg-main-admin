@@ -575,7 +575,7 @@ export default function BulletinSetting() {
     return (
       <div className="flex flex-row justify-between mt-4">
         <BaseText locale medium className="mb-4">
-          Exposed/Non-exposed
+          Visible on home screen
         </BaseText>
         <SwitchComponent
           value={linkStatus}

@@ -495,5 +495,6 @@
   "SEO 이미지" : "SEO 이미지",
   "Administrator page login": "관리자페이지 로그인",
   "Please enter your ID": "아이디를 입력해 주세요",
-  "Please enter your password": "비밀번호 입력해 주세요"
+  "Please enter your password": "비밀번호 입력해 주세요",
+  "Visible on home screen": "홈 화면에 노출 여부"
 }
