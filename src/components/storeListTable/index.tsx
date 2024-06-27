@@ -94,9 +94,14 @@ const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   useImperativeHandle(ref, () => ({
     async downloadExcel() {
       try {
+        setLoading(true);
+        paramsQuery.limit = 1000000000000000;
         let result: any = await storeApi.downloadExcel(paramsQuery);
         window.open(result.results?.object?.url, "_blank");
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
     },
   }));
 
