@@ -260,8 +260,8 @@ const Login = () => {
           </div>)} */}
 
         <div className="w-2/3 bg-white rounded-lg p-11 drop-shadow-lg">
-          <BaseText bold size={30}>
-            Login to Admin page
+          <BaseText locale bold size={30}>
+            Administrator page login
           </BaseText>
           <div className="flex mt-8 flex-col">
             <div className="flex flex-row gap-3">
@@ -271,7 +271,7 @@ const Login = () => {
                 </BaseText>
               </div>
               <BaseInput
-                placeholder="아이디를 입력해 주세요"
+                placeholder="Please enter your ID"
                 className="w-full border border-gray-300 rounded-md"
                 styleInputContainer="w-full h-[60px]"
                 onChange={(value) => {
@@ -287,7 +287,7 @@ const Login = () => {
                 </BaseText>
               </div>
               <BaseInput
-                placeholder="비밀번호 입력해 주세요"
+                placeholder="Please enter your password"
                 className="w-full border border-gray-300 rounded-md"
                 styleInputContainer="w-full h-[60px]"
                 onChange={(value) => {
@@ -302,7 +302,7 @@ const Login = () => {
             className="w-full mt-6"
             disabled={password.length === 0 || username.length === 0}
           >
-            <BaseText bold size={16} className="text-white">
+            <BaseText locale bold size={16} className="text-white">
               Continue
             </BaseText>
           </BaseButton>
