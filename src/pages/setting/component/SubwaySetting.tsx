@@ -460,7 +460,9 @@ export const SubwaySetting = () => {
                                   : ""
                               )}
                               onClick={() => {
+                                setIsEditingSubwayName(false);
                                 setSubwaySelected(item);
+                                setIsCreatingSubwayName(false);
                               }}
                               onDoubleClick={handleEditSubwayName}
                             >
@@ -617,6 +619,7 @@ export const SubwaySetting = () => {
                               onClick={() => {
                                 setIsEditingStationLineName(false);
                                 setStationLineSelected(item);
+                                setIsCreatingStationLineName(false);
                               }}
                               onDoubleClick={handleEditStationLineName}
                             >

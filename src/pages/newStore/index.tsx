@@ -284,6 +284,8 @@ const NewStore = () => {
   };
 
   const [isAddressKor, setAddressKor] = useState<boolean>(true);
+  const [isRegionKor, setRegionKor] = useState<boolean>(true);
+  const [isSubwayKor, setSubwayKor] = useState<boolean>(true);
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
@@ -1185,6 +1187,24 @@ const NewStore = () => {
               )}
             <ListCategoryPart1
               title="지역"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setRegionKor(e.target.value)}
+                  value={isRegionKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.regionProvince + formDataPage1?.regionDistrict
               }
@@ -1195,6 +1215,24 @@ const NewStore = () => {
             />
             <ListCategoryPart1
               title="지하철"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setSubwayKor(e.target.value)}
+                  value={isSubwayKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.subwayLocation +
                 formDataPage1?.subwayLine +
@@ -1756,7 +1794,7 @@ const NewStore = () => {
         />
 
         <ModalSelectRegion
-          isAddressKor={isAddressKor}
+          isAddressKor={isRegionKor}
           isOpen={openModalRegion}
           onClose={handleCloseModalRegion}
           onSubmit={(value) => handleSubmitRegion(value)}
@@ -1765,7 +1803,7 @@ const NewStore = () => {
         />
 
         <ModalSelectSubway
-          isAddressKor={isAddressKor}
+          isAddressKor={isSubwayKor}
           isOpen={openModalSubway}
           onClose={handleCloseModalSubway}
           onSubmit={(value) => handleSubmitSubway(value)}
