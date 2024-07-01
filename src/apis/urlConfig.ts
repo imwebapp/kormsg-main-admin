@@ -39,3 +39,6 @@ export const POINT_PRODUCT_HISTORY = "/point_product_history";
 export const SITE_CATEGORY = "/site_category";
 export const REGION = "/setting_province";
 export const DISTRICT = "/setting_district";
+export const STATION = "/setting_station";
+export const STATION_LINE = "/setting_station_line";
+export const SUBWAY = "/setting_station_subway";
