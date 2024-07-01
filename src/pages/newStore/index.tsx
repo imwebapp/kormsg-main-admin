@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BaseText, CustomButton } from "../../components";
+import { useEffect, useMemo, useState } from "react";
+import { BaseEditor, BaseText, CustomButton } from "../../components";
 
 import { CheckOutlined } from "@ant-design/icons";
 import { App, Layout, Spin, Radio } from "antd";
@@ -121,7 +121,6 @@ interface INewManger {
   images: string[];
 }
 interface IFormDataPage2 {
-  storeIntroduction: string;
   priceList: INewPrice[];
   manager: INewManger[];
 }
@@ -285,6 +284,8 @@ const NewStore = () => {
   };
 
   const [isAddressKor, setAddressKor] = useState<boolean>(true);
+  const [isRegionKor, setRegionKor] = useState<boolean>(true);
+  const [isSubwayKor, setSubwayKor] = useState<boolean>(true);
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
@@ -333,10 +334,13 @@ const NewStore = () => {
   });
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
-    storeIntroduction: "",
     priceList: [],
     manager: [],
   });
+
+  const [seoContent, setSeoContent] = useState("");
+  const [description, setDescription] = useState("");
+  const [defaultDescription, setDefaultDescription] = useState("");
 
   const handleInputChange = (name: string, value: any) => {
     setFormDataPage1({ ...formDataPage1, [name]: value });
@@ -498,7 +502,8 @@ const NewStore = () => {
         address_2: formDataPage1?.storeAddressDetails,
         category_id: formDataPage1?.category,
         contact_phone: formDataPage1?.storeNumber,
-        description: formDataPage2?.storeIntroduction,
+        description: description,
+        description_content: seoContent,
         images: resultArrayImageConvert,
         latitude: formDataPage1?.latitude,
         longitude: formDataPage1?.longitude,
@@ -532,6 +537,7 @@ const NewStore = () => {
         thumbnails: resultArrayImageConvert,
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
+        // change_owner: true,
         change_owner:
           idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id
             ? true
@@ -786,13 +792,11 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          storeCopyFunc?.description_content ||
-          storeCopyFunc?.description ||
-          "",
         priceList: storeCopyFunc?.courses || [],
         manager: storeCopyFunc?.mentors || [],
       });
+      setDescription(storeCopyFunc?.description || "");
+      setSeoContent(storeCopyFunc?.description_content || "");
     }
   }, [storeCopyFunc]);
 
@@ -863,11 +867,12 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          dataEditShop?.description_content || dataEditShop?.description || "",
         priceList: dataEditShop?.courses || [],
         manager: dataEditShop?.mentors || [],
       });
+      setDescription(dataEditShop?.description || "");
+      setDefaultDescription(dataEditShop?.description || "");
+      setSeoContent(dataEditShop?.description_content || "");
     }
   }, [dataEditShop]);
 
@@ -939,13 +944,11 @@ const NewStore = () => {
               },
             });
             setFormDataPage2({
-              storeIntroduction:
-                dataEditShop?.description_content ||
-                dataEditShop?.description ||
-                "",
               priceList: dataEditShop?.courses || [],
               manager: res?.results?.objects?.rows || [],
             });
+            setDescription(dataEditShop?.description || "");
+            setSeoContent(dataEditShop?.description_content || "");
           }
         })
         .catch((err) => {
@@ -1044,7 +1047,10 @@ const NewStore = () => {
               type="number"
               placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
-              onChange={(value) => handleInputChange("storeNumber", value)}
+              onChange={(value) => {
+                const digitsOnly = value.match(/\d+/g)?.join("");
+                if (digitsOnly) handleInputChange("storeNumber", digitsOnly);
+              }}
             />
             <div>
               <div className={classNames("flex items-center mb-2 gap-2")}>
@@ -1181,6 +1187,24 @@ const NewStore = () => {
               )}
             <ListCategoryPart1
               title="지역"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setRegionKor(e.target.value)}
+                  value={isRegionKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.regionProvince + formDataPage1?.regionDistrict
               }
@@ -1191,6 +1215,24 @@ const NewStore = () => {
             />
             <ListCategoryPart1
               title="지하철"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setSubwayKor(e.target.value)}
+                  value={isSubwayKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.subwayLocation +
                 formDataPage1?.subwayLine +
@@ -1319,20 +1361,14 @@ const NewStore = () => {
           </div>
 
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
-            <BaseInput
-              onChange={(value) =>
-                handleInputChangePage2("storeIntroduction", value)
-              }
-              value={formDataPage2?.storeIntroduction}
-              placeholder="매장의 소개해주세요
-            구글 혹은 네이버에 노출 될 수 있으니
-            소개글과 노출 원하는 키워드도 같이
-            입력바랍니다. 예시: 강남케어, 강남맛집,강남추천 등~"
-              title="매장 소개"
-              className="flex w-full"
-              styleInputContainer="w-full"
-              textArea
-              titleSize={16}
+            <BaseText locale size={16} bold>
+              매장 소개
+            </BaseText>
+            <BaseEditor
+              defaultValue={defaultDescription}
+              onChange={(value: string) => {
+                setDescription(value);
+              }}
             />
             <div className="flex">
               {listOptionPart2.map((item, index) => {
@@ -1452,6 +1488,16 @@ const NewStore = () => {
                 />
               )}
             </div>
+            <BaseInput
+              onChange={(value) => setSeoContent(value)}
+              value={seoContent}
+              placeholder="Please enter description and keywords for SEO"
+              title="SEO"
+              className="flex w-full"
+              styleInputContainer="w-full"
+              textArea
+              titleSize={16}
+            />
           </div>
 
           <div className="flex flex-col w-1/3 p-4 overflow-auto ">
@@ -1696,10 +1742,12 @@ const NewStore = () => {
                 })}
               </div>
             )}
-            {formDataPage2?.storeIntroduction && (
-              <BaseText size={16} bold className="text-center">
-                {formDataPage2?.storeIntroduction}
-              </BaseText>
+            {description && (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: description || "",
+                }}
+              ></div>
             )}
             {formDataPage2?.manager?.length > 0 && (
               <div className="flex flex-col gap-2 py-3 mt-1">
@@ -1746,7 +1794,7 @@ const NewStore = () => {
         />
 
         <ModalSelectRegion
-          isAddressKor={isAddressKor}
+          isAddressKor={isRegionKor}
           isOpen={openModalRegion}
           onClose={handleCloseModalRegion}
           onSubmit={(value) => handleSubmitRegion(value)}
@@ -1755,7 +1803,7 @@ const NewStore = () => {
         />
 
         <ModalSelectSubway
-          isAddressKor={isAddressKor}
+          isAddressKor={isSubwayKor}
           isOpen={openModalSubway}
           onClose={handleCloseModalSubway}
           onSubmit={(value) => handleSubmitSubway(value)}
