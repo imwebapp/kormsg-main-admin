@@ -386,6 +386,8 @@ export const RegionSetting = () => {
                               )}
                               onClick={() => {
                                 setDistrictSelected(item);
+                                setIsEditingDistrictName(false);
+                                setIsCreatingDistrictName(false);
                               }}
                               onDoubleClick={handleEditDistrictName}
                             >
@@ -544,6 +546,7 @@ export const RegionSetting = () => {
                               onClick={() => {
                                 setIsEditingRegionName(false);
                                 setRegionSelected(item);
+                                setIsCreatingRegionName(false);
                               }}
                               onDoubleClick={handleEditRegionName}
                             >
