@@ -18,7 +18,7 @@ export const ListCategoryPart1 = (props: IListCategoryPart) => {
   return (
     <div className="flex flex-col gap-2">
       {title && (
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row gap-4 items-center">
           <BaseText locale size={16} bold>
             {title}
           </BaseText>
