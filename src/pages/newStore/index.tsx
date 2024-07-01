@@ -535,11 +535,11 @@ const NewStore = () => {
         thumbnails: resultArrayImageConvert,
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
-        change_owner: true,
-        // change_owner:
-        //   idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id
-        //     ? true
-        //     : false, //change owner when edit shop
+        // change_owner: true,
+        change_owner:
+          idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id
+            ? true
+            : false, //change owner when edit shop
         verified: true,
         payment_methods: formDataPage1?.reservationFuncSetting
           ? formDataPage1?.reservationPaymentMethod.length > 0
