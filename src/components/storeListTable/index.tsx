@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import {
   Popconfirm,
   Popover,
@@ -28,6 +35,8 @@ import { BaseTableDnD } from "../table/BaseTableDnD";
 import CustomButton from "../button";
 import { shopApi } from "../../apis/shopApi";
 import _ from "lodash";
+import { showSuccess } from "../../utils/showToast";
+import { useCommonState } from "../../stores/commonStorage";
 
 type StoreListTableProps = {
   className?: string; // for tailwindcss
@@ -40,7 +49,7 @@ type StoreListTableProps = {
   isUpdate?: Number;
   onRefresh?: () => void;
 };
-export default function StoreListTable(props: StoreListTableProps) {
+const StoreListTable = forwardRef((props: StoreListTableProps, ref) => {
   const {
     className,
     typeStore,
@@ -65,6 +74,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setListRowSelected(newSelectedRowKeys as string[]);
   };
+  const { setLoading } = useCommonState((state) => state);
 
   const [positionStore, setPositionStore] = useState({
     lat: 0,
@@ -79,6 +89,22 @@ export default function StoreListTable(props: StoreListTableProps) {
   const [deniedMessagse, setDeniedMessagse] = useState("");
   const [valueAddDay, setValueAddDay] = useState<number>();
   const [valueMinusDay, setValueMinusDay] = useState<number>();
+  const [paramsQuery, setParamsQuery] = useState<any>();
+
+  useImperativeHandle(ref, () => ({
+    async downloadExcel() {
+      try {
+        setLoading(true);
+        paramsQuery.limit = 1000000000000000;
+        let result: any = await storeApi.downloadExcel(paramsQuery);
+        window.open(result.results?.object?.url, "_blank");
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    },
+  }));
+
   const renderEventAction = (item: any, events: any) => {
     return (
       <div>
@@ -129,6 +155,7 @@ export default function StoreListTable(props: StoreListTableProps) {
   };
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
+    setListStore([]);
   };
   const cloneStore = async (id: string) => {
     try {
@@ -215,13 +242,13 @@ export default function StoreListTable(props: StoreListTableProps) {
   function generateOrder(sorting: string | undefined) {
     switch (sorting) {
       case SORTING.NONE:
-        return [["geolocation_api_type", "DESC"]];
+        return [["created_at", "DESC"]];
       case SORTING.DESC:
-        return [["expired_date", "DESC"]];
+        return [["created_at", "DESC"]];
       case SORTING.ASC:
-        return [["expired_date", "ASC"]];
+        return [["created_at", "ASC"]];
       default:
-        return [["geolocation_api_type", "DESC"]];
+        return [["created_at", "DESC"]];
     }
   }
   function generateFilter(status?: string) {
@@ -242,7 +269,7 @@ export default function StoreListTable(props: StoreListTableProps) {
         filterString += `"state":{"$in":["EXPIRED"]}`;
         break;
       case STORE_STATUS.eventOngoing:
-        filterString += ``;
+        filterString += `"state":{"$notIn":["EXPIRED"]}`;
         break;
       default:
         break;
@@ -261,10 +288,6 @@ export default function StoreListTable(props: StoreListTableProps) {
     return `{${filterString}}`;
   }
   const generateFields = () => {
-    if (typeStore === STORE_STATUS.eventOngoing) {
-      // default event on going
-      return '["$all",{"events":["$all",{"$filter":{}}]}]';
-    }
     // const convertFilter: any = {};
     // if (valueSearch !== "") {
     //   convertFilter["$filter"] = {
@@ -284,8 +307,13 @@ export default function StoreListTable(props: StoreListTableProps) {
     if (thema && thema !== "" && thema !== t("All")) {
       filterThema += `,{"$filter":{"thema_id":"${thema}"}}`;
     }
+    let filterEvent = "";
+    if (typeStore === STORE_STATUS.eventOngoing) {
+      // default event on going
+      filterEvent += ',{"$filter":{}}';
+    }
     //{"user":["$all",{"new_group":["$all"]}]}
-    let fields = `["$all",{"courses":["$all",{"prices":["$all"]}]},{"user":["$all",{"new_group":["name"]}]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"]}]`;
+    let fields = `["$all",{"courses":["$all","$separate",{"prices":["$all"]}]},{"user":["$all"]},{"category":["$all",{"thema":["$all"]}${filterThema}]},{"events":["$all"${filterEvent}]}]`;
 
     return fields;
   };
@@ -308,24 +336,29 @@ export default function StoreListTable(props: StoreListTableProps) {
 
   const getListStore = useCallback(
     _.debounce(async (valueSearch?: string) => {
+      setLoading(true);
       // field all selected
       const fieldsCustom = generateFields();
       const filterCustom = generateFilter(typeStore);
       const orderCustom = JSON.stringify(generateOrder(typeSorting));
+      let params = {
+        limit: limit,
+        page: currentPage,
+        fields: fieldsCustom,
+        filter: filterCustom,
+        order: orderCustom,
+        search_value: valueSearch,
+      };
+      setParamsQuery(params);
       storeApi
-        .getList({
-          limit: limit,
-          page: currentPage,
-          fields: fieldsCustom,
-          filter: filterCustom,
-          order: orderCustom,
-          search_value: valueSearch,
-        })
+        .getList(params)
         .then((res: any) => {
           setListStore(res.results.objects.rows);
+          setLoading(false);
         })
         .catch((err) => {
           console.log("err: ", err);
+          setLoading(false);
         });
     }, 500),
     [typeStore, typeSorting, thema, isUpdate, currentPage]
@@ -421,17 +454,25 @@ export default function StoreListTable(props: StoreListTableProps) {
   useEffect(() => {
     getListStore(valueSearch);
     setListRowSelected([]);
-  }, [valueSearch]);
-
-  useEffect(() => {
-    getListStore(valueSearch);
-    setListRowSelected([]);
-  }, [typeStore, typeSorting, thema, isUpdate, currentPage]);
+  }, [typeStore, typeSorting, thema, isUpdate, currentPage, valueSearch]);
 
   useEffect(() => {
     setCurrentPage(1);
     setListRowSelected([]);
+    setListStore([]);
   }, [typeStore]);
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        console.log("Copied to clipboard:", text);
+        showSuccess("Copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err);
+      });
+  };
 
   let dynamicColumns: TableColumnsType<any> = [
     {
@@ -444,14 +485,30 @@ export default function StoreListTable(props: StoreListTableProps) {
     },
     {
       title: t("Id"),
-      dataIndex: ["user", "username"],
+      render: ({ user }) => (
+        <div className="min-w-[200px] flex flex-row">
+          <BaseText>{user?.username || ""}</BaseText>
+          <img
+            onClick={() => copyToClipboard(user?.username || "")}
+            src={Images.copy}
+            className="w-6 h-6 cursor-pointer"
+          />
+        </div>
+      ),
     },
     {
       title: t("Title"),
-      dataIndex: "title",
-      render: (title) => (
-        <div className="min-w-[200px]">
+      render: ({ title, contact_phone }) => (
+        <div className="min-w-[200px] flex flex-col">
           <BaseText>{title}</BaseText>
+          <div className="flex flex-row">
+            <BaseText>{contact_phone}</BaseText>
+            <img
+              onClick={() => copyToClipboard(contact_phone)}
+              src={Images.copy}
+              className="w-6 h-6 cursor-pointer"
+            />
+          </div>
         </div>
       ),
       width: "25%",
@@ -655,7 +712,10 @@ export default function StoreListTable(props: StoreListTableProps) {
               title={t("Delete")}
               description={t("Are you sure to delete")}
             >
-              <img src={Images.trash} className="w-6 h-6 cursor-pointer mr-10" />
+              <img
+                src={Images.trash}
+                className="w-6 h-6 cursor-pointer mr-10"
+              />
             </Popconfirm>
           </div>
         ),
@@ -889,4 +949,5 @@ export default function StoreListTable(props: StoreListTableProps) {
       </BaseModal2>
     </>
   );
-}
+});
+export default StoreListTable;
