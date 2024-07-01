@@ -10,6 +10,9 @@ export const storeApi = {
   hardDeleteStore: (id: string) => {
     return axiosClient.delete(`${STORE}/hard_delete/${id}`);
   },
+  deleteStoreMultiple: (params?: any) => {
+    return axiosClient.delete(`${STORE}`, { params });
+  },
   deleteStore: (id: string) => {
     return axiosClient.delete(`${STORE}/${id}`);
   },

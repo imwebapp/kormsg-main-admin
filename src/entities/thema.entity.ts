@@ -6,7 +6,9 @@ export interface ThemaInterface {
     updated_at?: Date;
     deleted_at?: any;
     name?: string;
+    image?: string;
     alias?: string;
+    description?: string;
     start_time?: string;
     end_time?: string;
     groups?: Array<any>;

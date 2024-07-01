@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { BaseText, CustomButton } from "../../components";
+import { useEffect, useMemo, useState } from "react";
+import { BaseEditor, BaseText, CustomButton } from "../../components";
 
 import { CheckOutlined } from "@ant-design/icons";
 import { App, Layout, Spin, Radio } from "antd";
@@ -33,7 +33,11 @@ import { UserFilter } from "./components/UserFilter";
 import { ListSelectImageDrag } from "./components/ListSelectImageDrag";
 import { BoardLinkApi } from "../../apis/boardLinkApi";
 import { ReservationPart } from "./components/ReservationPart";
-import { HOLIDAY_SETTING, LIST_BANKING, PAYMENT_METHODS } from "../../utils/constants";
+import {
+  HOLIDAY_SETTING,
+  LIST_BANKING,
+  PAYMENT_METHODS,
+} from "../../utils/constants";
 import axios from "axios";
 import { SelectAddress } from "./components/SelectAddress";
 interface IFormDataPage1 {
@@ -117,7 +121,6 @@ interface INewManger {
   images: string[];
 }
 interface IFormDataPage2 {
-  storeIntroduction: string;
   priceList: INewPrice[];
   manager: INewManger[];
 }
@@ -201,9 +204,9 @@ const NewStore = () => {
   const handleSubmitSubway = (value: any) => {
     setFormDataPage1({
       ...formDataPage1,
-      subwayLocation: value?.subwaySelected.name,
-      subwayLine: value?.subwaySelectedChild.name,
-      subwayStation: value?.subwaySelectedDetails,
+      subwayLocation: value?.subwayLocation,
+      subwayLine: value?.subwayLine,
+      subwayStation: value?.subwayStation,
     });
     setOpenModalSubway(false);
   };
@@ -280,7 +283,9 @@ const NewStore = () => {
     setOpenModalCreateNewManage(false);
   };
 
-  const [typeAddress, setTypeAddress] = useState<boolean>(true);
+  const [isAddressKor, setAddressKor] = useState<boolean>(true);
+  const [isRegionKor, setRegionKor] = useState<boolean>(true);
+  const [isSubwayKor, setSubwayKor] = useState<boolean>(true);
   const [idEditedShop, setIdEditedShop] = useState<string>();
   const [storeCopyFunc, setStoreCopyFunc] = useState<any>();
   const [storeOwnerMembershipSetting, setStoreOwnerMembershipSetting] =
@@ -329,10 +334,13 @@ const NewStore = () => {
   });
 
   const [formDataPage2, setFormDataPage2] = useState<IFormDataPage2>({
-    storeIntroduction: "",
     priceList: [],
     manager: [],
   });
+
+  const [seoContent, setSeoContent] = useState("");
+  const [description, setDescription] = useState("");
+  const [defaultDescription, setDefaultDescription] = useState("");
 
   const handleInputChange = (name: string, value: any) => {
     setFormDataPage1({ ...formDataPage1, [name]: value });
@@ -358,17 +366,34 @@ const NewStore = () => {
   const getCoordinates = async (address: string) => {
     const fullAddress = address;
     try {
-      const response = await axios.get(`https://photon.komoot.io/api/?q=${fullAddress}&limit=1`);
+      const response = await axios.get(
+        `https://photon.komoot.io/api/?q=${fullAddress}&limit=1`
+      );
       if (response.status === 200) {
         const location = response.data.features[0].geometry.coordinates;
-        setFormDataPage1({ ...formDataPage1, latitude: location[1], longitude: location[0], storeAddress: fullAddress })
+        setFormDataPage1({
+          ...formDataPage1,
+          latitude: location[1],
+          longitude: location[0],
+          storeAddress: fullAddress,
+        });
       } else {
-        console.error('Geocoding failed:', response.data.status);
-        setFormDataPage1({ ...formDataPage1, latitude: 37.3957122, longitude: 127.1105181, storeAddress: fullAddress });
+        console.error("Geocoding failed:", response.data.status);
+        setFormDataPage1({
+          ...formDataPage1,
+          latitude: 37.3957122,
+          longitude: 127.1105181,
+          storeAddress: fullAddress,
+        });
       }
     } catch (error) {
-      console.error('Error occurred while fetching geocode:', error);
-      setFormDataPage1({ ...formDataPage1, latitude: 37.3957122, longitude: 127.1105181, storeAddress: fullAddress });
+      console.error("Error occurred while fetching geocode:", error);
+      setFormDataPage1({
+        ...formDataPage1,
+        latitude: 37.3957122,
+        longitude: 127.1105181,
+        storeAddress: fullAddress,
+      });
     }
   };
 
@@ -477,7 +502,8 @@ const NewStore = () => {
         address_2: formDataPage1?.storeAddressDetails,
         category_id: formDataPage1?.category,
         contact_phone: formDataPage1?.storeNumber,
-        description: formDataPage2?.storeIntroduction,
+        description: description,
+        description_content: seoContent,
         images: resultArrayImageConvert,
         latitude: formDataPage1?.latitude,
         longitude: formDataPage1?.longitude,
@@ -511,7 +537,11 @@ const NewStore = () => {
         thumbnails: resultArrayImageConvert,
         title: formDataPage1?.storeName,
         user_id: storeOwnerMembershipSetting?.id,
-        change_owner: (idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id) ? true : false, //change owner when edit shop
+        // change_owner: true,
+        change_owner:
+          idOwnerShopEdit && idOwnerShopEdit !== storeOwnerMembershipSetting?.id
+            ? true
+            : false, //change owner when edit shop
         verified: true,
         payment_methods: formDataPage1?.reservationFuncSetting
           ? formDataPage1?.reservationPaymentMethod.length > 0
@@ -722,9 +752,13 @@ const NewStore = () => {
         longitude: storeCopyFunc?.longitude || 127.1105181,
         storeAddressDetails: storeCopyFunc?.address_2 || "",
         storeImages: storeCopyFunc?.images || [],
-        leave_day: typeof storeCopyFunc?.leave_day === 'boolean' ? storeCopyFunc?.leave_day : true,
+        leave_day:
+          typeof storeCopyFunc?.leave_day === "boolean"
+            ? storeCopyFunc?.leave_day
+            : true,
         working_day: storeCopyFunc?.working_day || [],
-        holiday_setting: storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
+        holiday_setting:
+          storeCopyFunc?.holiday_setting || HOLIDAY_SETTING.OTHER,
         holiday_day: storeCopyFunc?.holiday_day || [],
         opening_hours: storeCopyFunc?.opening_hours || "",
         opening_hours_weekend: storeCopyFunc?.opening_hours_weekend || "",
@@ -758,13 +792,11 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          storeCopyFunc?.description_content ||
-          storeCopyFunc?.description ||
-          "",
         priceList: storeCopyFunc?.courses || [],
         manager: storeCopyFunc?.mentors || [],
       });
+      setDescription(storeCopyFunc?.description || "");
+      setSeoContent(storeCopyFunc?.description_content || "");
     }
   }, [storeCopyFunc]);
 
@@ -796,7 +828,10 @@ const NewStore = () => {
         longitude: dataEditShop?.longitude || 127.1105181,
         storeAddressDetails: dataEditShop?.address_2 || "",
         storeImages: dataEditShop?.images || [],
-        leave_day: typeof dataEditShop?.leave_day === 'boolean' ? dataEditShop?.leave_day : true,
+        leave_day:
+          typeof dataEditShop?.leave_day === "boolean"
+            ? dataEditShop?.leave_day
+            : true,
         working_day: dataEditShop?.working_day || [],
         holiday_setting: dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
         holiday_day: dataEditShop?.holiday_day || [],
@@ -832,11 +867,12 @@ const NewStore = () => {
         },
       });
       setFormDataPage2({
-        storeIntroduction:
-          dataEditShop?.description_content || dataEditShop?.description || "",
         priceList: dataEditShop?.courses || [],
         manager: dataEditShop?.mentors || [],
       });
+      setDescription(dataEditShop?.description || "");
+      setDefaultDescription(dataEditShop?.description || "");
+      setSeoContent(dataEditShop?.description_content || "");
     }
   }, [dataEditShop]);
 
@@ -866,9 +902,13 @@ const NewStore = () => {
               longitude: dataEditShop?.longitude || 127.1105181,
               storeAddressDetails: dataEditShop?.address_2 || "",
               storeImages: dataEditShop?.images || [],
-              leave_day: typeof dataEditShop?.leave_day === 'boolean' ? dataEditShop?.leave_day : true,
+              leave_day:
+                typeof dataEditShop?.leave_day === "boolean"
+                  ? dataEditShop?.leave_day
+                  : true,
               working_day: dataEditShop?.working_day || [],
-              holiday_setting: dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
+              holiday_setting:
+                dataEditShop?.holiday_setting || HOLIDAY_SETTING.OTHER,
               holiday_day: dataEditShop?.holiday_day || [],
               opening_hours: dataEditShop?.opening_hours || "",
               opening_hours_weekend: dataEditShop?.opening_hours_weekend || "",
@@ -904,13 +944,11 @@ const NewStore = () => {
               },
             });
             setFormDataPage2({
-              storeIntroduction:
-                dataEditShop?.description_content ||
-                dataEditShop?.description ||
-                "",
               priceList: dataEditShop?.courses || [],
               manager: res?.results?.objects?.rows || [],
             });
+            setDescription(dataEditShop?.description || "");
+            setSeoContent(dataEditShop?.description_content || "");
           }
         })
         .catch((err) => {
@@ -1006,16 +1044,24 @@ const NewStore = () => {
             />
             <BaseInput
               title="매장 번호"
+              type="number"
               placeholder="고객님이 전화할 수 있는 번호를 입력"
               value={formDataPage1.storeNumber}
-              onChange={(value) => handleInputChange("storeNumber", value)}
+              onChange={(value) => {
+                const digitsOnly = value.match(/\d+/g)?.join("");
+                if (digitsOnly) handleInputChange("storeNumber", digitsOnly);
+              }}
             />
             <div>
-              <div className={classNames('flex items-center mb-2 gap-2')}>
+              <div className={classNames("flex items-center mb-2 gap-2")}>
                 <BaseText locale bold>
                   매장 주소(위치기반 적용)
                 </BaseText>
-                <Radio.Group className="flex items-center" onChange={(e) => setTypeAddress(e.target.value)} value={typeAddress}>
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setAddressKor(e.target.value)}
+                  value={isAddressKor}
+                >
                   <Radio value={true}>
                     <BaseText locale medium>
                       Korean
@@ -1028,15 +1074,16 @@ const NewStore = () => {
                   </Radio>
                 </Radio.Group>
               </div>
-              {typeAddress ?
+              {isAddressKor ? (
                 <div onClick={handleClickPostalCode}>
                   <BaseInput
                     // title="매장 주소(위치기반 적용)"
                     placeholder="주소입력"
                     value={formDataPage1?.storeAddress}
-                  // onChange={(value) => handleInputChange('storeAddress', value)}
+                    // onChange={(value) => handleInputChange('storeAddress', value)}
                   />
-                </div> :
+                </div>
+              ) : (
                 <SelectAddress
                   value={{
                     fullAddress: formDataPage1?.storeAddress,
@@ -1055,7 +1102,8 @@ const NewStore = () => {
                       storeAddress: value.fullAddress || "",
                     });
                   }}
-                />}
+                />
+              )}
               <BaseInput
                 placeholder="상세주소 입력"
                 value={formDataPage1.storeAddressDetails}
@@ -1139,6 +1187,24 @@ const NewStore = () => {
               )}
             <ListCategoryPart1
               title="지역"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setRegionKor(e.target.value)}
+                  value={isRegionKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.regionProvince + formDataPage1?.regionDistrict
               }
@@ -1149,6 +1215,24 @@ const NewStore = () => {
             />
             <ListCategoryPart1
               title="지하철"
+              subTitle={
+                <Radio.Group
+                  className="flex items-center"
+                  onChange={(e) => setSubwayKor(e.target.value)}
+                  value={isSubwayKor}
+                >
+                  <Radio value={true}>
+                    <BaseText locale medium>
+                      Korean
+                    </BaseText>
+                  </Radio>
+                  <Radio value={false}>
+                    <BaseText locale medium>
+                      Global
+                    </BaseText>
+                  </Radio>
+                </Radio.Group>
+              }
               value={
                 formDataPage1?.subwayLocation +
                 formDataPage1?.subwayLine +
@@ -1166,8 +1250,8 @@ const NewStore = () => {
                 formDataPage1?.chatMessageFunc === ""
                   ? ""
                   : formDataPage1?.chatMessageFunc
-                    ? "1"
-                    : "2"
+                  ? "1"
+                  : "2"
               }
               onClick={(value) => {
                 handleInputChange(
@@ -1186,8 +1270,8 @@ const NewStore = () => {
                 formDataPage1?.stampSetting === ""
                   ? ""
                   : formDataPage1?.stampSetting
-                    ? "1"
-                    : "2"
+                  ? "1"
+                  : "2"
               }
               onClick={(value) => {
                 handleInputChange("stampSetting", value === "1" ? true : false);
@@ -1203,8 +1287,8 @@ const NewStore = () => {
                 formDataPage1?.reservationFuncSetting === ""
                   ? ""
                   : formDataPage1?.reservationFuncSetting
-                    ? "1"
-                    : "2"
+                  ? "1"
+                  : "2"
               }
               onClick={(value) => {
                 const isActivated = value === "1";
@@ -1220,12 +1304,12 @@ const NewStore = () => {
                   reservationBankInfo: isActivated
                     ? formDataPage1.reservationBankInfo
                     : {
-                      bankId: "",
-                      bankName: "",
-                      bankImage: "",
-                      bankNumber: "",
-                      bankUserName: "",
-                    },
+                        bankId: "",
+                        bankName: "",
+                        bankImage: "",
+                        bankNumber: "",
+                        bankUserName: "",
+                      },
                 });
               }}
               options={[
@@ -1277,20 +1361,14 @@ const NewStore = () => {
           </div>
 
           <div className="flex flex-col w-1/3 gap-4 p-6 overflow-auto border-x ">
-            <BaseInput
-              onChange={(value) =>
-                handleInputChangePage2("storeIntroduction", value)
-              }
-              value={formDataPage2?.storeIntroduction}
-              placeholder="매장의 소개해주세요
-            구글 혹은 네이버에 노출 될 수 있으니
-            소개글과 노출 원하는 키워드도 같이
-            입력바랍니다. 예시: 강남케어, 강남맛집,강남추천 등~"
-              title="매장 소개"
-              className="flex w-full"
-              styleInputContainer="w-full"
-              textArea
-              titleSize={16}
+            <BaseText locale size={16} bold>
+              매장 소개
+            </BaseText>
+            <BaseEditor
+              defaultValue={defaultDescription}
+              onChange={(value: string) => {
+                setDescription(value);
+              }}
             />
             <div className="flex">
               {listOptionPart2.map((item, index) => {
@@ -1410,6 +1488,16 @@ const NewStore = () => {
                 />
               )}
             </div>
+            <BaseInput
+              onChange={(value) => setSeoContent(value)}
+              value={seoContent}
+              placeholder="Please enter description and keywords for SEO"
+              title="SEO"
+              className="flex w-full"
+              styleInputContainer="w-full"
+              textArea
+              titleSize={16}
+            />
           </div>
 
           <div className="flex flex-col w-1/3 p-4 overflow-auto ">
@@ -1465,121 +1553,121 @@ const NewStore = () => {
               formDataPage1.storeNumber ||
               formDataPage1.storeAddressDetails ||
               formDataPage1.opening_hours) && (
-                <div className="mt-1 border ">
-                  <div className="flex">
-                    <BaseText
-                      locale
-                      size={16}
-                      bold
-                      className="flex justify-center flex-1 p-[10px] border-b-8 border-r"
-                    >
-                      정보
-                    </BaseText>
-                    <BaseText
-                      locale
-                      size={16}
-                      className="flex justify-center flex-1 p-[10px]"
-                    >
-                      리뷰
-                    </BaseText>
-                  </div>
-                  <div className="p-4">
-                    {(formDataPage1.storeAddress ||
-                      formDataPage1.storeAddressDetails) && (
-                        <div className="flex items-center gap-1 py-3 border-b">
-                          <img src={Images.iconGps} className="w-5 h-5" />
+              <div className="mt-1 border ">
+                <div className="flex">
+                  <BaseText
+                    locale
+                    size={16}
+                    bold
+                    className="flex justify-center flex-1 p-[10px] border-b-8 border-r"
+                  >
+                    정보
+                  </BaseText>
+                  <BaseText
+                    locale
+                    size={16}
+                    className="flex justify-center flex-1 p-[10px]"
+                  >
+                    리뷰
+                  </BaseText>
+                </div>
+                <div className="p-4">
+                  {(formDataPage1.storeAddress ||
+                    formDataPage1.storeAddressDetails) && (
+                    <div className="flex items-center gap-1 py-3 border-b">
+                      <img src={Images.iconGps} className="w-5 h-5" />
+                      <BaseText locale size={16} className="text-center">
+                        {formDataPage1.storeAddress +
+                          " " +
+                          formDataPage1.storeAddressDetails}
+                      </BaseText>
+                    </div>
+                  )}
+                  {formDataPage1.opening_hours && (
+                    <div className="flex items-center gap-1 py-3 border-b">
+                      <img src={Images.iconClock} className="w-5 h-5" />
+                      <BaseText size={16} className="text-center">
+                        {formDataPage1.opening_hours}
+                      </BaseText>
+                    </div>
+                  )}
+                  {formDataPage1.storeNumber && (
+                    <div className="flex items-center gap-1 py-3 border-b">
+                      <img src={Images.iconPhone2} className="w-5 h-5" />
+                      <BaseText locale size={16} className="text-center">
+                        {formDataPage1.storeNumber}
+                      </BaseText>
+                    </div>
+                  )}
+                  {formDataPage1.thema && (
+                    <div className="flex items-center gap-1 py-3 border-b">
+                      <img src={Images.iconCategory} className="w-5 h-5" />
+                      {listThema
+                        .filter(
+                          (item: any) => item.value === formDataPage1.thema
+                        )
+                        .map((item: any, index: number) => {
+                          return (
+                            <BaseText
+                              key={index}
+                              locale
+                              size={16}
+                              className="text-center"
+                            >
+                              {item.label}
+                            </BaseText>
+                          );
+                        })}
+                    </div>
+                  )}
+                  {formDataPage1.category && (
+                    <div className="flex items-center gap-1 py-3 border-b">
+                      <img src={Images.iconSquare} className="w-5 h-5" />
+                      {listCategory
+                        .filter(
+                          (item: any) => item.value === formDataPage1.category
+                        )
+                        .map((item: any, index: number) => {
+                          return (
+                            <BaseText
+                              key={index}
+                              locale
+                              size={16}
+                              className="text-center"
+                            >
+                              {item.label}
+                            </BaseText>
+                          );
+                        })}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 py-3 ">
+                    <img src={Images.iconTag} className="w-5 h-5" />
+                    {formDataPage1.hashtag.map((item, index) => {
+                      // Find the corresponding object with matching id
+                      const correspondingItem = listHashtag.find(
+                        (i: any) => i.value === item
+                      );
+
+                      // Check if correspondingItem exists and retrieve the label
+                      const label = correspondingItem
+                        ? correspondingItem.label
+                        : "";
+                      return (
+                        <div
+                          key={index}
+                          className="px-4 mr-1 rounded-lg bg-darkNight100"
+                        >
                           <BaseText locale size={16} className="text-center">
-                            {formDataPage1.storeAddress +
-                              " " +
-                              formDataPage1.storeAddressDetails}
+                            {label}
                           </BaseText>
                         </div>
-                      )}
-                    {formDataPage1.opening_hours && (
-                      <div className="flex items-center gap-1 py-3 border-b">
-                        <img src={Images.iconClock} className="w-5 h-5" />
-                        <BaseText size={16} className="text-center">
-                          {formDataPage1.opening_hours}
-                        </BaseText>
-                      </div>
-                    )}
-                    {formDataPage1.storeNumber && (
-                      <div className="flex items-center gap-1 py-3 border-b">
-                        <img src={Images.iconPhone2} className="w-5 h-5" />
-                        <BaseText locale size={16} className="text-center">
-                          {formDataPage1.storeNumber}
-                        </BaseText>
-                      </div>
-                    )}
-                    {formDataPage1.thema && (
-                      <div className="flex items-center gap-1 py-3 border-b">
-                        <img src={Images.iconCategory} className="w-5 h-5" />
-                        {listThema
-                          .filter(
-                            (item: any) => item.value === formDataPage1.thema
-                          )
-                          .map((item: any, index: number) => {
-                            return (
-                              <BaseText
-                                key={index}
-                                locale
-                                size={16}
-                                className="text-center"
-                              >
-                                {item.label}
-                              </BaseText>
-                            );
-                          })}
-                      </div>
-                    )}
-                    {formDataPage1.category && (
-                      <div className="flex items-center gap-1 py-3 border-b">
-                        <img src={Images.iconSquare} className="w-5 h-5" />
-                        {listCategory
-                          .filter(
-                            (item: any) => item.value === formDataPage1.category
-                          )
-                          .map((item: any, index: number) => {
-                            return (
-                              <BaseText
-                                key={index}
-                                locale
-                                size={16}
-                                className="text-center"
-                              >
-                                {item.label}
-                              </BaseText>
-                            );
-                          })}
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1 py-3 ">
-                      <img src={Images.iconTag} className="w-5 h-5" />
-                      {formDataPage1.hashtag.map((item, index) => {
-                        // Find the corresponding object with matching id
-                        const correspondingItem = listHashtag.find(
-                          (i: any) => i.value === item
-                        );
-
-                        // Check if correspondingItem exists and retrieve the label
-                        const label = correspondingItem
-                          ? correspondingItem.label
-                          : "";
-                        return (
-                          <div
-                            key={index}
-                            className="px-4 mr-1 rounded-lg bg-darkNight100"
-                          >
-                            <BaseText locale size={16} className="text-center">
-                              {label}
-                            </BaseText>
-                          </div>
-                        );
-                      })}
-                    </div>
+                      );
+                    })}
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
             {/* event part */}
 
@@ -1654,10 +1742,12 @@ const NewStore = () => {
                 })}
               </div>
             )}
-            {formDataPage2?.storeIntroduction && (
-              <BaseText size={16} bold className="text-center">
-                {formDataPage2?.storeIntroduction}
-              </BaseText>
+            {description && (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: description || "",
+                }}
+              ></div>
             )}
             {formDataPage2?.manager?.length > 0 && (
               <div className="flex flex-col gap-2 py-3 mt-1">
@@ -1704,6 +1794,7 @@ const NewStore = () => {
         />
 
         <ModalSelectRegion
+          isAddressKor={isRegionKor}
           isOpen={openModalRegion}
           onClose={handleCloseModalRegion}
           onSubmit={(value) => handleSubmitRegion(value)}
@@ -1712,12 +1803,10 @@ const NewStore = () => {
         />
 
         <ModalSelectSubway
+          isAddressKor={isSubwayKor}
           isOpen={openModalSubway}
           onClose={handleCloseModalSubway}
           onSubmit={(value) => handleSubmitSubway(value)}
-          dataSubway={formDataPage1?.subwayLocation}
-          dataSubwayChild={formDataPage1?.subwayLine}
-          dataSubwayDetails={formDataPage1?.subwayStation}
         />
 
         <ModalSelectReservationFunc

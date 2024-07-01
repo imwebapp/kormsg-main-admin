@@ -234,3 +234,7 @@ export const convertParams = (obj: any) => {
   }
   return result;
 };
+
+export function isNotEmptyOrWhitespace(str:string) {
+  return str.trim().length > 0;
+}

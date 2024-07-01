@@ -9,10 +9,14 @@ import { BASE_URL, IS_TEST, ListCountries } from "../../utils/constants";
 import ReactFlagsSelect from "react-flags-select";
 import Images from "../../assets/gen";
 import BaseButton from "../../components/baseButton";
-import OtpInput from 'react-otp-input';
+import OtpInput from "react-otp-input";
 import { BaseInput } from "../../components/input/BaseInput";
 import { App, Layout, Space, Spin } from "antd";
 import { classNames, formatPhoneNumber } from "../../utils/common";
+import { set } from "lodash";
+import { useCommonState } from "../../stores/commonStorage";
+import { showError, showSuccess } from "../../utils/showToast";
+import md5 from "md5";
 
 const BgList = [
   Images.bgLogin1,
@@ -20,141 +24,147 @@ const BgList = [
   Images.bgLogin3,
   Images.bgLogin4,
   Images.bgLogin5,
-]
+];
 const getRandomBg = () => {
   const randomIndex = Math.floor(Math.random() * BgList.length);
   return BgList[randomIndex];
-}
+};
 
 const Login = () => {
   const navigate = useNavigate();
-  const { message } = App.useApp();
+  // const { message } = App.useApp();
   const { accessToken, setAccessToken } = useLocalStorage((state) => state);
-  const [loadingScreen, setLoadingScreen] = useState(false);
-
-  const [username, setUsername] = useState("adminj");
-  const [password, setPassword] = useState("c9b3109c85263c46320c635bd3548f1e");
+  const { setLoading } = useCommonState((state) => state);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const [bg, setBg] = useState(getRandomBg());
-  const [phone, setPhone] = useState('');
-  const [dialCode, setDialCode] = useState('+82');
-  const [selected, setSelected] = useState("KR");
+  // const [phone, setPhone] = useState("");
+  // const [dialCode, setDialCode] = useState("+82");
+  // const [selected, setSelected] = useState("KR");
 
-  const [timer, setTimer] = useState(60);
-  const [isVerifyOtp, setIsVerifyOtp] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [isErrorOtp, setIsErrorOtp] = useState(false);
+  // const [timer, setTimer] = useState(60);
+  // const [isVerifyOtp, setIsVerifyOtp] = useState(false);
+  // const [otp, setOtp] = useState("");
+  // const [isErrorOtp, setIsErrorOtp] = useState(false);
 
-  const isServerTest = BASE_URL?.includes(IS_TEST || 'server-dev');
+  // const isServerTest = BASE_URL?.includes(IS_TEST || "server-dev");
 
-  const handleChangeOtp = (otp: string) => {
-    setOtp(otp);
-  }
+  // const handleChangeOtp = (otp: string) => {
+  //   setOtp(otp);
+  // };
 
-  const customLabels = ListCountries.reduce((acc: any, item) => {
-    acc[item.code] = {
-      primary: item.name,
-      secondary: item.dial_code
-    };
-    return acc;
-  }, {});
+  // const customLabels = ListCountries.reduce((acc: any, item) => {
+  //   acc[item.code] = {
+  //     primary: item.name,
+  //     secondary: item.dial_code,
+  //   };
+  //   return acc;
+  // }, {});
 
-  const sendOtp = async () => {
+  // const sendOtp = async () => {
+  //   try {
+  //     const cleanedPhoneNumber = formatPhoneNumber(phone);
+  //     setLoadingScreen(true);
+  //     const data = {
+  //       phone: dialCode + cleanedPhoneNumber,
+  //     };
+  //     const resSendOtp: any = await authApi.sendOtp(data);
+
+  //     if (resSendOtp.code === 200) {
+  //       setLoadingScreen(false);
+
+  //       setIsVerifyOtp(true);
+  //       startTimer();
+  //     }
+  //   } catch (error: any) {
+  //     console.log("Error sending OTP:", error);
+  //     setLoadingScreen(false);
+  //     if (error?.response?.data?.message === "Record Not Found") {
+  //       message.error("Phone number Not Found");
+  //     }
+  //   }
+  // };
+
+  // const startTimer = () => {
+  //   setTimer(60);
+  //   const intervalId = setInterval(() => {
+  //     setTimer((prevTime) => prevTime - 1);
+  //   }, 1000);
+
+  //   setTimeout(() => {
+  //     clearInterval(intervalId);
+  //   }, 60000);
+  // };
+
+  // const handleResendOtp = () => {
+  //   sendOtp();
+  // };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     const cleanedPhoneNumber = formatPhoneNumber(phone);
+  //     setLoadingScreen(true);
+  //     const data = {
+  //       phone: dialCode + cleanedPhoneNumber,
+  //       otp,
+  //     };
+  //     const resVerify: any = await authApi.verifyOtp(data);
+  //     if (resVerify?.code === 200) {
+  //       message.success("login successfully");
+  //       setAccessToken(resVerify?.results?.token);
+  //       setTokens();
+  //       setLoadingScreen(false);
+  //       navigate(Url.dashboard);
+  //     }
+  //   } catch (error: any) {
+  //     console.log("Error verify OTP:", error);
+  //     if (error?.response?.data?.message === "Code Error") {
+  //       setIsErrorOtp(true);
+  //     } else {
+  //       setIsErrorOtp(false);
+  //     }
+  //     setLoadingScreen(false);
+  //     message.error(error?.response?.data?.message || "Error verify OTP");
+  //   }
+  // };
+
+  const handleLoginIdPass = async () => {
     try {
-      const cleanedPhoneNumber = formatPhoneNumber(phone);
-      setLoadingScreen(true);
-      const data = {
-        phone: dialCode + cleanedPhoneNumber,
-      }
-      const resSendOtp: any = await authApi.sendOtp(data)
-
-      if (resSendOtp.code === 200) {
-        setLoadingScreen(false);
-
-        setIsVerifyOtp(true);
-        startTimer();
-      }
-    } catch (error: any) {
-      console.log('Error sending OTP:', error);
-      setLoadingScreen(false);
-      if (error?.response?.data?.message === 'Record Not Found') {
-        message.error('Phone number Not Found');
-      }
-    }
-  };
-
-  const startTimer = () => {
-    setTimer(60);
-    const intervalId = setInterval(() => {
-      setTimer(prevTime => prevTime - 1);
-    }, 1000);
-
-    setTimeout(() => {
-      clearInterval(intervalId);
-    }, 60000);
-  };
-
-  const handleResendOtp = () => {
-    sendOtp();
-  };
-
-  const handleLogin = async () => {
-    try {
-      const cleanedPhoneNumber = formatPhoneNumber(phone);
-      setLoadingScreen(true);
-      const data = {
-        phone: dialCode + cleanedPhoneNumber,
-        otp
-      }
-      const resVerify: any = await authApi.verifyOtp(data);
-      if (resVerify?.code === 200) {
-        message.success('login successfully');
-        setAccessToken(resVerify?.results?.token)
-        setTokens();
-        setLoadingScreen(false);
-        navigate(Url.dashboard)
-      }
-    } catch (error: any) {
-      console.log('Error verify OTP:', error);
-      if (error?.response?.data?.message === 'Code Error') {
-        setIsErrorOtp(true);
-      } else {
-        setIsErrorOtp(false);
-      }
-      setLoadingScreen(false);
-      message.error(error?.response?.data?.message || 'Error verify OTP');
-    }
-  };
-
-  const handleLoginTest = async () => {
-    try {
-      const param = { username, password }
-      const resLoginTest: any = await authApi.login(param)
+      setLoading(true);
+      const param = {
+        username: username.trim(),
+        password: md5(password.trim()),
+      };
+      const resLoginTest: any = await authApi.login(param);
 
       if (resLoginTest?.code === 200) {
-        setAccessToken(resLoginTest?.results?.token)
+        setAccessToken(resLoginTest?.results?.token);
         setTokens();
-        navigate(Url.dashboard)
+        navigate(Url.dashboard);
+        showSuccess("login successfully");
       }
     } catch (error) {
-      console.log('Error verify OTP:', error);
+      console.log("Error verify OTP:", error);
+      showError(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (timer === 0) {
-      clearInterval(timer);
-    }
-  }, [timer]);
+  // useEffect(() => {
+  //   if (timer === 0) {
+  //     clearInterval(timer);
+  //   }
+  // }, [timer]);
 
   return (
     <div className="flex h-screen bg-white ">
-      <Spin spinning={loadingScreen} tip="Loading..." size="large" fullscreen />
       <div className="relative w-1/3 bg-red-100">
         <img src={bg} className="w-full h-full" />
       </div>
       <div className="flex items-center justify-center w-2/3">
-        {isVerifyOtp ? (
+        {/* {isVerifyOtp ? (
           <div className="w-2/3 bg-white rounded-lg p-11 drop-shadow-lg">
             <BaseText bold size={30}>
               SMS verification code
@@ -247,9 +257,58 @@ const Login = () => {
                 </BaseText>
               </BaseButton>
             }
-          </div>)}
+          </div>)} */}
+
+        <div className="w-2/3 bg-white rounded-lg p-11 drop-shadow-lg">
+          <BaseText locale bold size={30}>
+            Administrator page login
+          </BaseText>
+          <div className="flex mt-8 flex-col">
+            <div className="flex flex-row gap-3">
+              <div className="bg-darkNight50 w-[56px] h-[60px] flex justify-center items-center rounded-lg">
+                <BaseText bold size={20}>
+                  ID
+                </BaseText>
+              </div>
+              <BaseInput
+                placeholder="Please enter your ID"
+                className="w-full border border-gray-300 rounded-md"
+                styleInputContainer="w-full h-[60px]"
+                onChange={(value) => {
+                  setUsername(value);
+                }}
+                value={username}
+              />
+            </div>
+            <div className="flex flex-row gap-3 mt-6">
+              <div className="bg-darkNight50 w-[56px] h-[60px] flex justify-center items-center rounded-lg">
+                <BaseText bold size={20}>
+                  PW
+                </BaseText>
+              </div>
+              <BaseInput
+                placeholder="Please enter your password"
+                className="w-full border border-gray-300 rounded-md"
+                styleInputContainer="w-full h-[60px]"
+                onChange={(value) => {
+                  setPassword(value);
+                }}
+                value={password}
+              />
+            </div>
+          </div>
+          <BaseButton
+            onClick={handleLoginIdPass}
+            className="w-full mt-6"
+            disabled={password.length === 0 || username.length === 0}
+          >
+            <BaseText locale bold size={16} className="text-white">
+              Continue
+            </BaseText>
+          </BaseButton>
+        </div>
       </div>
-    </div >
+    </div>
   );
 };
 
