@@ -83,6 +83,7 @@ export default class Images {
     static readonly bank7 = require("../../../src/assets/images/bank7.png");
     static readonly bank8 = require("../../../src/assets/images/bank8.png");
     static readonly bank9 = require("../../../src/assets/images/bank9.png");
+    static readonly bg = require("../../../src/assets/images/bg.png");
     static readonly bgLogin1 = require("../../../src/assets/images/bgLogin1.jpg");
     static readonly bgLogin2 = require("../../../src/assets/images/bgLogin2.jpg");
     static readonly bgLogin3 = require("../../../src/assets/images/bgLogin3.jpg");
@@ -160,6 +161,7 @@ export default class Images {
     static readonly success = require("../../../src/assets/images/success.png");
     static readonly trash2 = require("../../../src/assets/images/trash2.png");
     static readonly twoDot = require("../../../src/assets/images/twoDot.png");
+    static readonly upload2 = require("../../../src/assets/images/upload2.png");
     static readonly userDefault = require("../../../src/assets/images/user_default.png");
     static readonly web = require("../../../src/assets/images/web.png");
     static readonly web2 = require("../../../src/assets/images/web2.png");

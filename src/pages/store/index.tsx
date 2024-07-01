@@ -51,6 +51,7 @@ const StorePage = () => {
   const [themas, setThemas] = useState<any>([]);
   const fileExcelRef = useRef<any>(null);
   const { t } = useTranslation();
+  const storeListRef = useRef<any>(null);
 
   const handleRangeChange = (value: any, dateString?: [string, string]) => {
     if (dateString && dateString[0] !== "" && dateString[1] !== "") {
@@ -65,6 +66,7 @@ const StorePage = () => {
       try {
         let params = {
           search_value: valueSearch,
+          thema_id: selectedThema !== t("All") ? selectedThema : undefined,
         };
         let resultCount: any = await storeApi.getCountStore(params);
         if (resultCount.code === 200) {
@@ -72,7 +74,7 @@ const StorePage = () => {
         }
       } catch (error) {}
     }, 500),
-    []
+    [selectedThema]
   );
 
   const getListThema = async () => {
@@ -150,24 +152,7 @@ const StorePage = () => {
       refreshTable();
     }
   };
-  const downloadExcel = async () => {
-    try {
-      const params = {
-        fields: [
-          "$all",
-          { courses: ["$all", { prices: ["$all"] }] },
-          { user: ["$all"] },
-          { category: ["$all", { thema: ["$all"] }, { $filter: {} }] },
-          { events: ["$all"] },
-        ],
-        filter: { state: { $notIn: ["REJECTED", "EXPIRED"] } },
-        limit: 99999,
-        order: [["geolocation_api_type", "DESC"]],
-      };
-      let result: any = await storeApi.downloadExcel(params);
-      window.open(result.results?.object?.url, "_blank");
-    } catch (error) {}
-  };
+  
   const onDragEnd = (result: any) => {
     console.log("result onDragEnd", result);
     if (!result.destination) {
@@ -234,18 +219,16 @@ const StorePage = () => {
 
   const refreshTable = () => {
     setIsUpdateSuccess(isUpdateSuccess + 1);
-    getCountStore();
+    getCountStore(valueKeywordFilter);
   };
 
   useEffect(() => {
     getListThema();
-    getCountStore();
-    return () => {};
   }, []);
 
   useEffect(() => {
     getCountStore(valueKeywordFilter);
-  }, [valueKeywordFilter, getCountStore]);
+  }, [valueKeywordFilter, getCountStore, selectedThema, selectedButton]);
 
   const handleButtonClick = (buttonName: string) => {
     setSelectedButton(buttonName);
@@ -328,6 +311,8 @@ const StorePage = () => {
       </div>
     );
   };
+
+
   return (
     <>
       <div className="p-6">
@@ -400,7 +385,7 @@ const StorePage = () => {
               <div
                 className="flex gap-2 justify-center px-4 py-2.5 rounded-xl border-2 border-gray-200 border-solid cursor-pointer"
                 onClick={() => {
-                  downloadExcel();
+                  storeListRef.current?.downloadExcel();
                 }}
               >
                 <img
@@ -435,6 +420,7 @@ const StorePage = () => {
           </div>
 
           <StoreListTable
+            ref={storeListRef}
             thema={selectedThema}
             typeStore={selectedButton}
             typeSorting={selectedSorting}

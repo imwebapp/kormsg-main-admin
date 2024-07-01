@@ -10,11 +10,14 @@ import {
   VISIBLE_BOARDS,
 } from "../../../utils/constants";
 import { groupApi } from "../../../apis/groupApi";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { classNames } from "../../../utils/common";
 import { ThemaInterface } from "../../../entities";
 import { ThemaApi } from "../../../apis/themaApi";
 import { showError, showSuccess } from "../../../utils/showToast";
+import Images from "../../../assets/gen";
+import { storeApi } from "../../../apis/storeApi";
+import { UploadApi } from "../../../apis/uploadApi";
 
 export const ThemaDetail = ({
   lastOpen,
@@ -23,36 +26,37 @@ export const ThemaDetail = ({
   submitModal,
 }: any) => {
   const [thema, setThema] = useState<ThemaInterface>();
-  // const [groupUsers, setGroupUsers] = useState([]);
+  const [groupUsers, setGroupUsers] = useState([]);
+  const fileRef = useRef<any>(null);
 
-  // const getGroupUser = async () => {
-  //   try {
-  //     const repon: any = await groupApi.getList();
-  //     setGroupUsers(repon?.results?.objects?.rows || []);
-  //   } catch (error) {}
-  // };
+  const getGroupUser = async () => {
+    try {
+      const repon: any = await groupApi.getList();
+      setGroupUsers(repon?.results?.objects?.rows || []);
+    } catch (error) {}
+  };
 
-  // useEffect(() => {
-  //   const viewGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_view)
-  //     .map((item) => item.group_view.id);
+  useEffect(() => {
+    const viewGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_view)
+      .map((item) => item.group_view.id);
 
-  //   const postGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_post)
-  //     .map((item) => item.group_post.id);
+    const postGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_post)
+      .map((item) => item.group_post.id);
 
-  //   const commentGroup: any = (themaProps as ThemaInterface)?.groups
-  //     ?.filter((item) => item.group_comment)
-  //     .map((item) => item.group_comment.id);
+    const commentGroup: any = (themaProps as ThemaInterface)?.groups
+      ?.filter((item) => item.group_comment)
+      .map((item) => item.group_comment.id);
 
-  //   setThema({
-  //     ...themaProps,
-  //     view_group_ids: viewGroup,
-  //     post_group_ids: postGroup,
-  //     comment_group_ids: commentGroup,
-  //   });
-  //   getGroupUser();
-  // }, [lastOpen, themaProps]);
+    setThema({
+      ...themaProps,
+      view_group_ids: viewGroup,
+      post_group_ids: postGroup,
+      comment_group_ids: commentGroup,
+    });
+    getGroupUser();
+  }, [lastOpen, themaProps]);
 
   const submit = async () => {
     if (!thema) return;
@@ -65,6 +69,21 @@ export const ThemaDetail = ({
       }
       showSuccess("Success");
       submitModal && submitModal();
+    } catch (error) {
+      showError(error);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (file) {
+        const respon = await UploadApi.uploadImage(file);
+        setThema({
+          ...thema,
+          image: respon.url,
+        });
+      }
     } catch (error) {
       showError(error);
     }
@@ -85,6 +104,56 @@ export const ThemaDetail = ({
           defaultValue={thema?.name}
           title="Name"
           placeholder="Enter name"
+        />
+        <BaseText locale size={24} className="mt-4">
+          SEO Setting
+        </BaseText>
+        <BaseText locale size={14} bold className="mt-4">
+          SEO 이미지
+        </BaseText>
+        <div
+          onClick={() => fileRef.current?.click()}
+          className="cursor-pointer mt-2 relative flex justify-center items-center h-[187px]"
+        >
+          {thema?.image && thema.image != "" ? (
+            <img src={thema.image} className="w-full h-[187px] object-cover" />
+          ) : (
+            <>
+              <div className="z-10 justify-center items-center flex flex-col">
+                <img src={Images.upload2} className="w-6 h-6" />
+                <BaseText size={16} locale medium>
+                  Upload
+                </BaseText>
+              </div>
+              <img
+                src={Images.bg}
+                className="h-[187px] w-full absolute top-0 left-0"
+              />
+            </>
+          )}
+          <input
+            key={Date.now()}
+            ref={fileRef}
+            onChange={handleFileChange}
+            id="fileThema"
+            type="file"
+            className="hidden"
+            accept="image/*"
+          />
+        </div>
+        <BaseInput
+          className="mt-4"
+          onChange={(value) => {
+            setThema({
+              ...thema,
+              description: value,
+            });
+          }}
+          textArea
+          value={thema?.description}
+          defaultValue={thema?.description}
+          title="SEO 설명"
+          placeholder="SEO를 위해 설명을 넣어주세요!"
         />
         <BaseInputSelect
           className="mt-4 "
@@ -227,7 +296,7 @@ export const ThemaDetail = ({
         {/* ////////////////////////////////////// */}
         {/* ////////////////////////////////////// */}
         {/* ////////////////////////////////////// */}
-        
+
         {/* <div className="flex flex-col items-start mt-4">
           <BaseText locale bold>
             Writing
