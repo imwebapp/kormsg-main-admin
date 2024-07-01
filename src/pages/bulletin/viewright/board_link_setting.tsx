@@ -619,7 +619,7 @@ export default function BulletinSetting() {
       </Popconfirm>
 
       <BaseModal2
-        width="80vw"
+        width="100vw"
         bodyStyle="h-[80vh]"
         noScroll
         isOpen={openModalThema}

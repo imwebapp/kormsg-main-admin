@@ -93,7 +93,7 @@ export const BaseModal2 = (props: BaseModalProps) => {
       </div>
       <div
         className={classNames(
-          'max-h-[80vh] px-6 py-4 ',
+          'max-h-[80vh] px-2 py-4 ',
           noScroll ? '' : 'overflow-auto',
           bodyStyle
         )}

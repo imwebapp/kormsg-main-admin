@@ -1,48 +1,50 @@
-import { useEffect, useState } from "react";
-import { BaseText } from "../../../components";
-import { classNames } from "../../../utils/common";
-import { PlusOutlined, DownOutlined } from "@ant-design/icons";
-import { BoardLinkInterface, ThemaInterface } from "../../../entities";
-import { BoardLinkApi } from "../../../apis/boardLinkApi";
-import { useBulletinState } from "../store";
+import {useEffect, useState} from 'react'
+import {BaseText} from '../../../components'
+import {classNames} from '../../../utils/common'
+import {PlusOutlined, DownOutlined} from '@ant-design/icons'
+import {BoardLinkInterface, ThemaInterface} from '../../../entities'
+import {BoardLinkApi} from '../../../apis/boardLinkApi'
+import {useBulletinState} from '../store'
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DraggableStateSnapshot,
-} from "react-beautiful-dnd";
-import { CategoryApi } from "../../../apis/categoryApi";
-import { showError } from "../../../utils/showToast";
-import { BaseInput } from "../../../components/input/BaseInput";
-import { BOARD } from "../../../utils/constants";
+} from 'react-beautiful-dnd'
+import {CategoryApi} from '../../../apis/categoryApi'
+import {showError} from '../../../utils/showToast'
+import {BaseInput} from '../../../components/input/BaseInput'
+import {BOARD} from '../../../utils/constants'
 
-export const NEW_ID = "NEW_ID";
+export const NEW_ID = 'NEW_ID'
 export default function BulletinLeft() {
-  const { boardSelected, setBoardSelected, setLastRefresh, lastRefresh } =
-    useBulletinState((state) => state);
-  const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>([]);
-  const [linkCateDragging, setLinkCateDragging] = useState<number>();
-  const [editBoardNameIndex, setBoardNameIndex] = useState();
+  const {boardSelected, setBoardSelected, setLastRefresh, lastRefresh} =
+    useBulletinState((state) => state)
+  const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>([])
+  const [linkCateDragging, setLinkCateDragging] = useState<number>()
+  const [editBoardNameIndex, setBoardNameIndex] = useState()
+
+  console.log(111, boardSelected)
 
   const _getBoardLinks = async () => {
     try {
-      const respon = await BoardLinkApi.getList();
-      setBoardLinks(respon);
+      const respon = await BoardLinkApi.getList()
+      setBoardLinks(respon)
     } catch (error) {}
-  };
+  }
 
   const createBoardLink = async () => {
     try {
-      const data = boardLinks.map((item) => item.id === NEW_ID);
-      if (data[0]) return;
-      setBoardLinks([{ id: NEW_ID, name: "New Link" }, ...boardLinks]);
-      setBoardSelected({ id: NEW_ID, name: "New Link" });
+      const data = boardLinks.map((item) => item.id === NEW_ID)
+      if (data[0]) return
+      setBoardLinks([{id: NEW_ID, name: 'New Link'}, ...boardLinks])
+      setBoardSelected({id: NEW_ID, name: 'New Link'})
     } catch (error) {}
-  };
+  }
 
   useEffect(() => {
-    _getBoardLinks();
-  }, [lastRefresh]);
+    _getBoardLinks()
+  }, [lastRefresh])
 
   const orderLink = async (
     prev_index_number: number | undefined,
@@ -53,20 +55,20 @@ export default function BulletinLeft() {
       await BoardLinkApi.orderLink(boardLinks[linkIndex].id, {
         prev_index_number,
         next_index_number,
-      });
-      _getBoardLinks();
-      setLastRefresh(Date.now());
+      })
+      _getBoardLinks()
+      setLastRefresh(Date.now())
     } catch (error) {
-      showError(error);
-      _getBoardLinks();
-      setLastRefresh(Date.now());
+      showError(error)
+      _getBoardLinks()
+      setLastRefresh(Date.now())
     }
-  };
+  }
 
   const onDragEnd = (result: any) => {
     try {
       if (!result.destination) {
-        return;
+        return
       }
 
       if (result.source.index < result.destination.index) {
@@ -74,21 +76,21 @@ export default function BulletinLeft() {
           boardLinks[result.destination.index]?.index,
           boardLinks[result.destination.index + 1]?.index,
           result.source.index
-        );
+        )
       } else {
         orderLink(
           boardLinks[result.destination.index - 1]?.index,
           boardLinks[result.destination.index]?.index,
           result.source.index
-        );
+        )
       }
 
-      const newItems = [...boardLinks];
-      const [reorderedItem] = newItems.splice(result.source.index, 1);
-      newItems.splice(result.destination.index, 0, reorderedItem);
-      setBoardLinks(newItems);
+      const newItems = [...boardLinks]
+      const [reorderedItem] = newItems.splice(result.source.index, 1)
+      newItems.splice(result.destination.index, 0, reorderedItem)
+      setBoardLinks(newItems)
     } catch (error) {}
-  };
+  }
 
   const orderLinkCategory = async (
     prev_index_number: number,
@@ -99,48 +101,48 @@ export default function BulletinLeft() {
       await CategoryApi.orderLinkCategory(id, {
         prev_index_number,
         next_index_number,
-      });
-      _getBoardLinks();
-      setLastRefresh(Date.now());
+      })
+      _getBoardLinks()
+      setLastRefresh(Date.now())
     } catch (error) {
-      showError(error);
-      _getBoardLinks();
-      setLastRefresh(Date.now());
-      console.log("err", error);
+      showError(error)
+      _getBoardLinks()
+      setLastRefresh(Date.now())
+      console.log('err', error)
     }
-  };
+  }
 
   const updateEventThemas = async (data: BoardLinkInterface) => {
     try {
-      await BoardLinkApi.update(data.id || "", data);
-      _getBoardLinks();
-      setLastRefresh(Date.now());
+      await BoardLinkApi.update(data.id || '', data)
+      _getBoardLinks()
+      setLastRefresh(Date.now())
     } catch (error) {
-      showError(error);
-      _getBoardLinks();
-      setLastRefresh(Date.now());
+      showError(error)
+      _getBoardLinks()
+      setLastRefresh(Date.now())
     }
-  };
+  }
 
   const onDragEndCategory = (result: any, linkIndex: number) => {
     try {
-      setLinkCateDragging(undefined);
+      setLinkCateDragging(undefined)
       if (!result.destination) {
-        return;
+        return
       }
 
       //////////////////////////////////
       //////////////////////////////////
       if (boardLinks[linkIndex].route === BOARD.EVENT_BOARD) {
-        const newItems = [...(boardLinks[linkIndex].themas || [])];
-        const [reorderedItem]: any = newItems.splice(result.source.index, 1);
-        newItems.splice(result.destination.index, 0, reorderedItem);
+        const newItems = [...(boardLinks[linkIndex].themas || [])]
+        const [reorderedItem]: any = newItems.splice(result.source.index, 1)
+        newItems.splice(result.destination.index, 0, reorderedItem)
         updateEventThemas({
           ...boardLinks[linkIndex],
           themas: newItems.map((item: ThemaInterface) => item.id),
-        });
-        boardLinks[linkIndex].themas = newItems;
-        setBoardLinks(boardLinks);
+        })
+        boardLinks[linkIndex].themas = newItems
+        setBoardLinks(boardLinks)
       } else {
         //////////////////////////////////
         //////////////////////////////////
@@ -150,118 +152,120 @@ export default function BulletinLeft() {
             boardLinks[linkIndex].categories?.[result.destination.index + 1]
               ?.index,
             boardLinks[linkIndex].categories?.[result.source.index].id
-          );
+          )
         } else {
           orderLinkCategory(
             boardLinks[linkIndex].categories?.[result.destination.index - 1]
               ?.index,
             boardLinks[linkIndex].categories?.[result.destination.index]?.index,
             boardLinks[linkIndex].categories?.[result.source.index].id
-          );
+          )
         }
 
-        const newItems = [...boardLinks];
+        const newItems = [...boardLinks]
         const [reorderedItem]: any = newItems[linkIndex].categories?.splice(
           result.source.index,
           1
-        );
+        )
         newItems[linkIndex].categories?.splice(
           result.destination.index,
           0,
           reorderedItem
-        );
-        setBoardLinks(newItems);
+        )
+        setBoardLinks(newItems)
       }
     } catch (error) {
-      console.log("error", error);
+      console.log('error', error)
     }
-  };
+  }
 
   const onDragStartCate = (linkIndex: number) => {
-    setLinkCateDragging(linkIndex);
-  };
+    setLinkCateDragging(linkIndex)
+  }
 
   const updateOrCreateBoardLink = async (boardLink: BoardLinkInterface) => {
-    setBoardSelected(boardLink);
+    setBoardSelected(boardLink)
     try {
       if (boardLink.id && boardLink.id !== NEW_ID) {
-        const data = await BoardLinkApi.update(boardLink.id, boardLink);
+        const data = await BoardLinkApi.update(boardLink.id, boardLink)
         // setBoardSelected(data);
       } else {
-        const { id, ...linkData } = boardLink;
-        const data = await BoardLinkApi.create(linkData);
-        console.log("data", data);
-        setBoardSelected(data);
+        const {id, ...linkData} = boardLink
+        const data = await BoardLinkApi.create(linkData)
+        console.log('data', data)
+        setBoardSelected(data)
       }
-      setLastRefresh(Date.now());
-      setBoardNameIndex(undefined);
+      setLastRefresh(Date.now())
+      setBoardNameIndex(undefined)
     } catch (error) {
-      showError(error);
+      showError(error)
     }
-  };
+  }
 
   const boardLinkItem = (
     item: BoardLinkInterface,
     index: any,
     snapshot?: DraggableStateSnapshot
   ) => {
-    const isCollapsed = boardSelected?.id !== item.id;
+    const isCollapsed = boardSelected?.id !== item.id
     return (
-      <div key={index} className={classNames("flex flex-col")}>
+      <div key={index} className={classNames('flex flex-col')}>
         <div
           className={classNames(
-            "px-3 py-2 mb-1 rounded flex items-center cursor-pointer hover:bg-dayBreakBlue50",
-            boardSelected?.id === item.id ? "bg-dayBreakBlue50" : ""
+            'px-3 py-2 mb-1 rounded flex items-center cursor-pointer hover:bg-dayBreakBlue50',
+            boardSelected?.id === item.id ? 'bg-dayBreakBlue50' : ''
           )}
           onDoubleClick={() => {
-            if (item.id !== "HOME")
+            if (item.id !== 'HOME')
               setTimeout(() => {
-                setBoardNameIndex(index);
-              }, 0);
+                setBoardNameIndex(index)
+              }, 0)
           }}
           onClick={() => {
-            setBoardSelected(item);
+            if (boardSelected?.id === item.id) {
+              setBoardSelected({id: '1', name: '1'})
+            } else setBoardSelected(item)
             // setLastRefresh(Date.now());
           }}
         >
-          {editBoardNameIndex === index && item.id !== "HOME" ? (
+          {editBoardNameIndex === index && item.id !== 'HOME' ? (
             // && item.id !== NEW_ID
             <BaseInput
               // key={Date.now()}
-              styleInputContainer="h-9"
+              styleInputContainer='h-9'
               onSave={(value) => {
                 updateOrCreateBoardLink({
                   ...boardSelected,
                   name: value,
-                });
+                })
               }}
               onBlur={(value) => {
                 updateOrCreateBoardLink({
                   ...boardSelected,
                   name: value,
-                });
+                })
               }}
               defaultValue={item.name}
-              placeholder="Typing...."
-              className="w-[170px]"
+              placeholder='Typing....'
+              className='w-[170px]'
             />
           ) : (
-            <div className="flex items-center justify-between flex-1">
+            <div className='flex items-center justify-between flex-1'>
               <BaseText
                 bold
                 size={16}
                 className={classNames(
                   boardSelected?.id === item.id || snapshot?.isDragging
-                    ? "text-dayBreakBlue500"
-                    : ""
+                    ? 'text-dayBreakBlue500'
+                    : ''
                 )}
               >
                 {item.name}
               </BaseText>
               <div
-                className="p-1"
+                className='p-1'
                 onClick={(event) => {
-                  event.stopPropagation(); // Stop event propagation
+                  event.stopPropagation() // Stop event propagation
                   //custom show list
                 }}
               >
@@ -270,26 +274,25 @@ export default function BulletinLeft() {
             </div>
           )}
         </div>
-        {
-          !isCollapsed && (
-            <DragDropContext
-              onDragStart={() => onDragStartCate(index)}
-              onDragEnd={(result: any) => {
-                onDragEndCategory(result, index);
-              }}
-            >
-              <Droppable droppableId={`droppableCate-${item.id}`}>
-                {(provided) => (
-                  <div
-                    className="flex flex-col pl-8"
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    {item.route === BOARD.EVENT_BOARD
-                      ? (item.themas || []).map((elem: ThemaInterface, i) => (
+        {!isCollapsed && (
+          <DragDropContext
+            onDragStart={() => onDragStartCate(index)}
+            onDragEnd={(result: any) => {
+              onDragEndCategory(result, index)
+            }}
+          >
+            <Droppable droppableId={`droppableCate-${item.id}`}>
+              {(provided) => (
+                <div
+                  className='flex flex-col pl-8'
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  {item.route === BOARD.EVENT_BOARD
+                    ? (item.themas || []).map((elem: ThemaInterface, i) => (
                         <Draggable
                           key={elem?.id}
-                          draggableId={elem?.id || ""}
+                          draggableId={elem?.id || ''}
                           index={i}
                         >
                           {(provided, snapshot) => (
@@ -298,8 +301,8 @@ export default function BulletinLeft() {
                               {...provided.dragHandleProps}
                               ref={provided.innerRef}
                               className={classNames(
-                                "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
-                                snapshot.isDragging ? "bg-dayBreakBlue50" : ""
+                                'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                                snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
                               )}
                             >
                               <BaseText
@@ -308,17 +311,17 @@ export default function BulletinLeft() {
                                 size={16}
                                 className={classNames(
                                   snapshot.isDragging
-                                    ? "text-dayBreakBlue500"
-                                    : "text-darkNight700"
+                                    ? 'text-dayBreakBlue500'
+                                    : 'text-darkNight700'
                                 )}
                               >
-                                {elem?.name || ""}
+                                {elem?.name || ''}
                               </BaseText>
                             </div>
                           )}
                         </Draggable>
                       ))
-                      : (item.categories || []).map((elem, i) => (
+                    : (item.categories || []).map((elem, i) => (
                         <Draggable
                           key={elem.category?.id}
                           draggableId={elem.category?.id}
@@ -330,8 +333,8 @@ export default function BulletinLeft() {
                               {...provided.dragHandleProps}
                               ref={provided.innerRef}
                               className={classNames(
-                                "hover:bg-dayBreakBlue50 rounded-lg px-2 py-1",
-                                snapshot.isDragging ? "bg-dayBreakBlue50" : ""
+                                'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                                snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
                               )}
                             >
                               <BaseText
@@ -340,8 +343,8 @@ export default function BulletinLeft() {
                                 size={16}
                                 className={classNames(
                                   snapshot.isDragging
-                                    ? "text-dayBreakBlue500"
-                                    : "text-darkNight700"
+                                    ? 'text-dayBreakBlue500'
+                                    : 'text-darkNight700'
                                 )}
                               >
                                 {elem.category?.name}
@@ -350,33 +353,32 @@ export default function BulletinLeft() {
                           )}
                         </Draggable>
                       ))}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
-          )
-        }
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+        )}
         <div
-          className={classNames(linkCateDragging === index ? "h-[24px]" : "")}
+          className={classNames(linkCateDragging === index ? 'h-[24px]' : '')}
         ></div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
-    <div className="w-[300px] border-r p-6 max-h-full overflow-auto no-scrollbar">
-      <div className={classNames("flex pb-4 items-center justify-between")}>
-        <BaseText bold locale size={16} className="">
+    <div className='w-[300px] border-r p-6 max-h-full overflow-auto no-scrollbar'>
+      <div className={classNames('flex pb-4 items-center justify-between')}>
+        <BaseText bold locale size={16} className=''>
           Main
         </BaseText>
         <PlusOutlined
-          className={classNames("text-xl cursor-pointer")}
+          className={classNames('text-xl cursor-pointer')}
           onClick={createBoardLink}
         />
       </div>
-      {boardLinkItem({ id: "HOME", name: "Home" }, "HOME")}
+      {boardLinkItem({id: 'HOME', name: 'Home'}, 'HOME')}
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="droppableThema">
+        <Droppable droppableId='droppableThema'>
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {boardLinks.map((item: BoardLinkInterface, index: number) => {
@@ -393,20 +395,20 @@ export default function BulletinLeft() {
                         ref={provided.innerRef}
                         className={classNames(
                           snapshot.isDragging
-                            ? "bg-dayBreakBlue50 rounded-lg"
-                            : ""
+                            ? 'bg-dayBreakBlue50 rounded-lg'
+                            : ''
                         )}
                       >
                         {boardLinkItem(item, index, snapshot)}
                       </div>
                     )}
                   </Draggable>
-                );
+                )
               })}
             </div>
           )}
         </Droppable>
       </DragDropContext>
     </div>
-  );
+  )
 }
