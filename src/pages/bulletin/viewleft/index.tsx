@@ -1,24 +1,24 @@
-import {useEffect, useState} from 'react'
-import {BaseText} from '../../../components'
-import {classNames} from '../../../utils/common'
-import {PlusOutlined, DownOutlined} from '@ant-design/icons'
-import {BoardLinkInterface, ThemaInterface} from '../../../entities'
-import {BoardLinkApi} from '../../../apis/boardLinkApi'
-import {useBulletinState} from '../store'
+import { useEffect, useState } from 'react'
+import { BaseText } from '../../../components'
+import { classNames } from '../../../utils/common'
+import { PlusOutlined, DownOutlined } from '@ant-design/icons'
+import { BoardLinkInterface, ThemaInterface } from '../../../entities'
+import { BoardLinkApi } from '../../../apis/boardLinkApi'
+import { useBulletinState } from '../store'
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DraggableStateSnapshot,
 } from 'react-beautiful-dnd'
-import {CategoryApi} from '../../../apis/categoryApi'
-import {showError} from '../../../utils/showToast'
-import {BaseInput} from '../../../components/input/BaseInput'
-import {BOARD} from '../../../utils/constants'
+import { CategoryApi } from '../../../apis/categoryApi'
+import { showError } from '../../../utils/showToast'
+import { BaseInput } from '../../../components/input/BaseInput'
+import { BOARD } from '../../../utils/constants'
 
 export const NEW_ID = 'NEW_ID'
 export default function BulletinLeft() {
-  const {boardSelected, setBoardSelected, setLastRefresh, lastRefresh} =
+  const { boardSelected, setBoardSelected, setLastRefresh, lastRefresh } =
     useBulletinState((state) => state)
   const [boardLinks, setBoardLinks] = useState<Array<BoardLinkInterface>>([])
   const [linkCateDragging, setLinkCateDragging] = useState<number>()
@@ -30,16 +30,16 @@ export default function BulletinLeft() {
     try {
       const respon = await BoardLinkApi.getList()
       setBoardLinks(respon)
-    } catch (error) {}
+    } catch (error) { }
   }
 
   const createBoardLink = async () => {
     try {
       const data = boardLinks.map((item) => item.id === NEW_ID)
       if (data[0]) return
-      setBoardLinks([{id: NEW_ID, name: 'New Link'}, ...boardLinks])
-      setBoardSelected({id: NEW_ID, name: 'New Link'})
-    } catch (error) {}
+      setBoardLinks([{ id: NEW_ID, name: 'New Link' }, ...boardLinks])
+      setBoardSelected({ id: NEW_ID, name: 'New Link' })
+    } catch (error) { }
   }
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function BulletinLeft() {
       const [reorderedItem] = newItems.splice(result.source.index, 1)
       newItems.splice(result.destination.index, 0, reorderedItem)
       setBoardLinks(newItems)
-    } catch (error) {}
+    } catch (error) { }
   }
 
   const orderLinkCategory = async (
@@ -190,7 +190,7 @@ export default function BulletinLeft() {
         const data = await BoardLinkApi.update(boardLink.id, boardLink)
         // setBoardSelected(data);
       } else {
-        const {id, ...linkData} = boardLink
+        const { id, ...linkData } = boardLink
         const data = await BoardLinkApi.create(linkData)
         console.log('data', data)
         setBoardSelected(data)
@@ -223,6 +223,7 @@ export default function BulletinLeft() {
           }}
           onClick={() => {
             setBoardSelected(item)
+            setBoardNameIndex(undefined)
             // setLastRefresh(Date.now());
           }}
         >
@@ -265,7 +266,7 @@ export default function BulletinLeft() {
                 onClick={(event) => {
                   event.stopPropagation() // Stop event propagation
                   if (boardSelected?.id === item.id) {
-                    setBoardSelected({id: '1', name: '1'})
+                    setBoardSelected({ id: '1', name: '1' })
                   }
                   //custom show list
                 }}
@@ -291,69 +292,69 @@ export default function BulletinLeft() {
                 >
                   {item.route === BOARD.EVENT_BOARD
                     ? (item.themas || []).map((elem: ThemaInterface, i) => (
-                        <Draggable
-                          key={elem?.id}
-                          draggableId={elem?.id || ''}
-                          index={i}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
+                      <Draggable
+                        key={elem?.id}
+                        draggableId={elem?.id || ''}
+                        index={i}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className={classNames(
+                              'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                              snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                            )}
+                          >
+                            <BaseText
+                              key={`thema${i}`}
+                              medium
+                              size={16}
                               className={classNames(
-                                'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
-                                snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                                snapshot.isDragging
+                                  ? 'text-dayBreakBlue500'
+                                  : 'text-darkNight700'
                               )}
                             >
-                              <BaseText
-                                key={`thema${i}`}
-                                medium
-                                size={16}
-                                className={classNames(
-                                  snapshot.isDragging
-                                    ? 'text-dayBreakBlue500'
-                                    : 'text-darkNight700'
-                                )}
-                              >
-                                {elem?.name || ''}
-                              </BaseText>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))
+                              {elem?.name || ''}
+                            </BaseText>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))
                     : (item.categories || []).map((elem, i) => (
-                        <Draggable
-                          key={elem.category?.id}
-                          draggableId={elem.category?.id}
-                          index={i}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              ref={provided.innerRef}
+                      <Draggable
+                        key={elem.category?.id}
+                        draggableId={elem.category?.id}
+                        index={i}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            ref={provided.innerRef}
+                            className={classNames(
+                              'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
+                              snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                            )}
+                          >
+                            <BaseText
+                              key={`category${i}`}
+                              medium
+                              size={16}
                               className={classNames(
-                                'hover:bg-dayBreakBlue50 rounded-lg px-2 py-1',
-                                snapshot.isDragging ? 'bg-dayBreakBlue50' : ''
+                                snapshot.isDragging
+                                  ? 'text-dayBreakBlue500'
+                                  : 'text-darkNight700'
                               )}
                             >
-                              <BaseText
-                                key={`category${i}`}
-                                medium
-                                size={16}
-                                className={classNames(
-                                  snapshot.isDragging
-                                    ? 'text-dayBreakBlue500'
-                                    : 'text-darkNight700'
-                                )}
-                              >
-                                {elem.category?.name}
-                              </BaseText>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                              {elem.category?.name}
+                            </BaseText>
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
                 </div>
               )}
             </Droppable>
@@ -377,7 +378,7 @@ export default function BulletinLeft() {
           onClick={createBoardLink}
         />
       </div>
-      {boardLinkItem({id: 'HOME', name: 'Home'}, 'HOME')}
+      {boardLinkItem({ id: 'HOME', name: 'Home' }, 'HOME')}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId='droppableThema'>
           {(provided) => (
