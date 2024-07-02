@@ -222,9 +222,7 @@ export default function BulletinLeft() {
               }, 0)
           }}
           onClick={() => {
-            if (boardSelected?.id === item.id) {
-              setBoardSelected({id: '1', name: '1'})
-            } else setBoardSelected(item)
+            setBoardSelected(item)
             // setLastRefresh(Date.now());
           }}
         >
@@ -266,6 +264,9 @@ export default function BulletinLeft() {
                 className='p-1'
                 onClick={(event) => {
                   event.stopPropagation() // Stop event propagation
+                  if (boardSelected?.id === item.id) {
+                    setBoardSelected({id: '1', name: '1'})
+                  }
                   //custom show list
                 }}
               >
