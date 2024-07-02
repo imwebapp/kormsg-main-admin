@@ -185,7 +185,8 @@ export const RegionSetting = () => {
     }
   };
 
-  const handleEditDistrictName = () => {
+  const handleEditDistrictName = (e: any) => {
+    e.stopPropagation();
     setIsEditingDistrictName(true);
     setNewDistrictName(districtSelected.name);
   };
@@ -406,18 +407,6 @@ export const RegionSetting = () => {
                                   />
                                   {!isCreatingDistrictName && checkSelected && (
                                     <div className="flex gap-1">
-                                      {/* <div onClick={() => handleUpDistrict(item)}>
-                                            <img
-                                                src={Images.arrowUp2}
-                                                className="w-6 h-6 cursor-pointer"
-                                            />
-                                        </div>
-                                        <div onClick={() => handleDownDistrict(item)}>
-                                            <img
-                                                src={Images.arrowDown2}
-                                                className="w-6 h-6 cursor-pointer"
-                                            />
-                                        </div> */}
                                       <div
                                         onClick={() =>
                                           handleDeleteDistrict(item)
@@ -448,12 +437,24 @@ export const RegionSetting = () => {
                                     {item.name}
                                   </BaseText>
                                   {!isCreatingDistrictName && checkSelected && (
-                                    <img
-                                      src={Images.edit2}
-                                      alt="Excel upload"
-                                      className="w-6 h-6 text-white cursor-pointer"
-                                      onClick={handleEditDistrictName}
-                                    />
+                                    <div className="flex flex-row gap-1">
+                                      <div
+                                        onClick={() =>
+                                          handleDeleteDistrict(item)
+                                        }
+                                      >
+                                        <img
+                                          src={Images.trash}
+                                          className="w-6 h-6 cursor-pointer"
+                                        />
+                                      </div>
+                                      <img
+                                        src={Images.edit2}
+                                        alt="Excel upload"
+                                        className="w-6 h-6 text-white cursor-pointer"
+                                        onClick={handleEditDistrictName}
+                                      />
+                                    </div>
                                   )}
                                 </div>
                               )}
@@ -565,18 +566,6 @@ export const RegionSetting = () => {
                                   />
                                   {!isCreatingRegionName && checkSelected && (
                                     <div className="flex gap-1">
-                                      {/* <div onClick={() => handleUpRegion(item)}>
-                                                      <img
-                                                          src={Images.arrowUp2}
-                                                          className="w-6 h-6 cursor-pointer"
-                                                      />
-                                                  </div>
-                                                  <div onClick={() => handleDownRegion(item)}>
-                                                      <img
-                                                          src={Images.arrowDown2}
-                                                          className="w-6 h-6 cursor-pointer"
-                                                      />
-                                                  </div> */}
                                       <div
                                         onClick={() => handleDeleteRegion(item)}
                                       >

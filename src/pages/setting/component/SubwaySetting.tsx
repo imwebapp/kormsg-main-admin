@@ -245,7 +245,8 @@ export const SubwaySetting = () => {
     }
   };
 
-  const handleEditSubwayName = () => {
+  const handleEditSubwayName = (e: any) => {
+    e.stopPropagation();
     setIsEditingSubwayName(true);
     setNewSubwayName(subwaySelected.name);
   };
@@ -521,12 +522,22 @@ export const SubwaySetting = () => {
                                     {item.name}
                                   </BaseText>
                                   {!isCreatingSubwayName && checkSelected && (
-                                    <img
-                                      src={Images.edit2}
-                                      alt="Excel upload"
-                                      className="w-6 h-6 text-white cursor-pointer"
-                                      onClick={handleEditSubwayName}
-                                    />
+                                    <div className="flex flex-row gap-1">
+                                      <div
+                                        onClick={() => handleDeleteSubway(item)}
+                                      >
+                                        <img
+                                          src={Images.trash}
+                                          className="w-6 h-6 cursor-pointer"
+                                        />
+                                      </div>
+                                      <img
+                                        src={Images.edit2}
+                                        alt="Excel upload"
+                                        className="w-6 h-6 text-white cursor-pointer"
+                                        onClick={handleEditSubwayName}
+                                      />
+                                    </div>
                                   )}
                                 </div>
                               )}
